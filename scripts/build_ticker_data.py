@@ -187,9 +187,19 @@ def main():
             "corr":     corrs,
         }
 
+    # Replace NaN with None recursively — Python's json.dump writes literal "NaN"
+    # which is invalid per the JSON spec and breaks browser JSON.parse.
+    import math
+    def _clean(o):
+        if isinstance(o, dict):  return {k: _clean(v) for k, v in o.items()}
+        if isinstance(o, list):  return [_clean(v) for v in o]
+        if isinstance(o, float) and (math.isnan(o) or math.isinf(o)): return None
+        return o
+    out_clean = _clean(out)
+
     outpath = DATA / "ticker_indicators.json"
     with open(outpath, "w") as f:
-        json.dump(out, f, separators=(",", ":"), default=str)
+        json.dump(out_clean, f, separators=(",", ":"), default=str, allow_nan=False)
     size_kb = outpath.stat().st_size / 1024
     print(f"saved {len(out)} tickers → {outpath} ({size_kb:.0f} KB)")
 
