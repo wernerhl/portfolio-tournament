@@ -1,8 +1,8 @@
-name: Daily Tournament Update
+name: Daily Update
 
 on:
   schedule:
-    - cron: '0 22 * * 1-5'   # ~6pm ET on weekdays (UTC; DST drift ±1h)
+    - cron: '0 22 * * 1-5'   # ~6pm ET weekdays (DST drift ±1h)
   workflow_dispatch:
 
 permissions:
@@ -21,18 +21,16 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
-        run: pip install yfinance fredapi pandas numpy scipy
+        run: pip install yfinance fredapi pandas numpy scipy pyarrow
 
-      - name: Compute regime + NAV
+      - name: Run daily pipeline
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        run: |
-          python scripts/compute_regime.py
-          python scripts/compute_nav.py
+        run: python scripts/update_daily.py
 
       - name: Commit
         run: |
-          git config user.name  "Tournament Bot"
+          git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
           git add data/
           git diff --cached --quiet || git commit -m "📊 $(date -u +%Y-%m-%d)"

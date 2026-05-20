@@ -1,113 +1,100 @@
 {
-  "last_updated": "2026-05-19",
-  "cash_total": 87820,
-  "_note_holdings": "PLACEHOLDER values from tournament_build_prompt.md. Update each tier's holdings/shares/cost basis to match Werner's actual paper-portfolio allocations across the four strategies before going live.",
+  "last_updated": "2026-05-20",
+  "_note": "v2: this file holds ONLY Tier 5 (Werner's manual picks) + system settings. Algorithmic tier holdings 1-4 are in data/tier_holdings.json (regenerated monthly by select_tiers.py).",
 
-  "tiers": {
+  "werner_picks": {
+    "name": "Werner's Picks",
+    "short": "WERNER",
+    "color": "#a78bfa",
+    "description": "Discretionary portfolio. Structural judgment, not algorithm.",
+    "cash_floor": 0.15,
+    "cash_slope": 0.70,
+    "cash_max": 0.85,
+    "cash_formula": "min(0.85, 0.15 + R * 0.70)",
+    "benchmark": "SPY",
+    "hedging": "moderate",
+    "holdings": {
+      "GOOG":  {"shares": 50,  "cost": 326.81},
+      "NVDA":  {"shares": 100, "cost": 86.68},
+      "AVGO":  {"shares": 50,  "cost": 326.75},
+      "TSM":   {"shares": 25,  "cost": 380.00},
+      "ETN":   {"shares": 15,  "cost": 410.00},
+      "VRT":   {"shares": 20,  "cost": 400.00},
+      "CEG":   {"shares": 15,  "cost": 275.00},
+      "MSFT":  {"shares": 50,  "cost": 500.40}
+    },
+    "cash": 87820
+  },
+
+  "system_settings": {
+    "inception_capital_per_tier": 100000,
+    "transaction_cost_bps": 10,
+    "phase1_data_dir": "data/source",
+    "backtest_start": "2010-01-04",
+    "backtest_end":   "2026-04-30",
+    "min_price_history_days": 252
+  },
+
+  "tier_specs": {
     "1_cap_pres": {
       "name": "Capital Preservation",
       "short": "CAP PRES",
       "color": "#3266ad",
-      "description": "Lowest vol. Defensive compounders + infrastructure. Heavy hedging.",
+      "description": "Defensive sectors only, high-margin profitable names. Heavy hedging.",
+      "n_holdings": 12,
       "cash_floor": 0.25,
-      "cash_formula": "min(1.0, 0.25 + R * 0.75)",
-      "max_positions": 12,
-      "universe_filter": "defensive_only",
-      "benchmark": "60/40 SPY/TLT",
-      "hedging": "full",
-      "holdings": {
-        "BRK-B": {"shares": 7,  "cost": 460.00},
-        "PM":    {"shares": 20, "cost": 155.00},
-        "JPM":   {"shares": 12, "cost": 295.00},
-        "V":     {"shares": 11, "cost": 311.00},
-        "MA":    {"shares": 7,  "cost": 502.00},
-        "CEG":   {"shares": 12, "cost": 275.00},
-        "LLY":   {"shares": 4,  "cost": 780.00},
-        "PG":    {"shares": 0,  "cost": 0, "_note": "on watchlist, not yet purchased"},
-        "JNJ":   {"shares": 0,  "cost": 0, "_note": "on watchlist"}
+      "cash_slope": 0.75,
+      "cash_max": 1.0,
+      "benchmark": "60_40",
+      "universe_filter": {
+        "sectors": ["Consumer Defensive", "Healthcare", "Utilities", "Financial Services", "Industrials"],
+        "min_gross_margin": 0.30,
+        "require_positive_fcf": true
       },
-      "cash_allocated": 25000
+      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 1},
+      "hedging": "full"
     },
-
     "2_balanced": {
       "name": "Balanced Growth",
       "short": "BALANCED",
       "color": "#1D9E75",
-      "description": "Core portfolio. Mix of compounders + AI infrastructure + defensives.",
+      "description": "Full universe, equal-weight 3 technical factors + fundamentals. Moderate hedging.",
+      "n_holdings": 20,
       "cash_floor": 0.15,
-      "cash_formula": "min(0.85, 0.15 + R * 0.70)",
-      "max_positions": 20,
-      "universe_filter": "all",
+      "cash_slope": 0.70,
+      "cash_max": 0.85,
       "benchmark": "SPY",
-      "hedging": "moderate",
-      "holdings": {
-        "GOOG":  {"shares": 50,  "cost": 326.81},
-        "NVDA":  {"shares": 100, "cost": 86.68},
-        "AVGO":  {"shares": 50,  "cost": 326.75},
-        "TSM":   {"shares": 25,  "cost": 380.00},
-        "ANET":  {"shares": 0,   "cost": 0,      "_note": "limit order at $142"},
-        "GEV":   {"shares": 0,   "cost": 0,      "_note": "limit order at $950"},
-        "ETN":   {"shares": 15,  "cost": 410.00},
-        "VRT":   {"shares": 20,  "cost": 400.00},
-        "CEG":   {"shares": 15,  "cost": 275.00},
-        "JPM":   {"shares": 12,  "cost": 295.00},
-        "BRK-B": {"shares": 7,   "cost": 460.00},
-        "PM":    {"shares": 20,  "cost": 155.00},
-        "V":     {"shares": 11,  "cost": 311.00}
-      },
-      "cash_allocated": 20000
+      "universe_filter": null,
+      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 1},
+      "hedging": "moderate"
     },
-
     "3_aggressive": {
       "name": "Aggressive Growth",
       "short": "AGGRESSIVE",
       "color": "#BA7517",
-      "description": "Concentrated AI + infrastructure. Momentum tilt. Less hedging.",
+      "description": "Full universe, double weight on 6-month relative strength. Light hedging.",
+      "n_holdings": 15,
       "cash_floor": 0.10,
-      "cash_formula": "min(0.50, 0.10 + R * 0.40)",
-      "max_positions": 15,
-      "universe_filter": "all",
+      "cash_slope": 0.40,
+      "cash_max": 0.50,
       "benchmark": "QQQ",
-      "hedging": "light",
-      "holdings": {
-        "NVDA":  {"shares": 100, "cost": 86.68},
-        "AVGO":  {"shares": 50,  "cost": 326.75},
-        "GOOG":  {"shares": 50,  "cost": 326.81},
-        "TSM":   {"shares": 25,  "cost": 380.00},
-        "ANET":  {"shares": 0,   "cost": 0,      "_note": "limit at $142"},
-        "GEV":   {"shares": 0,   "cost": 0,      "_note": "limit at $950"},
-        "ETN":   {"shares": 15,  "cost": 410.00},
-        "VRT":   {"shares": 20,  "cost": 400.00},
-        "CRDO":  {"shares": 0,   "cost": 0,      "_note": "limit at $95"},
-        "META":  {"shares": 0,   "cost": 0,      "_note": "limit at $600"}
-      },
-      "cash_allocated": 22000
+      "universe_filter": null,
+      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 2},
+      "hedging": "light"
     },
-
     "4_tactical": {
       "name": "Tactical Alpha",
       "short": "TACTICAL",
       "color": "#D85A30",
-      "description": "Top 8-10 highest conviction. Regime is the only brake. Options-heavy.",
+      "description": "Concentrated 8-name basket, momentum tilt, no cash floor. Regime is the brake.",
+      "n_holdings": 8,
       "cash_floor": 0.0,
-      "cash_formula": "min(1.0, R * 1.0)",
-      "max_positions": 10,
-      "universe_filter": "all",
+      "cash_slope": 1.0,
+      "cash_max": 1.0,
       "benchmark": "SSO",
-      "hedging": "none_until_crisis",
-      "holdings": {
-        "NVDA":  {"shares": 100, "cost": 86.68},
-        "GOOG":  {"shares": 50,  "cost": 326.81},
-        "AVGO":  {"shares": 50,  "cost": 326.75},
-        "TSM":   {"shares": 25,  "cost": 380.00},
-        "GEV":   {"shares": 0,   "cost": 0,      "_note": "limit at $950"},
-        "ANET":  {"shares": 0,   "cost": 0,      "_note": "limit at $142"},
-        "CRDO":  {"shares": 0,   "cost": 0,      "_note": "limit at $95"},
-        "PLTR":  {"shares": 0,   "cost": 0,      "_note": "limit at $130"}
-      },
-      "cash_allocated": 20820
+      "universe_filter": null,
+      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 2},
+      "hedging": "none_until_crisis"
     }
-  },
-
-  "_instructions": "UPDATE THIS FILE after every trade. Add/remove holdings, update shares and cost basis. The daily pipeline reads this to compute NAV."
+  }
 }
