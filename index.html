@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Tournament</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>♛</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07070a; --c1:rgba(255,255,255,0.02); --c2:rgba(255,255,255,0.04);
+  --bd:rgba(255,255,255,0.05); --bd2:rgba(255,255,255,0.10);
+  --t1:#d4d4d4; --t2:#a3a3a3; --t3:#737373; --t4:#525252; --t5:#333;
+  --g:#4ade80; --y:#facc15; --r:#f87171; --b:#60a5fa; --p:#a78bfa; --o:#fb923c;
+  --tier1:#3266ad; --tier2:#1D9E75; --tier3:#BA7517; --tier4:#D85A30;
+  --m:'IBM Plex Mono','SF Mono',monospace; --s:'Inter',-apple-system,sans-serif;
+}
+body{background:var(--bg);color:var(--t1);font-family:var(--s);min-height:100vh;line-height:1.4}
+.w{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+button{cursor:pointer;font-family:var(--m);background:0;border:0;color:inherit}
+
+/* Header */
+.hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:18px;flex-wrap:wrap}
+.hd-l h1{font:700 13px var(--m);color:var(--t2);letter-spacing:.08em}
+.hd-dot{width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 8px rgba(74,222,128,.5);display:inline-block;margin-right:8px}
+.hd-sub{font:400 10px var(--m);color:var(--t4);margin-top:3px}
+.hd-r{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.regime{display:flex;gap:8px;align-items:center;padding:6px 14px;border:1px solid var(--bd2);border-radius:6px;background:var(--c1)}
+.regime-num{font:700 22px var(--m);letter-spacing:-.03em}
+.regime-lbl{font:600 8.5px var(--m);letter-spacing:.15em;line-height:1.2}
+.regime-meta{font:400 8.5px var(--m);color:var(--t4);line-height:1.3}
+
+/* Leader banner */
+.lb{margin-bottom:16px;padding:12px 16px;background:linear-gradient(90deg,rgba(255,215,0,.06),rgba(255,255,255,.01));border:1px solid rgba(255,215,0,.15);border-radius:8px;display:flex;align-items:center;gap:14px;font:500 11px var(--s)}
+.lb-crown{font-size:22px;line-height:1}
+.lb-name{font:700 13px var(--s);color:var(--t1)}
+.lb-stat{font:400 11px var(--m);color:var(--t3)}
+.lb-stat strong{color:var(--g);font-weight:700}
+
+/* Chart container */
+.chart-card{background:var(--c1);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:18px}
+.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.chart-title{font:700 10px var(--m);color:var(--t3);letter-spacing:.15em}
+.periods{display:flex;gap:2px}
+.period-btn{padding:4px 10px;font:600 9px var(--m);letter-spacing:.08em;color:var(--t3);border-radius:3px;border:1px solid transparent;transition:all .12s}
+.period-btn:hover{color:var(--t2)}
+.period-btn.on{background:rgba(255,255,255,.05);color:var(--t1);border-color:rgba(255,255,255,.08)}
+.chart-wrap{position:relative;height:340px}
+.chart-meta{font:400 9px var(--m);color:var(--t4);margin-top:6px;text-align:right}
+
+/* Leaderboard */
+.lbtable{margin-bottom:18px;background:var(--c1);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.lb-h{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.lb-h h2{font:700 10px var(--m);color:var(--t3);letter-spacing:.15em}
+.lb-h-sub{font:400 9px var(--m);color:var(--t5)}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--m)}
+th{font:600 8.5px var(--m);color:var(--t4);letter-spacing:.12em;text-align:left;padding:8px 12px;border-bottom:1px solid var(--bd);white-space:nowrap}
+th.num{text-align:right}
+td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.02);white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.tier-row{cursor:pointer;transition:background .12s}
+tr.tier-row:hover{background:rgba(255,255,255,.025)}
+tr.tier-row.open td{background:rgba(255,255,255,.025)}
+.rank{font:700 13px var(--m);color:var(--t4);width:24px}
+.rank.first{color:var(--y)}
+.tier-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:8px;vertical-align:middle}
+.tier-name{font:700 12px var(--s);color:var(--t1)}
+.tier-desc{font:400 9px var(--m);color:var(--t5);margin-top:2px}
+.pos{color:var(--g)}.neg{color:var(--r)}.neut{color:var(--t3)}
+.chev{display:inline-block;color:var(--t4);transition:transform .15s}
+.chev.open{transform:rotate(90deg)}
+
+/* Tier expansion */
+.tier-detail{display:none;padding:14px 16px;background:rgba(0,0,0,.25);border-bottom:1px solid var(--bd)}
+.tier-detail.open{display:block}
+.td-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-bottom:10px}
+.td-block{background:var(--c1);border:1px solid var(--bd);border-radius:6px;padding:10px 12px}
+.td-label{font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:4px}
+.td-val{font:700 18px var(--m);letter-spacing:-.02em}
+.td-sub{font:400 9px var(--m);color:var(--t4);margin-top:2px}
+
+/* Holdings table inside tier detail */
+.h-table{margin-top:8px;width:100%;border-collapse:collapse;font-size:10.5px}
+.h-table th{padding:5px 6px;border-bottom:1px solid var(--bd);font-size:8px}
+.h-table td{padding:5px 6px;border-bottom:1px solid rgba(255,255,255,.02)}
+.h-empty{color:var(--t4);font-style:italic}
+
+/* Cash gauge */
+.gauge{display:flex;height:6px;border-radius:3px;background:var(--c2);overflow:hidden}
+.gauge .eq{background:var(--b)}
+.gauge .csh{background:var(--t3)}
+
+/* Hedging note */
+.hedge{font:400 10px var(--s);color:var(--t2);padding:6px 10px;background:var(--c1);border-left:2px solid var(--p);border-radius:0 4px 4px 0;margin-top:6px}
+.hedge .k{font:700 8px var(--m);color:var(--p);letter-spacing:.12em;margin-right:6px}
+
+/* Footer */
+.ft{margin-top:24px;padding:14px;background:var(--c1);border:1px solid var(--bd);border-radius:6px;font:400 9.5px var(--m);color:var(--t4);line-height:1.8}
+.ft .k{color:var(--t3);font-weight:700;letter-spacing:.1em}
+.ft a{color:var(--b);text-decoration:none}
+
+.ld{text-align:center;padding:80px;font:500 12px var(--m);color:var(--t3)}
+
+@media(max-width:720px){
+  .w{padding:14px 10px 40px}
+  .td-grid{grid-template-columns:1fr}
+  table{font-size:10px}
+  th,td{padding:6px 8px}
+}
+</style>
+</head>
+<body>
+<div class="w" id="app"><div class="ld">Loading tournament data…</div></div>
+<script>
+"use strict";
+const S = {data:null, backtest:null, config:null, period:"ALL", expanded:null, chart:null};
+
+const fmt   = n => (typeof n === "number") ? n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "—";
+const fmt2  = n => (typeof n === "number") ? n.toFixed(2) : "—";
+const fmtP  = n => (typeof n === "number") ? ((n>=0?"+":"") + n.toFixed(2) + "%") : "—";
+const fmtP1 = n => (typeof n === "number") ? ((n>=0?"+":"") + n.toFixed(1) + "%") : "—";
+const pnlc  = n => (n>0 ? "pos" : (n<0 ? "neg" : "neut"));
+
+const TIER_COLOR = {"1_cap_pres":"#3266ad","2_balanced":"#1D9E75","3_aggressive":"#BA7517","4_tactical":"#D85A30"};
+
+function regimeLabel(R){ return R<0.3?"LOW RISK":R<0.5?"ELEVATED":R<0.7?"HIGH RISK":"CRISIS"; }
+function regimeColor(R){ return R<0.3?"var(--g)":R<0.5?"var(--y)":R<0.7?"var(--o)":"var(--r)"; }
+
+// Build a unified daily series per tier by merging backtest + live history
+function buildSeries(){
+  const tiers = Object.keys(S.config.tiers);
+  const series = {};  // tier_id → [{date, nav}]
+  const benchSeries = {spy:[], qqq:[], "60_40":[], sso:[]};
+
+  // Backtest portion
+  if (S.backtest && S.backtest.rows) {
+    const rows = S.backtest.rows;
+    tiers.forEach(tid => {
+      series[tid] = rows.filter(r => r[tid] != null && !isNaN(r[tid]))
+                        .map(r => ({date:r.date, nav:+r[tid]}));
+    });
+    ["spy","qqq","60_40","sso"].forEach(b => {
+      benchSeries[b] = rows.filter(r => r[b] != null && !isNaN(r[b]))
+                            .map(r => ({date:r.date, nav:+r[b]}));
+    });
+  }
+
+  // Live portion: each tier scaled to MATCH backtest endpoint on the seam date
+  if (S.data && S.data.history && S.data.history.length > 0) {
+    tiers.forEach(tid => {
+      const liveDays = S.data.history.filter(h => h.tiers[tid] && h.tiers[tid].nav > 0);
+      if (liveDays.length === 0) return;
+      const backtestEndpoint = series[tid] && series[tid].length > 0
+        ? series[tid][series[tid].length - 1].nav : 1.0;
+      const liveStartNav = liveDays[0].tiers[tid].nav;
+      // Scale live NAV so liveStartNav = backtestEndpoint
+      const k = backtestEndpoint / liveStartNav;
+      liveDays.forEach(d => {
+        series[tid] = series[tid] || [];
+        // Skip duplicate dates already in backtest
+        if (series[tid].length === 0 || series[tid][series[tid].length-1].date !== d.date) {
+          series[tid].push({date:d.date, nav:d.tiers[tid].nav * k, live:true});
+        }
+      });
+    });
+  }
+  return {tiers:series, bench:benchSeries};
+}
+
+function applyPeriod(series, period){
+  if (!series.length) return series;
+  if (period === "ALL") return series;
+  const lastDate = new Date(series[series.length-1].date);
+  let start = new Date(lastDate);
+  switch(period){
+    case "1M": start.setMonth(start.getMonth()-1); break;
+    case "3M": start.setMonth(start.getMonth()-3); break;
+    case "6M": start.setMonth(start.getMonth()-6); break;
+    case "YTD": start = new Date(lastDate.getFullYear(), 0, 1); break;
+    case "1Y": start.setFullYear(start.getFullYear()-1); break;
+    case "5Y": start.setFullYear(start.getFullYear()-5); break;
+    default: return series;
+  }
+  return series.filter(r => new Date(r.date) >= start);
+}
+
+function rebase(series){
+  if (series.length === 0) return series;
+  const base = series[0].nav;
+  return series.map(r => ({...r, nav:r.nav / base}));
+}
+
+// Compute leaderboard metrics for a tier's series (within current period)
+function tierMetrics(series, benchSeries){
+  if (!series || series.length < 2) return null;
+  const first = series[0].nav, last = series[series.length-1].nav;
+  const total = (last/first - 1) * 100;
+  // 1W and 1M returns (calendar)
+  const lastDate = new Date(series[series.length-1].date);
+  const wAgo = new Date(lastDate); wAgo.setDate(wAgo.getDate()-7);
+  const mAgo = new Date(lastDate); mAgo.setMonth(mAgo.getMonth()-1);
+  const findPrior = d => {
+    for (let i = series.length-1; i >= 0; i--){
+      if (new Date(series[i].date) <= d) return series[i].nav;
+    }
+    return null;
+  };
+  const wPrior = findPrior(wAgo);
+  const mPrior = findPrior(mAgo);
+  const w1 = wPrior ? (last/wPrior - 1) * 100 : null;
+  const m1 = mPrior ? (last/mPrior - 1) * 100 : null;
+
+  // Daily returns for Sharpe + DD
+  const rets = [];
+  let runMax = first, maxDD = 0;
+  for (let i = 1; i < series.length; i++){
+    rets.push(series[i].nav / series[i-1].nav - 1);
+    runMax = Math.max(runMax, series[i].nav);
+    maxDD  = Math.min(maxDD, series[i].nav / runMax - 1);
+  }
+  const mean = rets.reduce((a,b)=>a+b,0) / rets.length;
+  const variance = rets.reduce((s,r)=>s+(r-mean)**2,0) / rets.length;
+  const sd = Math.sqrt(variance);
+  const sharpe = sd > 0 ? (mean * 252) / (sd * Math.sqrt(252)) : 0;
+
+  // Alpha vs benchmark over same window
+  let alpha = null;
+  if (benchSeries && benchSeries.length >= 2){
+    const bFirst = benchSeries[0].nav, bLast = benchSeries[benchSeries.length-1].nav;
+    const benchRet = (bLast/bFirst - 1) * 100;
+    alpha = total - benchRet;
+  }
+  return {total, w1, m1, sharpe, maxDD:maxDD*100, alpha};
+}
+
+function renderChart(allSeries, period){
+  const ctx = document.getElementById("race-chart");
+  if (!ctx) return;
+  if (S.chart) S.chart.destroy();
+
+  const datasets = [];
+  Object.entries(allSeries.tiers).forEach(([tid, ser]) => {
+    const t = S.config.tiers[tid];
+    if (!t || !ser || ser.length === 0) return;
+    const periodSer = applyPeriod(ser, period);
+    const rebased = rebase(periodSer);
+    datasets.push({
+      label: t.short,
+      data: rebased.map(r => ({x:r.date, y:r.nav})),
+      borderColor: t.color,
+      backgroundColor: t.color + "22",
+      borderWidth: 1.6,
+      pointRadius: 0,
+      tension: 0.05,
+    });
+  });
+  // SPY benchmark always
+  const spy = applyPeriod(allSeries.bench.spy, period);
+  if (spy.length > 0){
+    const rebSpy = rebase(spy);
+    datasets.push({
+      label: "SPY",
+      data: rebSpy.map(r => ({x:r.date, y:r.nav})),
+      borderColor: "#6b7280",
+      backgroundColor: "transparent",
+      borderWidth: 1.0,
+      borderDash: [4, 3],
+      pointRadius: 0,
+      tension: 0.05,
+    });
+  }
+
+  S.chart = new Chart(ctx, {
+    type: "line",
+    data: {datasets},
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {duration: 300},
+      interaction: {mode:"nearest", axis:"x", intersect:false},
+      scales: {
+        x: {
+          type: "time",
+          time: {unit: period==="1M"||period==="3M"?"week":(period==="6M"||period==="YTD"||period==="1Y"?"month":"year")},
+          grid: {color:"rgba(255,255,255,0.04)", drawBorder:false},
+          ticks: {color:"#737373", font:{family:"IBM Plex Mono",size:9}},
+        },
+        y: {
+          type: "logarithmic",
+          grid: {color:"rgba(255,255,255,0.04)", drawBorder:false},
+          ticks: {color:"#737373", font:{family:"IBM Plex Mono",size:9},
+                  callback: v => v.toFixed(2)},
+        },
+      },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {color:"#a3a3a3", font:{family:"Inter",size:11},
+                   usePointStyle:true, padding:14}
+        },
+        tooltip: {
+          backgroundColor: "rgba(0,0,0,0.9)",
+          titleColor: "#d4d4d4",
+          titleFont: {family:"IBM Plex Mono",size:10},
+          bodyFont: {family:"IBM Plex Mono",size:10},
+          padding: 8,
+          borderColor: "rgba(255,255,255,0.1)",
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}× (${((ctx.parsed.y-1)*100>=0?"+":"")}${((ctx.parsed.y-1)*100).toFixed(1)}%)`,
+          },
+        },
+      },
+    },
+  });
+}
+
+function renderTierDetail(tid){
+  const t = S.config.tiers[tid];
+  const live = S.data && S.data.history && S.data.history.length > 0
+    ? S.data.history[S.data.history.length-1].tiers[tid] : null;
+
+  const positions = live && live.positions ? live.positions
+    : Object.entries(t.holdings).map(([tk, h]) => ({
+        ticker:tk, shares:h.shares||0, cost_basis:h.cost||0,
+        price:null, value:null, gain_pct:null, weight:null,
+        _note: h._note,
+      }));
+
+  const targetCash = live ? live.target_cash_pct : (t.cash_floor*100);
+  const actualCash = live ? live.actual_cash_pct : (t.cash_floor*100);
+  const nav = live ? live.nav : null;
+
+  let html = `<div class="td-grid">
+    <div>
+      <div class="td-block">
+        <div class="td-label">CASH ALLOCATION</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div class="td-val" style="color:var(--t1)">${actualCash.toFixed(0)}<small style="font-size:11px;color:var(--t4)">% actual</small></div>
+          <div style="font:400 10px var(--m);color:var(--t3)">target ${targetCash.toFixed(0)}%</div>
+        </div>
+        <div class="gauge" style="margin-top:6px">
+          <div class="eq" style="width:${100-actualCash}%"></div>
+          <div class="csh" style="width:${actualCash}%"></div>
+        </div>
+        <div class="td-sub">equity ${(100-actualCash).toFixed(0)}% · cash ${actualCash.toFixed(0)}% · cash floor ${(t.cash_floor*100).toFixed(0)}%</div>
+      </div>
+      <div class="hedge"><span class="k">HEDGING</span>${hedgingNote(t.hedging)}</div>
+    </div>
+    <div>
+      <div class="td-block">
+        <div class="td-label">DESCRIPTION</div>
+        <div style="font:400 11px var(--s);color:var(--t2);line-height:1.5">${t.description}</div>
+        <div class="td-sub" style="margin-top:8px">
+          benchmark: <strong style="color:var(--t2)">${t.benchmark}</strong> ·
+          max positions: ${t.max_positions} ·
+          regime: <code style="color:var(--p)">${t.cash_formula}</code>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  html += `<table class="h-table"><tr>
+    <th>TICKER</th><th class="num">SHARES</th><th class="num">COST</th>
+    <th class="num">PRICE</th><th class="num">VALUE</th><th class="num">GAIN</th>
+    <th class="num">WEIGHT</th><th>NOTE</th>
+  </tr>`;
+  positions.forEach(p => {
+    const noShares = (p.shares <= 0);
+    html += `<tr${noShares?' style="opacity:.5"':''}>
+      <td><strong style="color:var(--t1)">${p.ticker}</strong></td>
+      <td class="num">${noShares?'—':p.shares}</td>
+      <td class="num">${noShares?'—':("$"+fmt2(p.cost_basis))}</td>
+      <td class="num">${p.price?("$"+fmt2(p.price)):"—"}</td>
+      <td class="num">${p.value?("$"+fmt(p.value)):"—"}</td>
+      <td class="num ${p.gain_pct!=null?pnlc(p.gain_pct):''}">${p.gain_pct!=null?fmtP1(p.gain_pct):"—"}</td>
+      <td class="num">${p.weight!=null?p.weight.toFixed(1)+"%":"—"}</td>
+      <td style="color:var(--t4);font-size:10px">${p._note||""}</td>
+    </tr>`;
+  });
+  html += `</table>`;
+  if (live && live.cash) {
+    html += `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:8px;text-align:right">
+      cash sleeve: <strong style="color:var(--t2)">$${fmt(live.cash)}</strong> ·
+      equity: <strong style="color:var(--t2)">$${fmt(live.equity)}</strong> ·
+      NAV: <strong style="color:var(--t1)">$${fmt(live.nav)}</strong>
+    </div>`;
+  }
+  return html;
+}
+
+function hedgingNote(level){
+  switch(level){
+    case "full": return "Buy SPY put spreads when R<sub>t</sub> > 0.6 (50% notional, 0.5%/q budget). Standing VIX call tail hedge.";
+    case "moderate": return "Covered calls on +30% winners. SPY put spreads when R<sub>t</sub> > 0.7. No standing VIX hedge.";
+    case "light": return "Covered calls on +40% winners. Put spreads only when R<sub>t</sub> > 0.85.";
+    case "none_until_crisis": return "No hedging. Exit to cash on R<sub>t</sub> > 0.85. Optional VIX calls in crisis.";
+    default: return level;
+  }
+}
+
+function render(){
+  const a = document.getElementById("app");
+  if (!S.config) { a.innerHTML = '<div class="ld">config.json missing</div>'; return; }
+
+  const live = S.data && S.data.history && S.data.history.length > 0
+    ? S.data.history[S.data.history.length-1] : null;
+  const R = live ? live.R_t : null;
+  const regime = live ? live.regime : "—";
+  const lastUpdated = S.data && S.data.last_updated
+    ? new Date(S.data.last_updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})
+    : "—";
+
+  const allSeries = buildSeries();
+  const tierMetricsMap = {};
+  Object.entries(allSeries.tiers).forEach(([tid, ser]) => {
+    const periodSer = applyPeriod(ser, S.period);
+    const benchTid = (tid === "3_aggressive") ? allSeries.bench.qqq
+                   : (tid === "4_tactical")  ? allSeries.bench.sso
+                   : (tid === "1_cap_pres")  ? allSeries.bench["60_40"]
+                   : allSeries.bench.spy;
+    const periodBench = applyPeriod(benchTid || [], S.period);
+    tierMetricsMap[tid] = tierMetrics(periodSer, periodBench);
+  });
+
+  // Leader = tier with highest total return over selected period
+  let leader = null, leaderRet = -Infinity;
+  Object.entries(tierMetricsMap).forEach(([tid, m]) => {
+    if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; }
+  });
+
+  // Header
+  let h = `
+  <div class="hd">
+    <div class="hd-l">
+      <div><span class="hd-dot"></span><h1 style="display:inline">PORTFOLIO TOURNAMENT</h1>
+        <span style="font:400 9px var(--m);color:var(--t5);margin-left:6px">v1.0</span></div>
+      <div class="hd-sub">${lastUpdated} · 4 risk tiers · regime overlay only</div>
+    </div>
+    <div class="hd-r">
+      <div class="regime">
+        <div>
+          <div class="regime-num" style="color:${regimeColor(R||0)}">${R!=null?R.toFixed(3):"—"}</div>
+          <div class="regime-lbl" style="color:${regimeColor(R||0)}">$R_t$ · ${regime}</div>
+        </div>
+        <div class="regime-meta">
+          <div>Tier 1 cash: <strong>${R!=null?Math.min(100,25+R*75).toFixed(0):"—"}%</strong></div>
+          <div>Tier 2 cash: <strong>${R!=null?Math.min(85,15+R*70).toFixed(0):"—"}%</strong></div>
+          <div>Tier 3 cash: <strong>${R!=null?Math.min(50,10+R*40).toFixed(0):"—"}%</strong></div>
+          <div>Tier 4 cash: <strong>${R!=null?Math.min(100,R*100).toFixed(0):"—"}%</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  // Leader banner
+  if (leader && tierMetricsMap[leader]) {
+    const lt = S.config.tiers[leader];
+    const m  = tierMetricsMap[leader];
+    h += `<div class="lb">
+      <div class="lb-crown">♛</div>
+      <div>
+        <div class="lb-name" style="color:${lt.color}">${lt.name} leads</div>
+        <div class="lb-stat">over ${S.period === "ALL" ? "full sample" : S.period}:
+          <strong>${fmtP(m.total)}</strong> total ·
+          Sharpe ${m.sharpe.toFixed(2)} ·
+          max DD ${fmtP1(m.maxDD)}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Chart
+  h += `<div class="chart-card">
+    <div class="chart-head">
+      <div class="chart-title">RACE CHART · LOG SCALE</div>
+      <div class="periods">
+        ${["1M","3M","6M","YTD","1Y","5Y","ALL"].map(p =>
+          `<button class="period-btn ${S.period===p?"on":""}" data-p="${p}">${p}</button>`).join("")}
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="race-chart"></canvas></div>
+    <div class="chart-meta">NAV rebased to 1.0 at start of period · log scale</div>
+  </div>`;
+
+  // Leaderboard
+  const sorted = Object.entries(tierMetricsMap)
+    .filter(([_,m]) => m != null)
+    .sort((a,b) => (b[1].total - a[1].total));
+
+  h += `<div class="lbtable">
+    <div class="lb-h"><h2>LEADERBOARD</h2><div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ranked by total return</div></div>
+    <table>
+      <tr>
+        <th>#</th><th>TIER</th>
+        <th class="num">NAV</th>
+        <th class="num">TOTAL</th>
+        <th class="num">1M</th>
+        <th class="num">1W</th>
+        <th class="num">SHARPE</th>
+        <th class="num">MAX DD</th>
+        <th class="num">vs BENCH</th>
+        <th></th>
+      </tr>`;
+  sorted.forEach(([tid, m], i) => {
+    const t = S.config.tiers[tid];
+    const live = S.data && S.data.history && S.data.history.length > 0
+      ? S.data.history[S.data.history.length-1].tiers[tid] : null;
+    const nav = live ? live.nav : null;
+    const open = (S.expanded === tid);
+    h += `<tr class="tier-row ${open?"open":""}" data-tid="${tid}">
+      <td class="rank ${i===0?"first":""}">${i+1}</td>
+      <td>
+        <span class="tier-dot" style="background:${t.color}"></span>
+        <span class="tier-name">${t.short}</span>
+        <div class="tier-desc">${t.description.substring(0,72)}${t.description.length>72?"…":""}</div>
+      </td>
+      <td class="num">${nav?"$"+fmt(nav):"—"}</td>
+      <td class="num ${pnlc(m.total)}">${fmtP(m.total)}</td>
+      <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
+      <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
+      <td class="num">${m.sharpe.toFixed(2)}</td>
+      <td class="num neg">${fmtP1(m.maxDD)}</td>
+      <td class="num ${m.alpha!=null?pnlc(m.alpha):'neut'}">${m.alpha!=null?fmtP1(m.alpha):"—"}</td>
+      <td><span class="chev ${open?"open":""}">›</span></td>
+    </tr>`;
+    if (open) {
+      h += `<tr><td colspan="10" style="padding:0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
+    }
+  });
+  h += `</table></div>`;
+
+  // Footer
+  h += `<div class="ft">
+    <span class="k">DESIGN </span>Four portfolios sharing the same EWS regime signal but different concentration / cash floors / hedging policies. Holdings are FIXED per tier (set in config.json); the only active element is the regime overlay adjusting the cash sleeve.<br>
+    <span class="k">REGIME </span>R<sub>t</sub> ∈ [0,1] from 12 risk indicators (VIX, VVIX, SKEW, realized vol, HYG/LQD, gold/SPX, TLT/SPX, def/cyc, SPX 60d return, SPX drawdown, oil velocity, DXY) z-scored over rolling 252 days, mapped via Φ, equal-weight mean.<br>
+    <span class="k">DATA </span>Yahoo Finance (prices, indicators) · FRED (EFFR for cash yield). Updated weekdays 6pm ET via GitHub Actions.<br>
+    <span class="k">SOURCE </span>config.json is the single source of truth for holdings — update after every trade.
+  </div>`;
+
+  a.innerHTML = h;
+
+  // Bind period buttons
+  document.querySelectorAll(".period-btn").forEach(b => b.addEventListener("click", () => {
+    S.period = b.dataset.p;
+    render();
+  }));
+  // Bind tier rows
+  document.querySelectorAll(".tier-row").forEach(r => r.addEventListener("click", () => {
+    const tid = r.dataset.tid;
+    S.expanded = (S.expanded === tid) ? null : tid;
+    render();
+  }));
+  // Draw chart after DOM
+  setTimeout(() => renderChart(allSeries, S.period), 10);
+}
+
+async function loadJSON(path){
+  try { const r = await fetch(path + "?" + Date.now()); if (r.ok) return await r.json(); }
+  catch(e){ return null; }
+}
+async function loadCSV(path){
+  try {
+    const r = await fetch(path + "?" + Date.now());
+    if (!r.ok) return null;
+    const text = await r.text();
+    return Papa.parse(text, {header:true, dynamicTyping:true, skipEmptyLines:true}).data;
+  } catch(e){ return null; }
+}
+
+async function init(){
+  S.config   = await loadJSON("config.json");
+  S.data     = await loadJSON("data/tournament.json");
+  const rows = await loadCSV("data/backtest_equity_curves.csv");
+  S.backtest = rows ? {rows} : null;
+
+  if (!S.config) {
+    document.getElementById("app").innerHTML = '<div class="ld">config.json not found</div>';
+    return;
+  }
+  if (!S.data && !S.backtest) {
+    document.getElementById("app").innerHTML = `<div class="ld">No tournament data yet.<br><br>
+      Run <code>python scripts/backtest_tournament.py</code> for history,<br>
+      then <code>python scripts/update_tournament.py</code> for today's NAV.</div>`;
+    return;
+  }
+  render();
+}
+init();
+</script>
+</body></html>

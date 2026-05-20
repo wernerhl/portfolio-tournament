@@ -1,0 +1,113 @@
+{
+  "last_updated": "2026-05-19",
+  "cash_total": 87820,
+  "_note_holdings": "PLACEHOLDER values from tournament_build_prompt.md. Update each tier's holdings/shares/cost basis to match Werner's actual paper-portfolio allocations across the four strategies before going live.",
+
+  "tiers": {
+    "1_cap_pres": {
+      "name": "Capital Preservation",
+      "short": "CAP PRES",
+      "color": "#3266ad",
+      "description": "Lowest vol. Defensive compounders + infrastructure. Heavy hedging.",
+      "cash_floor": 0.25,
+      "cash_formula": "min(1.0, 0.25 + R * 0.75)",
+      "max_positions": 12,
+      "universe_filter": "defensive_only",
+      "benchmark": "60/40 SPY/TLT",
+      "hedging": "full",
+      "holdings": {
+        "BRK-B": {"shares": 7,  "cost": 460.00},
+        "PM":    {"shares": 20, "cost": 155.00},
+        "JPM":   {"shares": 12, "cost": 295.00},
+        "V":     {"shares": 11, "cost": 311.00},
+        "MA":    {"shares": 7,  "cost": 502.00},
+        "CEG":   {"shares": 12, "cost": 275.00},
+        "LLY":   {"shares": 4,  "cost": 780.00},
+        "PG":    {"shares": 0,  "cost": 0, "_note": "on watchlist, not yet purchased"},
+        "JNJ":   {"shares": 0,  "cost": 0, "_note": "on watchlist"}
+      },
+      "cash_allocated": 25000
+    },
+
+    "2_balanced": {
+      "name": "Balanced Growth",
+      "short": "BALANCED",
+      "color": "#1D9E75",
+      "description": "Core portfolio. Mix of compounders + AI infrastructure + defensives.",
+      "cash_floor": 0.15,
+      "cash_formula": "min(0.85, 0.15 + R * 0.70)",
+      "max_positions": 20,
+      "universe_filter": "all",
+      "benchmark": "SPY",
+      "hedging": "moderate",
+      "holdings": {
+        "GOOG":  {"shares": 50,  "cost": 326.81},
+        "NVDA":  {"shares": 100, "cost": 86.68},
+        "AVGO":  {"shares": 50,  "cost": 326.75},
+        "TSM":   {"shares": 25,  "cost": 380.00},
+        "ANET":  {"shares": 0,   "cost": 0,      "_note": "limit order at $142"},
+        "GEV":   {"shares": 0,   "cost": 0,      "_note": "limit order at $950"},
+        "ETN":   {"shares": 15,  "cost": 410.00},
+        "VRT":   {"shares": 20,  "cost": 400.00},
+        "CEG":   {"shares": 15,  "cost": 275.00},
+        "JPM":   {"shares": 12,  "cost": 295.00},
+        "BRK-B": {"shares": 7,   "cost": 460.00},
+        "PM":    {"shares": 20,  "cost": 155.00},
+        "V":     {"shares": 11,  "cost": 311.00}
+      },
+      "cash_allocated": 20000
+    },
+
+    "3_aggressive": {
+      "name": "Aggressive Growth",
+      "short": "AGGRESSIVE",
+      "color": "#BA7517",
+      "description": "Concentrated AI + infrastructure. Momentum tilt. Less hedging.",
+      "cash_floor": 0.10,
+      "cash_formula": "min(0.50, 0.10 + R * 0.40)",
+      "max_positions": 15,
+      "universe_filter": "all",
+      "benchmark": "QQQ",
+      "hedging": "light",
+      "holdings": {
+        "NVDA":  {"shares": 100, "cost": 86.68},
+        "AVGO":  {"shares": 50,  "cost": 326.75},
+        "GOOG":  {"shares": 50,  "cost": 326.81},
+        "TSM":   {"shares": 25,  "cost": 380.00},
+        "ANET":  {"shares": 0,   "cost": 0,      "_note": "limit at $142"},
+        "GEV":   {"shares": 0,   "cost": 0,      "_note": "limit at $950"},
+        "ETN":   {"shares": 15,  "cost": 410.00},
+        "VRT":   {"shares": 20,  "cost": 400.00},
+        "CRDO":  {"shares": 0,   "cost": 0,      "_note": "limit at $95"},
+        "META":  {"shares": 0,   "cost": 0,      "_note": "limit at $600"}
+      },
+      "cash_allocated": 22000
+    },
+
+    "4_tactical": {
+      "name": "Tactical Alpha",
+      "short": "TACTICAL",
+      "color": "#D85A30",
+      "description": "Top 8-10 highest conviction. Regime is the only brake. Options-heavy.",
+      "cash_floor": 0.0,
+      "cash_formula": "min(1.0, R * 1.0)",
+      "max_positions": 10,
+      "universe_filter": "all",
+      "benchmark": "SSO",
+      "hedging": "none_until_crisis",
+      "holdings": {
+        "NVDA":  {"shares": 100, "cost": 86.68},
+        "GOOG":  {"shares": 50,  "cost": 326.81},
+        "AVGO":  {"shares": 50,  "cost": 326.75},
+        "TSM":   {"shares": 25,  "cost": 380.00},
+        "GEV":   {"shares": 0,   "cost": 0,      "_note": "limit at $950"},
+        "ANET":  {"shares": 0,   "cost": 0,      "_note": "limit at $142"},
+        "CRDO":  {"shares": 0,   "cost": 0,      "_note": "limit at $95"},
+        "PLTR":  {"shares": 0,   "cost": 0,      "_note": "limit at $130"}
+      },
+      "cash_allocated": 20820
+    }
+  },
+
+  "_instructions": "UPDATE THIS FILE after every trade. Add/remove holdings, update shares and cost basis. The daily pipeline reads this to compute NAV."
+}

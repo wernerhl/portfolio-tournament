@@ -1,0 +1,56 @@
+name: Daily Tournament Update
+
+on:
+  schedule:
+    - cron: '0 22 * * 1-5'   # ~6pm ET on weekdays (UTC; DST drift ±1h)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install yfinance fredapi pandas numpy scipy
+
+      - name: Compute regime + NAV
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          python scripts/compute_regime.py
+          python scripts/compute_nav.py
+
+      - name: Commit
+        run: |
+          git config user.name  "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/
+          git diff --cached --quiet || git commit -m "📊 $(date -u +%Y-%m-%d)"
+          git push
+
+  deploy:
+    needs: update
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4
