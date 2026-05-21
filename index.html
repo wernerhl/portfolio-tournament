@@ -192,30 +192,50 @@ function buildSeries(){
     TIER_ORDER.forEach(tid => {
       const liveDays = S.tournament.history.filter(h => h.tiers && h.tiers[tid] && h.tiers[tid].nav > 0);
       if (liveDays.length === 0) return;
-      const btEndpoint = series[tid] && series[tid].length > 0 ? series[tid][series[tid].length-1].nav : null;
-      const liveStart  = liveDays[0].tiers[tid].nav;
-      // For Werner (5), no backtest exists — show live only at his own scale
-      const k = (btEndpoint && tid !== "5_werner") ? (btEndpoint / liveStart) : 1.0;
       series[tid] = series[tid] || [];
+      const btDates = new Set(series[tid].map(r => r.date));
+      const btLastDate = series[tid].length > 0 ? series[tid][series[tid].length-1].date : null;
+      // Find a live entry whose date OVERLAPS with backtest — use that pair for rebasing
+      // so that live[seam] · k = backtest[seam].
+      let k = 1.0;
+      if (tid !== "5_werner") {
+        const overlap = liveDays.find(d => btDates.has(d.date));
+        if (overlap) {
+          const btMatch = series[tid].find(r => r.date === overlap.date);
+          if (btMatch && overlap.tiers[tid].nav > 0) k = btMatch.nav / overlap.tiers[tid].nav;
+        } else if (series[tid].length > 0) {
+          // No overlap — fall back to ratio of last backtest vs first live
+          k = series[tid][series[tid].length-1].nav / liveDays[0].tiers[tid].nav;
+        }
+      }
+      // Append ONLY live entries whose date is strictly AFTER the backtest endpoint.
       liveDays.forEach(d => {
-        if (series[tid].length === 0 || series[tid][series[tid].length-1].date !== d.date) {
+        if (!btLastDate || d.date > btLastDate) {
           series[tid].push({date:d.date, nav:d.tiers[tid].nav * k, live:true});
         }
       });
+      series[tid].sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
     });
-    // Benchmarks: scale live to backtest endpoint similarly
+    // Benchmarks: same rules
     Object.keys(benchSeries).forEach(b => {
       const live = S.tournament.history
         .filter(h => h.benchmarks && h.benchmarks[b] && h.benchmarks[b].nav != null)
         .map(h => ({date:h.date, nav:h.benchmarks[b].nav}));
       if (live.length === 0) return;
-      const btEndpoint = benchSeries[b].length > 0 ? benchSeries[b][benchSeries[b].length-1].nav : null;
-      const k = btEndpoint ? btEndpoint / live[0].nav : 1.0;
+      const btDates = new Set(benchSeries[b].map(r => r.date));
+      const btLastDate = benchSeries[b].length > 0 ? benchSeries[b][benchSeries[b].length-1].date : null;
+      let k = 1.0;
+      const overlap = live.find(d => btDates.has(d.date));
+      if (overlap) {
+        const btMatch = benchSeries[b].find(r => r.date === overlap.date);
+        if (btMatch && overlap.nav > 0) k = btMatch.nav / overlap.nav;
+      } else if (benchSeries[b].length > 0) {
+        k = benchSeries[b][benchSeries[b].length-1].nav / live[0].nav;
+      }
       live.forEach(d => {
-        if (benchSeries[b].length === 0 || benchSeries[b][benchSeries[b].length-1].date !== d.date) {
-          benchSeries[b].push({date:d.date, nav:d.nav * k});
-        }
+        if (!btLastDate || d.date > btLastDate) benchSeries[b].push({date:d.date, nav:d.nav * k});
       });
+      benchSeries[b].sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
     });
   }
   return {tiers:series, bench:benchSeries};
