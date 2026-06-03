@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -922,6 +923,21 @@ function renderTickerChart(tk){
   const ctx = document.getElementById("ticker-chart");
   if (!ctx) return;
   if (S.tickerChart) S.tickerChart.destroy();
+
+  // Pull entry/stop/target lines from ticker_signals.json if available
+  const sig = S.signals && S.signals.signals && S.signals.signals[tk];
+  const hline = (yval, color, label) => ({
+    type: "line", yMin: yval, yMax: yval,
+    borderColor: color, borderWidth: 1, borderDash: [4, 4],
+    label: { content: label, display: true, position: "start",
+             font: {family: "IBM Plex Mono", size: 9},
+             color: color, backgroundColor: "transparent" },
+  });
+  const annotations = {};
+  if (sig && sig.entry?.primary)  annotations.entry  = hline(sig.entry.primary,  "#60a5fa", `Entry $${sig.entry.primary.toFixed(2)}`);
+  if (sig && sig.stop?.price)     annotations.stop   = hline(sig.stop.price,     "#f87171", `Stop $${sig.stop.price.toFixed(2)}`);
+  if (sig && sig.target?.base)    annotations.target = hline(sig.target.base,    "#4ade80", `Target $${sig.target.base.toFixed(2)}`);
+
   S.tickerChart = new Chart(ctx, {
     type: "line",
     data: {
@@ -947,9 +963,89 @@ function renderTickerChart(tk){
                 labels:{color:"#a3a3a3",font:{family:"Inter",size:10},usePointStyle:true,padding:8,boxWidth:6}},
         tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
                  callbacks:{ label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` }},
+        annotation: {annotations},
       },
     },
   });
+}
+
+// -------- Signal box (entry/stop/target/size/why/risks) --------
+const SIG_COLORS = {
+  "STRONG BUY": {bg:"rgba(22,163,74,0.14)",  border:"rgba(22,163,74,0.40)", text:"#4ade80", icon:"▲▲"},
+  "BUY":        {bg:"rgba(22,163,74,0.08)",  border:"rgba(22,163,74,0.25)", text:"#4ade80", icon:"▲"},
+  "WATCH":      {bg:"rgba(96,165,250,0.08)", border:"rgba(96,165,250,0.25)", text:"#60a5fa", icon:"◉"},
+  "HOLD":       {bg:"rgba(115,115,115,0.08)",border:"rgba(115,115,115,0.25)", text:"#a3a3a3", icon:"—"},
+  "SELL":       {bg:"rgba(220,38,38,0.10)",  border:"rgba(220,38,38,0.30)",  text:"#f87171", icon:"▼"},
+};
+function rrColor(rr){ return rr >= 2.0 ? "#4ade80" : rr >= 1.5 ? "#facc15" : "#f87171"; }
+function fmtMoney(v){ if (v == null || !Number.isFinite(v)) return "—"; return "$" + v.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}); }
+
+function renderSignalBox(tk){
+  const sig = S.signals && S.signals.signals && S.signals.signals[tk];
+  if (!sig) return "";
+  const baseSig = (sig.signal || "HOLD").split(" —")[0].trim();
+  const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
+  const rr = sig.target?.reward_risk ?? 0;
+  const rrc = rrColor(rr);
+
+  const cell = (label, value, sub) => `
+    <div>
+      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em;margin-bottom:3px">${label}</div>
+      ${value}${sub ? `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:2px">${sub}</div>` : ""}
+    </div>`;
+
+  const condList = obj => Object.entries(obj || {}).map(([k, v]) =>
+    `<div style="display:inline-block;margin-right:14px">
+       <span style="color:${v?'#4ade80':'#f87171'};font-weight:700">${v?'✓':'✗'}</span>
+       <span style="color:var(--t3)">${k.replace(/_/g,' ')}</span>
+     </div>`).join("");
+
+  return `<div style="background:${sc.bg};border:1px solid ${sc.border};border-radius:8px;padding:14px 16px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:14px;flex-wrap:wrap">
+      <div>
+        <span style="font:800 11px var(--m);letter-spacing:.15em;color:${sc.text};background:${sc.bg};
+                     padding:4px 10px;border-radius:4px;border:1px solid ${sc.border}">${sc.icon} ${sig.signal}</span>
+        <span style="font:500 10px var(--m);color:var(--t4);margin-left:10px">${sig.category} · strength ${sig.signal_strength}/100</span>
+      </div>
+      <div style="font:500 10px var(--m);color:var(--t3)">
+        R/R <strong style="color:${rrc}">${rr}:1</strong>
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${rrc};margin-left:4px;vertical-align:middle"></span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+      ${cell("ENTRY",
+        `<div style="font:700 16px var(--m);color:#60a5fa">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
+        `${sig.entry?.basis || ""}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)}`)}
+      ${cell("STOP",
+        `<div style="font:700 16px var(--m);color:#f87171">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
+        sig.stop?.category_rule || "")}
+      ${cell("TARGET",
+        `<div style="font:700 16px var(--m);color:#4ade80">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
+        `Cons: $${(sig.target?.conservative ?? 0).toFixed(2)}<br>Aggr: $${(sig.target?.aggressive ?? 0).toFixed(2)}`)}
+      ${cell("SIZE",
+        `<div style="font:700 16px var(--m);color:var(--t1)">${fmtMoney(sig.size?.dollars)}</div>`,
+        `${sig.size?.shares ?? 0} shares · ${sig.size?.pct_portfolio ?? 0}%<br>Max loss: ${fmtMoney(sig.size?.max_loss)}`)}
+    </div>
+
+    <div style="margin-bottom:8px">
+      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">WHY</span>
+      <p style="font:400 12px var(--s);color:var(--t2);line-height:1.55;margin-top:3px">${sig.why || ""}</p>
+    </div>
+    <div>
+      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">RISKS</span>
+      <p style="font:400 12px var(--s);color:var(--t3);line-height:1.55;margin-top:3px">${sig.risks || ""}</p>
+    </div>
+
+    <details style="margin-top:8px">
+      <summary style="font:500 10px var(--m);color:var(--t4);cursor:pointer;letter-spacing:.05em">Signal conditions</summary>
+      <div style="margin-top:6px;font:400 10px var(--m);line-height:1.9">
+        <div><span style="color:var(--t4);font-weight:700">BUY:</span> ${condList(sig.conditions?.buy)}</div>
+        <div><span style="color:var(--t4);font-weight:700">STRONG:</span> ${condList(sig.conditions?.strong_buy)}</div>
+        <div><span style="color:var(--t4);font-weight:700">SELL:</span> ${condList(sig.conditions?.sell)}</div>
+      </div>
+    </details>
+  </div>`;
 }
 
 function renderTickerDetail(tk){
@@ -983,6 +1079,8 @@ function renderTickerDetail(tk){
       </div>
       <button class="tk-close" data-close-tk="1">CLOSE ✕</button>
     </div>
+
+    ${renderSignalBox(tk)}
 
     <div class="tk-grid">
       <div>
@@ -1358,6 +1456,7 @@ async function init(){
   S.regime     = await loadJSON("data/regime_indicators.json");
   S.regimeDaily = await loadCSV("data/regime_daily.csv");
   S.indicatorSeries = await loadJSON("data/indicator_series.json");
+  S.signals    = await loadJSON("data/ticker_signals.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 

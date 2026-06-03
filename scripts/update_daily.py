@@ -17,6 +17,7 @@ scripts = [
     "compute_nav.py",
     "build_ticker_data.py",
     "build_indicator_series.py",
+    "compute_signals.py",
 ]
 
 for script in scripts:

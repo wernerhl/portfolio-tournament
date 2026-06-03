@@ -21,11 +21,12 @@ jobs:
       - name: Install deps
         run: pip install yfinance fredapi pandas numpy scipy pyarrow
 
-      - name: Re-score + reselect tiers + rebuild ticker data
+      - name: Re-score + reselect tiers + rebuild ticker data + recompute signals
         run: |
           python scripts/score_universe.py
           python scripts/select_tiers.py
           python scripts/build_ticker_data.py
+          python scripts/compute_signals.py
 
       - name: Commit
         run: |
