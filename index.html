@@ -1258,9 +1258,13 @@ function render(){
     render();
   }));
   // ---- Indicator card clicks (open / close drill-down) ----
-  document.querySelectorAll(".ind-card[data-ind]").forEach(c => c.addEventListener("click", (ev) => {
+  const ind_cards = document.querySelectorAll(".ind-card[data-ind]");
+  console.log("[dashboard] binding ind-card click on", ind_cards.length, "cards; indicatorSeries loaded:", !!S.indicatorSeries);
+  ind_cards.forEach(c => c.addEventListener("click", (ev) => {
     if (ev.target.closest(".ind-detail")) return;
     const k = c.dataset.ind;
+    const has_key = !!(S.indicatorSeries && S.indicatorSeries.indicators && S.indicatorSeries.indicators[k]);
+    console.log("[ind-click]", k, "wasExpanded:", S.expandedIndicator, "indicatorSeriesLoaded:", !!S.indicatorSeries, "hasKey:", has_key);
     S.expandedIndicator = (S.expandedIndicator === k) ? null : k;
     render();
   }));
