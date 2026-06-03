@@ -456,16 +456,21 @@ function _doRenderIndicatorCharts(){
   if (!S.expandedIndicator || !S.indicatorSeries) return;
   const ind = S.indicatorSeries.indicators[S.expandedIndicator];
   if (!ind) return;
-  // Pre-convert date strings to numeric timestamps. The time-scale parser in
-  // chartjs-adapter-date-fns 3 was silently dropping all but the latest point
-  // for some indicators (raw axis showed only the recent values, z-axis showed
-  // a tiny band around the last z). Passing numeric ms timestamps bypasses the
-  // adapter's string parsing entirely.
-  const toTs = arr => arr.map(p => ({x: new Date(p.d).getTime(), y: p.v}))
-                          .filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
-  const raw = toTs(indFilterPeriod(ind.chart, S.indPeriod));
-  const zs  = toTs(indFilterPeriod(ind.z_chart, S.indPeriod));
-  const timeUnit = (S.indPeriod === "1Y" || S.indPeriod === "2Y") ? "month" : "year";
+  // Use the data-point INDEX as x (linear scale). This sidesteps the
+  // chartjs-adapter-date-fns parsing pipeline entirely — earlier attempts with
+  // type:"time" (both string dates and ms timestamps) resulted in only the
+  // most recent few points being plotted, regardless of data length. The date
+  // string is preserved as a 'd' field for tooltip + tick callbacks.
+  const toIdx = arr => arr.map((p, i) => ({x: i, y: p.v, d: p.d}))
+                           .filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+  const raw = toIdx(indFilterPeriod(ind.chart, S.indPeriod));
+  const zs  = toIdx(indFilterPeriod(ind.z_chart, S.indPeriod));
+  // Hand-tick ~6 evenly-spaced x labels from the date strings
+  const xTickCb = arr => v => {
+    const i = Math.round(v);
+    return (i >= 0 && i < arr.length && arr[i] && arr[i].d) ? arr[i].d.slice(0, 7) : "";
+  };
+  const xStep = arr => Math.max(1, Math.floor(arr.length / 6));
 
   // ---- Raw value chart ----
   const rawCtx = document.getElementById("ind-raw-chart");
@@ -473,8 +478,10 @@ function _doRenderIndicatorCharts(){
     if (S.indRawChart) { try { S.indRawChart.destroy(); } catch(e){} }
     const m  = (ind.stats && Number.isFinite(ind.stats.mean_1y)) ? ind.stats.mean_1y : null;
     const sd = (ind.stats && Number.isFinite(ind.stats.std_1y))  ? ind.stats.std_1y  : null;
+    // Horizon lines now only need 2 points (start + end of x range)
     const horizon = (yval, color, dash, lbl) => ({
-      label: lbl, data: raw.map(p => ({x: p.x, y: yval})),
+      label: lbl,
+      data: [{x: 0, y: yval}, {x: Math.max(0, raw.length - 1), y: yval}],
       borderColor: color, borderDash: dash, borderWidth: 0.6, pointRadius: 0, fill: false, tension: 0, showLine: true,
     });
     const datasets = [
@@ -497,16 +504,20 @@ function _doRenderIndicatorCharts(){
           interaction:{mode:"nearest",axis:"x",intersect:false},
           parsing: false,
           scales: {
-            x: {type:"time", time:{unit: timeUnit},
+            x: {type:"linear", min: 0, max: Math.max(0, raw.length - 1),
                 grid:{color:"rgba(255,255,255,0.03)"},
-                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
+                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0,
+                       stepSize: xStep(raw), callback: xTickCb(raw)}},
             y: {grid:{color:"rgba(255,255,255,0.03)"},
                 ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
           },
           plugins:{legend:{display:false},
                    tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
                             titleFont:{family:"IBM Plex Mono",size:10},bodyFont:{family:"IBM Plex Mono",size:10},
-                            callbacks:{label: ctx => ` ${ctx.dataset.label || ind.label}: ${ctx.parsed.y}`}}},
+                            callbacks:{
+                              title: items => (items[0] && raw[items[0].dataIndex] && raw[items[0].dataIndex].d) || "",
+                              label: ctx => ` ${ctx.dataset.label || ind.label}: ${ctx.parsed.y}`,
+                            }}},
         },
       });
     } catch (e) {
@@ -535,15 +546,19 @@ function _doRenderIndicatorCharts(){
         interaction:{mode:"nearest",axis:"x",intersect:false},
         parsing: false,
         scales: {
-          x: {type:"time", time:{unit: timeUnit},
+          x: {type:"linear", min: 0, max: Math.max(0, zs.length - 1),
               grid:{color:"rgba(255,255,255,0.03)"},
-              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0,
+                     stepSize: xStep(zs), callback: xTickCb(zs)}},
           y: {grid:{color:"rgba(255,255,255,0.03)"},
               ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
         },
         plugins: {legend: {display:false},
                   tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
-                           callbacks:{label: ctx => ` z = ${ctx.parsed.y.toFixed(2)} (${ctx.parsed.y > 0 ? "above" : "below"} avg)`}}},
+                           callbacks:{
+                             title: items => (items[0] && zs[items[0].dataIndex] && zs[items[0].dataIndex].d) || "",
+                             label: ctx => ` z = ${ctx.parsed.y.toFixed(2)} (${ctx.parsed.y > 0 ? "above" : "below"} avg)`,
+                           }}},
       },
     });
     } catch (e) {
