@@ -1,0 +1,35 @@
+{
+  "in_sample_AUC": {
+    "v1_equal_weight": 0.6911,
+    "v2_tier_weighted": 0.6791,
+    "v3_logistic_pc": 0.8195,
+    "v3_elastic_net": 0.8751,
+    "v3_random_forest": 0.9597,
+    "v3_gradient_boost": 0.9988
+  },
+  "loco_mean_AUC": {
+    "auc_equal_weight": 0.5129,
+    "auc_tier_weighted": 0.5162,
+    "auc_logistic_pc": 0.5098,
+    "auc_elastic_net": 0.5884,
+    "auc_random_forest": 0.536,
+    "auc_gradient_boost": 0.4792
+  },
+  "loco_std_AUC": {
+    "auc_equal_weight": 0.211,
+    "auc_tier_weighted": 0.2032,
+    "auc_logistic_pc": 0.1428,
+    "auc_elastic_net": 0.18,
+    "auc_random_forest": 0.1972,
+    "auc_gradient_boost": 0.272
+  },
+  "winner": "elastic_net",
+  "winning_loco_auc": 0.5884,
+  "n_episodes": 7,
+  "n_components_pca": 11,
+  "pca_variance_explained_target": 0.85,
+  "correlation_pairs_above_0p7": 8,
+  "target_definition": "SPX min(t+1:t+60) / SPX(t) - 1 <= -0.1",
+  "sample_days": 5330,
+  "positive_class_share": 0.1381
+}
