@@ -191,6 +191,15 @@ def main():
                 "baa_yield":"BAA", "aaa_yield":"AAA",
                 "mortgage_30y":"MORTGAGE30US",
                 "umich_sentiment":"UMCSENT", "ism_mfg":"BUSLOANS",
+                # v2 addendum: additional Tier A forward-looking indicators (5 working)
+                # Note: USSLIND (Philly Fed LEI) and NAPMNOI (ISM new orders) are no longer
+                # maintained on FRED. NEWORDER (durable goods orders) substitutes for ISM.
+                # No reliable free leading-indicator composite available — Tier A grows to 14.
+                "mfg_new_orders":  "NEWORDER", # monthly: durable goods new orders ($M)
+                "kcfsi":           "KCFSI",    # monthly: Kansas City Fed financial stress index
+                "stlfsi":          "STLFSI4",  # weekly:  St. Louis Fed FSI (v4 supersedes STLFSI2)
+                "loan_tightening": "DRTSCILM", # quarterly: SLOOS net % tightening C&I std
+                "consumer_expect": "MICH",     # monthly: Michigan consumer expectations (1-5Y)
             }
             # Fetch with retry. If a series fails twice, we'll preserve any existing values
             # for that column by merging into the pre-existing parquet at save time.

@@ -44,8 +44,8 @@ DATA.mkdir(exist_ok=True)
 
 LOOKBACK    = 252
 MIN_PERIODS = 60
-MIN_LEAD    = 5    # of 9 Tier A
-MIN_FULL    = 8    # of 18 total
+MIN_LEAD    = 8    # of 14 Tier A (after addendum)
+MIN_FULL    = 12   # of 23 total
 
 TIER_WEIGHTS = {"A": 2.0, "B": 1.0, "C": 0.5}
 
@@ -89,6 +89,28 @@ INDICATORS = [
      "VVIX",     "{v:.1f}",
      ["Tail protection cheap",       "Tail protection moderate",
       "Tail protection bid",         "Vol-of-vol stretched"]),
+
+    # ---- v2 addendum: 5 additional Tier A forward-looking indicators ----
+    ("mfg_new_orders","A","lower",  "fred_indicators", "mfg_new_orders",
+     "Mfg orders","${v:,.0f}M",
+     ["New orders trending up",      "Orders stable",
+      "Orders softening",            "Orders contracting (recession signal)"]),
+    ("kcfsi",        "A", "higher", "fred_indicators", "kcfsi",
+     "KCFSI",    "{v:+.2f}",
+     ["KC stress below average",     "KC stress neutral",
+      "KC stress elevated",          "KC stress acute"]),
+    ("stlfsi",       "A", "higher", "fred_indicators", "stlfsi",
+     "STLFSI",   "{v:+.2f}",
+     ["St. Louis FSI calm",          "St. Louis FSI neutral",
+      "St. Louis FSI elevated",      "St. Louis FSI acute"]),
+    ("loan_tightening","A","higher","fred_indicators", "loan_tightening",
+     "Loan tight","{v:+.1f}%",
+     ["Banks easing credit",         "Standards neutral",
+      "Banks tightening credit",     "Credit crunch (leads default cycle)"]),
+    ("consumer_expect","A","lower", "fred_indicators", "consumer_expect",
+     "UMich Exp.","{v:.1f}",
+     ["Consumers optimistic",        "Expectations neutral",
+      "Consumers cautious",          "Consumers pessimistic"]),
 
     # ---------------- Tier B — Contemporaneous ----------------
     ("hyg_lqd",      "B", "lower",  "vol_derived", "hyg_lqd_ratio",
@@ -326,7 +348,8 @@ def main():
     print(f"  R_lead = {latest_row['R_lead']:.3f}  ({latest_row['early_warning']})")
     print(f"  R_full = {latest_row['R_full']:.3f}  ({latest_row['regime']})")
     print(f"  divergence = {latest_row['divergence']:+.3f}  ({latest_row['divergence_alert']})")
-    print(f"  Tier A: {latest_row['n_lead_indicators']}/9 · Total: {latest_row['n_full_indicators']}/18")
+    n_tier_a = sum(1 for spec in INDICATORS if spec[1] == "A")
+    print(f"  Tier A: {latest_row['n_lead_indicators']}/{n_tier_a} · Total: {latest_row['n_full_indicators']}/{len(INDICATORS)}")
 
     indicator_payload = []
     for idx, spec in enumerate(INDICATORS):

@@ -168,8 +168,42 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 /* Indicator cards */
 .ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .ind-card{background:rgba(255,255,255,0.015);border:1px solid var(--bd);border-radius:6px;padding:9px 11px;
-          transition:border-color .15s}
+          transition:border-color .15s;cursor:pointer;position:relative}
 .ind-card:hover{border-color:var(--bd2)}
+.ind-card.expanded{border-color:var(--bd2);box-shadow:inset 0 0 0 1px rgba(96,165,250,0.25)}
+
+/* Indicator detail panel */
+.ind-detail{margin-top:14px;padding:14px;background:rgba(0,0,0,.30);border:1px solid var(--bd2);
+            border-radius:8px;animation:fadeIn 0.15s ease-in}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ind-detail-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:14px}
+.ind-detail-title h3{font:700 16px var(--s);color:var(--t1);line-height:1.2}
+.ind-detail-title .sub{font:400 10px var(--m);color:var(--t4);margin-top:2px;letter-spacing:.06em}
+.ind-detail-desc{font:400 11px var(--s);color:var(--t2);line-height:1.55;margin-top:6px}
+.ind-detail-close{font:600 9px var(--m);color:var(--t3);padding:4px 9px;border:1px solid var(--bd);border-radius:3px;
+                  cursor:pointer;background:transparent}
+.ind-detail-close:hover{color:var(--t1);border-color:var(--bd2)}
+
+.id-charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.id-chart-wrap{position:relative;background:rgba(0,0,0,.18);border:1px solid var(--bd);border-radius:6px;padding:8px 8px 4px}
+.id-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 2px}
+.id-chart-title{font:600 8px var(--m);color:var(--t4);letter-spacing:.18em}
+.id-chart-canvas{position:relative;height:200px}
+.id-periods{display:flex;gap:2px}
+.id-period-btn{padding:3px 9px;font:600 9px var(--m);letter-spacing:.08em;color:var(--t4);
+               border-radius:3px;border:1px solid transparent;cursor:pointer;background:transparent}
+.id-period-btn:hover{color:var(--t2)}
+.id-period-btn.on{background:rgba(255,255,255,.05);color:var(--t1);border-color:rgba(255,255,255,.08)}
+
+.id-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.id-stat-block{background:rgba(0,0,0,.18);border:1px solid var(--bd);border-radius:6px;padding:10px 12px}
+.id-stat-block .head{font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:7px}
+.id-stat-row{display:flex;justify-content:space-between;font:500 11px var(--m);padding:3px 0;color:var(--t2)}
+.id-stat-row .k{color:var(--t4)}
+.id-stat-row .v{color:var(--t1);font-weight:700;font-variant-numeric:tabular-nums}
+.id-interp{margin-top:10px;padding:10px 12px;background:var(--c1);border-left:2px solid var(--b);
+           border-radius:0 4px 4px 0;font:400 11px var(--s);color:var(--t2);line-height:1.55}
+.id-interp .k{font:700 8px var(--m);color:var(--b);letter-spacing:.18em;margin-right:8px}
 .ind-card.safe{background:rgba(74,222,128,0.04);border-color:rgba(74,222,128,0.15)}
 .ind-card.neutral{background:rgba(96,165,250,0.04);border-color:rgba(96,165,250,0.15)}
 .ind-card.elevated{background:rgba(250,204,21,0.05);border-color:rgba(250,204,21,0.18)}
@@ -306,12 +340,179 @@ function renderIndicators(){
 }
 function renderIndCard(i){
   const c = statusHex(i.status);
-  return `<div class="ind-card ${i.status}">
+  const open = (S.expandedIndicator === i.key);
+  return `<div class="ind-card ${i.status} ${open?"expanded":""}" data-ind="${i.key}">
     <div class="ind-lbl ${i.status}">${i.label}</div>
     <div class="ind-val">${i.value_str || "—"}</div>
     <div class="ind-narr">${i.narrative || ""}</div>
     <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
   </div>`;
+}
+
+// -------- Indicator detail panel --------
+function renderIndicatorDetail(){
+  if (!S.expandedIndicator || !S.indicatorSeries) return "";
+  const key = S.expandedIndicator;
+  const ind = S.indicatorSeries.indicators[key];
+  if (!ind) return "";
+  const c = ind.current || {};
+  const st = ind.stats || {};
+  const tierColor = ({A:"#f87171", B:"#60a5fa", C:"#a3a3a3"})[ind.tier] || "#737373";
+  const stat = (k, v) => `<div class="id-stat-row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+
+  // Build interpretation text
+  const dirWord = ind.direction === "higher" ? "higher = more risk" : "lower = more risk";
+  const phi = c.phi != null ? c.phi.toFixed(3) : "—";
+  const z = c.z != null ? c.z.toFixed(2) : "—";
+  const pct = c.percentile_1y != null ? c.percentile_1y.toFixed(0) : "—";
+  let interp = "";
+  if (c.phi != null) {
+    if (c.phi < 0.40) interp = `Below historical risk threshold. Z-score ${z} (${pct}th 1-year percentile). Not contributing to elevated regime.`;
+    else if (c.phi < 0.60) interp = `Near neutral. Z-score ${z} (${pct}th percentile). Mild signal.`;
+    else if (c.phi < 0.80) interp = `Elevated risk reading. Z-score ${z} (${pct}th percentile). Contributing to ${ind.tier === "A" ? "early warning" : "regime"} signal.`;
+    else interp = `Crisis-level reading. Z-score ${z} (${pct}th percentile). Strong contribution to risk score.`;
+  }
+
+  return `<div class="ind-detail">
+    <div class="ind-detail-head">
+      <div class="ind-detail-title">
+        <h3 style="color:${tierColor}">${ind.label} <small style="color:var(--t4);font-size:11px">· ${ind.display_name}</small></h3>
+        <div class="sub">TIER ${ind.tier} · WEIGHT ${ind.weight} · ${dirWord.toUpperCase()} · ${ind.source_label}</div>
+        <div class="ind-detail-desc">${ind.description || ""}</div>
+      </div>
+      <button class="ind-detail-close" data-close-ind="1">CLOSE ✕</button>
+    </div>
+
+    <div class="id-charts">
+      <div class="id-chart-wrap">
+        <div class="id-chart-head">
+          <div class="id-chart-title">RAW VALUE · DASHED = ±1σ · DOTTED = ±2σ FROM 1Y MEAN</div>
+          <div class="id-periods">
+            ${["1Y","2Y","5Y","ALL"].map(p => `<button class="id-period-btn ${S.indPeriod===p?"on":""}" data-indp="${p}">${p}</button>`).join("")}
+          </div>
+        </div>
+        <div class="id-chart-canvas"><canvas id="ind-raw-chart"></canvas></div>
+      </div>
+      <div class="id-chart-wrap">
+        <div class="id-chart-head">
+          <div class="id-chart-title">Z-SCORE · GREEN BELOW 0 · RED ABOVE 0  (already direction-flipped)</div>
+          <div></div>
+        </div>
+        <div class="id-chart-canvas"><canvas id="ind-z-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="id-stats">
+      <div class="id-stat-block">
+        <div class="head">CURRENT STATE  ·  ${c.date || "—"}</div>
+        ${stat("Value",      c.value_str || "—")}
+        ${stat("Z-score",    z)}
+        ${stat("Risk score (Φ)", phi)}
+        ${stat("Status",     `<span style="color:${statusHex(c.status||'')}">${(c.status||'—').toUpperCase()}</span>`)}
+        ${stat("1Y percentile", pct + "th")}
+      </div>
+      <div class="id-stat-block">
+        <div class="head">STATISTICS  ·  ${st.n_obs || "—"} obs from ${st.start || "—"}</div>
+        ${stat("1Y mean",    (st.mean_1y!=null?st.mean_1y:"—"))}
+        ${stat("1Y std",     (st.std_1y !=null?st.std_1y :"—"))}
+        ${stat("1Y range",   `${st.min_1y} → ${st.max_1y}`)}
+        ${stat("All-time range", `${st.min_all} → ${st.max_all}`)}
+      </div>
+    </div>
+
+    <div class="id-interp"><span class="k">INTERPRETATION</span>${interp}</div>
+  </div>`;
+}
+
+// Apply a 1Y / 2Y / 5Y / ALL window to a [{d, v}] series
+function indFilterPeriod(arr, period){
+  if (!arr || !arr.length || period === "ALL") return arr;
+  const last = new Date(arr[arr.length-1].d);
+  const start = new Date(last);
+  switch(period){
+    case "1Y": start.setFullYear(start.getFullYear()-1); break;
+    case "2Y": start.setFullYear(start.getFullYear()-2); break;
+    case "5Y": start.setFullYear(start.getFullYear()-5); break;
+  }
+  return arr.filter(p => new Date(p.d) >= start);
+}
+
+function renderIndicatorCharts(){
+  if (!S.expandedIndicator || !S.indicatorSeries) return;
+  const ind = S.indicatorSeries.indicators[S.expandedIndicator];
+  if (!ind) return;
+  const raw = indFilterPeriod(ind.chart, S.indPeriod);
+  const zs  = indFilterPeriod(ind.z_chart, S.indPeriod);
+
+  // ---- Raw value chart ----
+  const rawCtx = document.getElementById("ind-raw-chart");
+  if (rawCtx && raw.length) {
+    if (S.indRawChart) S.indRawChart.destroy();
+    const m = ind.stats.mean_1y, sd = ind.stats.std_1y;
+    const horizon = (yval, color, dash) => ({
+      label: "", data: raw.map(p => ({x:p.d, y:yval})),
+      borderColor: color, borderDash: dash, borderWidth: 0.6, pointRadius: 0, fill: false, tension: 0, showLine: true,
+    });
+    S.indRawChart = new Chart(rawCtx, {
+      type: "line",
+      data: {datasets: [
+        {label: ind.label, data: raw.map(p => ({x:p.d, y:p.v})),
+         borderColor: "#60a5fa", borderWidth: 1.6, pointRadius: 0, tension: 0.1, fill: false},
+        horizon(m,        "#9ca3af", [4,4]),    // mean (dashed grey)
+        horizon(m + sd,   "#facc15", [3,3]),
+        horizon(m - sd,   "#facc15", [3,3]),
+        horizon(m + 2*sd, "#f87171", [2,3]),
+        horizon(m - 2*sd, "#f87171", [2,3]),
+      ]},
+      options: {
+        responsive:true, maintainAspectRatio:false, animation:{duration:200},
+        interaction:{mode:"nearest",axis:"x",intersect:false},
+        scales: {
+          x: {type:"time", time:{unit: S.indPeriod==="1Y"?"month":(S.indPeriod==="2Y"?"month":"year")},
+              grid:{color:"rgba(255,255,255,0.03)"},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
+          y: {grid:{color:"rgba(255,255,255,0.03)"},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+        },
+        plugins:{legend:{display:false},
+                 tooltip:{filter: t => t.dataset.label === ind.label,
+                          backgroundColor:"rgba(0,0,0,0.9)",
+                          titleFont:{family:"IBM Plex Mono",size:10},bodyFont:{family:"IBM Plex Mono",size:10},
+                          callbacks:{label: ctx => ` ${ind.label}: ${ctx.parsed.y}`}}},
+      },
+    });
+  }
+
+  // ---- Z-score chart ----
+  const zCtx = document.getElementById("ind-z-chart");
+  if (zCtx && zs.length) {
+    if (S.indZChart) S.indZChart.destroy();
+    S.indZChart = new Chart(zCtx, {
+      type: "line",
+      data: {datasets: [
+        {label: "z", data: zs.map(p => ({x:p.d, y:p.v})),
+         borderWidth: 1.6, pointRadius: 0, tension: 0.1,
+         segment: {borderColor: ctx => (ctx.p0.parsed.y > 0 ? "#f87171" : "#4ade80")},
+         fill: {target: "origin",
+                above: "rgba(248,113,113,0.15)",
+                below: "rgba(74,222,128,0.10)"}},
+      ]},
+      options: {
+        responsive:true, maintainAspectRatio:false, animation:{duration:200},
+        interaction:{mode:"nearest",axis:"x",intersect:false},
+        scales: {
+          x: {type:"time", time:{unit: S.indPeriod==="1Y"?"month":(S.indPeriod==="2Y"?"month":"year")},
+              grid:{color:"rgba(255,255,255,0.03)"},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
+          y: {grid:{color:"rgba(255,255,255,0.03)"},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+        },
+        plugins: {legend: {display:false},
+                  tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
+                           callbacks:{label: ctx => ` z = ${ctx.parsed.y.toFixed(2)} (${ctx.parsed.y > 0 ? "above" : "below"} avg)`}}},
+      },
+    });
+  }
 }
 
 // Renders the deployment cards for all 5 tiers
@@ -461,6 +662,7 @@ function renderRegimeCommandCenter(R){
       <div class="rcc-card">
         <h3 style="display:flex;align-items:baseline">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
         ${renderIndicators()}
+        ${renderIndicatorDetail()}
       </div>
     </div>
 
@@ -1055,11 +1257,29 @@ function render(){
     S.tickerChartPeriod = b.dataset.tkp;
     render();
   }));
+  // ---- Indicator card clicks (open / close drill-down) ----
+  document.querySelectorAll(".ind-card[data-ind]").forEach(c => c.addEventListener("click", (ev) => {
+    if (ev.target.closest(".ind-detail")) return;
+    const k = c.dataset.ind;
+    S.expandedIndicator = (S.expandedIndicator === k) ? null : k;
+    render();
+  }));
+  document.querySelectorAll("[data-close-ind]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.expandedIndicator = null;
+    render();
+  }));
+  document.querySelectorAll(".id-period-btn[data-indp]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.indPeriod = b.dataset.indp;
+    render();
+  }));
   // Draw charts after DOM
   setTimeout(() => {
     renderRegimeTimeline();
     renderChart(allSeries, S.period);
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
+    if (S.expandedIndicator) renderIndicatorCharts();
   }, 10);
 }
 
@@ -1078,6 +1298,7 @@ async function init(){
   S.metrics    = await loadJSON("data/backtest_metrics.json");
   S.regime     = await loadJSON("data/regime_indicators.json");
   S.regimeDaily = await loadCSV("data/regime_daily.csv");
+  S.indicatorSeries = await loadJSON("data/indicator_series.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 

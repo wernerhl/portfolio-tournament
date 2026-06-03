@@ -16,6 +16,7 @@ scripts = [
     "compute_regime_v2.py",
     "compute_nav.py",
     "build_ticker_data.py",
+    "build_indicator_series.py",
 ]
 
 for script in scripts:
