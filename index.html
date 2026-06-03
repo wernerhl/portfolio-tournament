@@ -446,6 +446,14 @@ function indFilterPeriod(arr, period){
 
 function renderIndicatorCharts(){
   if (!S.expandedIndicator || !S.indicatorSeries) return;
+  // Wait one rAF so the parent .id-chart-canvas has non-zero clientWidth/Height
+  // before Chart.js measures it. Without this, Chart.js can construct at 0×0
+  // and render nothing visible even though no error is thrown.
+  requestAnimationFrame(() => _doRenderIndicatorCharts());
+}
+
+function _doRenderIndicatorCharts(){
+  if (!S.expandedIndicator || !S.indicatorSeries) return;
   const ind = S.indicatorSeries.indicators[S.expandedIndicator];
   if (!ind) return;
   const raw = indFilterPeriod(ind.chart, S.indPeriod);
@@ -454,52 +462,61 @@ function renderIndicatorCharts(){
   // ---- Raw value chart ----
   const rawCtx = document.getElementById("ind-raw-chart");
   if (rawCtx && raw.length) {
-    if (S.indRawChart) S.indRawChart.destroy();
-    const m = ind.stats.mean_1y, sd = ind.stats.std_1y;
-    const horizon = (yval, color, dash) => ({
-      label: "", data: raw.map(p => ({x:p.d, y:yval})),
+    if (S.indRawChart) { try { S.indRawChart.destroy(); } catch(e){} }
+    const m  = (ind.stats && ind.stats.mean_1y) != null ? ind.stats.mean_1y : null;
+    const sd = (ind.stats && ind.stats.std_1y)  != null ? ind.stats.std_1y  : null;
+    const horizon = (yval, color, dash, lbl) => ({
+      label: lbl, data: raw.map(p => ({x:p.d, y:yval})),
       borderColor: color, borderDash: dash, borderWidth: 0.6, pointRadius: 0, fill: false, tension: 0, showLine: true,
     });
-    S.indRawChart = new Chart(rawCtx, {
-      type: "line",
-      data: {datasets: [
-        {label: ind.label, data: raw.map(p => ({x:p.d, y:p.v})),
-         borderColor: "#60a5fa", borderWidth: 1.6, pointRadius: 0, tension: 0.1, fill: false},
-        horizon(m,        "#9ca3af", [4,4]),    // mean (dashed grey)
-        horizon(m + sd,   "#facc15", [3,3]),
-        horizon(m - sd,   "#facc15", [3,3]),
-        horizon(m + 2*sd, "#f87171", [2,3]),
-        horizon(m - 2*sd, "#f87171", [2,3]),
-      ]},
-      options: {
-        responsive:true, maintainAspectRatio:false, animation:{duration:200},
-        interaction:{mode:"nearest",axis:"x",intersect:false},
-        scales: {
-          x: {type:"time", time:{unit: S.indPeriod==="1Y"?"month":(S.indPeriod==="2Y"?"month":"year")},
-              grid:{color:"rgba(255,255,255,0.03)"},
-              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
-          y: {grid:{color:"rgba(255,255,255,0.03)"},
-              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+    const datasets = [
+      {label: ind.label, data: raw.map(p => ({x:p.d, y:p.v})),
+       borderColor: "#60a5fa", borderWidth: 1.6, pointRadius: 0, tension: 0.1, fill: false},
+    ];
+    if (m != null && sd != null) {
+      datasets.push(horizon(m,        "#9ca3af", [4,4], "mean (1y)"));
+      datasets.push(horizon(m + sd,   "#facc15", [3,3], "+1σ"));
+      datasets.push(horizon(m - sd,   "#facc15", [3,3], "-1σ"));
+      datasets.push(horizon(m + 2*sd, "#f87171", [2,3], "+2σ"));
+      datasets.push(horizon(m - 2*sd, "#f87171", [2,3], "-2σ"));
+    }
+    try {
+      S.indRawChart = new Chart(rawCtx, {
+        type: "line",
+        data: {datasets},
+        options: {
+          responsive:true, maintainAspectRatio:false, animation:{duration:200},
+          interaction:{mode:"nearest",axis:"x",intersect:false},
+          scales: {
+            x: {type:"time", time:{unit: S.indPeriod==="1Y"?"month":(S.indPeriod==="2Y"?"month":"year")},
+                grid:{color:"rgba(255,255,255,0.03)"},
+                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
+            y: {grid:{color:"rgba(255,255,255,0.03)"},
+                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+          },
+          plugins:{legend:{display:false},
+                   tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
+                            titleFont:{family:"IBM Plex Mono",size:10},bodyFont:{family:"IBM Plex Mono",size:10},
+                            callbacks:{label: ctx => ` ${ctx.dataset.label || ind.label}: ${ctx.parsed.y}`}}},
         },
-        plugins:{legend:{display:false},
-                 tooltip:{filter: t => t.dataset.label === ind.label,
-                          backgroundColor:"rgba(0,0,0,0.9)",
-                          titleFont:{family:"IBM Plex Mono",size:10},bodyFont:{family:"IBM Plex Mono",size:10},
-                          callbacks:{label: ctx => ` ${ind.label}: ${ctx.parsed.y}`}}},
-      },
-    });
+      });
+    } catch (e) {
+      console.error("[ind-raw-chart] Chart.js failed:", e);
+    }
   }
 
   // ---- Z-score chart ----
   const zCtx = document.getElementById("ind-z-chart");
   if (zCtx && zs.length) {
-    if (S.indZChart) S.indZChart.destroy();
+    if (S.indZChart) { try { S.indZChart.destroy(); } catch(e){} }
+    try {
     S.indZChart = new Chart(zCtx, {
       type: "line",
       data: {datasets: [
         {label: "z", data: zs.map(p => ({x:p.d, y:p.v})),
+         borderColor: "#60a5fa",   // fallback color in case segment callback errors
          borderWidth: 1.6, pointRadius: 0, tension: 0.1,
-         segment: {borderColor: ctx => (ctx.p0.parsed.y > 0 ? "#f87171" : "#4ade80")},
+         segment: {borderColor: ctx => ((ctx.p1 && ctx.p1.parsed && ctx.p1.parsed.y > 0) ? "#f87171" : "#4ade80")},
          fill: {target: "origin",
                 above: "rgba(248,113,113,0.15)",
                 below: "rgba(74,222,128,0.10)"}},
@@ -519,6 +536,9 @@ function renderIndicatorCharts(){
                            callbacks:{label: ctx => ` z = ${ctx.parsed.y.toFixed(2)} (${ctx.parsed.y > 0 ? "above" : "below"} avg)`}}},
       },
     });
+    } catch (e) {
+      console.error("[ind-z-chart] Chart.js failed:", e);
+    }
   }
 }
 
@@ -1286,14 +1306,13 @@ function render(){
     renderChart(allSeries, S.period);
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
-      renderIndicatorCharts();
-      // Safety net: ensure the freshly-rendered panel is in the viewport, even
-      // if the layout grows enough that the inline placement still pushes it
-      // partly below the fold.
+      // Scroll FIRST so the panel area is committed to layout, then render
+      // charts (which rAF-defers to give Chart.js correct canvas dimensions).
       const panel = document.querySelector(".ind-detail");
       if (panel && panel.scrollIntoView) {
         panel.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
       }
+      renderIndicatorCharts();
     }
   }, 10);
 }
