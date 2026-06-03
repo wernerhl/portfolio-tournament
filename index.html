@@ -456,21 +456,29 @@ function _doRenderIndicatorCharts(){
   if (!S.expandedIndicator || !S.indicatorSeries) return;
   const ind = S.indicatorSeries.indicators[S.expandedIndicator];
   if (!ind) return;
-  const raw = indFilterPeriod(ind.chart, S.indPeriod);
-  const zs  = indFilterPeriod(ind.z_chart, S.indPeriod);
+  // Pre-convert date strings to numeric timestamps. The time-scale parser in
+  // chartjs-adapter-date-fns 3 was silently dropping all but the latest point
+  // for some indicators (raw axis showed only the recent values, z-axis showed
+  // a tiny band around the last z). Passing numeric ms timestamps bypasses the
+  // adapter's string parsing entirely.
+  const toTs = arr => arr.map(p => ({x: new Date(p.d).getTime(), y: p.v}))
+                          .filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+  const raw = toTs(indFilterPeriod(ind.chart, S.indPeriod));
+  const zs  = toTs(indFilterPeriod(ind.z_chart, S.indPeriod));
+  const timeUnit = (S.indPeriod === "1Y" || S.indPeriod === "2Y") ? "month" : "year";
 
   // ---- Raw value chart ----
   const rawCtx = document.getElementById("ind-raw-chart");
   if (rawCtx && raw.length) {
     if (S.indRawChart) { try { S.indRawChart.destroy(); } catch(e){} }
-    const m  = (ind.stats && ind.stats.mean_1y) != null ? ind.stats.mean_1y : null;
-    const sd = (ind.stats && ind.stats.std_1y)  != null ? ind.stats.std_1y  : null;
+    const m  = (ind.stats && Number.isFinite(ind.stats.mean_1y)) ? ind.stats.mean_1y : null;
+    const sd = (ind.stats && Number.isFinite(ind.stats.std_1y))  ? ind.stats.std_1y  : null;
     const horizon = (yval, color, dash, lbl) => ({
-      label: lbl, data: raw.map(p => ({x:p.d, y:yval})),
+      label: lbl, data: raw.map(p => ({x: p.x, y: yval})),
       borderColor: color, borderDash: dash, borderWidth: 0.6, pointRadius: 0, fill: false, tension: 0, showLine: true,
     });
     const datasets = [
-      {label: ind.label, data: raw.map(p => ({x:p.d, y:p.v})),
+      {label: ind.label, data: raw,
        borderColor: "#60a5fa", borderWidth: 1.6, pointRadius: 0, tension: 0.1, fill: false},
     ];
     if (m != null && sd != null) {
@@ -487,8 +495,9 @@ function _doRenderIndicatorCharts(){
         options: {
           responsive:true, maintainAspectRatio:false, animation:{duration:200},
           interaction:{mode:"nearest",axis:"x",intersect:false},
+          parsing: false,
           scales: {
-            x: {type:"time", time:{unit: S.indPeriod==="1Y"?"month":(S.indPeriod==="2Y"?"month":"year")},
+            x: {type:"time", time:{unit: timeUnit},
                 grid:{color:"rgba(255,255,255,0.03)"},
                 ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
             y: {grid:{color:"rgba(255,255,255,0.03)"},
@@ -513,8 +522,8 @@ function _doRenderIndicatorCharts(){
     S.indZChart = new Chart(zCtx, {
       type: "line",
       data: {datasets: [
-        {label: "z", data: zs.map(p => ({x:p.d, y:p.v})),
-         borderColor: "#60a5fa",   // fallback color in case segment callback errors
+        {label: "z", data: zs,
+         borderColor: "#60a5fa",
          borderWidth: 1.6, pointRadius: 0, tension: 0.1,
          segment: {borderColor: ctx => ((ctx.p1 && ctx.p1.parsed && ctx.p1.parsed.y > 0) ? "#f87171" : "#4ade80")},
          fill: {target: "origin",
@@ -524,8 +533,9 @@ function _doRenderIndicatorCharts(){
       options: {
         responsive:true, maintainAspectRatio:false, animation:{duration:200},
         interaction:{mode:"nearest",axis:"x",intersect:false},
+        parsing: false,
         scales: {
-          x: {type:"time", time:{unit: S.indPeriod==="1Y"?"month":(S.indPeriod==="2Y"?"month":"year")},
+          x: {type:"time", time:{unit: timeUnit},
               grid:{color:"rgba(255,255,255,0.03)"},
               ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0}},
           y: {grid:{color:"rgba(255,255,255,0.03)"},
