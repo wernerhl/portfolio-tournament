@@ -17,8 +17,9 @@
       "z": -0.7061223673995151,
       "phi": 0.24005602149665894,
       "status": "safe",
-      "narrative": "Calm hedging demand",
-      "direction": "higher"
+      "narrative": "Financial conditions easy",
+      "direction": "higher",
+      "as_of": "2026-05-21"
     },
     {
       "key": "vvix",
@@ -39,8 +40,9 @@
       "z": 0.4998667801542802,
       "phi": 0.69141555762353,
       "status": "elevated",
-      "narrative": "Tail risk underpriced",
-      "direction": "lower"
+      "narrative": "Adjusted tightening",
+      "direction": "higher",
+      "as_of": "2026-05-21"
     },
     {
       "key": "realized_vol",
@@ -50,8 +52,9 @@
       "z": -0.4199369444052613,
       "phi": 0.33726575900827527,
       "status": "safe",
-      "narrative": "Below-average volatility",
-      "direction": "higher"
+      "narrative": "Curve normal",
+      "direction": "lower",
+      "as_of": "2026-05-21"
     },
     {
       "key": "hyg_lqd",
@@ -72,8 +75,9 @@
       "z": -1.6860114288838342,
       "phi": 0.04589679903327618,
       "status": "safe",
-      "narrative": "Positive momentum",
-      "direction": "lower"
+      "narrative": "Term contango",
+      "direction": "higher",
+      "as_of": "2026-05-21"
     },
     {
       "key": "spx_drawdown",
@@ -83,8 +87,37 @@
       "z": -0.6809363900258557,
       "phi": 0.24795587041878026,
       "status": "safe",
-      "narrative": "Near all-time high",
-      "direction": "lower"
+      "narrative": "Calm hedging demand",
+      "direction": "higher",
+      "as_of": "2026-05-21"
+    },
+    {
+      "key": "vvix",
+      "label": "VVIX",
+      "tier": "A",
+      "weight": 2.0,
+      "value": 91.87999725341797,
+      "value_str": "91.9",
+      "z": -0.8680729363733021,
+      "phi": 0.19267720282845585,
+      "status": "safe",
+      "narrative": "Tail protection cheap",
+      "direction": "higher",
+      "as_of": "2026-05-21"
+    },
+    {
+      "key": "hyg_lqd",
+      "label": "HYG/LQD",
+      "tier": "B",
+      "weight": 1.0,
+      "value": 0.7386521482702356,
+      "value_str": "0.74",
+      "z": -2.1456682856003284,
+      "phi": 0.01594972658369486,
+      "status": "safe",
+      "narrative": "Credit spreads tight",
+      "direction": "lower",
+      "as_of": "2026-05-21"
     },
     {
       "key": "gold_spx",
@@ -100,13 +133,16 @@
     {
       "key": "tlt_spx",
       "label": "TLT/SPX",
-      "value": 0.011255253626780249,
+      "tier": "B",
+      "weight": 1.0,
+      "value": 0.011311196068420964,
       "value_str": "0.011",
       "z": -2.533162170453487,
       "phi": 0.005651932132766022,
       "status": "safe",
       "narrative": "No flight to quality",
-      "direction": "higher"
+      "direction": "higher",
+      "as_of": "2026-05-21"
     },
     {
       "key": "def_cyc",
@@ -117,7 +153,64 @@
       "phi": 0.0032275081850256715,
       "status": "safe",
       "narrative": "Cyclical leadership",
-      "direction": "higher"
+      "direction": "higher",
+      "as_of": "2026-05-21"
+    },
+    {
+      "key": "dxy",
+      "label": "DXY",
+      "tier": "B",
+      "weight": 1.0,
+      "value": 99.19100189208984,
+      "value_str": "99.2",
+      "z": 0.8095256745295178,
+      "phi": 0.7908935795581842,
+      "status": "elevated",
+      "narrative": "Dollar strengthening",
+      "direction": "higher",
+      "as_of": "2026-05-21"
+    },
+    {
+      "key": "realized_vol",
+      "label": "Real vol",
+      "tier": "C",
+      "weight": 0.5,
+      "value": 10.863815409167534,
+      "value_str": "10.9%",
+      "z": -0.4028074548408827,
+      "phi": 0.3435449382678221,
+      "status": "safe",
+      "narrative": "Below-average volatility",
+      "direction": "higher",
+      "as_of": "2026-05-21"
+    },
+    {
+      "key": "spx_ret_60d",
+      "label": "SPX 60d",
+      "tier": "C",
+      "weight": 0.5,
+      "value": 7.192355174173115,
+      "value_str": "+7.2%",
+      "z": -0.3195039892358843,
+      "phi": 0.3746721834109191,
+      "status": "safe",
+      "narrative": "Positive momentum",
+      "direction": "lower",
+      "as_of": "2026-05-21"
+    },
+    {
+      "key": "spx_drawdown",
+      "label": "SPX DD",
+      "tier": "C",
+      "weight": 0.5,
+      "value": -0.7401445333909629,
+      "value_str": "-0.7%",
+      "z": -0.31737562167987204,
+      "phi": 0.37547930142982416,
+      "status": "safe",
+      "narrative": "Near all-time high",
+      "direction": "lower",
+      "as_of": "2026-05-21"
     },
     {
       "key": "oil_60d_vel",

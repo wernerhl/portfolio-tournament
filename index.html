@@ -146,6 +146,25 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 .verdict{font:500 11px var(--s);color:var(--t2);line-height:1.55;margin-top:12px;
          padding-top:10px;border-top:1px dashed var(--bd2)}
 
+/* Tier section heading inside the indicator card */
+.ind-tier-head{display:flex;align-items:baseline;justify-content:space-between;
+               font:600 8.5px var(--m);letter-spacing:.18em;color:var(--t4);
+               padding:8px 4px 6px;border-bottom:1px dashed var(--bd);margin-bottom:6px}
+.ind-tier-head .desc{font:400 9.5px var(--s);color:var(--t5);letter-spacing:0;text-transform:none}
+.ind-tier-head:first-child{padding-top:0}
+.tier-pill{display:inline-block;padding:1px 6px;border-radius:3px;font:700 7.5px var(--m);
+           letter-spacing:.1em;margin-right:6px}
+.tier-pill.A{background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.25)}
+.tier-pill.B{background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25)}
+.tier-pill.C{background:rgba(115,115,115,0.18);color:#a3a3a3;border:1px solid rgba(115,115,115,0.30)}
+
+/* Three-score header on the gauge card */
+.score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.score-cell{background:rgba(255,255,255,0.015);border:1px solid var(--bd);border-radius:5px;padding:6px 8px;text-align:center}
+.score-cell .k{font:600 7.5px var(--m);color:var(--t4);letter-spacing:.16em}
+.score-cell .v{font:700 16px var(--m);letter-spacing:-.02em;margin-top:1px}
+.score-cell .s{font:600 8.5px var(--m);margin-top:0px}
+
 /* Indicator cards */
 .ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .ind-card{background:rgba(255,255,255,0.015);border:1px solid var(--bd);border-radius:6px;padding:9px 11px;
@@ -262,18 +281,37 @@ function gaugeSVG(R){
           </svg>`;
 }
 
-// Renders the 12-card indicator grid from regime_indicators.json
+// Renders the 18 indicator cards grouped by tier (A/B/C). Falls back to a
+// single grid if the JSON doesn't carry tier info (older snapshots).
 function renderIndicators(){
   if (!S.regime || !S.regime.indicators) return "";
-  return `<div class="ind-grid">${S.regime.indicators.map(i => {
-    const c = statusHex(i.status);
-    return `<div class="ind-card ${i.status}">
-      <div class="ind-lbl ${i.status}">${i.label}</div>
-      <div class="ind-val">${i.value_str || "—"}</div>
-      <div class="ind-narr">${i.narrative || ""}</div>
-      <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
-    </div>`;
-  }).join("")}</div>`;
+  const all = S.regime.indicators;
+  const hasTiers = all.some(i => i.tier);
+  if (!hasTiers) {
+    return `<div class="ind-grid">${all.map(renderIndCard).join("")}</div>`;
+  }
+  const tiers = {
+    A: {label:"TIER A — FORWARD-LOOKING",  desc:"what markets expect (weight 2.0)", items:[]},
+    B: {label:"TIER B — CONTEMPORANEOUS",  desc:"what's happening now (weight 1.0)", items:[]},
+    C: {label:"TIER C — CONFIRMING",       desc:"what already happened (weight 0.5)", items:[]},
+  };
+  all.forEach(i => { if (tiers[i.tier]) tiers[i.tier].items.push(i); });
+  return Object.entries(tiers).map(([k, t]) => t.items.length === 0 ? "" : `
+    <div class="ind-tier-head">
+      <span><span class="tier-pill ${k}">${k}</span>${t.label.replace(/^TIER [ABC] — /, "")}</span>
+      <span class="desc">${t.desc} · ${t.items.length} channel${t.items.length>1?"s":""}</span>
+    </div>
+    <div class="ind-grid">${t.items.map(renderIndCard).join("")}</div>`
+  ).join("");
+}
+function renderIndCard(i){
+  const c = statusHex(i.status);
+  return `<div class="ind-card ${i.status}">
+    <div class="ind-lbl ${i.status}">${i.label}</div>
+    <div class="ind-val">${i.value_str || "—"}</div>
+    <div class="ind-narr">${i.narrative || ""}</div>
+    <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
+  </div>`;
 }
 
 // Renders the deployment cards for all 5 tiers
@@ -357,42 +395,82 @@ function renderRegimeTimeline(){
   });
 }
 
+// Word color for the three classification labels
+function ewColor(label){
+  return ({"CLEAR":"var(--g)","WATCH":"var(--y)","WARNING":"var(--o)","DANGER":"var(--r)",
+           "LOW RISK":"var(--g)","ELEVATED":"var(--y)","HIGH RISK":"var(--o)","CRISIS":"var(--r)",
+           "CONSISTENT":"var(--t2)","LEADING RISK":"var(--r)","RECOVERY":"var(--g)"}[label]) || "var(--t2)";
+}
+
 // The full Regime Command Center section — built fresh on each render()
 function renderRegimeCommandCenter(R){
   const reg = S.regime || {};
   const total = reg.n_indicators || 12;
-  const safe = reg.n_safe || 0;
-  const ele  = reg.n_elevated || 0;
-  const cri  = reg.n_crisis || 0;
+  const safe  = reg.n_safe || 0;
+  const ele   = reg.n_elevated || 0;
+  const cri   = reg.n_crisis || 0;
   const verdict = reg.verdict || (R != null
     ? `R<sub>t</sub> = ${R.toFixed(3)} — see leaderboard for deployment.`
     : "Regime data unavailable.");
-  const rDisp = R != null ? R.toFixed(3) : "—";
-  const lbl = R != null ? regimeLabel(R) : "—";
-  const lblColor = R != null ? regimeColor(R) : "var(--t3)";
+
+  // v2 fields: R_lead / R_full / divergence + their classifications
+  const R_lead = reg.R_lead;
+  const R_full = reg.R_full != null ? reg.R_full : (reg.R_t != null ? reg.R_t : R);
+  const divv   = reg.divergence;
+  const ew     = reg.early_warning;
+  const rgm    = reg.regime;
+  const divlab = reg.divergence_alert;
+
+  // Fall back to single-score header for v1 snapshots
+  const v2 = (R_lead != null && R_full != null);
+  const rDisp = R_full != null ? R_full.toFixed(3) : "—";
+  const lbl = R_full != null ? (rgm || regimeLabel(R_full).toUpperCase()) : "—";
+  const lblColor = R_full != null ? ewColor(lbl) : "var(--t3)";
+
+  const scoreRow = v2 ? `<div class="score-row">
+      <div class="score-cell">
+        <div class="k">EARLY WARNING</div>
+        <div class="v">${R_lead.toFixed(3)}</div>
+        <div class="s" style="color:${ewColor(ew)}">${ew}</div>
+      </div>
+      <div class="score-cell">
+        <div class="k">CURRENT REGIME</div>
+        <div class="v">${R_full.toFixed(3)}</div>
+        <div class="s" style="color:${ewColor(rgm)}">${rgm}</div>
+      </div>
+      <div class="score-cell">
+        <div class="k">DIVERGENCE</div>
+        <div class="v">${divv >= 0 ? "+" : ""}${divv.toFixed(3)}</div>
+        <div class="s" style="color:${ewColor(divlab)}">${divlab}</div>
+      </div>
+    </div>` : "";
+
+  const tierCounts = `<span style="margin-left:auto;font:400 9px var(--m);color:var(--t5);letter-spacing:0;text-transform:none">
+    ${safe} safe · ${ele} elevated · ${cri} crisis</span>`;
 
   return `<section class="rcc">
     <div class="rcc-top">
       <div class="rcc-card">
         <h3>CYCLE POSITION</h3>
-        ${gaugeSVG(R || 0)}
+        ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
-        <div class="gauge-rt">R<sub>t</sub> = <span class="r-num">${rDisp}</span></div>
+        <div class="gauge-rt">R<sub>full</sub> = <span class="r-num">${rDisp}</span></div>
+        ${scoreRow}
         <div class="verdict">${verdict}</div>
       </div>
       <div class="rcc-card">
-        <h3>INDICATOR READINGS — ${total} RISK CHANNELS  ·  ${safe} safe / ${ele} elevated / ${cri} crisis</h3>
+        <h3 style="display:flex;align-items:baseline">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
         ${renderIndicators()}
       </div>
     </div>
 
     <div class="rcc-card">
       <h3>DEPLOYMENT SIGNAL PER TIER</h3>
-      ${renderDeployment(R)}
+      ${renderDeployment(R_full)}
     </div>
 
     <div class="rcc-card">
-      <h3>REGIME TIMELINE — R<sub>t</sub> with regime bands (safe → elevated → crisis)</h3>
+      <h3>REGIME TIMELINE — R<sub>full</sub> with regime bands (safe → elevated → crisis)</h3>
       <div class="timeline-wrap"><canvas id="regime-timeline"></canvas></div>
     </div>
   </section>`;
