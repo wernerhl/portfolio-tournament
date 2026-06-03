@@ -315,14 +315,17 @@ function gaugeSVG(R){
           </svg>`;
 }
 
-// Renders the 18 indicator cards grouped by tier (A/B/C). Falls back to a
-// single grid if the JSON doesn't carry tier info (older snapshots).
+// Renders the indicator cards grouped by tier (A/B/C). If S.expandedIndicator is
+// set, the detail panel is inlined immediately after the tier grid that owns
+// the expanded card (was previously appended at the bottom of the rcc-card,
+// which put the panel ~3 sections off-screen for a Tier A click).
 function renderIndicators(){
   if (!S.regime || !S.regime.indicators) return "";
   const all = S.regime.indicators;
   const hasTiers = all.some(i => i.tier);
   if (!hasTiers) {
-    return `<div class="ind-grid">${all.map(renderIndCard).join("")}</div>`;
+    return `<div class="ind-grid">${all.map(renderIndCard).join("")}</div>`
+         + (S.expandedIndicator ? renderIndicatorDetail() : "");
   }
   const tiers = {
     A: {label:"TIER A — FORWARD-LOOKING",  desc:"what markets expect (weight 2.0)", items:[]},
@@ -330,13 +333,17 @@ function renderIndicators(){
     C: {label:"TIER C — CONFIRMING",       desc:"what already happened (weight 0.5)", items:[]},
   };
   all.forEach(i => { if (tiers[i.tier]) tiers[i.tier].items.push(i); });
-  return Object.entries(tiers).map(([k, t]) => t.items.length === 0 ? "" : `
+  return Object.entries(tiers).map(([k, t]) => {
+    if (t.items.length === 0) return "";
+    const ownsExpanded = S.expandedIndicator && t.items.some(i => i.key === S.expandedIndicator);
+    return `
     <div class="ind-tier-head">
       <span><span class="tier-pill ${k}">${k}</span>${t.label.replace(/^TIER [ABC] — /, "")}</span>
       <span class="desc">${t.desc} · ${t.items.length} channel${t.items.length>1?"s":""}</span>
     </div>
-    <div class="ind-grid">${t.items.map(renderIndCard).join("")}</div>`
-  ).join("");
+    <div class="ind-grid">${t.items.map(renderIndCard).join("")}</div>
+    ${ownsExpanded ? renderIndicatorDetail() : ""}`;
+  }).join("");
 }
 function renderIndCard(i){
   const c = statusHex(i.status);
@@ -662,7 +669,6 @@ function renderRegimeCommandCenter(R){
       <div class="rcc-card">
         <h3 style="display:flex;align-items:baseline">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
         ${renderIndicators()}
-        ${renderIndicatorDetail()}
       </div>
     </div>
 
@@ -1257,14 +1263,10 @@ function render(){
     S.tickerChartPeriod = b.dataset.tkp;
     render();
   }));
-  // ---- Indicator card clicks (open / close drill-down) ----
-  const ind_cards = document.querySelectorAll(".ind-card[data-ind]");
-  console.log("[dashboard] binding ind-card click on", ind_cards.length, "cards; indicatorSeries loaded:", !!S.indicatorSeries);
-  ind_cards.forEach(c => c.addEventListener("click", (ev) => {
+  // ---- Indicator card clicks (open / close drill-down, inline under tier) ----
+  document.querySelectorAll(".ind-card[data-ind]").forEach(c => c.addEventListener("click", (ev) => {
     if (ev.target.closest(".ind-detail")) return;
     const k = c.dataset.ind;
-    const has_key = !!(S.indicatorSeries && S.indicatorSeries.indicators && S.indicatorSeries.indicators[k]);
-    console.log("[ind-click]", k, "wasExpanded:", S.expandedIndicator, "indicatorSeriesLoaded:", !!S.indicatorSeries, "hasKey:", has_key);
     S.expandedIndicator = (S.expandedIndicator === k) ? null : k;
     render();
   }));
@@ -1283,7 +1285,16 @@ function render(){
     renderRegimeTimeline();
     renderChart(allSeries, S.period);
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
-    if (S.expandedIndicator) renderIndicatorCharts();
+    if (S.expandedIndicator) {
+      renderIndicatorCharts();
+      // Safety net: ensure the freshly-rendered panel is in the viewport, even
+      // if the layout grows enough that the inline placement still pushes it
+      // partly below the fold.
+      const panel = document.querySelector(".ind-detail");
+      if (panel && panel.scrollIntoView) {
+        panel.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+      }
+    }
   }, 10);
 }
 
