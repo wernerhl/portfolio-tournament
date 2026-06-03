@@ -192,18 +192,51 @@ def main():
                 "mortgage_30y":"MORTGAGE30US",
                 "umich_sentiment":"UMCSENT", "ism_mfg":"BUSLOANS",
             }
+            # Fetch with retry. If a series fails twice, we'll preserve any existing values
+            # for that column by merging into the pre-existing parquet at save time.
             fred_data = {}
+            failed = []
             for name, sid in fred_series.items():
-                try:
-                    s = fred.get_series(sid, observation_start="2005-01-01")
-                    fred_data[name] = s.dropna()
-                except Exception as e:
-                    log(f"  warn FRED {name}: {e}")
-            fred_df = pd.DataFrame(fred_data)
-            fred_df.to_parquet(SOURCE / "fred_indicators.parquet")
-            log(f"  saved fred_indicators.parquet ({fred_df.shape})")
+                last_err = None
+                for attempt in range(2):
+                    try:
+                        s = fred.get_series(sid, observation_start="2005-01-01")
+                        fred_data[name] = s.dropna()
+                        break
+                    except Exception as e:
+                        last_err = e
+                        time.sleep(0.6)
+                else:
+                    failed.append(name)
+                    log(f"  warn FRED {name}: {last_err}")
+            log(f"  fetched FRED: {len(fred_data)}/{len(fred_series)} series ok"
+                + (f"; failed: {failed}" if failed else ""))
 
-            # fred_derived
+            fred_df = pd.DataFrame(fred_data)
+            # MERGE into existing fred_indicators.parquet so a transient FRED hiccup
+            # doesn't wipe out columns that haven't been refetched this run.
+            fpath = SOURCE / "fred_indicators.parquet"
+            if fpath.exists():
+                existing = pd.read_parquet(fpath)
+                existing.index = pd.to_datetime(existing.index)
+                all_idx = existing.index.union(fred_df.index)
+                merged = pd.DataFrame(index=all_idx)
+                # Start with existing columns, reindexed
+                for c in existing.columns:
+                    merged[c] = existing[c].reindex(all_idx)
+                # Overlay fresh values where available (extends history forward)
+                for c in fred_df.columns:
+                    incoming = fred_df[c].reindex(all_idx)
+                    if c in merged.columns:
+                        merged[c] = incoming.combine_first(merged[c])
+                    else:
+                        merged[c] = incoming
+                fred_df = merged.sort_index()
+            fred_df.to_parquet(fpath)
+            log(f"  saved fred_indicators.parquet ({fred_df.shape}, {len(failed)} preserved from prior fetch)")
+
+            # fred_derived (recompute from the MERGED fred_df, so derived series
+            # also survive a partial fetch as long as their inputs exist in the merge)
             fdr = pd.DataFrame(index=fred_df.index)
             if "us02y" in fred_df and "us10y" in fred_df:
                 fdr["yield_2s10s"] = fred_df["us10y"] - fred_df["us02y"]
