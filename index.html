@@ -132,6 +132,55 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 .corr-card .tk{font:700 10px var(--m);color:var(--t2)}
 .corr-card .v{font:700 12px var(--m);margin-top:2px}
 
+/* === REGIME COMMAND CENTER === */
+.rcc{margin-bottom:22px;display:flex;flex-direction:column;gap:14px}
+.rcc-top{display:grid;grid-template-columns:280px 1fr;gap:14px}
+.rcc-card{background:var(--c1);border:1px solid var(--bd);border-radius:8px;padding:14px}
+.rcc-card h3{font:700 9.5px var(--m);color:var(--t3);letter-spacing:.18em;margin-bottom:10px}
+
+/* Cycle position gauge */
+.gauge-svg{display:block;margin:6px auto 0;width:100%;max-width:230px;height:auto}
+.gauge-rt{font:700 14px var(--m);text-align:center;letter-spacing:.05em;color:var(--t1);margin-top:2px}
+.gauge-rt .r-num{font-size:18px}
+.gauge-lbl{font:700 11px var(--s);text-align:center;letter-spacing:.04em;margin-top:6px}
+.verdict{font:500 11px var(--s);color:var(--t2);line-height:1.55;margin-top:12px;
+         padding-top:10px;border-top:1px dashed var(--bd2)}
+
+/* Indicator cards */
+.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ind-card{background:rgba(255,255,255,0.015);border:1px solid var(--bd);border-radius:6px;padding:9px 11px;
+          transition:border-color .15s}
+.ind-card:hover{border-color:var(--bd2)}
+.ind-card.safe{background:rgba(74,222,128,0.04);border-color:rgba(74,222,128,0.15)}
+.ind-card.neutral{background:rgba(96,165,250,0.04);border-color:rgba(96,165,250,0.15)}
+.ind-card.elevated{background:rgba(250,204,21,0.05);border-color:rgba(250,204,21,0.18)}
+.ind-card.crisis{background:rgba(248,113,113,0.05);border-color:rgba(248,113,113,0.22)}
+.ind-lbl{font:600 9px var(--m);letter-spacing:.1em}
+.ind-val{font:700 18px var(--m);letter-spacing:-.02em;margin-top:2px;color:var(--t1)}
+.ind-narr{font:400 9.5px var(--s);color:var(--t3);margin-top:3px;min-height:24px}
+.ind-bar{display:block;height:3px;border-radius:2px;background:var(--c2);margin-top:5px;overflow:hidden;position:relative}
+.ind-bar .fill{display:block;height:100%;border-radius:2px}
+.ind-lbl.safe{color:var(--g)}.ind-lbl.neutral{color:var(--b)}
+.ind-lbl.elevated{color:var(--y)}.ind-lbl.crisis{color:var(--r)}
+
+/* Deployment signal */
+.deploy-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.deploy-card{background:rgba(255,255,255,0.015);border:1px solid var(--bd);border-radius:6px;padding:10px 12px}
+.deploy-lbl{font:600 9.5px var(--s);color:var(--t2)}
+.deploy-pct{font:700 22px var(--m);letter-spacing:-.03em;margin-top:1px}
+.deploy-status{font:600 9.5px var(--s);letter-spacing:.02em;margin-top:1px}
+.deploy-bar{height:5px;background:var(--c2);border-radius:3px;margin-top:7px;overflow:hidden}
+.deploy-bar .fill{height:100%;border-radius:3px}
+.deploy-sub{font:400 9px var(--m);color:var(--t4);margin-top:4px}
+
+/* Regime timeline */
+.timeline-wrap{position:relative;height:170px}
+
+/* Slim header (compact regime number sits in the gauge card now) */
+.hd2{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:14px;flex-wrap:wrap}
+.hd2 h1{font:700 13px var(--m);color:var(--t2);letter-spacing:.08em}
+.hd2-sub{font:400 10px var(--m);color:var(--t4)}
+
 /* Footer */
 .ft{margin-top:24px;padding:14px;background:var(--c1);border:1px solid var(--bd);border-radius:6px;font:400 9.5px var(--m);color:var(--t4);line-height:1.8}
 .ft .k{color:var(--t3);font-weight:700;letter-spacing:.1em}
@@ -145,6 +194,9 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
   .tk-rets{grid-template-columns:repeat(3,1fr)}
   table{font-size:10px}
   th,td{padding:6px 8px}
+  .rcc-top{grid-template-columns:1fr}
+  .ind-grid{grid-template-columns:repeat(2,1fr)}
+  .deploy-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -153,8 +205,9 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 <script>
 "use strict";
 const S = {tournament:null, backtest:null, holdings:null, config:null, tickers:null, metrics:null,
+           regime:null, regimeDaily:null,
            period:"ALL", expanded:null, expandedTicker:null,
-           chart:null, tickerChart:null, tickerChartPeriod:"6M"};
+           chart:null, tickerChart:null, regimeChart:null, tickerChartPeriod:"6M"};
 
 const fmt   = n => (typeof n === "number") ? n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "—";
 const fmt2  = n => (typeof n === "number") ? n.toFixed(2) : "—";
@@ -166,8 +219,184 @@ const TIER_ORDER = ["1_cap_pres","2_balanced","3_aggressive","4_tactical","5_wer
 const BENCH_FOR_TIER = {"1_cap_pres":"60_40", "2_balanced":"spy", "3_aggressive":"qqq", "4_tactical":"sso", "5_werner":"spy"};
 
 function tierSpec(tid){ if (tid === "5_werner") return S.config.werner_picks; return (S.config.tier_specs || {})[tid]; }
-function regimeLabel(R){ return R<0.3?"LOW RISK":R<0.5?"ELEVATED":R<0.7?"HIGH RISK":"CRISIS"; }
+function regimeLabel(R){ return R<0.3?"Low risk":R<0.5?"Elevated":R<0.7?"High risk":"Crisis"; }
 function regimeColor(R){ return R<0.3?"var(--g)":R<0.5?"var(--y)":R<0.7?"var(--o)":"var(--r)"; }
+function regimeHex(R){ return R<0.3?"#4ade80":R<0.5?"#facc15":R<0.7?"#fb923c":"#f87171"; }
+function statusHex(s){ return ({safe:"#4ade80",neutral:"#60a5fa",elevated:"#facc15",crisis:"#f87171"})[s] || "#737373"; }
+function statusLabel(s){ return ({safe:"Safe",neutral:"Neutral",elevated:"Caution",crisis:"Crisis"})[s] || s; }
+
+// SVG semicircle gauge: 0 → 1 mapped to -90° → +90°.
+// Returns inline SVG markup.
+function gaugeSVG(R){
+  if (R == null) R = 0;
+  const cx = 110, cy = 110, r = 90, arc_w = 18;
+  // Build 4 colored arcs over [-90°, +90°] (i.e. top half)
+  const segs = [
+    {from:0.00, to:0.30, color:"#4ade80"}, // safe
+    {from:0.30, to:0.50, color:"#facc15"}, // elevated
+    {from:0.50, to:0.70, color:"#fb923c"}, // high
+    {from:0.70, to:1.00, color:"#f87171"}, // crisis
+  ];
+  const toXY = t => {
+    // t ∈ [0,1] → angle ∈ [180°, 360°] in standard math coords (top semicircle)
+    const ang = Math.PI * (1 + t);
+    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  };
+  const arcs = segs.map(s => {
+    const [x0,y0] = toXY(s.from);
+    const [x1,y1] = toXY(s.to);
+    const large = (s.to - s.from) > 0.5 ? 1 : 0;
+    return `<path d="M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}"
+                  fill="none" stroke="${s.color}" stroke-width="${arc_w}" stroke-linecap="butt"/>`;
+  }).join("");
+  // Needle
+  const [nx, ny] = toXY(Math.max(0, Math.min(1, R)));
+  const needle = `<line x1="${cx}" y1="${cy}" x2="${nx.toFixed(2)}" y2="${ny.toFixed(2)}"
+                       stroke="#d4d4d4" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="${cx}" cy="${cy}" r="6" fill="#d4d4d4"/>`;
+  // Labels
+  const labels = `<text x="14" y="135" font-family="IBM Plex Mono" font-size="10" fill="#737373">safe</text>
+                  <text x="186" y="135" font-family="IBM Plex Mono" font-size="10" fill="#737373" text-anchor="end">danger</text>`;
+  return `<svg class="gauge-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+            ${arcs}${needle}${labels}
+          </svg>`;
+}
+
+// Renders the 12-card indicator grid from regime_indicators.json
+function renderIndicators(){
+  if (!S.regime || !S.regime.indicators) return "";
+  return `<div class="ind-grid">${S.regime.indicators.map(i => {
+    const c = statusHex(i.status);
+    return `<div class="ind-card ${i.status}">
+      <div class="ind-lbl ${i.status}">${i.label}</div>
+      <div class="ind-val">${i.value_str || "—"}</div>
+      <div class="ind-narr">${i.narrative || ""}</div>
+      <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// Renders the deployment cards for all 5 tiers
+function renderDeployment(R){
+  return `<div class="deploy-grid">${TIER_ORDER.map(tid => {
+    const sp = tierSpec(tid); if (!sp) return "";
+    const cashFloor = sp.cash_floor ?? 0;
+    const cashSlope = sp.cash_slope ?? 0.7;
+    const cashMax   = sp.cash_max   ?? 1.0;
+    const cashPct   = R != null ? Math.max(cashFloor, Math.min(cashMax, cashFloor + R * cashSlope)) : cashFloor;
+    const deployPct = (1 - cashPct) * 100;
+    // Status: based on deployed share
+    let status = "Full"; let scolor = "var(--g)";
+    if (deployPct < 30)      { status = "Defensive"; scolor = "var(--r)"; }
+    else if (deployPct < 60) { status = "Cautious";  scolor = "var(--y)"; }
+    else if (deployPct < 85) { status = "Standard";  scolor = "var(--b)"; }
+    return `<div class="deploy-card">
+      <div class="deploy-lbl" style="color:${sp.color}">${sp.short}</div>
+      <div class="deploy-pct" style="color:${sp.color}">${deployPct.toFixed(0)}%</div>
+      <div class="deploy-status" style="color:${scolor}">${status}</div>
+      <div class="deploy-bar"><div class="fill" style="width:${deployPct}%;background:${sp.color}"></div></div>
+      <div class="deploy-sub">${(cashPct*100).toFixed(0)}% cash</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// Renders the regime timeline chart from regime_daily.csv (Chart.js)
+function renderRegimeTimeline(){
+  const ctx = document.getElementById("regime-timeline");
+  if (!ctx || !S.regimeDaily) return;
+  if (S.regimeChart) S.regimeChart.destroy();
+  const points = S.regimeDaily
+    .filter(r => r.date && r.R_t != null && !isNaN(r.R_t))
+    .map(r => ({x: r.date, y: +r.R_t}));
+  if (!points.length) return;
+  S.regimeChart = new Chart(ctx, {
+    type: "line",
+    data: {datasets: [{
+      label: "R_t",
+      data: points,
+      borderWidth: 1.2,
+      pointRadius: 0,
+      tension: 0.05,
+      fill: true,
+      // Color each segment + fill by Y value
+      segment: {
+        borderColor: ctx => regimeHex(ctx.p1.parsed.y),
+      },
+      backgroundColor: (ctx) => {
+        const chart = ctx.chart;
+        const {ctx: c2d, chartArea} = chart;
+        if (!chartArea) return "rgba(74,222,128,0.10)";
+        const g = c2d.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        g.addColorStop(0,    "rgba(248,113,113,0.25)");  // top  = crisis
+        g.addColorStop(0.30, "rgba(251,146,60,0.18)");
+        g.addColorStop(0.55, "rgba(250,204,21,0.12)");
+        g.addColorStop(1,    "rgba(74,222,128,0.10)");   // bottom = safe
+        return g;
+      },
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+      interaction: {mode:"nearest", axis:"x", intersect:false},
+      scales: {
+        x: {type:"time", time:{unit:"year"},
+            grid:{color:"rgba(255,255,255,0.03)"},
+            ticks:{color:"#737373", font:{family:"IBM Plex Mono", size:9}, maxRotation:0}},
+        y: {min:0, max:1,
+            grid:{color:"rgba(255,255,255,0.03)"},
+            ticks:{color:"#737373", font:{family:"IBM Plex Mono", size:9},
+                   callback:v => v===0?"safe":(v===0.5?"elevated":(v===1?"crisis":""))}},
+      },
+      plugins: {
+        legend: {display: false},
+        tooltip: {backgroundColor:"rgba(0,0,0,0.9)",
+                  titleFont:{family:"IBM Plex Mono", size:10},
+                  bodyFont:{family:"IBM Plex Mono", size:10}, padding:8,
+                  callbacks:{ label: ctx => ` R_t = ${ctx.parsed.y.toFixed(3)}  (${regimeLabel(ctx.parsed.y)})` }},
+      },
+    },
+  });
+}
+
+// The full Regime Command Center section — built fresh on each render()
+function renderRegimeCommandCenter(R){
+  const reg = S.regime || {};
+  const total = reg.n_indicators || 12;
+  const safe = reg.n_safe || 0;
+  const ele  = reg.n_elevated || 0;
+  const cri  = reg.n_crisis || 0;
+  const verdict = reg.verdict || (R != null
+    ? `R<sub>t</sub> = ${R.toFixed(3)} — see leaderboard for deployment.`
+    : "Regime data unavailable.");
+  const rDisp = R != null ? R.toFixed(3) : "—";
+  const lbl = R != null ? regimeLabel(R) : "—";
+  const lblColor = R != null ? regimeColor(R) : "var(--t3)";
+
+  return `<section class="rcc">
+    <div class="rcc-top">
+      <div class="rcc-card">
+        <h3>CYCLE POSITION</h3>
+        ${gaugeSVG(R || 0)}
+        <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
+        <div class="gauge-rt">R<sub>t</sub> = <span class="r-num">${rDisp}</span></div>
+        <div class="verdict">${verdict}</div>
+      </div>
+      <div class="rcc-card">
+        <h3>INDICATOR READINGS — ${total} RISK CHANNELS  ·  ${safe} safe / ${ele} elevated / ${cri} crisis</h3>
+        ${renderIndicators()}
+      </div>
+    </div>
+
+    <div class="rcc-card">
+      <h3>DEPLOYMENT SIGNAL PER TIER</h3>
+      ${renderDeployment(R)}
+    </div>
+
+    <div class="rcc-card">
+      <h3>REGIME TIMELINE — R<sub>t</sub> with regime bands (safe → elevated → crisis)</h3>
+      <div class="timeline-wrap"><canvas id="regime-timeline"></canvas></div>
+    </div>
+  </section>`;
+}
 function rankColor(pct){ return pct>=70?"var(--g)":pct>=40?"var(--y)":"var(--r)"; }
 function corrColor(c){ const a=Math.abs(c); return a>=0.7?"var(--r)":a>=0.4?"var(--y)":"var(--g)"; }
 
@@ -626,27 +855,17 @@ function render(){
   let leader = null, leaderRet = -Infinity;
   Object.entries(tmMap).forEach(([tid, m]) => { if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; } });
 
-  // ---- Header ----
-  let h = `<div class="hd">
-    <div class="hd-l">
-      <div><span class="hd-dot"></span><h1 style="display:inline">PORTFOLIO TOURNAMENT</h1>
-        <span style="font:400 9px var(--m);color:var(--t5);margin-left:6px">v2.0</span></div>
-      <div class="hd-sub">${updated} · 4 algo tiers + Werner · monthly rescore + regime overlay</div>
-    </div>
-    <div class="regime">
-      <div>
-        <div class="regime-num" style="color:${regimeColor(R||0)}">${R!=null?R.toFixed(3):"—"}</div>
-        <div class="regime-lbl" style="color:${regimeColor(R||0)}">R<sub>t</sub> · ${regime}</div>
-      </div>
-      <div class="regime-meta">
-        ${TIER_ORDER.map(tid => {
-          const sp = tierSpec(tid); if (!sp) return "";
-          const cp = R != null ? Math.min(sp.cash_max || 1, sp.cash_floor + R * (sp.cash_slope ?? 0.7)) * 100 : null;
-          return `<div><span style="color:${sp.color}">${sp.short}</span>: <strong>${cp != null ? cp.toFixed(0) : "—"}%</strong></div>`;
-        }).join("")}
-      </div>
+  // ---- Slim header ----
+  let h = `<div class="hd2">
+    <div>
+      <span class="hd-dot"></span><h1 style="display:inline">PORTFOLIO TOURNAMENT</h1>
+      <span style="font:400 9px var(--m);color:var(--t5);margin-left:6px">v2.0</span>
+      <div class="hd2-sub">${updated} · 4 algo tiers + Werner · monthly rescore + regime overlay</div>
     </div>
   </div>`;
+
+  // ---- 1. REGIME COMMAND CENTER ----
+  h += renderRegimeCommandCenter(R);
 
   // ---- Leader banner ----
   if (leader && tmMap[leader]) {
@@ -760,6 +979,7 @@ function render(){
   }));
   // Draw charts after DOM
   setTimeout(() => {
+    renderRegimeTimeline();
     renderChart(allSeries, S.period);
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
   }, 10);
@@ -778,6 +998,8 @@ async function init(){
   S.holdings   = await loadJSON("data/tier_holdings.json");
   S.tickers    = await loadJSON("data/ticker_indicators.json");
   S.metrics    = await loadJSON("data/backtest_metrics.json");
+  S.regime     = await loadJSON("data/regime_indicators.json");
+  S.regimeDaily = await loadCSV("data/regime_daily.csv");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 
