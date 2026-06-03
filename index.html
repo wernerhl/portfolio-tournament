@@ -979,19 +979,28 @@ function renderTickerChart(tk){
   if (!ctx) return;
   if (S.tickerChart) S.tickerChart.destroy();
 
-  // Pull entry/stop/target lines from ticker_signals.json if available
+  // Pull annotation lines from ticker_signals.json (branch on mode)
   const sig = S.signals && S.signals.signals && S.signals.signals[tk];
-  const hline = (yval, color, label) => ({
+  const hline = (yval, color, label, dash=[4,4]) => ({
     type: "line", yMin: yval, yMax: yval,
-    borderColor: color, borderWidth: 1, borderDash: [4, 4],
+    borderColor: color, borderWidth: 1, borderDash: dash,
     label: { content: label, display: true, position: "start",
              font: {family: "IBM Plex Mono", size: 9},
              color: color, backgroundColor: "transparent" },
   });
   const annotations = {};
-  if (sig && sig.entry?.primary)  annotations.entry  = hline(sig.entry.primary,  "#60a5fa", `Entry $${sig.entry.primary.toFixed(2)}`);
-  if (sig && sig.stop?.price)     annotations.stop   = hline(sig.stop.price,     "#f87171", `Stop $${sig.stop.price.toFixed(2)}`);
-  if (sig && sig.target?.base)    annotations.target = hline(sig.target.base,    "#4ade80", `Target $${sig.target.base.toFixed(2)}`);
+  if (sig && sig.mode === "position") {
+    if (sig.position?.cost_basis)  annotations.cost  = hline(sig.position.cost_basis, "#60a5fa", `Cost $${sig.position.cost_basis.toFixed(2)}`);
+    if (sig.stops?.active_stop)    annotations.stop  = hline(sig.stops.active_stop,   "#f87171", `${sig.stops.active_stop_type === "trailing" ? "Trail" : "Stop"} $${sig.stops.active_stop.toFixed(2)}`);
+    if (sig.trim?.trigger_price)   annotations.trim  = hline(sig.trim.trigger_price,  "#facc15", `Trim ${sig.trim.trim_pct}% at $${sig.trim.trigger_price.toFixed(2)}`, [2,4]);
+    if (sig.hedge?.type === "covered_call" && sig.hedge.strike) {
+      annotations.cc = hline(sig.hedge.strike, "#a78bfa", `CC $${sig.hedge.strike}`, [3,3]);
+    }
+  } else if (sig) {
+    if (sig.entry?.primary)  annotations.entry  = hline(sig.entry.primary,  "#60a5fa", `Entry $${sig.entry.primary.toFixed(2)}`);
+    if (sig.stop?.price)     annotations.stop   = hline(sig.stop.price,     "#f87171", `Stop $${sig.stop.price.toFixed(2)}`);
+    if (sig.target?.base)    annotations.target = hline(sig.target.base,    "#4ade80", `Target $${sig.target.base.toFixed(2)}`);
+  }
 
   S.tickerChart = new Chart(ctx, {
     type: "line",
@@ -1029,16 +1038,24 @@ const SIG_COLORS = {
   "STRONG BUY": {bg:"rgba(22,163,74,0.14)",  border:"rgba(22,163,74,0.40)", text:"#4ade80", icon:"▲▲"},
   "BUY":        {bg:"rgba(22,163,74,0.08)",  border:"rgba(22,163,74,0.25)", text:"#4ade80", icon:"▲"},
   "WATCH":      {bg:"rgba(96,165,250,0.08)", border:"rgba(96,165,250,0.25)", text:"#60a5fa", icon:"◉"},
+  "WAIT":       {bg:"rgba(250,204,21,0.10)", border:"rgba(250,204,21,0.30)", text:"#facc15", icon:"⏸"},
   "HOLD":       {bg:"rgba(115,115,115,0.08)",border:"rgba(115,115,115,0.25)", text:"#a3a3a3", icon:"—"},
+  "TRIM":       {bg:"rgba(250,204,21,0.10)", border:"rgba(250,204,21,0.35)", text:"#facc15", icon:"✂"},
   "SELL":       {bg:"rgba(220,38,38,0.10)",  border:"rgba(220,38,38,0.30)",  text:"#f87171", icon:"▼"},
 };
 function rrColor(rr){ return rr >= 2.0 ? "#4ade80" : rr >= 1.5 ? "#facc15" : "#f87171"; }
 function fmtMoney(v){ if (v == null || !Number.isFinite(v)) return "—"; return "$" + v.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function sigVerb(s){ return (s||"HOLD").split(/[\s—]+/)[0].toUpperCase(); }
 
 function renderSignalBox(tk){
   const sig = S.signals && S.signals.signals && S.signals.signals[tk];
   if (!sig) return "";
-  const baseSig = (sig.signal || "HOLD").split(" —")[0].trim();
+  if (sig.mode === "position") return renderPositionBox(sig);
+  return renderEntryBox(sig);
+}
+
+function renderEntryBox(sig){
+  const baseSig = sigVerb(sig.signal);
   const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
   const rr = sig.target?.reward_risk ?? 0;
   const rrc = rrColor(rr);
@@ -1098,6 +1115,87 @@ function renderSignalBox(tk){
         <div><span style="color:var(--t4);font-weight:700">BUY:</span> ${condList(sig.conditions?.buy)}</div>
         <div><span style="color:var(--t4);font-weight:700">STRONG:</span> ${condList(sig.conditions?.strong_buy)}</div>
         <div><span style="color:var(--t4);font-weight:700">SELL:</span> ${condList(sig.conditions?.sell)}</div>
+      </div>
+    </details>
+  </div>`;
+}
+
+// -------- Position-mode signal box (owned stocks) --------
+function renderPositionBox(sig){
+  const p = sig.position, s = sig.stops;
+  const baseSig = sigVerb(sig.signal);
+  const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
+  const gainColor = p.gain_pct >= 0 ? "#4ade80" : "#f87171";
+
+  // Thesis dots
+  const thesisRows = (sig.thesis || []).map(t => {
+    const color = t.status === "green" ? "#4ade80" : t.status === "yellow" ? "#facc15" : "#f87171";
+    const icon  = t.status === "green" ? "✓"      : t.status === "yellow" ? "⚠"      : "✗";
+    return `<div style="font:400 12px var(--s);color:${color};line-height:1.7">${icon} ${t.text}</div>`;
+  }).join("");
+
+  // Hedge callout
+  const hedgeHtml = sig.hedge ? `
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(96,165,250,0.07);
+                border:1px solid rgba(96,165,250,0.22);border-radius:6px">
+      <div style="font:600 9px var(--m);color:#60a5fa;letter-spacing:.12em;margin-bottom:4px">ACTION</div>
+      <div style="font:400 12px var(--s);color:#93c5fd;line-height:1.55">${sig.hedge.text}</div>
+    </div>` : "";
+
+  // Trim status line
+  const trimHtml = sig.trim ? `
+    <div style="font:400 11px var(--m);color:var(--t4);margin-top:8px">
+      Next trim: <strong style="color:var(--t2)">${sig.trim.trim_pct}%</strong> at ${sig.trim.at_gain}
+      ($${sig.trim.trigger_price} · ${sig.trim.distance >= 0 ? "+" : ""}${sig.trim.distance}% from here)
+    </div>` : `
+    <div style="font:400 11px var(--m);color:var(--t4);margin-top:8px">No upcoming trim trigger</div>`;
+
+  const cell = (label, big, sub, color="var(--t1)") => `
+    <div>
+      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em;margin-bottom:3px">${label}</div>
+      <div style="font:700 16px var(--m);color:${color}">${big}</div>
+      ${sub ? `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:2px">${sub}</div>` : ""}
+    </div>`;
+
+  return `<div style="background:${sc.bg};border:1px solid ${sc.border};border-radius:8px;padding:14px 16px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:14px;flex-wrap:wrap">
+      <div>
+        <span style="font:800 11px var(--m);letter-spacing:.15em;color:${sc.text};background:${sc.bg};
+                     padding:4px 10px;border-radius:4px;border:1px solid ${sc.border}">${sc.icon} ${sig.signal}</span>
+        <span style="font:500 10px var(--m);color:var(--t4);margin-left:10px">${sig.category} · ${p.weight_pct}% of portfolio</span>
+      </div>
+      <div style="font:500 10px var(--m);color:var(--t4)">POSITION MODE</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px">
+      ${cell("COST",    "$" + p.cost_basis.toFixed(2),    `${p.shares} shares`, "var(--t2)")}
+      ${cell("CURRENT", "$" + p.current_price.toFixed(2), fmtMoney(p.position_value), "var(--t1)")}
+      ${cell("GAIN",    (p.gain_pct >= 0 ? "+" : "") + p.gain_pct.toFixed(1) + "%",
+                       (p.gain_dollars >= 0 ? "+" : "") + fmtMoney(p.gain_dollars), gainColor)}
+      ${cell("ACTIVE STOP", "$" + s.active_stop.toFixed(2),
+                            `${s.active_stop_type} · -${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak`,
+                            "#f87171")}
+    </div>
+
+    ${trimHtml}
+    ${hedgeHtml}
+
+    <div style="margin-top:14px">
+      <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.12em;margin-bottom:6px">THESIS CHECK</div>
+      ${thesisRows}
+    </div>
+
+    <div style="margin-top:12px">
+      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">POSITION MANAGEMENT</span>
+      <p style="font:400 12px var(--s);color:var(--t2);line-height:1.55;margin-top:3px">${sig.why || ""}</p>
+    </div>
+
+    <details style="margin-top:8px">
+      <summary style="font:500 10px var(--m);color:var(--t4);cursor:pointer;letter-spacing:.05em">Stop details</summary>
+      <div style="margin-top:6px;font:400 11px var(--m);color:var(--t3);line-height:1.7">
+        Trailing stop: $${s.trail_stop.toFixed(2)} (-${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak, bracket ${s.trail_bracket}) ·
+        Hard stop: $${s.hard_stop.toFixed(2)} (-${s.hard_stop_pct}% from cost) ·
+        Active = higher of the two = <strong style="color:#f87171">$${s.active_stop.toFixed(2)}</strong>
       </div>
     </details>
   </div>`;
