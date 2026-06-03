@@ -657,15 +657,25 @@ function ewColor(label){
 }
 
 // The full Regime Command Center section — built fresh on each render()
+// v4 graduated regime: color + action verb for the 4 bands
+function v4RegimeColor(reg){
+  return ({DEPLOY:"var(--g)",CAUTIOUS:"var(--y)",DEFENSIVE:"var(--o)",CRISIS:"var(--r)"})[reg] || "var(--t3)";
+}
+function v4RegimeAction(reg){
+  return ({
+    DEPLOY:    "Full sizing; new entries OK; sell out-of-the-money premium.",
+    CAUTIOUS:  "Reduce new entries to 75%; favour limit orders at lower levels.",
+    DEFENSIVE: "Trim concentrated holdings; activate put spreads; raise cash to tier maximum.",
+    CRISIS:    "Full Portfolio OS crisis mode.",
+  })[reg] || "—";
+}
+
 function renderRegimeCommandCenter(R){
   const reg = S.regime || {};
   const total = reg.n_indicators || 12;
   const safe  = reg.n_safe || 0;
   const ele   = reg.n_elevated || 0;
   const cri   = reg.n_crisis || 0;
-  const verdict = reg.verdict || (R != null
-    ? `R<sub>t</sub> = ${R.toFixed(3)} — see leaderboard for deployment.`
-    : "Regime data unavailable.");
 
   // v2 fields: R_lead / R_full / divergence + their classifications
   const R_lead = reg.R_lead;
@@ -674,14 +684,49 @@ function renderRegimeCommandCenter(R){
   const ew     = reg.early_warning;
   const rgm    = reg.regime;
   const divlab = reg.divergence_alert;
-
-  // Fall back to single-score header for v1 snapshots
   const v2 = (R_lead != null && R_full != null);
-  const rDisp = R_full != null ? R_full.toFixed(3) : "—";
-  const lbl = R_full != null ? (rgm || regimeLabel(R_full).toUpperCase()) : "—";
-  const lblColor = R_full != null ? ewColor(lbl) : "var(--t3)";
 
-  const scoreRow = v2 ? `<div class="score-row">
+  // v4 fields: latest row of regime_v4_daily.csv
+  const v4Last = (S.regimeV4 && S.regimeV4.length)
+    ? S.regimeV4.filter(r => r && r.p_5_40_calibrated != null && !isNaN(r.p_5_40_calibrated)).slice(-1)[0]
+    : null;
+  const p5_40 = v4Last ? +v4Last.p_5_40_calibrated : null;
+  const p3_20 = v4Last && v4Last.p_3_20_equal_weight != null ? +v4Last.p_3_20_equal_weight : null;
+  const p10_60 = v4Last && v4Last.p_10_60_equal_weight != null ? +v4Last.p_10_60_equal_weight : null;
+  const p7_40 = v4Last && v4Last.p_7_40_equal_weight != null ? +v4Last.p_7_40_equal_weight : null;
+  const v4reg = v4Last ? v4Last.graduated_regime : null;
+  const v4color = v4RegimeColor(v4reg);
+
+  // Verdict: v4-driven if available, else v2 verdict from regime_indicators.json
+  const verdict = v4Last
+    ? `<strong style="color:${v4color}">${v4reg}.</strong> ${v4RegimeAction(v4reg)}`
+    : (reg.verdict || (R != null ? `R<sub>t</sub> = ${R.toFixed(3)}` : "Regime data unavailable."));
+
+  // Gauge stays driven by R_full (0-1 calibrated visually); label uses v4 if available
+  const rDisp = R_full != null ? R_full.toFixed(3) : "—";
+  const lbl = v4reg || (R_full != null ? (rgm || regimeLabel(R_full).toUpperCase()) : "—");
+  const lblColor = v4reg ? v4color : (R_full != null ? ewColor(rgm) : "var(--t3)");
+
+  // ---- New score row: graduated probabilities (v4) + v2 R_full as backup ----
+  const probCell = (label, p, action) => {
+    if (p == null) return `<div class="score-cell">
+        <div class="k">${label}</div><div class="v" style="color:var(--t4)">—</div></div>`;
+    const pctText = (p * 100).toFixed(0) + "%";
+    let cellColor = "var(--g)";
+    if (p > 0.45) cellColor = "var(--o)";
+    else if (p > 0.25) cellColor = "var(--y)";
+    if (p > 0.65) cellColor = "var(--r)";
+    return `<div class="score-cell">
+        <div class="k">${label}</div>
+        <div class="v" style="color:${cellColor}">${pctText}</div>
+        ${action ? `<div class="s" style="color:${cellColor}">${action}</div>` : ""}
+      </div>`;
+  };
+  const scoreRow = v4Last ? `<div class="score-row">
+      ${probCell("≥3% / 20d", p3_20, "")}
+      ${probCell("≥5% / 40d · CAL", p5_40, v4reg)}
+      ${probCell("≥10% / 60d", p10_60, "")}
+    </div>` : (v2 ? `<div class="score-row">
       <div class="score-cell">
         <div class="k">EARLY WARNING</div>
         <div class="v">${R_lead.toFixed(3)}</div>
@@ -697,6 +742,15 @@ function renderRegimeCommandCenter(R){
         <div class="v">${divv >= 0 ? "+" : ""}${divv.toFixed(3)}</div>
         <div class="s" style="color:${ewColor(divlab)}">${divlab}</div>
       </div>
+    </div>` : "");
+
+  // Compact v2 footnote: R_full / R_lead / divergence on one line
+  const v2Foot = v2 ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--bd);
+       font:400 10px var(--m);color:var(--t4);text-align:center;line-height:1.6">
+      <span style="color:var(--t3)">v2:</span>
+      R<sub>full</sub> <strong style="color:${ewColor(rgm)}">${R_full.toFixed(3)} ${rgm}</strong>
+      &middot; R<sub>lead</sub> <strong style="color:${ewColor(ew)}">${R_lead.toFixed(3)} ${ew}</strong>
+      &middot; div <strong style="color:${ewColor(divlab)}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
     </div>` : "";
 
   const tierCounts = `<span style="margin-left:auto;font:400 9px var(--m);color:var(--t5);letter-spacing:0;text-transform:none">
@@ -705,12 +759,13 @@ function renderRegimeCommandCenter(R){
   return `<section class="rcc">
     <div class="rcc-top">
       <div class="rcc-card">
-        <h3>CYCLE POSITION</h3>
+        <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">v4 calibrated</span>' : ''}</h3>
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
-        <div class="gauge-rt">R<sub>full</sub> = <span class="r-num">${rDisp}</span></div>
+        <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
         ${scoreRow}
         <div class="verdict">${verdict}</div>
+        ${v2Foot}
       </div>
       <div class="rcc-card">
         <h3 style="display:flex;align-items:baseline">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
@@ -1457,6 +1512,8 @@ async function init(){
   S.regimeDaily = await loadCSV("data/regime_daily.csv");
   S.indicatorSeries = await loadJSON("data/indicator_series.json");
   S.signals    = await loadJSON("data/ticker_signals.json");
+  S.regimeV4   = await loadCSV("data/regime_v4_daily.csv");
+  S.v4Cal      = await loadJSON("data/v4_calibration.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 
