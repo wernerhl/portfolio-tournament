@@ -103,12 +103,21 @@ NAMES = {
     "oil_60d_vel": "Oil 60-day velocity",
 }
 
-# Sampling stride to keep JSON small
+# Sampling stride to keep JSON small.
+# CRITICAL: iloc[::stride] silently drops the LAST point whenever
+# (len-1) is not a multiple of stride — e.g. len=1260 with stride=2
+# samples indices 0,2,...,1258 and drops 1259 (today's reading). That
+# made the indicator chart end one day before the current-state panel
+# during a crash session. Always force the final observation into the
+# sample so chart endpoint == panel "current state."
 def downsample(series: pd.Series, target: int = TARGET_POINTS) -> pd.Series:
     if len(series) <= target:
         return series
     stride = max(1, len(series) // target)
-    return series.iloc[::stride]
+    sampled = series.iloc[::stride]
+    if len(series) > 0 and sampled.index[-1] != series.index[-1]:
+        sampled = pd.concat([sampled, series.iloc[[-1]]])
+    return sampled
 
 
 def _clean(o):
