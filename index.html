@@ -247,6 +247,81 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
   background:var(--surface-2);border-radius:6px;
   font:600 var(--fs-body) var(--s);letter-spacing:0}
 
+/* ── Regime & Overlay panel (vol-regime + attribution) ─────────────── */
+.rop{margin-bottom:var(--s8);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:10px;padding:18px 20px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.018)}
+.rop-head{display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:14px;flex-wrap:wrap;gap:12px}
+.rop-head h2{font:700 var(--fs-h2) var(--s);letter-spacing:-.005em;color:var(--t1);margin:0}
+.rop-head .sub{font:italic 400 12px var(--s);color:var(--t3)}
+.rop-grid{display:grid;grid-template-columns:1.2fr 1.2fr 1fr;gap:14px}
+.rop-block{background:var(--surface-2);border:1px solid var(--hairline);
+  border-radius:8px;padding:12px 14px}
+.rop-block h4{font:600 var(--fs-label) var(--m);color:var(--t3);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.rop-state{font:600 24px var(--s);letter-spacing:-.005em;margin-bottom:4px}
+.rop-state.deep_contango{color:var(--g)}
+.rop-state.contango{color:var(--g)}
+.rop-state.flattening{color:var(--y)}
+.rop-state.backwardation{color:var(--r)}
+.rop-meta{font:400 12px var(--m);color:var(--t3);line-height:1.5}
+.rop-meta strong{color:var(--t1);font-weight:600}
+.rop-cond-row{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px dashed var(--hairline);font:400 12px var(--m)}
+.rop-cond-row:last-child{border-bottom:0}
+.rop-cond-row .k{color:var(--t3)}
+.rop-cond-row .v{font-weight:600;color:var(--t1)}
+.rop-cond-row .v.on{color:var(--y)}
+.rop-cond-row .v.off{color:var(--t4)}
+.rop-attr{padding:10px 12px;background:var(--bg);border-left:3px solid var(--accent);
+  border-radius:0 4px 4px 0;margin-top:8px}
+.rop-attr .driver{font:600 13px var(--m);color:var(--t1);letter-spacing:.02em}
+.rop-attr .reversion{font:400 11px var(--m);color:var(--t3);margin-top:3px}
+.rop-attr .overlay-flag{margin-top:6px;padding:4px 8px;background:rgba(168,143,229,.10);
+  border:1px solid rgba(168,143,229,.30);border-radius:4px;
+  font:600 10px var(--m);color:var(--p);letter-spacing:.06em;display:inline-block}
+.rop-curve-wrap{position:relative;height:160px}
+.rop-overlay-scalar{margin-top:10px;padding:10px 14px;background:rgba(201,168,106,.06);
+  border:1px solid var(--accent-dim);border-radius:6px}
+.rop-overlay-scalar .v{font:600 28px var(--m);color:var(--accent);letter-spacing:-.02em}
+.rop-overlay-scalar .lbl{font:600 9px var(--m);color:var(--accent);letter-spacing:.14em}
+.rop-overlay-scalar .cap{font:italic 400 11px var(--s);color:var(--t3);line-height:1.5;margin-top:4px}
+.rop-validation{margin-top:10px;font:400 11px var(--m);color:var(--t3);line-height:1.6}
+.rop-validation strong{color:var(--g);font-weight:600}
+.rop-history-strip{display:flex;gap:1px;margin-top:8px;height:14px;border-radius:3px;overflow:hidden}
+.rop-history-strip .cell{flex:1;min-width:0}
+.rop-history-strip .cell[data-st=deep_contango]{background:var(--pos-dim)}
+.rop-history-strip .cell[data-st=contango]{background:rgba(95,185,142,0.3)}
+.rop-history-strip .cell[data-st=flattening]{background:var(--warn-dim)}
+.rop-history-strip .cell[data-st=backwardation]{background:var(--neg-dim)}
+.rop-spike-list{font:400 11px var(--m);color:var(--t3);margin-top:6px;max-height:90px;overflow-y:auto}
+.rop-spike-list div{padding:2px 0;border-bottom:1px dashed var(--hairline)}
+.rop-spike-list strong{color:var(--t2);font-weight:600}
+.rop-event-badge{display:inline-block;padding:5px 10px;background:rgba(219,162,62,.12);
+  border:1px solid rgba(219,162,62,.40);border-radius:6px;
+  font:600 11px var(--m);color:var(--y);letter-spacing:.06em;margin-left:8px}
+.rop-next-event{font:italic 400 11px var(--s);color:var(--t3);margin-top:6px}
+
+/* Tournament conditional-mode toggle */
+.cond-toggle{display:inline-flex;gap:1px;background:var(--surface-2);
+  border:1px solid var(--hairline);border-radius:4px;overflow:hidden;
+  margin-left:12px}
+.cond-toggle button{padding:4px 10px;font:500 10px var(--m);color:var(--t3);
+  letter-spacing:.06em;border:0;background:transparent;cursor:pointer;transition:all .15s}
+.cond-toggle button:hover{color:var(--t2)}
+.cond-toggle button.on{background:rgba(201,168,106,.12);color:var(--accent)}
+.cond-caption{font:italic 400 11px var(--s);color:var(--t3);margin:6px 0 10px;line-height:1.5}
+
+/* Event-day badge on cycle-position card */
+.event-today-badge{display:inline-block;padding:4px 10px;
+  background:rgba(219,162,62,.10);border:1px solid rgba(219,162,62,.35);
+  border-radius:5px;font:600 10px var(--m);color:var(--y);letter-spacing:.10em;
+  margin-top:6px}
+.event-today-badge .lbl{margin-right:4px}
+.event-today-cap{font:italic 400 11px var(--s);color:var(--t3);margin-top:4px;line-height:1.5}
+.next-event-line{font:italic 400 11px var(--s);color:var(--t3);margin-top:4px}
+
 /* ── Scanner list (top-level) ─────────────────────────────────────── */
 .scanner{margin-bottom:var(--s8)}
 .scanner-head{display:flex;justify-content:space-between;align-items:center;
@@ -440,7 +515,8 @@ const S = {tournament:null, backtest:null, holdings:null, config:null, tickers:n
            period:"ALL", expanded:null, expandedTicker:null,
            chart:null, tickerChart:null, regimeChart:null, tickerChartPeriod:"6M",
            expandedIndicator:null, indPeriod:"1Y",
-           scannerSort:"quad", scannerSortDir:"desc", scannerFilter:"all"};
+           scannerSort:"quad", scannerSortDir:"desc", scannerFilter:"all",
+           leaderboardCondMode:false};   // tournament conditional/unconditional toggle
 
 const fmt   = n => (typeof n === "number") ? n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "—";
 const fmt2  = n => (typeof n === "number") ? n.toFixed(2) : "—";
@@ -1092,7 +1168,9 @@ function renderRegimeCommandCenter(R){
     inputs.shock ? `intraday shock` : null,
   ].filter(Boolean).join(" · ");
   const verdict = `<strong style="color:${lblColor}">${headline.label}.</strong> ${headline.action}
-    <div style="margin-top:6px;font:400 10px var(--m);color:var(--t4)">${inputLine}</div>`;
+    <div style="margin-top:6px;font:400 10px var(--m);color:var(--t4)">${inputLine}</div>
+    ${eventTodayBadge()}
+    ${nextEventLine()}`;
 
   // ---- New score row: graduated probabilities (v4) + v2 R_full as backup ----
   const probCell = (label, p, action) => {
@@ -1529,6 +1607,209 @@ function renderTwoScore(tk){
     <div class="ts-divergence" style="color:${div.color};border-left:3px solid ${div.color}">
       ${div.icon} ${div.text}
     </div>
+  </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// REGIME & OVERLAY panel — VIX term-structure regime + spike attribution.
+// CONDITIONING/uncertainty information only. NEVER renders a directional
+// implication for any event marker. The overlay scalar is shown but
+// gated as DIAGNOSTIC until backtest validation closes.
+// ──────────────────────────────────────────────────────────────────────
+function renderRegimeOverlayPanel(){
+  const r = S.volRegime;
+  if (!r) return "";
+
+  // State + dynamics
+  const dyn = (r.dynamics && r.dynamics[r.state]) || {};
+  const nextTypical = (() => {
+    const dist = dyn.next_state_distribution || {};
+    const keys = Object.keys(dist);
+    if (!keys.length) return null;
+    const top = keys.reduce((a,b) => dist[a] > dist[b] ? a : b);
+    const total = Object.values(dist).reduce((a,b) => a+b, 0);
+    return { state: top, pct: Math.round(dist[top] / total * 100) };
+  })();
+
+  // Conditioning row
+  const condRow = (k, v, on) => `<div class="rop-cond-row">
+    <span class="k">${k}</span>
+    <span class="v ${on === true ? 'on' : on === false ? 'off' : ''}">${v}</span>
+  </div>`;
+
+  // Attribution
+  const driver = r.attribution.primary_driver;
+  const reversion = r.attribution.primary_reversion;
+  const equityDrag = r.attribution.equity_drag;
+  const eqInputs = r.attribution.equity_drag_inputs || {};
+
+  // Term curve mini-chart datasets
+  const curve = r.curve || {};
+  const curvePoints = [
+    {tenor: "spot",   v: curve.spot_vix},
+    curve.vix1d ? {tenor: "1d",    v: curve.vix1d} : null,
+    {tenor: "3M",     v: curve.vix3m},
+  ].filter(Boolean);
+
+  // History strip
+  const history = (r.history_recent || []).slice(-180);
+  const stripCells = history.map(h => `<div class="cell" data-st="${h.state}" title="${h.d}: ${h.state} (${h.spread})"></div>`).join("");
+
+  // Past event-day spikes for the "past spikes" list
+  const pastSpikes = (r.past_spikes || []).slice().reverse().slice(0, 8);
+  const spikeList = pastSpikes.map(s => `
+    <div>${s.d} · <strong>${s.state}</strong> Δspread ${s.delta_spread >= 0 ? "+" : ""}${s.delta_spread}${s.event ? ' · ' + s.event : ''}</div>
+  `).join("");
+
+  // Overlay scalar
+  const ovs = r.overlay_scalar || {};
+
+  // Walk-forward validation
+  const wf = (r.validation && r.validation.walk_forward_event_subsample) || {};
+  const wfRate = wf.reversion_hit_rate;
+  const wfText = wfRate != null
+    ? `${wf.n_reverted}/${wf.n_event_spikes} (${Math.round(wfRate*100)}%)`
+    : "no event-day spikes in sample yet";
+
+  return `<section class="rop">
+    <div class="rop-head">
+      <div>
+        <h2>REGIME & OVERLAY</h2>
+        <div class="sub">VIX term-structure state · spike attribution · diagnostic overlay</div>
+      </div>
+      <div style="font:400 11px var(--m);color:var(--t3)">
+        spread = <strong style="color:var(--t1)">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>
+        (Δ ${r.delta_spread >= 0 ? "+" : ""}${r.delta_spread})
+        · ${r.tradable_at ? `signal at close · tradable next open ${r.tradable_at}` : ""}
+      </div>
+    </div>
+
+    <div class="rop-grid">
+      <!-- State + dynamics -->
+      <div class="rop-block">
+        <h4>STATE · DYNAMICS</h4>
+        <div class="rop-state ${r.state}">${r.state.replace("_"," ")}</div>
+        <div class="rop-meta">
+          Age <strong>${r.state_age}</strong> session${r.state_age === 1 ? "" : "s"}
+          · median persistence <strong>${dyn.median_sessions || "—"}</strong>
+          (p25 ${dyn.p25_sessions || "—"} · p75 ${dyn.p75_sessions || "—"})
+          ${nextTypical ? `<div>most-common next state: <strong>${nextTypical.state}</strong> (${nextTypical.pct}% of transitions)</div>` : ""}
+        </div>
+        <div style="margin-top:10px">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">HISTORY · last 180 sessions</div>
+          <div class="rop-history-strip">${stripCells}</div>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">PAST EVENT SPIKES (most recent 8)</div>
+          <div class="rop-spike-list">${spikeList || '<div style="color:var(--t4);font-style:italic">no recent trigger episodes</div>'}</div>
+        </div>
+      </div>
+
+      <!-- Conditioning + attribution -->
+      <div class="rop-block">
+        <h4>CONDITIONING · ATTRIBUTION</h4>
+        ${condRow("Event flag",
+                  r.conditioning.event_flag ? r.conditioning.event_types.join(" · ") : "—",
+                  r.conditioning.event_flag)}
+        ${condRow("Δ2Y (bps)",
+                  r.conditioning.delta_2y_bps != null
+                    ? `${r.conditioning.delta_2y_bps >= 0 ? "+" : ""}${r.conditioning.delta_2y_bps} <span style="color:var(--t4);font-weight:400">(${r.conditioning.delta_2y_source})</span>`
+                    : '<span style="color:var(--t4)">unavailable (FRED T+1)</span>',
+                  r.conditioning.front_end_repriced)}
+        ${condRow("Close behaviour",
+                  `proxy ${r.conditioning.held_close_proxy} ${r.conditioning.held_close ? '· held' : '· faded'}`,
+                  r.conditioning.held_close)}
+        <div class="rop-attr">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">PRIMARY DRIVER ${r.trigger_fired ? "" : '<span style="color:var(--t5)">· no trigger</span>'}</div>
+          <div class="driver">${driver.replace(/_/g, " ")}</div>
+          <div class="reversion">reversion bucket: <strong style="color:var(--t1)">${reversion.toUpperCase()}</strong>
+            · horizon ${r.config.reversion_N} sessions within ${r.config.reversion_X_sigma}σ</div>
+          ${equityDrag ? `<div class="overlay-flag">↘ EQUITY DRAG OVERLAY · SMH ${(eqInputs.smh_1d_return*100).toFixed(1)}% · breadth Δ ${eqInputs.breadth_delta_pp >= 0 ? "+" : ""}${eqInputs.breadth_delta_pp}pp</div>` : ""}
+        </div>
+      </div>
+
+      <!-- Curve + overlay scalar + validation -->
+      <div class="rop-block">
+        <h4>TERM CURVE · OVERLAY</h4>
+        <div class="rop-curve-wrap"><canvas id="rop-curve"></canvas></div>
+        <div class="rop-overlay-scalar">
+          <div class="lbl">OVERLAY POSITION SCALAR</div>
+          <div class="v">${ovs.value >= 0 ? "+" : ""}${ovs.value} <span style="font:600 11px var(--m);color:var(--accent);letter-spacing:.14em">${ovs.label}</span></div>
+          <div class="cap">${ovs.caption || ""}</div>
+        </div>
+        <div class="rop-validation">
+          Walk-forward event-day reversion: <strong>${wfText}</strong>
+          · horizon ${wf.horizon_sessions || "—"} sessions / ±${wf.threshold_sigma || "—"}σ
+          <br>No-look-ahead: <strong>${r.validation && r.validation.no_lookahead_passed ? "PASS" : "—"}</strong>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function renderRopCurveChart(){
+  const r = S.volRegime;
+  if (!r || !r.curve) return;
+  const ctx = document.getElementById("rop-curve");
+  if (!ctx) return;
+  if (S.ropCurveChart) { try { S.ropCurveChart.destroy(); } catch(e){} }
+  const curve = r.curve;
+  // Plot tenors as discrete x positions
+  const points = [
+    {x: 0, y: curve.spot_vix, label: "spot"},
+    curve.vix1d ? {x: 1, y: curve.vix1d, label: "1d"} : null,
+    {x: 2, y: curve.vix3m, label: "3M"},
+  ].filter(p => p && p.y != null);
+  // Color the line by spread sign (proxy for contango/backwardation)
+  const lineColor = r.spread > 0.5 ? "#E0664E" : (r.spread > -1 ? "#DBA23E" : "#5FB98E");
+  try {
+    S.ropCurveChart = new Chart(ctx, {
+      type: "line",
+      data: { datasets: [{
+        label: "VIX term", data: points,
+        borderColor: lineColor, borderWidth: 2, tension: 0.15,
+        pointRadius: 5, pointBackgroundColor: lineColor, pointBorderColor: "#1C1916",
+        pointBorderWidth: 2,
+      }] },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+        scales: {
+          x: {type: "linear", min: -0.3, max: 2.3,
+              grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 9},
+                      callback: v => ({0: "spot", 1: "1d", 2: "3M"})[v] || ""}},
+          y: {grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 9}}},
+        },
+        plugins: {legend: {display: false},
+                  tooltip: {backgroundColor: "rgba(0,0,0,0.9)",
+                            callbacks: { label: ctx => ` ${["spot","1d","3M"][ctx.parsed.x] || ""}: ${ctx.parsed.y.toFixed(2)}` }}},
+      },
+    });
+  } catch (e) {
+    console.error("[rop-curve] Chart.js failed:", e);
+  }
+}
+
+// Event-day badge for cycle position
+function eventTodayBadge(){
+  const r = S.volRegime;
+  if (!r || !r.event_today || !r.event_today.length) return "";
+  return `<div class="event-today-badge">
+    <span class="lbl">⊙</span> SCHEDULED MACRO EVENT TODAY · ${r.event_today.join(" · ")}
+    <div class="event-today-cap">Regime read is conditional; vol moves expected; do not deploy fresh capital pre-print.</div>
+  </div>`;
+}
+
+// "Next scheduled event in N sessions"
+function nextEventLine(){
+  const r = S.volRegime;
+  if (!r || !r.next_event) return "";
+  const n = r.next_event.sessions_away;
+  return `<div class="next-event-line">
+    Next scheduled event: <strong style="color:var(--t2)">${r.next_event.types.join("·")}</strong>
+    in <strong style="color:var(--t2)">${n}</strong> session${n === 1 ? "" : "s"}
+    (${r.next_event.date}) · model uncertainty elevated.
   </div>`;
 }
 
@@ -2061,6 +2342,9 @@ function render(){
   // ---- 1. REGIME COMMAND CENTER ----
   h += renderRegimeCommandCenter(R);
 
+  // ---- 1b. REGIME & OVERLAY (vol-regime + attribution) ----
+  h += renderRegimeOverlayPanel();
+
   // ---- 2. TWO-SCORE SCANNER ----
   h += renderScanner();
 
@@ -2090,9 +2374,38 @@ function render(){
   </div>`;
 
   // ---- Leaderboard ----
-  const sorted = Object.entries(tmMap).filter(([_,m]) => m != null).sort((a,b) => (b[1].total - a[1].total));
+  // Regime-conditional sorting: when toggle is on, sort by the current-state
+  // shrunk annualized return from the JS-shrunk conditional scores. The
+  // unconditional toggle keeps the existing total-return ordering.
+  const condMode = !!S.leaderboardCondMode;
+  const currentState = (S.volRegime && S.volRegime.state) || null;
+  const condFor = (tid) => {
+    const cs = S.condScores && S.condScores.sleeves && S.condScores.sleeves[tid];
+    if (!cs || !currentState) return null;
+    const cell = cs.per_state && cs.per_state[currentState];
+    return cell || null;
+  };
+  const sorted = Object.entries(tmMap).filter(([_,m]) => m != null).sort((a,b) => {
+    if (!condMode) return (b[1].total - a[1].total);
+    const ca = condFor(a[0]); const cb = condFor(b[0]);
+    return ((cb && cb.shrunk_ann_return) || -9e9) - ((ca && ca.shrunk_ann_return) || -9e9);
+  });
+
+  const toggleHtml = `<span class="cond-toggle">
+    <button class="${!condMode ? "on" : ""}" data-cond-mode="off">UNCONDITIONAL</button>
+    <button class="${condMode  ? "on" : ""}" data-cond-mode="on">CONDITIONAL · ${currentState || "—"}</button>
+  </span>`;
+
+  const sc = S.condScores || {};
+  const sn = (sc.state_day_counts || {})[currentState] || 0;
+  const condCap = condMode
+    ? `<div class="cond-caption">CONDITIONAL on <strong style="color:var(--accent)">${currentState || "—"}</strong>: scores are James-Stein shrunk toward unconditional. Bucket n = ${sn} days. ${sc.caption || ""}</div>`
+    : "";
+
   h += `<div class="lbtable">
-    <div class="lb-h"><h2>LEADERBOARD</h2><div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ranked by total return</div></div>
+    <div class="lb-h"><h2>LEADERBOARD</h2>
+      <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"}${toggleHtml}</div></div>
+    ${condCap}
     <table>
       <tr>
         <th>#</th><th>TIER</th>
@@ -2120,7 +2433,13 @@ function render(){
         <div class="tier-desc">${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}</div>
       </td>
       <td class="num">${navVal ? "$"+fmt(navVal) : "—"}</td>
-      <td class="num ${pnlc(m.total)}">${fmtP(m.total)}</td>
+      <td class="num ${pnlc(m.total)}">${fmtP(m.total)}${(() => {
+        if (!condMode) return "";
+        const cc = condFor(tid);
+        if (!cc || cc.shrunk_ann_return == null) return ` <small style="color:var(--t4)">· n=0</small>`;
+        const s = cc.shrunk_ann_return;
+        return ` <small style="color:var(--accent);font-weight:500"> · ${currentState[0].toUpperCase()}: ${(s*100).toFixed(1)}%</small><small style="color:var(--t4)"> · n=${cc.n} · w=${cc.shrinkage_weight}</small>`;
+      })()}</td>
       <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
       <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
       <td class="num">${m.sharpe.toFixed(2)}</td>
@@ -2229,9 +2548,17 @@ function render(){
       if (row && row.scrollIntoView) row.scrollIntoView({behavior:"smooth", block:"center"});
     }, 50);
   }));
+  // Conditional/unconditional toggle on leaderboard
+  document.querySelectorAll("[data-cond-mode]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.leaderboardCondMode = b.dataset.condMode === "on";
+    render();
+  }));
+
   // Draw charts after DOM
   setTimeout(() => {
     renderRegimeTimeline();
+    renderRopCurveChart();
     renderChart(allSeries, S.period);
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
@@ -2266,6 +2593,9 @@ async function init(){
   S.regimeV4   = await loadCSV("data/regime_v4_daily.csv");
   S.v4Cal      = await loadJSON("data/v4_calibration.json");
   S.intraday   = await loadJSON("data/intraday.json");
+  S.volRegime  = await loadJSON("data/vol_regime.json");
+  S.condScores = await loadJSON("data/regime_conditional_scores.json");
+  S.eventCal   = await loadJSON("data/event_calendar.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 

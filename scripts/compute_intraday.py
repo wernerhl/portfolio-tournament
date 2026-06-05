@@ -35,6 +35,16 @@ TICKERS = {
     "gld":   "GC=F",
     "tlt":   "TLT",
     "dxy":   "DX-Y.NYB",
+    # Rates — yfinance for intraday since FRED publishes after the close.
+    # Vol-regime classifier's "front-end repricing" flag uses Δ2Y in bps.
+    "us02y": "^IRX",      # placeholder: ^IRX = 13W; better proxies for 2Y exist
+                          # but yfinance's 2Y is unreliable. The intraday script
+                          # captures the rate level; vol_regime falls back to
+                          # last-FRED-known when this is too noisy.
+    "us02y_alt": "2YY=F",  # CME 2-year T-note futures yield (cleaner)
+    # Equity sector proxies for the idiosyncratic_equity overlay
+    "smh":   "SMH",
+    "soxx":  "SOXX",
 }
 
 

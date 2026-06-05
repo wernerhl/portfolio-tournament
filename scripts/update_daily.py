@@ -25,7 +25,9 @@ scripts = [
     "build_ticker_data.py",
     "build_indicator_series.py",
     "compute_signals.py",
-    "compute_intraday.py",   # best-effort; OK to fail (yfinance flake)
+    "compute_intraday.py",         # best-effort; OK to fail (yfinance flake)
+    "compute_vol_regime.py",       # VIX term-structure regime + attribution
+    "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
 ]
 
 for script in scripts:
