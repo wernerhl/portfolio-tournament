@@ -261,7 +261,8 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 const S = {tournament:null, backtest:null, holdings:null, config:null, tickers:null, metrics:null,
            regime:null, regimeDaily:null,
            period:"ALL", expanded:null, expandedTicker:null,
-           chart:null, tickerChart:null, regimeChart:null, tickerChartPeriod:"6M"};
+           chart:null, tickerChart:null, regimeChart:null, tickerChartPeriod:"6M",
+           expandedIndicator:null, indPeriod:"1Y"};
 
 const fmt   = n => (typeof n === "number") ? n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "—";
 const fmt2  = n => (typeof n === "number") ? n.toFixed(2) : "—";
@@ -435,12 +436,18 @@ function renderIndicatorDetail(){
 // Apply a 1Y / 2Y / 5Y / ALL window to a [{d, v}] series
 function indFilterPeriod(arr, period){
   if (!arr || !arr.length || period === "ALL") return arr;
+  // Default to 1Y when period is undefined. Without this, switch hits no case,
+  // `start` stays at the LAST data point's date, and the filter keeps only
+  // that single point. A 1-point line has no horizontal extent → Y-axis
+  // labels render but no blue line shows (the "empty graphs" bug).
+  const p = period || "1Y";
   const last = new Date(arr[arr.length-1].d);
   const start = new Date(last);
-  switch(period){
+  switch(p){
     case "1Y": start.setFullYear(start.getFullYear()-1); break;
     case "2Y": start.setFullYear(start.getFullYear()-2); break;
     case "5Y": start.setFullYear(start.getFullYear()-5); break;
+    default:   start.setFullYear(start.getFullYear()-1); break;
   }
   return arr.filter(p => new Date(p.d) >= start);
 }
@@ -503,7 +510,9 @@ function _doRenderIndicatorCharts(){
         options: {
           responsive:true, maintainAspectRatio:false, animation:{duration:200},
           interaction:{mode:"nearest",axis:"x",intersect:false},
-          parsing: false,
+          // No parsing:false — Chart.js 4 default parser handles {x,y} fine on a
+          // linear scale, and parsing:false combined with segment/tooltip
+          // callbacks reading ctx.parsed.y throws silently and kills the render.
           scales: {
             x: {type:"linear", min: 0, max: Math.max(0, raw.length - 1),
                 grid:{color:"rgba(255,255,255,0.03)"},
@@ -537,7 +546,14 @@ function _doRenderIndicatorCharts(){
         {label: "z", data: zs,
          borderColor: "#60a5fa",
          borderWidth: 1.6, pointRadius: 0, tension: 0.1,
-         segment: {borderColor: ctx => ((ctx.p1 && ctx.p1.parsed && ctx.p1.parsed.y > 0) ? "#f87171" : "#4ade80")},
+         // Defensive: ctx.p1.parsed may be missing in some Chart.js paths.
+         // Fall back to ctx.p1.raw which is always the original data point.
+         segment: {borderColor: ctx => {
+           const y = (ctx.p1 && ctx.p1.parsed && ctx.p1.parsed.y != null)
+             ? ctx.p1.parsed.y
+             : (ctx.p1 && ctx.p1.raw && ctx.p1.raw.y != null) ? ctx.p1.raw.y : 0;
+           return y > 0 ? "#f87171" : "#4ade80";
+         }},
          fill: {target: "origin",
                 above: "rgba(248,113,113,0.15)",
                 below: "rgba(74,222,128,0.10)"}},
@@ -545,7 +561,7 @@ function _doRenderIndicatorCharts(){
       options: {
         responsive:true, maintainAspectRatio:false, animation:{duration:200},
         interaction:{mode:"nearest",axis:"x",intersect:false},
-        parsing: false,
+        // (See raw chart above) — no parsing:false; Chart.js 4 handles {x,y}.
         scales: {
           x: {type:"linear", min: 0, max: Math.max(0, zs.length - 1),
               grid:{color:"rgba(255,255,255,0.03)"},
