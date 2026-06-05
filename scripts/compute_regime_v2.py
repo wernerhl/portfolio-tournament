@@ -392,6 +392,20 @@ def main():
     R_full_v = float(latest_row["R_full"])
     divv     = float(latest_row["divergence"])
 
+    # ── Complacency flag (high SKEW + low VIX = tail priced + protection cheap) ──
+    # When this is true, the headline must NOT show DEPLOY. A +0.05 bump is
+    # applied to the displayed R_lead so the gauge tilts more cautious.
+    # Documented, fixed bump — not data-fit.
+    raw_lookup = {i["key"]: i for i in indicator_payload}
+    skew_raw = (raw_lookup.get("skew") or {}).get("value")
+    vix_raw  = (raw_lookup.get("vix")  or {}).get("value")
+    complacency_flag = bool(skew_raw is not None and vix_raw is not None
+                            and skew_raw > 140 and vix_raw < 17)
+    complacency_reason = (f"SKEW {skew_raw:.0f} > 140 and VIX {vix_raw:.1f} < 17 — "
+                          f"tail priced, protection cheap, market unhedged"
+                          ) if complacency_flag else None
+    R_lead_displayed = round(min(1.0, R_lead_v + (0.05 if complacency_flag else 0.0)), 4)
+
     if divv > 0.15:
         verdict = (f"Forward markets ({R_lead_v:.2f}) pricing risk above equities ({R_full_v:.2f}). "
                    f"Divergence +{divv:.2f} — increase hedges before drawdown.")
@@ -410,11 +424,16 @@ def main():
     else:
         verdict = (f"Crisis regime: {n_cri} channels in stress. Defensive posture, maximize cash.")
 
+    # Prepend the complacency callout so it's the first thing the user reads.
+    if complacency_flag:
+        verdict = f"COMPLACENCY FLAG — {complacency_reason}. " + verdict
+
     payload = {
         "updated":      datetime.now().isoformat(),
         "as_of":        asof.strftime("%Y-%m-%d"),
         # v2 fields
         "R_lead":       round(R_lead_v, 4),
+        "R_lead_displayed": R_lead_displayed,
         "R_full":       round(R_full_v, 4),
         "divergence":   round(divv, 4),
         "regime":       str(latest_row["regime"]),
@@ -422,6 +441,9 @@ def main():
         "divergence_alert": str(latest_row["divergence_alert"]),
         "n_lead_indicators": int(latest_row["n_lead_indicators"]),
         "n_full_indicators": int(latest_row["n_full_indicators"]),
+        # complacency flag
+        "complacency_flag":   complacency_flag,
+        "complacency_reason": complacency_reason,
         # v1 compatibility (dashboard's renderRegimeCommandCenter reads R_t)
         "R_t":          round(R_full_v, 4),
         # status counts

@@ -22,6 +22,9 @@ REPO = Path(__file__).resolve().parent.parent
 DATA = REPO / "data"
 
 BENCHMARK_TICKERS = ["SPY", "TLT", "QQQ", "SSO"]
+BENCHMARK_KEYS = ["spy", "qqq", "sso", "tlt"]   # canonical lowercase storage keys
+INCEPTION_FILE = DATA / "benchmark_inception.json"
+START_CAPITAL = 100000.0
 
 
 def load_json(p): return json.load(open(p))
@@ -73,6 +76,102 @@ def effr_daily_rate():
 def cash_pct_from_formula(R, spec):
     cp = min(spec["cash_max"], spec["cash_floor"] + R * spec["cash_slope"])
     return max(cp, spec["cash_floor"])
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Inception-anchored benchmarks (replaces the buggy day-over-day chaining
+# that hit a case-mismatch on prev_benchmarks and froze NAV at $100k).
+# Each benchmark NAV = START_CAPITAL × (current_price / inception_price).
+# Inception prices persist in data/benchmark_inception.json.
+# ──────────────────────────────────────────────────────────────────────
+def get_inception_prices(history, current_prices):
+    """Return dict {spy, qqq, sso, tlt, date}. Create/persist if missing."""
+    if INCEPTION_FILE.exists():
+        try:
+            return json.load(open(INCEPTION_FILE))
+        except Exception as e:
+            print(f"  warn corrupted {INCEPTION_FILE}: {e}", file=sys.stderr)
+
+    inception = {}
+    if history:
+        first = history[0]
+        bms = first.get("benchmarks", {}) or {}
+        for b in BENCHMARK_KEYS:
+            entry = bms.get(b, {})
+            if isinstance(entry, dict) and entry.get("price"):
+                inception[b] = float(entry["price"])
+        inception_date = first.get("date")
+    else:
+        inception_date = datetime.now().strftime("%Y-%m-%d")
+
+    # Fill any missing slot from today's fetched prices (first-ever run path)
+    upper_map = {"spy": "SPY", "qqq": "QQQ", "sso": "SSO", "tlt": "TLT"}
+    for b in BENCHMARK_KEYS:
+        if b not in inception and current_prices.get(upper_map[b]):
+            inception[b] = float(current_prices[upper_map[b]])
+
+    inception["date"] = inception_date
+    with open(INCEPTION_FILE, "w") as f:
+        json.dump(inception, f, indent=2)
+    print(f"  wrote {INCEPTION_FILE.name}  ({inception})")
+    return inception
+
+
+def benchmark_navs_from_prices(prices_lower: dict, inception: dict) -> dict:
+    """
+    prices_lower: {"spy": 759.57, "qqq": ..., "sso": ..., "tlt": ...}
+    Returns {"spy":{nav,price}, "qqq":..., "sso":..., "tlt":..., "60_40":{nav}}.
+    """
+    out = {}
+    for b in BENCHMARK_KEYS:
+        px  = prices_lower.get(b)
+        px0 = inception.get(b)
+        if px is not None and px0:
+            out[b] = {"nav": round(START_CAPITAL * px / px0, 2), "price": round(float(px), 4)}
+        elif px is not None:
+            out[b] = {"price": round(float(px), 4)}   # no inception yet → no nav
+
+    spy_px, spy0 = prices_lower.get("spy"), inception.get("spy")
+    tlt_px, tlt0 = prices_lower.get("tlt"), inception.get("tlt")
+    if spy_px and spy0 and tlt_px and tlt0:
+        nav_6040 = START_CAPITAL * (0.6 * spy_px / spy0 + 0.4 * tlt_px / tlt0)
+        out["60_40"] = {"nav": round(nav_6040, 2)}
+    return out
+
+
+def backfill_benchmark_navs(tournament_path: Path = None) -> int:
+    """
+    One-off migration: recompute NAV for every benchmark on every past date
+    using the persisted inception prices. Returns number of entries touched.
+    """
+    tournament_path = tournament_path or (DATA / "tournament.json")
+    if not tournament_path.exists():
+        return 0
+    t = json.load(open(tournament_path))
+    history = t.get("history", [])
+    if not history:
+        return 0
+
+    # Ensure inception file exists before backfilling
+    inception = get_inception_prices(history, {})
+    touched = 0
+    for entry in history:
+        bms = entry.get("benchmarks", {}) or {}
+        prices_lower = {}
+        for b in BENCHMARK_KEYS:
+            blob = bms.get(b, {})
+            if isinstance(blob, dict) and blob.get("price"):
+                prices_lower[b] = float(blob["price"])
+        if not prices_lower:
+            continue
+        new_bms = benchmark_navs_from_prices(prices_lower, inception)
+        entry["benchmarks"] = new_bms
+        touched += 1
+    t["history"] = history
+    with open(tournament_path, "w") as f:
+        json.dump(t, f, indent=2, default=str)
+    print(f"  backfilled {touched} historical benchmark entries → {tournament_path.name}")
+    return touched
 
 
 def main():
@@ -250,55 +349,19 @@ def main():
         "positions": werner_positions,
     }
 
-    # ----- BENCHMARKS ($100K notional, compounding by SPY/QQQ/SSO daily; 60/40 monthly rebalance) -----
-    bench_out = {}
-    today_prices = {b: prices.get(b) for b in BENCHMARK_TICKERS}
-
-    for b in ["SPY", "QQQ"]:
-        if not prev_benchmarks:
-            bench_out[b] = {"nav": initial_cap, "price": today_prices.get(b)}
-        else:
-            prev = prev_benchmarks.get(b, {})
-            prev_p = prev.get("price")
-            prev_n = prev.get("nav", initial_cap)
-            if prev_p and today_prices.get(b):
-                ret = today_prices[b] / prev_p - 1
-                bench_out[b] = {"nav": round(prev_n * (1 + ret), 2), "price": today_prices[b]}
-            else:
-                bench_out[b] = {"nav": prev_n, "price": today_prices.get(b)}
-
-    # SSO: synthetic 1.5× daily SPY return
-    if not prev_benchmarks:
-        bench_out["SSO"] = {"nav": initial_cap, "price": today_prices.get("SSO")}
-    else:
-        prev_p_spy = prev_benchmarks.get("SPY", {}).get("price")
-        prev_n_sso = prev_benchmarks.get("SSO", {}).get("nav", initial_cap)
-        if prev_p_spy and today_prices.get("SPY"):
-            spy_ret = today_prices["SPY"] / prev_p_spy - 1
-            bench_out["SSO"] = {"nav": round(prev_n_sso * (1 + 1.5 * spy_ret), 2),
-                                "price": today_prices.get("SSO")}
-        else:
-            bench_out["SSO"] = {"nav": prev_n_sso, "price": today_prices.get("SSO")}
-
-    # 60/40 — buy & rebalance to 60/40 once per month-start; here just compound by daily return
-    if not prev_benchmarks:
-        bench_out["60_40"] = {"nav": initial_cap}
-    else:
-        prev_p_spy = prev_benchmarks.get("SPY", {}).get("price")
-        prev_p_tlt = prev_benchmarks.get("TLT", {}).get("price")
-        prev_n_60_40 = prev_benchmarks.get("60_40", {}).get("nav", initial_cap)
-        ret_spy = (today_prices["SPY"] / prev_p_spy - 1) if (prev_p_spy and today_prices.get("SPY")) else 0
-        ret_tlt = (today_prices["TLT"] / prev_p_tlt - 1) if (prev_p_tlt and today_prices.get("TLT")) else 0
-        bench_out["60_40"] = {"nav": round(prev_n_60_40 * (1 + 0.6 * ret_spy + 0.4 * ret_tlt), 2)}
-    if today_prices.get("TLT"):
-        bench_out["TLT"] = {"price": today_prices["TLT"]}
-
-    # ----- Compose entry + write -----
-    # Re-key benchmarks to lowercase to match backtest CSV
-    benchmark_lookup = {"SPY": "spy", "QQQ": "qqq", "SSO": "sso", "60_40": "60_40"}
-    bench_normalized = {}
-    for k, v in bench_out.items():
-        bench_normalized[benchmark_lookup.get(k, k.lower())] = v
+    # ----- BENCHMARKS (inception-anchored: NAV = $100k × current/inception) -----
+    # The old day-over-day chaining looked up prev_benchmarks["SPY"] but storage
+    # was lowercase ("spy") → prev was always {} → NAV froze at 100000 forever.
+    # Inception anchoring is robust to history corruption, missing days, and
+    # case-sensitive key bugs.
+    inception = get_inception_prices(history, prices)
+    prices_lower = {
+        "spy": prices.get("SPY"),
+        "qqq": prices.get("QQQ"),
+        "sso": prices.get("SSO"),
+        "tlt": prices.get("TLT"),
+    }
+    bench_normalized = benchmark_navs_from_prices(prices_lower, inception)
 
     entry = {
         "date": today,

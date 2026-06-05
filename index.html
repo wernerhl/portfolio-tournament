@@ -670,6 +670,143 @@ function v4RegimeAction(reg){
   })[reg] || "—";
 }
 
+// ──────────────────────────────────────────────────────────────────
+// Top banner: intraday SHOCK (red) or staleness (amber).
+// Renders ABOVE everything so the user never reads a calm gauge
+// without first seeing that the tape has cracked.
+// ──────────────────────────────────────────────────────────────────
+function renderTopBanner(){
+  const id = S.intraday;
+  if (!id) return "";
+  const now = new Date();
+  const snap = id.timestamp ? new Date(id.timestamp + "Z") : null;
+  const ageMin = snap ? (now - snap) / 60000 : 9999;
+
+  // Market hours (rough UTC envelope covering EST + EDT)
+  const utcH = now.getUTCHours(), utcMin = now.getUTCMinutes();
+  const dow = now.getUTCDay();
+  const marketOpen = dow >= 1 && dow <= 5 &&
+    ((utcH > 13 || (utcH === 13 && utcMin >= 30)) && utcH < 21);
+
+  // 1) SHOCK — highest priority
+  if (id.shock_active) {
+    const reasons = (id.shock_reasons || []).join(" · ");
+    const spxStr = (id.spx_change_pct >= 0 ? "+" : "") + (id.spx_change_pct ?? 0) + "%";
+    const vixStr = (id.vix_change_pct >= 0 ? "+" : "") + (id.vix_change_pct ?? 0) + "%";
+    return `<div style="background:rgba(220,38,38,0.15);border:1px solid #dc2626;
+       border-radius:8px;padding:14px 18px;margin-bottom:16px">
+      <div style="font:800 13px var(--m);color:#f87171;letter-spacing:.1em">
+        ⚠ INTRADAY STRESS — ACUTE RISK IN CURRENT SESSION</div>
+      <div style="font:400 12px var(--s);color:#fca5a5;margin-top:6px;line-height:1.55">
+        ${reasons}. SPX <strong>${spxStr}</strong> intraday, VIX
+        <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>).
+        The end-of-day regime below is <strong>STALE</strong> and does not reflect this move.
+        Do not deploy new capital until the close.
+        <span style="color:#fca5a570">snapshot ${Math.round(ageMin)} min ago</span></div>
+    </div>`;
+  }
+
+  // 2) STALENESS — amber when market open and either old or moved
+  const spxMoved = Math.abs(id.spx_change_pct || 0) > 1.0;
+  if (marketOpen && (ageMin > 60 || spxMoved)) {
+    const spxStr = (id.spx_change_pct >= 0 ? "+" : "") + (id.spx_change_pct ?? 0) + "%";
+    return `<div style="background:rgba(250,204,21,0.12);border:1px solid #facc15;
+       border-radius:8px;padding:12px 16px;margin-bottom:16px">
+      <div style="font:700 12px var(--m);color:#facc15;letter-spacing:.08em">
+        ⚠ REGIME SNAPSHOT IS STALE</div>
+      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+        Regime computed on prior close. SPX <strong>${spxStr}</strong> since,
+        VIX now <strong>${id.vix_now}</strong>. The DEPLOY/CAUTIOUS call below
+        does NOT reflect the current session.</div>
+    </div>`;
+  }
+
+  // 3) COMPLACENCY only — info chip
+  if (id.complacency_active) {
+    return `<div style="background:rgba(168,85,247,0.10);border:1px solid #a855f7;
+       border-radius:8px;padding:10px 14px;margin-bottom:16px">
+      <div style="font:700 11px var(--m);color:#c084fc;letter-spacing:.08em">
+        COMPLACENCY FLAG</div>
+      <div style="font:400 11px var(--s);color:#ddd6fe;margin-top:4px;line-height:1.55">
+        ${id.complacency_reason}.</div>
+    </div>`;
+  }
+  return "";
+}
+
+// ──────────────────────────────────────────────────────────────────
+// headlineVerdict — show the WORST of all signals, never the calmest.
+// Ranks v2 regime, v4 graduated regime, crisis-channel count,
+// complacency flag, and intraday shock. Returns {label, color, action}.
+// ──────────────────────────────────────────────────────────────────
+function headlineVerdict(){
+  const reg = S.regime || {};
+  const v4Last = (S.regimeV4 && S.regimeV4.length)
+    ? S.regimeV4.filter(r => r && r.p_5_40_calibrated != null && !isNaN(r.p_5_40_calibrated)).slice(-1)[0]
+    : null;
+  const v4reg = v4Last ? v4Last.graduated_regime : null;
+
+  // Severity rankings (higher = more cautious)
+  const rank = {
+    "DEPLOY": 0, "LOW RISK": 0, "CLEAR": 0,
+    "CAUTIOUS": 1, "ELEVATED": 1, "WATCH": 1,
+    "DEFENSIVE": 2, "HIGH RISK": 2, "WARNING": 2,
+    "CRISIS": 3, "DANGER": 3,
+  };
+  const colorMap = {
+    "DEPLOY":"#4ade80", "CAUTIOUS":"#facc15", "DEFENSIVE":"#fb923c", "CRISIS":"#f87171",
+    "INTRADAY STRESS":"#dc2626", "COMPLACENT":"#c084fc",
+  };
+  const actionMap = {
+    "DEPLOY":     "Full sizing; new entries OK; sell out-of-the-money premium.",
+    "CAUTIOUS":   "Trim sizing to 75%; require quality screens; tighten stops.",
+    "DEFENSIVE":  "Trim sizing to 50%; raise cash; no new positions in cyclicals.",
+    "CRISIS":     "Defensive: max cash, exit weak positions, hedge remaining longs.",
+    "INTRADAY STRESS": "Do not deploy new capital until the close. Hedge or wait.",
+    "COMPLACENT": "Cheap protection available; consider buying VIX/puts before re-deploying.",
+  };
+
+  let worst = "DEPLOY";
+  let worstRank = 0;
+  const consider = (label) => {
+    if (!label) return;
+    const r = rank[label];
+    if (r != null && r > worstRank) { worstRank = r; worst = label; }
+  };
+
+  consider(reg.regime);
+  consider(reg.early_warning);
+  consider(v4reg);
+  if ((reg.n_crisis || 0) >= 1) consider("DEFENSIVE");
+  if ((reg.n_crisis || 0) >= 4) consider("CRISIS");
+  // Complacency: NEVER show DEPLOY when SKEW>140 + VIX<17
+  const complacent = !!(reg.complacency_flag || (S.intraday && S.intraday.complacency_active));
+  if (complacent && worstRank < 1) { worst = "COMPLACENT"; worstRank = 1; }
+  // Shock overrides everything
+  if (S.intraday && S.intraday.shock_active) { worst = "INTRADAY STRESS"; worstRank = 99; }
+
+  // Map v2 → action vocabulary
+  if (worst === "LOW RISK")  worst = "DEPLOY";
+  if (worst === "ELEVATED")  worst = "CAUTIOUS";
+  if (worst === "HIGH RISK") worst = "DEFENSIVE";
+  if (worst === "WATCH")     worst = "CAUTIOUS";
+  if (worst === "WARNING")   worst = "DEFENSIVE";
+  if (worst === "DANGER")    worst = "CRISIS";
+
+  return {
+    label:  worst,
+    color:  colorMap[worst] || "#a3a3a3",
+    action: actionMap[worst] || "",
+    inputs: {
+      v2_regime: reg.regime, v2_ew: reg.early_warning,
+      v4_regime: v4reg,
+      n_crisis: reg.n_crisis || 0,
+      complacent: complacent,
+      shock: !!(S.intraday && S.intraday.shock_active),
+    },
+  };
+}
+
 function renderRegimeCommandCenter(R){
   const reg = S.regime || {};
   const total = reg.n_indicators || 12;
@@ -697,15 +834,23 @@ function renderRegimeCommandCenter(R){
   const v4reg = v4Last ? v4Last.graduated_regime : null;
   const v4color = v4RegimeColor(v4reg);
 
-  // Verdict: v4-driven if available, else v2 verdict from regime_indicators.json
-  const verdict = v4Last
-    ? `<strong style="color:${v4color}">${v4reg}.</strong> ${v4RegimeAction(v4reg)}`
-    : (reg.verdict || (R != null ? `R<sub>t</sub> = ${R.toFixed(3)}` : "Regime data unavailable."));
-
-  // Gauge stays driven by R_full (0-1 calibrated visually); label uses v4 if available
+  // Headline = WORST of v2 / v4 / crisis-count / complacency / shock
+  const headline = headlineVerdict();
+  const lbl = headline.label;
+  const lblColor = headline.color;
   const rDisp = R_full != null ? R_full.toFixed(3) : "—";
-  const lbl = v4reg || (R_full != null ? (rgm || regimeLabel(R_full).toUpperCase()) : "—");
-  const lblColor = v4reg ? v4color : (R_full != null ? ewColor(rgm) : "var(--t3)");
+
+  // Verdict prefers headline action; surface the per-source inputs so the user sees WHY
+  const inputs = headline.inputs;
+  const inputLine = [
+    inputs.v2_regime ? `v2 ${inputs.v2_regime}` : null,
+    inputs.v4_regime ? `v4 ${inputs.v4_regime}` : null,
+    inputs.n_crisis > 0 ? `${inputs.n_crisis} crisis ch.` : null,
+    inputs.complacent ? `complacent` : null,
+    inputs.shock ? `intraday shock` : null,
+  ].filter(Boolean).join(" · ");
+  const verdict = `<strong style="color:${lblColor}">${headline.label}.</strong> ${headline.action}
+    <div style="margin-top:6px;font:400 10px var(--m);color:var(--t4)">${inputLine}</div>`;
 
   // ---- New score row: graduated probabilities (v4) + v2 R_full as backup ----
   const probCell = (label, p, action) => {
@@ -723,9 +868,13 @@ function renderRegimeCommandCenter(R){
       </div>`;
   };
   const scoreRow = v4Last ? `<div class="score-row">
-      ${probCell("≥3% / 20d", p3_20, "")}
-      ${probCell("≥5% / 40d · CAL", p5_40, v4reg)}
-      ${probCell("≥10% / 60d", p10_60, "")}
+      ${probCell("≥3% over NEXT 20D", p3_20, "")}
+      ${probCell("≥5% over NEXT 40D · CAL", p5_40, v4reg)}
+      ${probCell("≥10% over NEXT 60D", p10_60, "")}
+    </div>
+    <div style="margin-top:6px;font:400 9.5px var(--m);color:var(--t4);text-align:center;line-height:1.4">
+      Multi-week drawdown probabilities (cumulative over the horizon). Does NOT protect against
+      single-day gaps — see the intraday banner at the top for same-session risk.
     </div>` : (v2 ? `<div class="score-row">
       <div class="score-cell">
         <div class="k">EARLY WARNING</div>
@@ -759,7 +908,7 @@ function renderRegimeCommandCenter(R){
   return `<section class="rcc">
     <div class="rcc-top">
       <div class="rcc-card">
-        <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">v4 calibrated</span>' : ''}</h3>
+        <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">composite verdict</span>' : ''}</h3>
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
         <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
@@ -1446,6 +1595,9 @@ function render(){
     </div>
   </div>`;
 
+  // ---- 0. INTRADAY SHOCK / STALENESS BANNER (renders ABOVE the regime gauge) ----
+  h += renderTopBanner();
+
   // ---- 1. REGIME COMMAND CENTER ----
   h += renderRegimeCommandCenter(R);
 
@@ -1612,6 +1764,7 @@ async function init(){
   S.signals    = await loadJSON("data/ticker_signals.json");
   S.regimeV4   = await loadCSV("data/regime_v4_daily.csv");
   S.v4Cal      = await loadJSON("data/v4_calibration.json");
+  S.intraday   = await loadJSON("data/intraday.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 
