@@ -142,6 +142,32 @@ def regime_multiplier(R_full: float) -> float:
     else:               return 0.0
 
 
+# ── Trade-now strength = setup × entry-proximity discount ───────────────
+# The raw signal_strength encodes "this is a great setup." It does NOT
+# encode "buy at THIS price." When price has run above the model's entry,
+# discount the strength so the dashboard's trade-now bar reflects actual
+# entry timing, not just thesis quality. Without this, TPL would show
+# strength 100 even when price is +3% above the buy zone.
+def trade_now_strength(setup_strength: int, price: float | None,
+                        entry: float | None, signal: str) -> int:
+    if signal in ("BUY", "STRONG BUY") and entry and price and entry > 0:
+        if price <= entry:
+            prox = 1.0
+        else:
+            overshoot = (price - entry) / entry
+            # Linear decay: at entry = 1.0, +10% = 0.4, floor 0.2.
+            prox = max(0.2, 1.0 - overshoot * 6.0)
+        return int(round(setup_strength * prox))
+    return int(setup_strength)
+
+
+def trade_now_note(price: float | None, entry: float | None, signal: str) -> str | None:
+    if signal in ("BUY", "STRONG BUY") and entry and price and price > entry:
+        pct = (price - entry) / entry * 100
+        return f"price ${price:.0f} is {pct:.0f}% above entry ${entry:.0f} — wait for pullback"
+    return None
+
+
 # ====================================================================
 # Position mode (owned stocks)
 # ====================================================================
@@ -265,11 +291,14 @@ def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_
         parts.append(hedge["text"])
     why = ". ".join(parts) + "."
 
+    # Position mode: no entry to compare against → trade_now == setup strength
     return {
         "ticker": ticker,
         "mode": "position",
         "signal": signal,
         "signal_strength": int(strength),
+        "trade_now_strength": int(strength),
+        "trade_now_note": None,
         "category": category,
         "position": {
             "shares":         float(shares),
@@ -512,11 +541,16 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
     if not risks:           risks.append("No major risk flags identified")
     risk_text = ". ".join(risks) + "."
 
+    # Entry mode: discount setup strength when price has run above entry
+    tn_strength = trade_now_strength(int(strength), current, entry_primary, signal)
+    tn_note     = trade_now_note(current, entry_primary, signal)
     return {
         "ticker":          ticker,
         "mode":            "entry",
         "signal":          signal,
         "signal_strength": int(strength),
+        "trade_now_strength": tn_strength,
+        "trade_now_note":  tn_note,
         "category":        category,
         "extended":        extended,
         "entry":           {"primary": entry_primary, "secondary": entry_secondary, "basis": entry_basis},
@@ -647,6 +681,13 @@ def main():
         sig = compute_signal(sym, scores, prices, fund, regime, holdings, pv)
         if sig is None:
             continue
+        # Add composite percentile against the FULL scored universe (not just
+        # the 58 signals computed today). This drives the dashboard's "top X%"
+        # subtitle on the Business Quality bar.
+        n_universe = len(scores) if len(scores) > 0 else 1
+        rank = sig.get("data", {}).get("rank")
+        if rank and rank > 0:
+            sig.setdefault("data", {})["composite_pct"] = round(100 * (1 - (rank - 1) / n_universe), 1)
         signals[tk] = sig
         mode = sig["mode"]
         if mode == "position":

@@ -121,6 +121,56 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 .fund-card .k{font:600 7px var(--m);color:var(--t4);letter-spacing:.15em}
 .fund-card .v{font:700 12px var(--m);margin-top:2px}
 
+/* ── Two-score header (detail view) ───────────────────────────────── */
+.two-score{background:rgba(255,255,255,0.02);border:1px solid var(--bd);
+  border-radius:8px;padding:14px 18px;margin-bottom:14px}
+.two-score .ts-row{display:grid;grid-template-columns:130px 1fr 130px 1fr;
+  gap:14px;align-items:center;margin-bottom:8px}
+.two-score .ts-label{font:600 10px var(--m);letter-spacing:.10em;color:var(--t3)}
+.two-score .ts-bar{height:14px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;position:relative}
+.two-score .ts-bar-fill{height:100%;border-radius:2px;transition:width .3s}
+.two-score .ts-val{font:700 13px var(--m);color:var(--t1)}
+.two-score .ts-of{font:400 10px var(--m);color:var(--t4)}
+.two-score .ts-sub{font:400 11px var(--m);color:var(--t4)}
+.two-score .ts-divergence{margin-top:10px;padding:8px 12px;
+  background:rgba(255,255,255,0.02);border-radius:4px;
+  font:600 12px var(--m);letter-spacing:.02em}
+
+/* ── Scanner list (top-level) ─────────────────────────────────────── */
+.scanner{margin-bottom:16px}
+.scanner-head{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:8px;flex-wrap:wrap;gap:10px}
+.scanner-head h2{font:700 14px var(--m);letter-spacing:.10em;color:var(--t2);margin:0}
+.scanner-head .sc-sub{font:400 10px var(--m);color:var(--t4)}
+.scanner .filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.scanner .filter-btn{background:transparent;border:1px solid var(--bd);color:var(--t3);
+  font:500 10px var(--m);letter-spacing:.06em;padding:4px 10px;border-radius:4px;
+  cursor:pointer;transition:all .15s}
+.scanner .filter-btn:hover{color:var(--t1);border-color:rgba(255,255,255,0.18)}
+.scanner .filter-btn.on{background:rgba(96,165,250,0.10);color:#93c5fd;border-color:rgba(96,165,250,0.40)}
+.scanner table{width:100%;border-collapse:collapse;font:400 11px var(--m)}
+.scanner table th{text-align:left;font:600 9px var(--m);color:var(--t4);
+  letter-spacing:.12em;padding:6px 8px;border-bottom:1px solid var(--bd);cursor:pointer;
+  user-select:none;white-space:nowrap}
+.scanner table th:hover{color:var(--t2)}
+.scanner table th.num{text-align:right}
+.scanner table th.sort{color:var(--t1)}
+.scanner table th.sort::after{content:" ▾";color:var(--t3);font-size:9px}
+.scanner table th.sort.asc::after{content:" ▴"}
+.scanner table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03);
+  vertical-align:middle}
+.scanner table tr.row{cursor:pointer;transition:background .12s}
+.scanner table tr.row:hover{background:rgba(255,255,255,0.03)}
+.scanner table td.tk{font:700 12px var(--m);color:var(--t1);width:60px}
+.scanner table td.bar-cell{width:140px}
+.scanner table td.minibar-wrap{display:flex;align-items:center;gap:8px}
+.scanner table td .minibar{flex:1;height:8px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;min-width:60px}
+.scanner table td .minibar-fill{height:100%;border-radius:2px}
+.scanner table td.val{font:600 11px var(--m);color:var(--t2);text-align:right;width:55px}
+.scanner table td.flag{font:600 10px var(--m);white-space:nowrap}
+
 .score-bars{display:flex;flex-direction:column;gap:5px;margin-top:8px}
 .sb{display:flex;align-items:center;gap:8px;font:500 9.5px var(--m)}
 .sb-lbl{flex:0 0 110px;color:var(--t3)}
@@ -262,7 +312,8 @@ const S = {tournament:null, backtest:null, holdings:null, config:null, tickers:n
            regime:null, regimeDaily:null,
            period:"ALL", expanded:null, expandedTicker:null,
            chart:null, tickerChart:null, regimeChart:null, tickerChartPeriod:"6M",
-           expandedIndicator:null, indPeriod:"1Y"};
+           expandedIndicator:null, indPeriod:"1Y",
+           scannerSort:"quad", scannerSortDir:"desc", scannerFilter:"all"};
 
 const fmt   = n => (typeof n === "number") ? n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "—";
 const fmt2  = n => (typeof n === "number") ? n.toFixed(2) : "—";
@@ -1198,6 +1249,218 @@ function renderTickerChart(tk){
   });
 }
 
+// ──────────────────────────────────────────────────────────────────────
+// Two-Score system: Business Quality (0-50) vs Trade Now (0-100).
+// They answer DIFFERENT questions; the divergence between them is the
+// actionable insight (great business + bad entry = pullback watch-list).
+// Used by the detail header and the universe scanner list.
+// ──────────────────────────────────────────────────────────────────────
+function qualityColor(q){          // 0-50 scale
+  if (q >= 38) return "#4ade80";
+  if (q >= 25) return "#facc15";
+  return "#f87171";
+}
+function tradeColor(t){            // 0-100 scale
+  if (t >= 70) return "#4ade80";
+  if (t >= 40) return "#facc15";
+  return "#f87171";
+}
+function divergenceState(quality, qPct, trade, sig){
+  // Signal-aware short-circuits: a SELL or position-management signal must
+  // never get flagged as "↗ momo (momentum trade)" — the strength score in
+  // those modes means "definitely act," not "good entry." Buy quadrants only
+  // apply when the signal is actually BUY or STRONG BUY.
+  const S = (sig || "").toUpperCase();
+  if (S.startsWith("SELL"))            return {cls:"exit",   color:"#f87171", icon:"▼",
+                                                text:"Exit signal — stop or thesis triggered."};
+  if (S.startsWith("TRIM"))            return {cls:"trim",   color:"#facc15", icon:"✂",
+                                                text:"Trim signal — profit-take threshold crossed."};
+  if (S.includes("HEDGE"))             return {cls:"hedge",  color:"#a78bfa", icon:"🛡",
+                                                text:"Hedge signal — extended position, sell covered calls."};
+  if (S.includes("MONITOR"))           return {cls:"monitor",color:"#94a3b8", icon:"—",
+                                                text:"Monitor — multiple yellow flags but no exit."};
+  if (S.startsWith("HOLD"))            return {cls:"hold",   color:"#737373", icon:"—",
+                                                text:"Hold — no action."};
+  if (S.startsWith("WAIT") || S.startsWith("WATCH"))
+                                       return {cls:"wait",   color:"#facc15", icon:"⏸",
+                                                text:"Wait for entry — not at the price the model wants."};
+  // BUY / STRONG BUY → 4-quadrant divergence
+  const hiQ = quality >= 38;
+  const hiT = trade >= 70;
+  if ( hiQ &&  hiT) return {cls:"clean", color:"#4ade80", icon:"★",
+                            text:"Clean buy — top-tier business at a good entry."};
+  if ( hiQ && !hiT) return {cls:"watch", color:"#facc15", icon:"⚠",
+                            text:"Quality name, but NOT a good entry now — pullback watch-list."};
+  if (!hiQ &&  hiT) return {cls:"momo",  color:"#60a5fa", icon:"↗",
+                            text:"Decent entry on a middling business — momentum trade, lower conviction."};
+  return                    {cls:"avoid", color:"#737373", icon:"·",
+                            text:"Neither quality nor timing — pass."};
+}
+function tradeContext(s){
+  // One short phrase that summarises the trade-now reading using existing data.
+  if (!s) return "";
+  if (s.mode === "position"){
+    const p = s.position || {};
+    if (s.signal && s.signal.startsWith("SELL")) return `stop triggered · ${p.gain_pct >= 0 ? "+" : ""}${p.gain_pct?.toFixed?.(0) || "?"}%`;
+    if (s.signal && s.signal.startsWith("TRIM")) return `${p.gain_pct?.toFixed?.(0) || "?"}% gain · trim trigger`;
+    if (s.signal && s.signal.includes("HEDGE")) return `+${p.gain_pct?.toFixed?.(0) || "?"}% · extended · ${s.hedge?.strike ? "sell $" + s.hedge.strike + " calls" : "hedge"}`;
+    return `${p.gain_pct >= 0 ? "+" : ""}${p.gain_pct?.toFixed?.(0) || "?"}% gain · trail $${s.stops?.active_stop ?? "?"}`;
+  }
+  const d = s.data || {};
+  const bits = [];
+  if (d.rsi != null) {
+    if (d.rsi < 35) bits.push(`RSI ${d.rsi.toFixed(0)} (oversold)`);
+    else if (d.rsi > 65) bits.push(`RSI ${d.rsi.toFixed(0)} (overbought)`);
+    else bits.push(`RSI ${d.rsi.toFixed(0)}`);
+  }
+  if (s.extended) bits.push("extended");
+  if (d.ma200_dist != null && Math.abs(d.ma200_dist) < 5) bits.push("at 200-DMA");
+  return bits.join(" · ");
+}
+function twoScoreBar(value, max, color){
+  const pct = Math.max(0, Math.min(100, value / max * 100));
+  return `<div class="ts-bar">
+    <div class="ts-bar-fill" style="width:${pct.toFixed(0)}%;background:${color}"></div>
+  </div>`;
+}
+function renderTwoScore(tk){
+  const s = S.signals && S.signals.signals && S.signals.signals[tk];
+  if (!s) return "";
+  const quality = (s.data && s.data.composite != null) ? +s.data.composite : 0;
+  const qPct    = (s.data && s.data.composite_pct != null) ? +s.data.composite_pct : 0;
+  const rank    = (s.data && s.data.rank != null) ? +s.data.rank : null;
+  const trade   = s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength;
+  const sig     = s.signal || "—";
+  const note    = s.trade_now_note;
+  const div     = divergenceState(quality, qPct, trade, sig);
+
+  return `<div class="two-score">
+    <div class="ts-row">
+      <div class="ts-label">Business quality</div>
+      ${twoScoreBar(quality, 50, qualityColor(quality))}
+      <div class="ts-val">${quality.toFixed(1)}<span class="ts-of">/50</span></div>
+      <div class="ts-sub">${qPct.toFixed(0)}th pct${rank === 1 ? " · #1 in universe" : rank ? " · rank #" + rank : ""}</div>
+    </div>
+    <div class="ts-row">
+      <div class="ts-label">Trade now</div>
+      ${twoScoreBar(trade, 100, tradeColor(trade))}
+      <div class="ts-val"><span style="color:${tradeColor(trade)}">${sig}</span> · ${trade}<span class="ts-of">/100</span></div>
+      <div class="ts-sub">${note ? '<span style="color:#facc15">' + note + '</span>' : tradeContext(s)}</div>
+    </div>
+    <div class="ts-divergence" style="color:${div.color};border-left:3px solid ${div.color}">
+      ${div.icon} ${div.text}
+    </div>
+  </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Scanner: list all tickers with computed signals side-by-side, with two
+// mini-bars per row (quality + trade-now) and the divergence flag. The
+// dashboard's other views (regime gauge, tier rows) are organised by
+// strategy; this view is organised by ACTIONABILITY across every name.
+// ──────────────────────────────────────────────────────────────────────
+function scannerRows(){
+  if (!S.signals || !S.signals.signals) return [];
+  const rows = [];
+  for (const [tk, s] of Object.entries(S.signals.signals)){
+    const quality = (s.data && s.data.composite != null) ? +s.data.composite : 0;
+    const qPct    = (s.data && s.data.composite_pct != null) ? +s.data.composite_pct : 0;
+    const rank    = (s.data && s.data.rank != null) ? +s.data.rank : 9999;
+    const trade   = s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength;
+    const sig     = s.signal || "—";
+    const div     = divergenceState(quality, qPct, trade, sig);
+    // quad order: actionable buys + exits at the top, holds at the bottom
+    const quadOrder = ({clean:9, exit:8, trim:7, watch:6, momo:5, hedge:4,
+                        wait:3, monitor:2, hold:1, avoid:0})[div.cls] ?? 0;
+    rows.push({tk, quality, qPct, rank, trade, sig, divCls:div.cls,
+               divColor:div.color, divIcon:div.icon, quadOrder,
+               mode:s.mode, note:s.trade_now_note});
+  }
+  return rows;
+}
+function scannerFilterFn(filter){
+  if (filter === "clean")     return r => r.divCls === "clean";
+  if (filter === "watch")     return r => r.divCls === "watch";
+  if (filter === "exit")      return r => r.divCls === "exit" || r.divCls === "trim";
+  if (filter === "quality")   return r => r.quality >= 38;
+  if (filter === "positions") return r => r.mode === "position";
+  return () => true;
+}
+function scannerSortFn(sortKey, dir){
+  const mult = dir === "asc" ? 1 : -1;
+  if (sortKey === "tk")      return (a,b) => mult * a.tk.localeCompare(b.tk);
+  if (sortKey === "quality") return (a,b) => mult * (a.quality - b.quality);
+  if (sortKey === "trade")   return (a,b) => mult * (a.trade   - b.trade);
+  // quad (default): divergence-quadrant ordering first, then quality desc
+  return (a,b) => (mult * (a.quadOrder - b.quadOrder))
+                || (b.quality - a.quality);
+}
+function renderScanner(){
+  const rows0 = scannerRows();
+  if (!rows0.length) return "";
+  const rows = rows0.filter(scannerFilterFn(S.scannerFilter))
+                    .sort(scannerSortFn(S.scannerSort, S.scannerSortDir));
+
+  const sortCls = (k) => k === S.scannerSort ? `sort ${S.scannerSortDir === "asc" ? "asc" : ""}` : "";
+
+  const filterChips = [
+    {k:"all",       lbl:`All (${rows0.length})`},
+    {k:"clean",     lbl:`★ Clean buys (${rows0.filter(r=>r.divCls==="clean").length})`},
+    {k:"watch",     lbl:`⚠ Pullback watch (${rows0.filter(r=>r.divCls==="watch").length})`},
+    {k:"exit",      lbl:`▼ Exit signals (${rows0.filter(r=>r.divCls==="exit"||r.divCls==="trim").length})`},
+    {k:"quality",   lbl:`Top quality (${rows0.filter(r=>r.quality>=38).length})`},
+    {k:"positions", lbl:`Owned (${rows0.filter(r=>r.mode==="position").length})`},
+  ];
+
+  const tradeColorFor = t => tradeColor(t);
+  const qColorFor     = q => qualityColor(q);
+
+  let body = "";
+  for (const r of rows){
+    const qPct = Math.max(0, Math.min(100, r.quality / 50 * 100));
+    const tPct = Math.max(0, Math.min(100, r.trade));
+    body += `<tr class="row" data-scanner-tk="${r.tk}">
+      <td class="tk">${r.tk}</td>
+      <td class="bar-cell">
+        <div class="minibar-wrap">
+          <div class="minibar"><div class="minibar-fill" style="width:${qPct.toFixed(0)}%;background:${qColorFor(r.quality)}"></div></div>
+        </div>
+      </td>
+      <td class="val">${r.quality.toFixed(1)}<small style="color:var(--t4)">/50</small>${r.rank===1 ? ' <span style="color:#fbbf24">#1</span>' : r.rank<=10 ? ` <span style="color:var(--t4)">#${r.rank}</span>` : ''}</td>
+      <td class="bar-cell">
+        <div class="minibar-wrap">
+          <div class="minibar"><div class="minibar-fill" style="width:${tPct.toFixed(0)}%;background:${tradeColorFor(r.trade)}"></div></div>
+        </div>
+      </td>
+      <td class="val"><span style="color:${tradeColorFor(r.trade)}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}</td>
+      <td class="flag" style="color:${r.divColor}">${r.divIcon} ${r.divCls}</td>
+    </tr>`;
+  }
+
+  return `<section class="scanner">
+    <div class="scanner-head">
+      <div>
+        <h2>SCANNER — BUSINESS QUALITY × TRADE NOW</h2>
+        <div class="sc-sub">${rows.length} of ${rows0.length} names · top of list = best divergence quadrant</div>
+      </div>
+      <div class="filter-row">
+        ${filterChips.map(f => `<button class="filter-btn ${S.scannerFilter===f.k?"on":""}" data-scfilter="${f.k}">${f.lbl}</button>`).join("")}
+      </div>
+    </div>
+    <table>
+      <thead><tr>
+        <th class="${sortCls("tk")}"      data-scsort="tk">TICKER</th>
+        <th class="${sortCls("quality")}" data-scsort="quality">BUSINESS QUALITY</th>
+        <th class="num"></th>
+        <th class="${sortCls("trade")}"   data-scsort="trade">TRADE NOW</th>
+        <th class="num"></th>
+        <th class="${sortCls("quad")}"    data-scsort="quad">FLAG</th>
+      </tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+  </section>`;
+}
+
 // -------- Signal box (entry/stop/target/size/why/risks) --------
 const SIG_COLORS = {
   "STRONG BUY": {bg:"rgba(22,163,74,0.14)",  border:"rgba(22,163,74,0.40)", text:"#4ade80", icon:"▲▲"},
@@ -1397,6 +1660,8 @@ function renderTickerDetail(tk){
       </div>
       <button class="tk-close" data-close-tk="1">CLOSE ✕</button>
     </div>
+
+    ${renderTwoScore(tk)}
 
     ${renderSignalBox(tk)}
 
@@ -1617,6 +1882,9 @@ function render(){
   // ---- 1. REGIME COMMAND CENTER ----
   h += renderRegimeCommandCenter(R);
 
+  // ---- 2. TWO-SCORE SCANNER ----
+  h += renderScanner();
+
   // ---- Leader banner ----
   if (leader && tmMap[leader]) {
     const lt = tierSpec(leader); const m = tmMap[leader];
@@ -1743,6 +2011,44 @@ function render(){
     ev.stopPropagation();
     S.indPeriod = b.dataset.indp;
     render();
+  }));
+  // ---- Scanner: filter chips, sortable headers, row click → expand ticker
+  document.querySelectorAll(".scanner .filter-btn[data-scfilter]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.scannerFilter = b.dataset.scfilter;
+    render();
+  }));
+  document.querySelectorAll(".scanner th[data-scsort]").forEach(th => th.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    const k = th.dataset.scsort;
+    if (S.scannerSort === k) {
+      S.scannerSortDir = (S.scannerSortDir === "desc") ? "asc" : "desc";
+    } else {
+      S.scannerSort = k; S.scannerSortDir = "desc";
+    }
+    render();
+  }));
+  document.querySelectorAll(".scanner tr.row[data-scanner-tk]").forEach(tr => tr.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    const tk = tr.dataset.scannerTk;
+    // Find which tier this ticker lives in; expand that tier and the ticker.
+    const owner = TIER_ORDER.find(tid => {
+      const t = S.tournament && S.tournament.history && S.tournament.history.slice(-1)[0];
+      const holdings = t?.tiers?.[tid]?.holdings || [];
+      return holdings.includes(tk);
+    });
+    if (owner) {
+      S.expanded = owner;
+      S.expandedTicker = tk;
+    } else {
+      // Ticker not currently in any live tier — still try detail panel for it.
+      S.expandedTicker = tk;
+    }
+    render();
+    setTimeout(() => {
+      const row = document.querySelector(`tr[data-tk="${tk}"]`) || document.querySelector(".tk-detail");
+      if (row && row.scrollIntoView) row.scrollIntoView({behavior:"smooth", block:"center"});
+    }, 50);
   }));
   // Draw charts after DOM
   setTimeout(() => {
