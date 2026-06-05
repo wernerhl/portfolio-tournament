@@ -251,7 +251,7 @@ def main():
                 "nav":   round(equity_value + cash_value, 2),
                 "equity": round(equity_value, 2),
                 "cash":   round(cash_value, 2),
-                "cash_pct":  round(cp * 100, 1),
+
                 "target_cash_pct": round(cp * 100, 1),
                 "actual_cash_pct": round(cash_value / (equity_value + cash_value) * 100, 1) if (equity_value+cash_value) > 0 else 0,
                 "n_positions": len(held),
@@ -296,7 +296,7 @@ def main():
                 "nav":   round(total, 2),
                 "equity": round(equity_value, 2),
                 "cash":   round(cash_value, 2),
-                "cash_pct": round(cp * 100, 1),
+
                 "target_cash_pct": round(cp * 100, 1),
                 "actual_cash_pct": round(cash_value / total * 100, 1) if total > 0 else 0,
                 "n_positions": len(held),
@@ -341,7 +341,7 @@ def main():
         "nav": round(total_w, 2),
         "equity": round(equity_w, 2),
         "cash":   round(cash_w, 2),
-        "cash_pct": round(w_cp * 100, 1),
+
         "target_cash_pct": round(w_cp * 100, 1),
         "actual_cash_pct": round(cash_w / total_w * 100, 1) if total_w > 0 else 0,
         "n_positions": len([p for p in werner_positions if p.get("value")]),

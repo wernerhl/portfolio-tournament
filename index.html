@@ -525,12 +525,59 @@ function renderIndicators(){
     ${ownsExpanded ? renderIndicatorDetail() : ""}`;
   }).join("");
 }
+// AUDIT FIX 2: prefer the intraday-snapshot value when it covers the same
+// instrument and is fresher than the EOD payload. Card and banner now agree
+// on VIX/VVIX/VIX3M/DXY/SKEW etc. The z-score / phi / status are KEPT from
+// the EOD regime computation — those need historical context the intraday
+// snapshot lacks.
+//
+// Mapping: regime-indicator key → intraday.prices[*] key.
+const INTRADAY_KEY_MAP = {
+  vix: "vix", vvix: "vvix", skew: "skew", dxy: "dxy",
+  // vix_term = vix - vix3m; recompute if both legs present.
+  vix_term: "_vix_term",
+  // SPX (used by spx_drawdown, spx_ret_60d, realized_vol) intentionally
+  // NOT overridden — those are derived series, not the raw SPX level.
+};
+function intradayValueFor(key){
+  const id = S.intraday;
+  if (!id || !id.prices) return null;
+  // Staleness gate: if snapshot is > 90 min old, don't override.
+  if (id.timestamp){
+    const ageMin = (Date.now() - new Date(id.timestamp + "Z").getTime()) / 60000;
+    if (ageMin > 90) return null;
+  }
+  const mapped = INTRADAY_KEY_MAP[key];
+  if (!mapped) return null;
+  if (mapped === "_vix_term"){
+    const v = id.prices.vix?.last, t = id.prices.vix3m?.last;
+    return (v != null && t != null) ? +(v - t).toFixed(2) : null;
+  }
+  return id.prices[mapped]?.last ?? null;
+}
+function formatIndicatorValue(key, val, fallbackStr){
+  if (val == null) return fallbackStr || "—";
+  // Match the precision of the EOD value_str roughly per indicator family.
+  if (key === "skew" || key === "mfg_new_orders") return val.toFixed(0);
+  if (key === "vvix" || key === "vix") return val.toFixed(2);
+  if (key === "dxy") return val.toFixed(1);
+  if (key === "vix_term") return val.toFixed(2);
+  return (typeof val === "number") ? val.toFixed(2) : String(val);
+}
+
 function renderIndCard(i){
   const c = statusHex(i.status);
   const open = (S.expandedIndicator === i.key);
+  const intradayVal = intradayValueFor(i.key);
+  const displayedStr = intradayVal != null
+    ? formatIndicatorValue(i.key, intradayVal, i.value_str)
+    : (i.value_str || "—");
+  const liveBadge = intradayVal != null
+    ? ` <span title="Intraday snapshot" style="font:600 7px var(--m);color:var(--accent);letter-spacing:.1em;vertical-align:top">·LIVE</span>`
+    : "";
   return `<div class="ind-card ${i.status} ${open?"expanded":""}" data-ind="${i.key}">
-    <div class="ind-lbl ${i.status}">${i.label}</div>
-    <div class="ind-val">${i.value_str || "—"}</div>
+    <div class="ind-lbl ${i.status}">${i.label}${liveBadge}</div>
+    <div class="ind-val">${displayedStr}</div>
     <div class="ind-narr">${i.narrative || ""}</div>
     <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
   </div>`;
@@ -1005,6 +1052,7 @@ function renderRegimeCommandCenter(R){
   const reg = S.regime || {};
   const total = reg.n_indicators || 12;
   const safe  = reg.n_safe || 0;
+  const neu   = reg.n_neutral || 0;       // AUDIT FIX 3: separate bucket
   const ele   = reg.n_elevated || 0;
   const cri   = reg.n_crisis || 0;
 
@@ -1096,8 +1144,12 @@ function renderRegimeCommandCenter(R){
       &middot; div <strong style="color:${ewColor(divlab)}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
     </div>` : "";
 
-  const tierCounts = `<span style="margin-left:auto;font:400 9px var(--m);color:var(--t5);letter-spacing:0;text-transform:none">
-    ${safe} safe · ${ele} elevated · ${cri} crisis</span>`;
+  // AUDIT FIX 3: 4-bucket count matches card colors (green / blue / amber / red)
+  const tierCounts = `<span style="margin-left:auto;font:400 10px var(--m);color:var(--t3);letter-spacing:0;text-transform:none">
+    <span style="color:var(--g)">${safe} safe</span> ·
+    <span style="color:var(--b)">${neu} neutral</span> ·
+    <span style="color:var(--y)">${ele} elevated</span> ·
+    <span style="color:var(--r)">${cri} crisis</span></span>`;
 
   return `<section class="rcc">
     <div class="rcc-top">

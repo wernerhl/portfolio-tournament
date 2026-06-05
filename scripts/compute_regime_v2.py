@@ -384,7 +384,11 @@ def main():
 
     n_by_status = {"safe":0, "neutral":0, "elevated":0, "crisis":0}
     for i in indicator_payload: n_by_status[i["status"]] += 1
-    n_safe = n_by_status["safe"] + n_by_status["neutral"]
+    # AUDIT FIX 3: keep neutral as its own bucket — folding it into n_safe makes
+    # the header claim "X safe" while X−N of those cards render BLUE (neutral),
+    # not green. Header now surfaces 4 buckets and matches card colors.
+    n_safe = n_by_status["safe"]
+    n_neu  = n_by_status["neutral"]
     n_ele  = n_by_status["elevated"]
     n_cri  = n_by_status["crisis"]
 
@@ -392,37 +396,35 @@ def main():
     R_full_v = float(latest_row["R_full"])
     divv     = float(latest_row["divergence"])
 
-    # ── Complacency flag (high SKEW + low VIX = tail priced + protection cheap) ──
-    # When this is true, the headline must NOT show DEPLOY. A +0.05 bump is
-    # applied to the displayed R_lead so the gauge tilts more cautious.
-    # Documented, fixed bump — not data-fit.
+    # ── Complacency flag — AUDIT FIX 4: align with indicator encoding ──────
+    # The SKEW indicator uses direction='lower', so HIGH SKEW = active tail
+    # hedging = SAFE in the card narratives. The old flag fired on HIGH SKEW
+    # + LOW VIX, which directly contradicted the card. Resolution: complacency
+    # is when NO ONE is pricing tails AND no one is hedging — i.e. LOW SKEW
+    # AND LOW VIX. Both encodings now agree.
     raw_lookup = {i["key"]: i for i in indicator_payload}
     skew_raw = (raw_lookup.get("skew") or {}).get("value")
     vix_raw  = (raw_lookup.get("vix")  or {}).get("value")
     complacency_flag = bool(skew_raw is not None and vix_raw is not None
-                            and skew_raw > 140 and vix_raw < 17)
-    complacency_reason = (f"SKEW {skew_raw:.0f} > 140 and VIX {vix_raw:.1f} < 17 — "
-                          f"tail priced, protection cheap, market unhedged"
+                            and skew_raw < 130 and vix_raw < 15)
+    complacency_reason = (f"SKEW {skew_raw:.0f} < 130 and VIX {vix_raw:.1f} < 15 — "
+                          f"no tail premium and no hedging — market complacent"
                           ) if complacency_flag else None
     R_lead_displayed = round(min(1.0, R_lead_v + (0.05 if complacency_flag else 0.0)), 4)
 
+    # AUDIT FIX 6: verdict was a deployment recommendation that didn't know about
+    # intraday shocks, so the dashboard ignored it (built its own via
+    # headlineVerdict). Now we keep it as a NEUTRAL channel-state description —
+    # no deployment claim — so the field is informative not contradictory.
     if divv > 0.15:
-        verdict = (f"Forward markets ({R_lead_v:.2f}) pricing risk above equities ({R_full_v:.2f}). "
-                   f"Divergence +{divv:.2f} — increase hedges before drawdown.")
+        verdict = (f"Forward layer ({R_lead_v:.2f}) pricing risk above equities ({R_full_v:.2f}). "
+                   f"Divergence +{divv:.2f}.")
     elif divv < -0.15:
-        verdict = (f"Forward markets ({R_lead_v:.2f}) normalizing below equities ({R_full_v:.2f}). "
-                   f"Divergence {divv:.2f} — prepare to re-enter.")
-    elif R_full_v < 0.30:
-        verdict = (f"Risk below average across {n_safe} of {len(indicator_payload)} channels. "
-                   f"Full deployment permitted.")
-    elif R_full_v < 0.50:
-        verdict = (f"Mixed signals: {n_safe} safe / {n_ele+n_cri} flagged. "
-                   f"Standard deployment with bias toward quality.")
-    elif R_full_v < 0.70:
-        verdict = (f"Elevated risk across {n_ele+n_cri} of {len(indicator_payload)} channels. "
-                   f"Trim exposure, raise cash.")
+        verdict = (f"Forward layer ({R_lead_v:.2f}) normalizing below equities ({R_full_v:.2f}). "
+                   f"Divergence {divv:.2f}.")
     else:
-        verdict = (f"Crisis regime: {n_cri} channels in stress. Defensive posture, maximize cash.")
+        verdict = (f"{n_safe} safe · {n_neu} neutral · {n_ele} elevated · {n_cri} crisis "
+                   f"of {len(indicator_payload)} channels. R_full {R_full_v:.2f}.")
 
     # Prepend the complacency callout so it's the first thing the user reads.
     if complacency_flag:
@@ -446,9 +448,10 @@ def main():
         "complacency_reason": complacency_reason,
         # v1 compatibility (dashboard's renderRegimeCommandCenter reads R_t)
         "R_t":          round(R_full_v, 4),
-        # status counts
+        # status counts — AUDIT FIX 3: neutral is its own bucket
         "n_indicators": len(indicator_payload),
         "n_safe":       n_safe,
+        "n_neutral":    n_neu,
         "n_elevated":   n_ele,
         "n_crisis":     n_cri,
         "verdict":      verdict,
