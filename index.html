@@ -1664,6 +1664,42 @@ function renderRegimeOverlayPanel(){
   // Overlay scalar
   const ovs = r.overlay_scalar || {};
 
+  // RoP-FIX B1: two-horizon line — acute today vs reverts later. Pulls the
+  // VIX1D event-vol point + intraday VIX move so the reader sees the
+  // acute-now / calm-later split explicitly instead of having to
+  // reconcile a benign 73% reversion stat with an obviously stressed
+  // session.
+  const vixId   = S.intraday || {};
+  const vixChg  = (vixId.vix_change_pct != null && vixId.vix_now != null)
+    ? `${vixId.vix_change_pct >= 0 ? "+" : ""}${vixId.vix_change_pct}%` : null;
+  const vixNow  = vixId.vix_now != null ? vixId.vix_now : (r.curve && r.curve.spot_vix);
+  const twoHorizonLine = (nextTypical && r.curve && r.curve.vix1d != null) ? `
+    <div style="margin-top:8px;padding:8px 10px;background:rgba(168,143,229,0.05);
+         border-left:2px solid rgba(168,143,229,0.4);border-radius:0 4px 4px 0;
+         font:italic 400 11.5px var(--s);color:var(--t2);line-height:1.55">
+      <strong style="font-style:normal;font-family:var(--m);color:var(--t1);font-weight:600">Acute today:</strong>
+      VIX1D <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${r.curve.vix1d}</strong>,
+      VIX <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${vixNow}</strong>${vixChg ? ` (${vixChg})` : ""}
+      — front-end event vol elevated.
+      Term structure (spot−3M = <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>)
+      only mildly inverted; historically reverts to
+      <strong style="font-style:normal;color:var(--t1)">${nextTypical.state}</strong>
+      <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${nextTypical.pct}%</strong> of the time.
+    </div>` : "";
+
+  // RoP-FIX B2: atypical-entry caveat
+  const en = r.entry || {};
+  const atypicalCaveat = en.atypical_entry ? `
+    <div style="margin-top:8px;padding:8px 10px;background:rgba(219,162,62,0.06);
+         border-left:2px solid rgba(219,162,62,0.55);border-radius:0 4px 4px 0;
+         font:italic 400 11.5px var(--s);color:var(--y);line-height:1.55">
+      <strong style="font-style:normal;font-family:var(--m);letter-spacing:.06em">⚠ ENTERED VIA A
+      ${en.current_entry_dspread >= 0 ? "+" : ""}${en.current_entry_dspread} SHOCK</strong>
+      (z = <strong style="font-style:normal;font-family:var(--m)">${en.entry_zscore}</strong>σ of ${r.state} entries,
+      vs typical ${en.state_mean_entry >= 0 ? "+" : ""}${en.state_mean_entry}).
+      The reversion stat above pools mostly gentle entries and may not apply to a shock-entered state.
+    </div>` : "";
+
   // Walk-forward validation — RoP-FIX 2: surface BOTH metrics with Wilson CI
   // and honest small-n caveat. Today is excluded from both.
   const wf  = (r.validation && r.validation.walk_forward) || {};
@@ -1700,6 +1736,8 @@ function renderRegimeOverlayPanel(){
           (p25 ${dyn.p25_sessions || "—"} · p75 ${dyn.p75_sessions || "—"})
           ${nextTypical ? `<div>most-common next state: <strong>${nextTypical.state}</strong> (${nextTypical.pct}% of transitions)</div>` : ""}
         </div>
+        ${twoHorizonLine}
+        ${atypicalCaveat}
         <div style="margin-top:10px">
           <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">HISTORY · last 180 sessions</div>
           <div class="rop-history-strip">${stripCells}</div>

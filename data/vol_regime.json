@@ -24,6 +24,14 @@
   "delta_spread": 3.52,
   "sigma_threshold": 0.838,
   "trigger_fired": true,
+  "entry": {
+    "current_entry_dspread": 3.52,
+    "state_mean_entry": 0.258,
+    "state_sigma_entry": 1.178,
+    "entry_zscore": 2.77,
+    "atypical_entry": true,
+    "rule": "Atypical when |entry \u0394spread \u2212 state mean| > 2\u03c3. Caveat: pooled transition stats may not describe a shock-entered episode."
+  },
   "dynamics": {
     "deep_contango": {
       "n_episodes": 205,
@@ -34,7 +42,10 @@
         "contango": 202,
         "backwardation": 1,
         "flattening": 2
-      }
+      },
+      "entry_dspread_mean": -0.5740488145409561,
+      "entry_dspread_sigma": 0.5043243941886967,
+      "entry_dspread_n": 205
     },
     "contango": {
       "n_episodes": 428,
@@ -45,7 +56,10 @@
         "flattening": 212,
         "deep_contango": 204,
         "backwardation": 12
-      }
+      },
+      "entry_dspread_mean": -0.09892523845779562,
+      "entry_dspread_sigma": 0.8475628022212487,
+      "entry_dspread_n": 428
     },
     "flattening": {
       "n_episodes": 303,
@@ -55,7 +69,10 @@
       "next_state_distribution": {
         "contango": 221,
         "backwardation": 81
-      }
+      },
+      "entry_dspread_mean": 0.25785486768968036,
+      "entry_dspread_sigma": 1.1782373562281228,
+      "entry_dspread_n": 303
     },
     "backwardation": {
       "n_episodes": 95,
@@ -66,7 +83,10 @@
         "flattening": 89,
         "deep_contango": 1,
         "contango": 5
-      }
+      },
+      "entry_dspread_mean": 1.740420893618935,
+      "entry_dspread_sigma": 1.5351215435291818,
+      "entry_dspread_n": 95
     }
   },
   "curve": {

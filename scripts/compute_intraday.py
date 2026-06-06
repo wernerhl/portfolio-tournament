@@ -39,14 +39,17 @@ TICKERS = {
     "smh":   "SMH",
     "soxx":  "SOXX",
     # ──────────────────────────────────────────────────────────────────
-    # 2Y rate intraday: REMOVED. ^IRX is the 13W T-bill, not the 2Y; the
-    # CME 2YY=F yield series is delisted on Yahoo. Capturing one of these
-    # under a "us02y" key is misleading — the vol-regime classifier uses
-    # Δ2Y in bps and a 13W stand-in produces a meaningless reading.
-    # The vol_regime module now prefers FRED day-over-day (which spans
-    # the 08:30 ET release window) and supports MANUAL_DELTA_2Y_BPS as
-    # an explicit operator override when FRED hasn't published.
+    # Same-day 2Y rate proxies — FRED DGS2 publishes T+1 around macro
+    # releases so the cash-2Y move is invisible on the event day itself.
+    # Two same-day proxies, captured as prior settle/close → current:
+    #   ZT=F  CME 2-Year T-Note futures — trades through the 08:30 ET
+    #         release. Standard proxy for event-day Δ2Y.
+    #   SHY   iShares 1-3y Treasury ETF — duration ≈ 1.85y; Δyield
+    #         derived via −price_return / duration × 10000 bps.
+    # vol_regime prefers ZT then SHY then FRED (T+1 reconciliation only).
     # ──────────────────────────────────────────────────────────────────
+    "zt":    "ZT=F",
+    "shy":   "SHY",
 }
 
 

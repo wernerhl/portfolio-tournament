@@ -98,43 +98,58 @@ def classify_state(spread: float) -> str:
     return "backwardation"
 
 
-def run_lengths(seq: list[str]) -> list[tuple[str, int]]:
-    """Return list of (state, length) tuples — consecutive runs of identical states."""
-    if not seq: return []
+def runs_with_boundaries(states: pd.Series, spread: pd.Series
+                          ) -> list[tuple[str, int, int, int, float]]:
+    """
+    Return [(state, start_idx, end_idx, length, entry_dspread), ...]
+    entry_dspread = the Δspread on the first day of the run (the day the
+    state changed). For the very first run we use 0.0 since there's no
+    preceding state.
+    """
+    delta = spread.diff().fillna(0.0)
+    states_list = states.tolist()
+    if not states_list: return []
     out = []
-    cur, n = seq[0], 1
-    for s in seq[1:]:
-        if s == cur:
-            n += 1
-        else:
-            out.append((cur, n))
-            cur, n = s, 1
-    out.append((cur, n))
+    cur, start = states_list[0], 0
+    for i in range(1, len(states_list)):
+        if states_list[i] != cur:
+            entry_d = float(delta.iloc[start]) if start > 0 else 0.0
+            out.append((cur, start, i - 1, i - start, entry_d))
+            cur, start = states_list[i], i
+    entry_d = float(delta.iloc[start]) if start > 0 else 0.0
+    out.append((cur, start, len(states_list) - 1, len(states_list) - start, entry_d))
     return out
 
 
-def state_dynamics(states: pd.Series) -> dict:
-    """Compute per-state persistence quartiles + most-common next-state."""
-    seq = states.dropna().tolist()
-    runs = run_lengths(seq)
+# RoP-FIX B2: per-state entry-Δspread distribution for the atypical-entry flag.
+def state_dynamics(states: pd.Series, spread: pd.Series = None) -> dict:
+    """Per-state persistence quartiles + transitions + entry-Δspread stats."""
+    if spread is not None:
+        runs = runs_with_boundaries(states, spread)
+    else:
+        # Legacy code path — synthesize a zeros series
+        runs = runs_with_boundaries(states, pd.Series(0.0, index=states.index))
     out = {}
-    for state in ("deep_contango","contango","flattening","backwardation"):
-        # Persistence: lengths of completed runs of this state
-        lengths = [n for s, n in runs if s == state]
-        # Decay: distribution of the NEXT state after a run of this state
+    for state in ("deep_contango", "contango", "flattening", "backwardation"):
+        lengths = [n for s, _, _, n, _ in runs if s == state]
+        entry_dspreads = [d for s, _, _, _, d in runs if s == state and _ != 0]
+        # Transitions: state immediately after each completed run of `state`
         transitions = []
-        for i, (s, n) in enumerate(runs[:-1]):
+        for i, (s, *_rest) in enumerate(runs[:-1]):
             if s == state:
-                transitions.append(runs[i+1][0])
+                transitions.append(runs[i + 1][0])
         next_state_counts = {}
         for t in transitions:
             next_state_counts[t] = next_state_counts.get(t, 0) + 1
         out[state] = {
-            "n_episodes":     len(lengths),
-            "p25_sessions":   int(np.percentile(lengths, 25)) if lengths else 0,
-            "median_sessions": int(np.percentile(lengths, 50)) if lengths else 0,
-            "p75_sessions":   int(np.percentile(lengths, 75)) if lengths else 0,
+            "n_episodes":              len(lengths),
+            "p25_sessions":            int(np.percentile(lengths, 25)) if lengths else 0,
+            "median_sessions":         int(np.percentile(lengths, 50)) if lengths else 0,
+            "p75_sessions":            int(np.percentile(lengths, 75)) if lengths else 0,
             "next_state_distribution": next_state_counts,
+            "entry_dspread_mean":      float(np.mean(entry_dspreads)) if entry_dspreads else None,
+            "entry_dspread_sigma":     float(np.std(entry_dspreads, ddof=1)) if len(entry_dspreads) > 1 else None,
+            "entry_dspread_n":         len(entry_dspreads),
         }
     return out
 
@@ -382,8 +397,9 @@ def main():
     else:
         print(f"    event-day only    n={ev['n']} — {wf['event_day_caveat']}")
 
-    # Per-state persistence + decay dynamics (computed from full history)
-    dynamics = state_dynamics(states)
+    # Per-state persistence + decay dynamics (computed from full history),
+    # WITH entry-Δspread distribution per state for the atypical-entry flag.
+    dynamics = state_dynamics(states, spread)
 
     # ── Current-day attribution ─────────────────────────────────────────
     last_date = spread.index[-1]
@@ -394,22 +410,67 @@ def main():
     last_sigma_thr = sigma_threshold.iloc[-1] if not sigma_threshold.empty else 0
     last_trigger = bool(fired.iloc[-1])
 
-    # Three conditioning variables, transparent
+    # RoP-FIX B2: current-state entry-Δspread + atypical-entry flag.
+    # The "entry" is the Δspread on the session the current state began.
+    # If age = k, the state began at index (len - k); that day's Δspread
+    # is the entry Δspread.
+    current_state_start_idx = len(spread) - int(last_age)
+    current_entry_dspread = float(d_spread.iloc[current_state_start_idx]) \
+        if current_state_start_idx > 0 else 0.0
+    dstate = dynamics.get(last_state, {})
+    mu_entry = dstate.get("entry_dspread_mean")
+    sd_entry = dstate.get("entry_dspread_sigma")
+    entry_zscore = None
+    atypical_entry = False
+    if mu_entry is not None and sd_entry is not None and sd_entry > 0:
+        entry_zscore = (current_entry_dspread - mu_entry) / sd_entry
+        atypical_entry = abs(entry_zscore) > 2.0
+
+    # ────────────────────────────────────────────────────────────────────
+    # Δ2Y for the event-day classifier — SAME-DAY ONLY.
+    # Sources in priority order (each spans the 08:30 ET release window):
+    #   1. ZT=F   CME 2Y T-Note futures, prior settle → current.
+    #             Δyield ≈ −(P_now/P_prior − 1) / dur_ZT × 10_000
+    #   2. SHY    iShares 1-3y Treasury ETF, prior close → current.
+    #             Δyield ≈ −(P_now/P_prior − 1) / dur_SHY × 10_000
+    #   3. MANUAL_DELTA_2Y_BPS env var, operator-injected override.
+    #   4. FRED us02y day-over-day  →  KEPT ONLY as a T+1 reconciliation
+    #             diagnostic; never the live event-day input. FRED's
+    #             same-day 2Y is not available intraday and never can be.
+    # The window used is written into delta_2y_source verbatim.
+    # ────────────────────────────────────────────────────────────────────
+    DUR_ZT  = 1.90    # ZT futures effective duration (≈ 2y) in years
+    DUR_SHY = 1.85    # SHY ETF duration in years
     event_today = events_by_date.get(last_date.strftime("%Y-%m-%d"), [])
     delta_2y_today = None
-    delta_2y_source = "unavailable (FRED T+1 publication around macro releases)"
-    # Strategy:
-    #   1. Prefer FRED DGS2 day-over-day = today_close − yesterday_close.
-    #      This window SPANS the 08:30 ET release — the right measurement
-    #      for an event-day classifier.
-    #   2. If FRED today is NaN, accept MANUAL_DELTA_2Y_BPS as an explicit
-    #      operator-injected number for the live session. Tomorrow's
-    #      pipeline run will overwrite with the FRED value.
+    delta_2y_source = "unavailable"
+    delta_2y_fred_reconciliation = None
     if not delta_2y_bps.empty:
         v = delta_2y_bps.reindex([last_date]).iloc[-1]
         if not (isinstance(v, float) and math.isnan(v)):
-            delta_2y_today = float(v)
-            delta_2y_source = "FRED us02y day-over-day (spans 08:30 ET release)"
+            delta_2y_fred_reconciliation = float(v)
+    # 1) ZT=F prior settle → current  (preferred — futures span the release)
+    try:
+        intra = json.load(open(DATA / "intraday.json"))
+        prices = intra.get("prices") or {}
+        zt = prices.get("zt") or {}
+        if zt.get("last") is not None and zt.get("prior_close"):
+            ret = (zt["last"] / zt["prior_close"]) - 1.0
+            delta_2y_today = -ret / DUR_ZT * 10_000.0
+            delta_2y_source = "ZT 2Y futures, prior settle → current (spans 08:30 ET release)"
+    except Exception:
+        pass
+    # 2) SHY ETF prior close → current  (same-day, slightly cruder)
+    if delta_2y_today is None:
+        try:
+            shy = prices.get("shy") or {}
+            if shy.get("last") is not None and shy.get("prior_close"):
+                ret = (shy["last"] / shy["prior_close"]) - 1.0
+                delta_2y_today = -ret / DUR_SHY * 10_000.0
+                delta_2y_source = "SHY 2Y ETF, prior close → current (cruder duration proxy)"
+        except Exception:
+            pass
+    # 3) Explicit operator override
     if delta_2y_today is None:
         import os
         env_override = os.environ.get("MANUAL_DELTA_2Y_BPS")
@@ -419,6 +480,13 @@ def main():
                 delta_2y_source = "manual override (MANUAL_DELTA_2Y_BPS env var)"
             except ValueError:
                 pass
+    # 4) FRED only if everything else missing — labeled as the T+1 source
+    if delta_2y_today is None and delta_2y_fred_reconciliation is not None:
+        delta_2y_today = delta_2y_fred_reconciliation
+        delta_2y_source = "FRED us02y day-over-day (T+1 — only available the next session)"
+    if delta_2y_today is None:
+        delta_2y_source = ("unavailable — ZT/SHY intraday + FRED today all missing. "
+                           "Re-run after intraday snapshot publishes.")
     front_end_repriced = bool(delta_2y_today is not None and not math.isnan(delta_2y_today)
                               and abs(delta_2y_today) >= DELTA_2Y_BPS)
     held_close_proxy = vix_intraday_range_quartile_proxy(vol["vix"].dropna())
@@ -535,6 +603,18 @@ def main():
         "sigma_threshold": round(float(last_sigma_thr), 3) if np.isfinite(last_sigma_thr) else None,
         "trigger_fired": last_trigger,
 
+        # RoP-FIX B: how this episode of the state began + flag if atypical
+        "entry":  {
+            "current_entry_dspread": round(current_entry_dspread, 3),
+            "state_mean_entry":      round(mu_entry, 3) if mu_entry is not None else None,
+            "state_sigma_entry":     round(sd_entry, 3) if sd_entry is not None else None,
+            "entry_zscore":          round(entry_zscore, 2) if entry_zscore is not None else None,
+            "atypical_entry":        atypical_entry,
+            "rule":                  ("Atypical when |entry Δspread − state mean| > "
+                                       "2σ. Caveat: pooled transition stats may not "
+                                       "describe a shock-entered episode."),
+        },
+
         "dynamics":      dynamics,
 
         "curve":         curve,
@@ -546,6 +626,7 @@ def main():
             "event_types":        event_today,
             "delta_2y_bps":       round(delta_2y_today, 1) if delta_2y_today is not None and not math.isnan(delta_2y_today) else None,
             "delta_2y_source":    delta_2y_source,
+            "delta_2y_fred_t1":   round(delta_2y_fred_reconciliation, 1) if delta_2y_fred_reconciliation is not None else None,
             "front_end_repriced": front_end_repriced,
             "held_close_proxy":   round(held_close_proxy, 2),
             "held_close":         held_close,
