@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-06T00:15:00.322298",
+  "updated": "2026-06-06T00:49:56.375260",
   "as_of": "2026-06-05",
   "tradable_at": "2026-06-08",
   "config": {
@@ -112,15 +112,16 @@
     "event_types": [
       "NFP"
     ],
-    "delta_2y_bps": null,
-    "delta_2y_source": "unavailable (FRED T+1 publication around macro releases)",
-    "front_end_repriced": false,
+    "delta_2y_bps": 10.6,
+    "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
+    "delta_2y_fred_t1": null,
+    "front_end_repriced": true,
     "held_close_proxy": 1.0,
     "held_close": true
   },
   "attribution": {
-    "primary_driver": "event_bump_sticky",
-    "primary_reversion": "med",
+    "primary_driver": "regime_repricing",
+    "primary_reversion": "low",
     "equity_drag": true,
     "equity_drag_inputs": {
       "smh_1d_return": -0.092,
