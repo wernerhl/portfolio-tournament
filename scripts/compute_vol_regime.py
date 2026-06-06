@@ -77,7 +77,11 @@ TRIGGER_SIGMA   = 1.0   # Δspread ≥ +1σ of 20d rolling stdev
 DELTA_2Y_BPS    = 7.0   # |Δ2Y| ≥ 7 bps → front-end repricing flag
 HELD_QUARTILE   = 0.75  # VIX close in top-quartile of day's range (≥ p75)
 EQUITY_DRAG_PCT = -0.05 # SMH 1d return ≤ -5%
-BREADTH_DROP_PP =  5.0  # breadth drop ≤ 5 percentage points → "intact"
+# Breadth "holds" rule — calibrated to the measure's own daily volatility
+# instead of a fixed pp cutoff. Same z-score discipline as the other
+# indicators: today's Δbreadth holds if it sits within ±k·σ of the 1-year
+# distribution of its own daily changes. RoP-FIX 3.
+BREADTH_HOLD_K_SIGMA = 1.0
 
 # Reversion definition — explicit
 REVERSION_N     = 10                  # sessions
@@ -188,34 +192,85 @@ def classify_driver(event_flag: bool, front_end_flag: bool, held_close: bool) ->
 
 
 # ────────────────────────────────────────────────────────────────────────
-# Walk-forward reversion hit-rate on event-day spike subsample.
-# Acceptance test per the brief.
+# Walk-forward reversion: two metrics so each is honest about its sample.
+#   all_triggers — every fired trigger that has a full N-session horizon
+#                  available (excludes today). The big-n number.
+#   event_only   — subset of those that fired on a scheduled-event day.
+#                  Small-n by construction; if < 5 we refuse to print a
+#                  point-estimate rate.
+# Wilson 95% CI alongside both rates so a 9/10 doesn't read as established.
 # ────────────────────────────────────────────────────────────────────────
-def walk_forward_reversion(spread: pd.Series, triggers: pd.DataFrame,
-                            event_flag_series: pd.Series) -> dict:
-    """For every TRIGGER on an EVENT day, did the spread revert within N sessions?"""
+def _wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    """95% Wilson interval for a binomial proportion."""
+    if n == 0: return (0.0, 1.0)
+    p = k / n
+    z2 = z * z
+    denom = 1 + z2 / n
+    centre = (p + z2 / (2 * n)) / denom
+    half = z * math.sqrt(p * (1 - p) / n + z2 / (4 * n * n)) / denom
+    return (max(0.0, centre - half), min(1.0, centre + half))
+
+
+def _measure_subsample(spread: pd.Series, fired_idx: pd.Index,
+                        last_date: pd.Timestamp) -> dict:
     sd_1y = spread.rolling(252, min_periods=60).std()
     n_attempts = 0; n_reverted = 0
-    event_trig = triggers[triggers["fired"]]
-    for d, row in event_trig.iterrows():
-        if not event_flag_series.get(d, False):
-            continue
+    spike_records = []
+    for d in fired_idx:
         if d not in spread.index: continue
         i = spread.index.get_loc(d)
-        if i < 1 or i + REVERSION_N + 1 >= len(spread): continue
+        # Horizon must be FULLY elapsed → exclude today (last_date) and any
+        # spike whose tail window extends past available data.
+        if d == last_date: continue
+        if i < 1 or i + REVERSION_N >= len(spread): continue
         pre = spread.iloc[i - 1]
         sigma = sd_1y.iloc[i]
         if not np.isfinite(sigma) or sigma <= 0: continue
         threshold = REVERSION_X_SD * sigma
-        window = spread.iloc[i+1 : i + REVERSION_N + 1]
-        reverted = ((window - pre).abs() <= threshold).any()
+        window = spread.iloc[i + 1 : i + REVERSION_N + 1]
+        reverted = bool(((window - pre).abs() <= threshold).any())
         n_attempts += 1
         if reverted: n_reverted += 1
+        spike_records.append((d, reverted))
     rate = (n_reverted / n_attempts) if n_attempts > 0 else None
-    return {"n_event_spikes": n_attempts, "n_reverted": n_reverted,
-            "reversion_hit_rate": rate,
-            "horizon_sessions": REVERSION_N,
-            "threshold_sigma": REVERSION_X_SD}
+    ci_lo, ci_hi = _wilson_ci(n_reverted, n_attempts) if n_attempts > 0 else (None, None)
+    return {
+        "n": n_attempts,
+        "n_reverted": n_reverted,
+        "hit_rate": rate,
+        "wilson_95ci": [ci_lo, ci_hi] if ci_lo is not None else None,
+        "horizon_sessions": REVERSION_N,
+        "threshold_sigma": REVERSION_X_SD,
+    }
+
+
+def walk_forward_reversion(spread: pd.Series, triggers: pd.DataFrame,
+                            event_flag_series: pd.Series) -> dict:
+    fired = triggers[triggers["fired"]].index
+    last_date = spread.index[-1]
+    event_fired = fired[[event_flag_series.get(d, False) for d in fired]]
+    all_metric   = _measure_subsample(spread, fired, last_date)
+    event_metric = _measure_subsample(spread, event_fired, last_date)
+    # Caveat language for the small-n event subsample
+    event_caption = None
+    if event_metric["n"] == 0:
+        event_caption = "no event-day spikes with elapsed horizon yet"
+    elif event_metric["n"] < 5:
+        event_caption = f"event-day n = {event_metric['n']} — too small to estimate; refer to the all-trigger metric"
+    elif event_metric["n"] < 30:
+        lo, hi = event_metric["wilson_95ci"]
+        event_caption = (f"event-day n = {event_metric['n']} → 95% CI "
+                          f"{int(lo*100)}–{int(hi*100)}%; not yet evidence")
+    return {
+        "today_excluded_from_metrics": str(last_date.date()),
+        "all_triggers_reversion":      all_metric,
+        "event_day_only_reversion":    event_metric,
+        "event_day_caveat":            event_caption,
+        "note": ("`all_triggers_reversion` measures all fired triggers with a fully "
+                  "elapsed N-session horizon — the right denominator for the spread-"
+                  "spike reversion question. `event_day_only_reversion` is the "
+                  "event-day subsample; by construction it has handful-per-year n."),
+    }
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -249,10 +304,13 @@ def main():
     spread = (vol["vix"] - vol["vix3m"]).dropna().rename("spread_spot_3m")
     spread.index = pd.to_datetime(spread.index)
 
-    # 2Y yield series (FRED us02y) — published with a ~1 day lag at NFP/CPI.
-    # For today's signal we fall back to the intraday snapshot ("^US2Y" /
-    # equivalent) when FRED hasn't published yet. The intraday value is treated
-    # as a provisional close; it's documented in the payload.
+    # 2Y yield series (FRED us02y). FRED publishes T+1 around macro releases
+    # (NFP/CPI print at 08:30 ET, FRED EOD lands the next day). The DGS2
+    # day-over-day diff IS release-spanning — it compares today's close to
+    # yesterday's close, capturing the 08:30 reaction. We do NOT use an
+    # intraday rate snapshot (^IRX is 13W not 2Y; CME 2YY=F delisted on
+    # Yahoo). When FRED today is NaN, we fall back to operator-injectable
+    # manual override (MANUAL_DELTA_2Y_BPS env var) — transparent in payload.
     if fred is not None and "us02y" in fred.columns:
         us02y = fred["us02y"].dropna()
         us02y.index = pd.to_datetime(us02y.index)
@@ -260,16 +318,6 @@ def main():
     else:
         us02y = pd.Series(dtype=float)
         delta_2y_bps = pd.Series(dtype=float)
-    us02y_intraday = None
-    us02y_intraday_prior = None
-    try:
-        intra = json.load(open(DATA / "intraday.json"))
-        u2 = (intra.get("prices") or {}).get("us02y") or {}
-        if u2.get("last") is not None:
-            us02y_intraday = float(u2["last"])
-            us02y_intraday_prior = float(u2.get("prior_close")) if u2.get("prior_close") is not None else None
-    except Exception:
-        pass
 
     # Semiconductor 1d return (SMH preferred, SOXX fallback)
     smh = (sect["smh"] if "smh" in sect.columns else sect["soxx"]).dropna()
@@ -318,13 +366,21 @@ def main():
                               "delta_spread": d_spread,
                               "sigma_threshold": sigma_threshold})
 
-    # Walk-forward reversion hit-rate on the event-day SUBSAMPLE
+    # Walk-forward reversion — both metrics (all-trigger + event-day-only)
     wf = walk_forward_reversion(spread, triggers, event_flag_series)
-    print(f"\n  Walk-forward reversion (event-day subsample, N={REVERSION_N}, "
-          f"X={REVERSION_X_SD}σ):")
-    print(f"    {wf['n_event_spikes']} event-day spikes · {wf['n_reverted']} reverted · "
-          f"hit rate = {wf['reversion_hit_rate']:.0%}" if wf['reversion_hit_rate'] is not None
-          else "    no event-day spikes in sample yet")
+    at = wf["all_triggers_reversion"]
+    ev = wf["event_day_only_reversion"]
+    print(f"\n  Walk-forward reversion (N={REVERSION_N}, X={REVERSION_X_SD}σ, today excluded):")
+    if at["hit_rate"] is not None:
+        lo, hi = at["wilson_95ci"]
+        print(f"    all triggers      n={at['n']:<3d} reverted {at['n_reverted']:<3d} "
+              f"rate {at['hit_rate']:.0%}  (95% CI {int(lo*100)}–{int(hi*100)}%)")
+    if ev["hit_rate"] is not None:
+        lo, hi = ev["wilson_95ci"]
+        print(f"    event-day only    n={ev['n']:<3d} reverted {ev['n_reverted']:<3d} "
+              f"rate {ev['hit_rate']:.0%}  (95% CI {int(lo*100)}–{int(hi*100)}%)")
+    else:
+        print(f"    event-day only    n={ev['n']} — {wf['event_day_caveat']}")
 
     # Per-state persistence + decay dynamics (computed from full history)
     dynamics = state_dynamics(states)
@@ -340,14 +396,29 @@ def main():
 
     # Three conditioning variables, transparent
     event_today = events_by_date.get(last_date.strftime("%Y-%m-%d"), [])
-    delta_2y_today = float(delta_2y_bps.reindex([last_date]).iloc[-1]) if not delta_2y_bps.empty else None
-    delta_2y_source = "FRED us02y"
-    # FRED publishes us02y T+1 around release windows. When NaN today, use
-    # intraday cash 2Y proxy if available (CME 2Y futures yield via yfinance).
-    if (delta_2y_today is None or (isinstance(delta_2y_today, float) and math.isnan(delta_2y_today))) \
-            and us02y_intraday is not None and us02y_intraday_prior is not None:
-        delta_2y_today = (us02y_intraday - us02y_intraday_prior) * 100.0
-        delta_2y_source = "intraday (CME 2Y futures yield)"
+    delta_2y_today = None
+    delta_2y_source = "unavailable (FRED T+1 publication around macro releases)"
+    # Strategy:
+    #   1. Prefer FRED DGS2 day-over-day = today_close − yesterday_close.
+    #      This window SPANS the 08:30 ET release — the right measurement
+    #      for an event-day classifier.
+    #   2. If FRED today is NaN, accept MANUAL_DELTA_2Y_BPS as an explicit
+    #      operator-injected number for the live session. Tomorrow's
+    #      pipeline run will overwrite with the FRED value.
+    if not delta_2y_bps.empty:
+        v = delta_2y_bps.reindex([last_date]).iloc[-1]
+        if not (isinstance(v, float) and math.isnan(v)):
+            delta_2y_today = float(v)
+            delta_2y_source = "FRED us02y day-over-day (spans 08:30 ET release)"
+    if delta_2y_today is None:
+        import os
+        env_override = os.environ.get("MANUAL_DELTA_2Y_BPS")
+        if env_override is not None:
+            try:
+                delta_2y_today = float(env_override)
+                delta_2y_source = "manual override (MANUAL_DELTA_2Y_BPS env var)"
+            except ValueError:
+                pass
     front_end_repriced = bool(delta_2y_today is not None and not math.isnan(delta_2y_today)
                               and abs(delta_2y_today) >= DELTA_2Y_BPS)
     held_close_proxy = vix_intraday_range_quartile_proxy(vol["vix"].dropna())
@@ -357,13 +428,20 @@ def main():
     driver = classify_driver(bool(event_today), front_end_repriced, held_close) \
              if last_trigger else {"driver": "no_trigger", "reversion": "n/a"}
 
-    # Independent equity_drag overlay
+    # Independent equity_drag overlay — RoP-FIX 3: calibrated threshold
     smh_ret_today = float(smh_ret_1d.reindex([last_date]).iloc[-1]) if not smh_ret_1d.empty else None
     breadth_delta_today = float(breadth_delta.reindex([last_date]).iloc[-1]) if not breadth_delta.empty else None
+    # σ of daily Δbreadth over rolling 1y window (252 sessions)
+    breadth_delta_sigma_1y = float(breadth_delta.rolling(252, min_periods=60).std().iloc[-1]) \
+        if not breadth_delta.empty else None
+    breadth_holds = (
+        breadth_delta_today is not None and breadth_delta_sigma_1y is not None
+        and breadth_delta_sigma_1y > 0
+        and breadth_delta_today >= -(BREADTH_HOLD_K_SIGMA * breadth_delta_sigma_1y)
+    )
     equity_drag = bool(
-        smh_ret_today is not None and breadth_delta_today is not None and
-        smh_ret_today <= EQUITY_DRAG_PCT and
-        breadth_delta_today >= -BREADTH_DROP_PP
+        smh_ret_today is not None and breadth_holds and
+        smh_ret_today <= EQUITY_DRAG_PCT
     )
 
     # ── Overlay scalar (DIAGNOSTIC — see brief, gated until backtest beats static) ──
@@ -404,12 +482,19 @@ def main():
             "event": ev[0] if ev else None,
         })
 
-    # Current term-structure curve point (just spot, 1M=VIX1d if present, 3M)
+    # Term-structure curve points — RoP-FIX 5: rename for clarity.
+    #   spot_vix  = VIX  (30-day implied vol; the "1-month / spot" point)
+    #   vix1d     = VIX1D (1-day vol; spikes on event days; NOT in spread)
+    #   vix3m     = VIX3M (3-month vol; back end of spread)
+    # Headline spread = spot−3M; the 1-day point is event-vol context, plotted
+    # but excluded from the spread definition.
     curve = {
         "spot_vix":    round(float(vol["vix"].iloc[-1]), 2),
         "vix1d":       round(float(vol["vix1d"].iloc[-1]), 2) if "vix1d" in vol.columns else None,
         "vix3m":       round(float(vol["vix3m"].iloc[-1]), 2),
         "spread_spot_3m": round(float(last_spread), 3),
+        "headline_spread": "spot − 3M (VIX − VIX3M); 1-day VIX1D is event-vol "
+                           "context, plotted but NOT in the spread definition.",
     }
 
     # Next scheduled event (sessions from today)
@@ -431,16 +516,16 @@ def main():
         "tradable_at":  tradable_at.strftime("%Y-%m-%d"),
 
         "config": {
-            "spread_definition": "VIX − VIX3M (FRED VIXCLS − VXVCLS proxy via yfinance)",
-            "state_breaks":      STATE_BREAKS,
-            "trigger_sigma":     TRIGGER_SIGMA,
-            "delta_2y_bps":      DELTA_2Y_BPS,
-            "held_quartile":     HELD_QUARTILE,
-            "equity_drag_pct":   EQUITY_DRAG_PCT,
-            "breadth_drop_pp":   BREADTH_DROP_PP,
-            "reversion_N":       REVERSION_N,
-            "reversion_X_sigma": REVERSION_X_SD,
-            "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)",
+            "spread_definition":      "VIX − VIX3M (FRED VIXCLS − VXVCLS proxy via yfinance)",
+            "state_breaks":           STATE_BREAKS,
+            "trigger_sigma":          TRIGGER_SIGMA,
+            "delta_2y_bps":           DELTA_2Y_BPS,
+            "held_quartile":          HELD_QUARTILE,
+            "equity_drag_pct":        EQUITY_DRAG_PCT,
+            "breadth_hold_k_sigma":   BREADTH_HOLD_K_SIGMA,
+            "reversion_N":            REVERSION_N,
+            "reversion_X_sigma":      REVERSION_X_SD,
+            "futures_spread_status":  "not_run (CBOE VX1/VX2 EOD settlements not sourced)",
         },
 
         "state":     last_state,
@@ -473,6 +558,11 @@ def main():
             "equity_drag_inputs": {
                 "smh_1d_return":     round(smh_ret_today, 3) if smh_ret_today is not None else None,
                 "breadth_delta_pp":  round(breadth_delta_today, 2) if breadth_delta_today is not None else None,
+                "breadth_holds":     breadth_holds,
+                "breadth_delta_sigma_1y_pp": round(breadth_delta_sigma_1y, 3) if breadth_delta_sigma_1y else None,
+                "breadth_z":         round(breadth_delta_today / breadth_delta_sigma_1y, 2)
+                                     if (breadth_delta_today is not None and breadth_delta_sigma_1y) else None,
+                "rule":              "breadth holds when Δbreadth ≥ −kσ of 1y daily Δ distribution (k = " + str(BREADTH_HOLD_K_SIGMA) + ")",
             },
         },
 
@@ -485,8 +575,8 @@ def main():
         },
 
         "validation": {
-            "walk_forward_event_subsample": wf,
-            "no_lookahead_passed": True,
+            "walk_forward":         wf,
+            "no_lookahead_passed":  True,
         },
 
         "history_recent": history_recent,

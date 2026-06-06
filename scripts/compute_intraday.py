@@ -35,16 +35,18 @@ TICKERS = {
     "gld":   "GC=F",
     "tlt":   "TLT",
     "dxy":   "DX-Y.NYB",
-    # Rates — yfinance for intraday since FRED publishes after the close.
-    # Vol-regime classifier's "front-end repricing" flag uses Δ2Y in bps.
-    "us02y": "^IRX",      # placeholder: ^IRX = 13W; better proxies for 2Y exist
-                          # but yfinance's 2Y is unreliable. The intraday script
-                          # captures the rate level; vol_regime falls back to
-                          # last-FRED-known when this is too noisy.
-    "us02y_alt": "2YY=F",  # CME 2-year T-note futures yield (cleaner)
     # Equity sector proxies for the idiosyncratic_equity overlay
     "smh":   "SMH",
     "soxx":  "SOXX",
+    # ──────────────────────────────────────────────────────────────────
+    # 2Y rate intraday: REMOVED. ^IRX is the 13W T-bill, not the 2Y; the
+    # CME 2YY=F yield series is delisted on Yahoo. Capturing one of these
+    # under a "us02y" key is misleading — the vol-regime classifier uses
+    # Δ2Y in bps and a 13W stand-in produces a meaningless reading.
+    # The vol_regime module now prefers FRED day-over-day (which spans
+    # the 08:30 ET release window) and supports MANUAL_DELTA_2Y_BPS as
+    # an explicit operator override when FRED hasn't published.
+    # ──────────────────────────────────────────────────────────────────
 }
 
 
