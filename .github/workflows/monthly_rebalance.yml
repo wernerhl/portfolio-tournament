@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
-        run: pip install yfinance fredapi pandas numpy scipy pyarrow
+        run: pip install yfinance fredapi pandas numpy scipy pyarrow scikit-learn
 
       - name: Re-score + reselect tiers + rebuild ticker data + recompute signals
         run: |
@@ -27,6 +27,8 @@ jobs:
           python scripts/select_tiers.py
           python scripts/build_ticker_data.py
           python scripts/compute_signals.py
+          python scripts/regime_v4_ml.py   # monthly v4 recalibration (writes v4_scoring_params.json knots)
+          python scripts/compute_thesis_backtest.py   # B5: thesis attribution over full backtest
 
       - name: Commit
         run: |

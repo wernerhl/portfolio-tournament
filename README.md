@@ -195,3 +195,21 @@ don't edit those by hand — the monthly rebalance overwrites them.
 
 The repo is **public**, so GitHub Pages on the free plan is fine. Holdings + cost basis
 are visible to anyone with the URL — same trade-off as `portfolio-screener`.
+
+## Data vintages (real-time convention)
+
+Several indicator inputs revise after the fact — FRED publishes the 2Y (DGS2)
+T+1 around macro releases, and NFCI/KCFSI/STLFSI/claims revise on weekly cycles.
+Two series exist for the regime composite:
+
+| File | Convention |
+|---|---|
+| `data/regime_daily_published.csv` | **As-published.** Append-only; each date's `R_t_published` is frozen at the value the system first printed that night. Seeded from `tournament.json` history (itself never rewritten). |
+| `data/regime_daily.csv` | **Revised.** Full recompute under current (revised/backfilled) inputs, regenerated every pipeline run. |
+
+The dashboard timeline charts the published vintage where it exists (since
+inception 2026-05-20) and the revised recompute for earlier history.
+**Any real-time performance claim — including the paper's live-period results —
+must use the published vintage.** Example of why this matters: 2026-06-05 was
+published as `R_t = 0.4269`; the revised recompute now says `0.3959` because
+inputs that were missing at publish time (T+1 FRED series) backfilled afterward.

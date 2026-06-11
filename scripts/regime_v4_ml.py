@@ -401,6 +401,43 @@ def main():
     daily_probs.to_csv(DATA / "regime_v4_daily.csv")
     print(f"  saved regime_v4_daily.csv ({daily_probs.shape})")
 
+    # ---- Scoring params for the daily light scorer (AUDIT FIX 2a) ----
+    # All displayed columns are equal-weight winners: isotonic(row_mean).
+    # IsotonicRegression.predict(out_of_bounds='clip') == np.interp over
+    # (X_thresholds_, y_thresholds_) with edge clipping, so dumping the
+    # knots lets score_regime_v4_daily.py extend the CSV daily with numpy
+    # only. This full script remains the MONTHLY recalibration job.
+    scoring_params = {
+        "fitted_at":  datetime.now().isoformat(),
+        "train_end":  str(X_full.index.max().date()),
+        "graduated_thresholds": {"deploy_lt": 0.25, "cautious_lt": 0.45, "defensive_lt": 0.65},
+        "feature_note": "input = mean over risk-score columns of regime_v2_risk_scores.parquet, NaN→0.5",
+        "targets": {},
+    }
+    def _dump_iso(out_col, cal):
+        if cal is not None and cal[0] == "equal_iso":
+            iso = cal[1]
+            scoring_params["targets"][out_col] = {
+                "x": [round(float(v), 6) for v in iso.X_thresholds_],
+                "y": [round(float(v), 6) for v in iso.y_thresholds_],
+            }
+    _dump_iso("p_5_40_calibrated", prod_cal)
+    for col, res in all_results.items():
+        if col == prod_col: continue
+        w = res.get("_winner", "equal_weight")
+        if w != "equal_weight": continue
+        out_col = f"p_{col[2:]}_{w}"
+        if out_col in daily_probs.columns and out_col not in scoring_params["targets"]:
+            y_c = targets.loc[common, col]; mask = y_c.notna()
+            try:
+                cal_t = fit_and_calibrate_winner(X_full[mask], y_c[mask], w, n_components)
+                _dump_iso(out_col, cal_t)
+            except Exception as e:
+                print(f"    knot-dump skip {out_col}: {e}", file=sys.stderr)
+    with open(DATA / "v4_scoring_params.json", "w") as f:
+        json.dump(scoring_params, f, indent=2)
+    print(f"  saved v4_scoring_params.json ({len(scoring_params['targets'])} isotonic curves)")
+
     # ---- Print regime distribution ----
     print(f"\nGraduated regime distribution (calibrated P(≥5%/40d)):")
     counts = daily_probs["graduated_regime"].value_counts()

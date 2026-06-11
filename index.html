@@ -322,6 +322,65 @@ tr.tier-row.open td{background:rgba(255,255,255,.025)}
 .event-today-cap{font:italic 400 11px var(--s);color:var(--t3);margin-top:4px;line-height:1.5}
 .next-event-line{font:italic 400 11px var(--s);color:var(--t3);margin-top:4px}
 
+/* ── THESIS layer (meso: exposure / falsification / attribution) ───── */
+.thesis{margin-bottom:var(--s8);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:10px;padding:18px 20px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.018)}
+.thesis-head{display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.thesis-head h2{font:700 var(--fs-h2) var(--s);letter-spacing:-.005em;color:var(--t1);margin:0}
+.thesis-head .sub{font:italic 400 12px var(--s);color:var(--t3)}
+.th-pending{display:inline-block;padding:3px 9px;border-radius:4px;margin-left:8px;
+  background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.45);
+  font:600 9px var(--m);color:var(--y);letter-spacing:.08em}
+.th-block{background:var(--surface-2);border:1px solid var(--hairline);
+  border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.th-block h4{font:600 var(--fs-label) var(--m);color:var(--t3);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.th-bar-row{display:grid;grid-template-columns:110px 1fr 120px;gap:12px;
+  align-items:center;padding:5px 0}
+.th-bar-row .tname{font:600 11px var(--m);color:var(--t2)}
+.th-stack{display:flex;height:18px;border-radius:3px;overflow:hidden;
+  background:var(--bg);border:1px solid var(--hairline)}
+.th-stack div{height:100%}
+.th-meta{font:400 10px var(--m);color:var(--t3);text-align:right}
+.th-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;
+  font:400 10px var(--m);color:var(--t3)}
+.th-legend .sw{display:inline-block;width:9px;height:9px;border-radius:2px;
+  margin-right:4px;vertical-align:middle}
+.th-table{width:100%;border-collapse:collapse;font:400 11.5px var(--m)}
+.th-table th{text-align:right;font:600 9px var(--m);color:var(--t4);
+  letter-spacing:.10em;padding:5px 8px;border-bottom:1px solid var(--hairline)}
+.th-table th:first-child{text-align:left}
+.th-table td{padding:6px 8px;border-bottom:1px dashed var(--hairline);
+  text-align:right;font-variant-numeric:tabular-nums}
+.th-table td:first-child{text-align:left;font-weight:600;color:var(--t2)}
+.th-claim{padding:10px 12px;background:var(--bg);border:1px solid var(--hairline);
+  border-radius:6px;margin-bottom:8px}
+.th-claim .cl-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.th-claim .cl-name{font:700 12px var(--m);color:var(--t1);letter-spacing:.03em}
+.th-claim .cl-status{font:600 9.5px var(--m);letter-spacing:.06em}
+.th-claim .cl-text{font:italic 400 13px var(--s);color:var(--t2);line-height:1.55;margin-top:5px}
+.th-claim .cl-kill{font:400 11px var(--s);color:var(--t3);margin-top:5px;line-height:1.45}
+.th-claim .cl-kill .k{font:600 8.5px var(--m);color:var(--r);letter-spacing:.12em;margin-right:6px}
+.th-log{margin-top:6px;font:400 10.5px var(--m);color:var(--t3);max-height:72px;overflow-y:auto}
+.th-log div{padding:2px 0;border-bottom:1px dashed var(--hairline)}
+.th-log .an{color:var(--accent);font-style:italic}
+.th-wf{display:grid;grid-template-columns:110px 1fr 70px;gap:8px;align-items:center;
+  padding:3px 0;font:400 11px var(--m)}
+.th-wf .lbl{color:var(--t3)}
+.th-wf .barwrap{position:relative;height:12px;background:var(--bg);
+  border-radius:2px;overflow:hidden}
+.th-wf .bar{position:absolute;top:0;height:100%}
+.th-wf .val{text-align:right;font-weight:600;color:var(--t2)}
+.th-toggle{display:inline-flex;gap:1px;background:var(--surface-2);
+  border:1px solid var(--hairline);border-radius:4px;overflow:hidden;margin-left:10px}
+.th-toggle button{padding:4px 10px;font:500 10px var(--m);color:var(--t3);
+  letter-spacing:.06em;border:0;background:transparent;cursor:pointer}
+.th-toggle button.on{background:rgba(201,168,106,.12);color:var(--accent)}
+.th-caveat{font:italic 400 10.5px var(--s);color:var(--t4);line-height:1.45;margin-top:6px}
+.th-rs-wrap{position:relative;height:170px}
+
 /* ── Scanner list (top-level) ─────────────────────────────────────── */
 .scanner{margin-bottom:var(--s8)}
 .scanner-head{display:flex;justify-content:space-between;align-items:center;
@@ -914,9 +973,20 @@ function renderRegimeTimeline(){
   const ctx = document.getElementById("regime-timeline");
   if (!ctx || !S.regimeDaily) return;
   if (S.regimeChart) S.regimeChart.destroy();
+  // AUDIT FIX 4: chart the PUBLISHED vintage where it exists (live period
+  // since inception 2026-05-20); revised recompute elsewhere. Published =
+  // what the system actually printed that night; inputs revise afterwards.
+  const pubMap = {};
+  (S.regimePub || []).forEach(r => {
+    if (r && r.date && r.R_t_published != null && !isNaN(r.R_t_published))
+      pubMap[String(r.date).slice(0,10)] = +r.R_t_published;
+  });
   const points = S.regimeDaily
     .filter(r => r.date && r.R_t != null && !isNaN(r.R_t))
-    .map(r => ({x: r.date, y: +r.R_t}));
+    .map(r => {
+      const d = String(r.date).slice(0,10);
+      return {x: r.date, y: (d in pubMap) ? pubMap[d] : +r.R_t};
+    });
   if (!points.length) return;
   S.regimeChart = new Chart(ctx, {
     type: "line",
@@ -992,24 +1062,63 @@ function v4RegimeAction(reg){
 // Renders ABOVE everything so the user never reads a calm gauge
 // without first seeing that the tape has cracked.
 // ──────────────────────────────────────────────────────────────────
+// ---- Session/staleness helpers (AUDIT FIX 2c + 5) -----------------
+// Approximate ET as UTC−4. A DST-precise conversion isn't needed for
+// badge logic; worst case the boundary slips one hour twice a year.
+function _etDateISO(d){ return new Date(d.getTime() - 4*3600e3).toISOString().slice(0,10); }
+function lastTradingSessionISO(){
+  const now = new Date();
+  const et = new Date(now.getTime() - 4*3600e3);
+  let d = new Date(Date.UTC(et.getUTCFullYear(), et.getUTCMonth(), et.getUTCDate()));
+  // Before the 16:00 ET close, today's session data can't exist yet.
+  if (et.getUTCHours() < 16) d.setUTCDate(d.getUTCDate() - 1);
+  while ([0,6].includes(d.getUTCDay())) d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0,10);
+}
+function isStaleAsOf(dateStr){
+  if (!dateStr) return true;
+  return String(dateStr).slice(0,10) < lastTradingSessionISO();
+}
+// Small chip rendered next to panel titles: grey when fresh, amber when stale.
+function asOfBadge(dateStr){
+  const d = dateStr ? String(dateStr).slice(0,10) : "—";
+  if (isStaleAsOf(d)) {
+    return `<span style="font:600 9px var(--m);letter-spacing:.08em;padding:2px 7px;border-radius:4px;
+      background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.4);color:var(--y);margin-left:8px">
+      STALE · as of ${d}</span>`;
+  }
+  return `<span style="font:500 9px var(--m);letter-spacing:.06em;color:var(--t4);margin-left:8px">as of ${d}</span>`;
+}
+function _fmtSnapTime(snap){
+  if (!snap) return "—";
+  return snap.toLocaleString("en-US", {timeZone:"America/New_York",
+    month:"short", day:"numeric", hour:"2-digit", minute:"2-digit"}) + " ET";
+}
+
 function renderTopBanner(){
   const id = S.intraday;
   if (!id) return "";
   const now = new Date();
   const snap = id.timestamp ? new Date(id.timestamp + "Z") : null;
   const ageMin = snap ? (now - snap) / 60000 : 9999;
+  const snapStr = _fmtSnapTime(snap);
 
   // Market hours (rough UTC envelope covering EST + EDT)
   const utcH = now.getUTCHours(), utcMin = now.getUTCMinutes();
   const dow = now.getUTCDay();
   const marketOpen = dow >= 1 && dow <= 5 &&
     ((utcH > 13 || (utcH === 13 && utcMin >= 30)) && utcH < 21);
+  // AUDIT FIX 5: session scoping — a snapshot from a previous ET calendar
+  // day describes the PRIOR session, not live conditions.
+  const snapIsCurrentSession = snap && _etDateISO(snap) === _etDateISO(now);
+  const shockIsLive = id.shock_active && marketOpen && snapIsCurrentSession;
 
-  // 1) SHOCK — highest priority
-  if (id.shock_active) {
+  const spxStr = (id.spx_change_pct >= 0 ? "+" : "") + (id.spx_change_pct ?? 0) + "%";
+  const vixStr = (id.vix_change_pct >= 0 ? "+" : "") + (id.vix_change_pct ?? 0) + "%";
+
+  // 1) LIVE SHOCK — red, only when it is happening NOW
+  if (shockIsLive) {
     const reasons = (id.shock_reasons || []).join(" · ");
-    const spxStr = (id.spx_change_pct >= 0 ? "+" : "") + (id.spx_change_pct ?? 0) + "%";
-    const vixStr = (id.vix_change_pct >= 0 ? "+" : "") + (id.vix_change_pct ?? 0) + "%";
     return `<div style="background:rgba(220,38,38,0.15);border:1px solid #dc2626;
        border-radius:8px;padding:14px 18px;margin-bottom:16px">
       <div style="font:800 13px var(--m);color:#f87171;letter-spacing:.1em">
@@ -1019,14 +1128,28 @@ function renderTopBanner(){
         <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>).
         The end-of-day regime below is <strong>STALE</strong> and does not reflect this move.
         Do not deploy new capital until the close.
-        <span style="color:#fca5a570">snapshot ${Math.round(ageMin)} min ago</span></div>
+        <span style="color:#fca5a570">snapshot ${snapStr} · ${Math.round(ageMin)} min ago</span></div>
+    </div>`;
+  }
+
+  // 1b) PRIOR-SESSION SHOCK — amber. Red means happening now; amber means
+  // happened, market closed (or the cron hasn't caught up to a new session).
+  if (id.shock_active && !shockIsLive) {
+    return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
+       border-radius:8px;padding:12px 16px;margin-bottom:16px">
+      <div style="font:700 12px var(--m);color:var(--y);letter-spacing:.08em">
+        ◷ PRIOR SESSION WAS A SHOCK DAY</div>
+      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+        SPX <strong>${spxStr}</strong>, VIX <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>)
+        in the last session. Market ${marketOpen ? "is open but the intraday snapshot hasn't refreshed yet" : "is closed"};
+        this banner reflects the prior session, not live conditions.
+        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
     </div>`;
   }
 
   // 2) STALENESS — amber when market open and either old or moved
   const spxMoved = Math.abs(id.spx_change_pct || 0) > 1.0;
   if (marketOpen && (ageMin > 60 || spxMoved)) {
-    const spxStr = (id.spx_change_pct >= 0 ? "+" : "") + (id.spx_change_pct ?? 0) + "%";
     return `<div style="background:rgba(250,204,21,0.12);border:1px solid #facc15;
        border-radius:8px;padding:12px 16px;margin-bottom:16px">
       <div style="font:700 12px var(--m);color:#facc15;letter-spacing:.08em">
@@ -1034,7 +1157,8 @@ function renderTopBanner(){
       <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
         Regime computed on prior close. SPX <strong>${spxStr}</strong> since,
         VIX now <strong>${id.vix_now}</strong>. The DEPLOY/CAUTIOUS call below
-        does NOT reflect the current session.</div>
+        does NOT reflect the current session.
+        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
     </div>`;
   }
 
@@ -1045,7 +1169,7 @@ function renderTopBanner(){
       <div style="font:700 11px var(--m);color:#c084fc;letter-spacing:.08em">
         COMPLACENCY FLAG</div>
       <div style="font:400 11px var(--s);color:#ddd6fe;margin-top:4px;line-height:1.55">
-        ${id.complacency_reason}.</div>
+        ${id.complacency_reason}. <span style="color:#ddd6fe99">snapshot ${snapStr}</span></div>
     </div>`;
   }
   return "";
@@ -1061,7 +1185,12 @@ function headlineVerdict(){
   const v4Last = (S.regimeV4 && S.regimeV4.length)
     ? S.regimeV4.filter(r => r && r.p_5_40_calibrated != null && !isNaN(r.p_5_40_calibrated)).slice(-1)[0]
     : null;
-  const v4reg = v4Last ? v4Last.graduated_regime : null;
+  // AUDIT FIX 2c: a stale calm signal must never be able to vote. If the
+  // v4 series hasn't been computed for the last trading session, exclude
+  // it from the worst-of ranking and annotate the exclusion.
+  const v4AsOf  = v4Last ? String(v4Last.date || "").slice(0,10) : null;
+  const v4Stale = isStaleAsOf(v4AsOf);
+  const v4reg = (v4Last && !v4Stale) ? v4Last.graduated_regime : null;
 
   // Severity rankings (higher = more cautious)
   const rank = {
@@ -1099,8 +1228,17 @@ function headlineVerdict(){
   // Complacency: NEVER show DEPLOY when SKEW>140 + VIX<17
   const complacent = !!(reg.complacency_flag || (S.intraday && S.intraday.complacency_active));
   if (complacent && worstRank < 1) { worst = "COMPLACENT"; worstRank = 1; }
-  // Shock overrides everything
-  if (S.intraday && S.intraday.shock_active) { worst = "INTRADAY STRESS"; worstRank = 99; }
+  // Shock overrides everything — but ONLY a live one. A prior-session shock
+  // is already baked into the EOD v2 regime; letting yesterday's snapshot
+  // keep shouting INTRADAY STRESS pre-open is the mirror image of the
+  // stale-calm bug. (AUDIT FIX 5 applied to the headline too.)
+  const _snap = (S.intraday && S.intraday.timestamp) ? new Date(S.intraday.timestamp + "Z") : null;
+  const _now = new Date();
+  const _utcH = _now.getUTCHours(), _utcMin = _now.getUTCMinutes(), _dow = _now.getUTCDay();
+  const _mktOpen = _dow >= 1 && _dow <= 5 && ((_utcH > 13 || (_utcH === 13 && _utcMin >= 30)) && _utcH < 21);
+  const shockLive = !!(S.intraday && S.intraday.shock_active && _mktOpen
+                        && _snap && _etDateISO(_snap) === _etDateISO(_now));
+  if (shockLive) { worst = "INTRADAY STRESS"; worstRank = 99; }
 
   // Map v2 → action vocabulary
   if (worst === "LOW RISK")  worst = "DEPLOY";
@@ -1117,9 +1255,11 @@ function headlineVerdict(){
     inputs: {
       v2_regime: reg.regime, v2_ew: reg.early_warning,
       v4_regime: v4reg,
+      v4_stale: v4Stale, v4_as_of: v4AsOf,
       n_crisis: reg.n_crisis || 0,
       complacent: complacent,
-      shock: !!(S.intraday && S.intraday.shock_active),
+      shock: shockLive,
+      shock_prior_session: !!(S.intraday && S.intraday.shock_active && !shockLive),
     },
   };
 }
@@ -1141,10 +1281,14 @@ function renderRegimeCommandCenter(R){
   const divlab = reg.divergence_alert;
   const v2 = (R_lead != null && R_full != null);
 
-  // v4 fields: latest row of regime_v4_daily.csv
+  // v4 fields: latest row of regime_v4_daily.csv — with freshness check.
+  // AUDIT FIX 2c: stale v4 still DISPLAYS (with an amber as-of badge) but
+  // never votes in the headline (handled in headlineVerdict).
   const v4Last = (S.regimeV4 && S.regimeV4.length)
     ? S.regimeV4.filter(r => r && r.p_5_40_calibrated != null && !isNaN(r.p_5_40_calibrated)).slice(-1)[0]
     : null;
+  const v4AsOfCC  = v4Last ? String(v4Last.date || "").slice(0,10) : null;
+  const v4StaleCC = isStaleAsOf(v4AsOfCC);
   const p5_40 = v4Last ? +v4Last.p_5_40_calibrated : null;
   const p3_20 = v4Last && v4Last.p_3_20_equal_weight != null ? +v4Last.p_3_20_equal_weight : null;
   const p10_60 = v4Last && v4Last.p_10_60_equal_weight != null ? +v4Last.p_10_60_equal_weight : null;
@@ -1163,9 +1307,11 @@ function renderRegimeCommandCenter(R){
   const inputLine = [
     inputs.v2_regime ? `v2 ${inputs.v2_regime}` : null,
     inputs.v4_regime ? `v4 ${inputs.v4_regime}` : null,
+    inputs.v4_stale ? `<span style="color:var(--y)">v4: stale (as of ${inputs.v4_as_of || "?"}), excluded</span>` : null,
     inputs.n_crisis > 0 ? `${inputs.n_crisis} crisis ch.` : null,
     inputs.complacent ? `complacent` : null,
     inputs.shock ? `intraday shock` : null,
+    inputs.shock_prior_session ? `prior-session shock (not voting)` : null,
   ].filter(Boolean).join(" · ");
   const verdict = `<strong style="color:${lblColor}">${headline.label}.</strong> ${headline.action}
     <div style="margin-top:6px;font:400 10px var(--m);color:var(--t4)">${inputLine}</div>
@@ -1187,7 +1333,11 @@ function renderRegimeCommandCenter(R){
         ${action ? `<div class="s" style="color:${cellColor}">${action}</div>` : ""}
       </div>`;
   };
-  const scoreRow = v4Last ? `<div class="score-row">
+  const scoreRow = v4Last ? `${v4StaleCC ? `<div style="margin-top:8px;text-align:center">
+      <span style="font:600 9px var(--m);letter-spacing:.08em;padding:3px 9px;border-radius:4px;
+        background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.45);color:var(--y)">
+        ⚠ v4 STALE · as of ${v4AsOfCC} · excluded from headline</span>
+    </div>` : ""}<div class="score-row" ${v4StaleCC ? 'style="opacity:.55"' : ''}>
       ${probCell("≥3% over NEXT 20D", p3_20, "")}
       ${probCell("≥5% over NEXT 40D · CAL", p5_40, v4reg)}
       ${probCell("≥10% over NEXT 60D", p10_60, "")}
@@ -1232,7 +1382,7 @@ function renderRegimeCommandCenter(R){
   return `<section class="rcc">
     <div class="rcc-top">
       <div class="rcc-card">
-        <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">composite verdict</span>' : ''}</h3>
+        <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">composite verdict</span>' : ''}${asOfBadge(reg.as_of)}</h3>
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
         <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
@@ -1254,6 +1404,12 @@ function renderRegimeCommandCenter(R){
     <div class="rcc-card">
       <h3>REGIME TIMELINE — R<sub>full</sub> with regime bands (safe → elevated → crisis)</h3>
       <div class="timeline-wrap"><canvas id="regime-timeline"></canvas></div>
+      <div style="margin-top:6px;font:italic 400 10.5px var(--s);color:var(--t4);line-height:1.45">
+        Vintages: indicator inputs revise after the fact (several FRED series publish T+1 or weekly).
+        Since inception 2026-05-20 this chart shows the <strong style="font-style:normal">as-published</strong>
+        values — what the system printed that night — preserved in regime_daily_published.csv.
+        Earlier history is the revised recompute. Real-time performance claims must use the published vintage.
+      </div>
     </div>
   </section>`;
 }
@@ -1715,7 +1871,7 @@ function renderRegimeOverlayPanel(){
   return `<section class="rop">
     <div class="rop-head">
       <div>
-        <h2>REGIME & OVERLAY</h2>
+        <h2>REGIME & OVERLAY${asOfBadge(r.as_of)}</h2>
         <div class="sub">VIX term-structure state · spike attribution · diagnostic overlay</div>
       </div>
       <div style="font:400 11px var(--m);color:var(--t3)">
@@ -1908,6 +2064,271 @@ function nextEventLine(){
 }
 
 // ──────────────────────────────────────────────────────────────────────
+// THESIS layer — meso: cross-sectional structure of the bets.
+// Risk accounting + epistemics, NOT a return forecaster. Holdings-based
+// exposure only; no factor regressions on live data; no rotation signal;
+// the registry/claims are frozen judgment artifacts rendered verbatim.
+// ──────────────────────────────────────────────────────────────────────
+const THESIS_COLORS = {
+  ai_infra: "#6B9BEA", fin_plumbing: "#5FB98E", hard_assets: "#C9A86A",
+  defensive_quality: "#B3AA9B", ldg_ex_ai: "#A88FE5", consumer_cyclical: "#E6914A",
+  unclassified: "#5E5648", cash: "#2C2820",
+};
+function thesisColor(k){ return THESIS_COLORS[k] || "#737373"; }
+function thesisLabel(k){
+  const reg = S.thesisReg && S.thesisReg.theses;
+  if (k === "unclassified") return "unclassified";
+  if (k === "cash") return "cash";
+  return (reg && reg[k] && reg[k].label) || k;
+}
+
+function renderThesisSection(){
+  const td = S.thesis;
+  if (!td) return "";
+  const frozen = td.registry_frozen;
+  const view = S.thesisView || "invested";
+  const tab  = S.thesisTab || "live";
+  const expKey = view === "total" ? "exposure_total" : "exposure_invested";
+
+  // ---- B1: exposure stacked bars + N_eff + overlap ----
+  const tierRows = Object.entries(td.tiers || {}).map(([tid, t]) => {
+    const exp = t[expKey] || {};
+    const segs = Object.entries(exp).map(([k, w]) =>
+      `<div style="width:${(w*100).toFixed(1)}%;background:${thesisColor(k)}"
+        title="${thesisLabel(k)}: ${(w*100).toFixed(1)}%"></div>`).join("");
+    const ts = tierSpec(tid);
+    return `<div class="th-bar-row">
+      <div class="tname" style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</div>
+      <div class="th-stack">${segs}</div>
+      <div class="th-meta">N<sub>eff</sub> <strong style="color:var(--t1)">${t.n_eff}</strong>
+        · uncl ${(t.unclassified_share*100).toFixed(0)}%${t.extend_registry_prompt ?
+        ' <span style="color:var(--y)" title="Unclassified > 15% of invested — extend the registry (version bump)">⚠ EXTEND</span>' : ''}</div>
+    </div>`;
+  }).join("");
+  const legend = Object.keys(THESIS_COLORS).map(k =>
+    `<span><span class="sw" style="background:${thesisColor(k)}"></span>${thesisLabel(k)}</span>`).join("");
+
+  const tids = Object.keys(td.tiers || {});
+  const om = td.overlap_matrix || {};
+  const heat = (v) => {
+    const a = Math.max(0, Math.min(1, v));
+    return `rgba(201,168,106,${(a*0.55).toFixed(2)})`;
+  };
+  const overlapTable = `<table class="th-table" style="margin-top:8px">
+    <tr><th>OVERLAP</th>${tids.map(t => `<th>${(tierSpec(t)||{}).short || t}</th>`).join("")}</tr>
+    ${tids.map(a => `<tr><td>${(tierSpec(a)||{}).short || a}</td>${tids.map(b =>
+      `<td style="background:${a===b ? 'transparent' : heat(om[a]?.[b] ?? 0)}">${a===b ? "—" : ((om[a]?.[b] ?? 0)).toFixed(2)}</td>`).join("")}</tr>`).join("")}
+  </table>`;
+
+  // ---- B2: basket performance table ----
+  const fmtPc = v => v == null ? "—" : ((v >= 0 ? "+" : "") + (v*100).toFixed(1) + "%");
+  const basketRows = Object.entries(td.baskets || {}).map(([k, b]) => `
+    <tr>
+      <td><span class="sw" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${thesisColor(k)};margin-right:6px"></span>${b.label}</td>
+      <td class="${b.ret_1d > 0 ? 'pos' : b.ret_1d < 0 ? 'neg' : ''}">${fmtPc(b.ret_1d)}</td>
+      <td class="${b.ret_1w > 0 ? 'pos' : b.ret_1w < 0 ? 'neg' : ''}">${fmtPc(b.ret_1w)}</td>
+      <td class="${b.ret_inception > 0 ? 'pos' : b.ret_inception < 0 ? 'neg' : ''}">${fmtPc(b.ret_inception)}</td>
+      <td class="neg">${fmtPc(b.drawdown_from_peak)}</td>
+      <td style="color:var(--t3)">${b.proxy_etf || "—"} ${fmtPc(b.proxy_ret_1w)}</td>
+      <td>${b.divergence_flag ? `<span style="color:var(--y)" title="basket vs proxy diverge ${b.divergence_1w_pp}pp on the week — classification drift smell">⚠ ${b.divergence_1w_pp}pp</span>` : '<span style="color:var(--t4)">ok</span>'}</td>
+    </tr>`).join("");
+
+  // ---- B3: falsification register ----
+  const claims = (S.thesisClaims && S.thesisClaims.claims) || [];
+  const ks = td.kill_status || {};
+  const claimCards = claims.map(c => {
+    const k = ks[c.thesis_id] || {};
+    const status = k.met
+      ? `<span class="cl-status" style="color:var(--r)">KILL CRITERIA MET ON ${k.date}</span>`
+      : `<span class="cl-status" style="color:var(--g)">no kill criteria met</span>`;
+    const log = (c.log || []).slice(-6).reverse().map(l =>
+      l.type === "auto"
+        ? `<div>${l.date} · ${l.event} · basket 1d ${(l.basket_ret_1d*100).toFixed(2)}%</div>`
+        : `<div class="an">${l.date} · analyst entry · ${l.note || ""}${l.kill ? " · KILL" : ""}</div>`
+    ).join("");
+    return `<div class="th-claim">
+      <div class="cl-head">
+        <span class="cl-name" style="color:${thesisColor(c.thesis_id)}">${thesisLabel(c.thesis_id)}</span>
+        ${status}
+      </div>
+      <div class="cl-text">${c.claim}</div>
+      <div class="cl-kill"><span class="k">KILL</span>${c.kill_criteria}</div>
+      <div class="th-log">${log || '<div style="color:var(--t4);font-style:italic">no log entries</div>'}</div>
+    </div>`;
+  }).join("");
+
+  // ---- B4: attribution waterfalls ----
+  const attr = td.attribution || {};
+  const maxAbs = Math.max(0.0001, ...Object.values(attr).flatMap(a =>
+    a.cum ? Object.values(a.cum).map(Math.abs) : [0]));
+  const wfRow = (lbl, v) => {
+    const w = Math.abs(v) / maxAbs * 50;
+    const color = v >= 0 ? "var(--g)" : "var(--r)";
+    const left = v >= 0 ? 50 : 50 - w;
+    return `<div class="th-wf">
+      <span class="lbl">${lbl}</span>
+      <div class="barwrap"><div class="bar" style="left:${left}%;width:${w}%;background:${color}"></div>
+        <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--hairline-hi)"></div></div>
+      <span class="val">${(v*100).toFixed(2)}%</span>
+    </div>`;
+  };
+  const attrBlocks = Object.entries(attr).map(([tid, a]) => {
+    const ts = tierSpec(tid); const c = a.cum || {};
+    return `<div style="margin-bottom:10px">
+      <div style="font:600 11px var(--m);color:${ts ? ts.color : 'var(--t2)'};margin-bottom:3px">
+        ${ts ? ts.short : tid} <span style="color:var(--t4);font-weight:400">· active vs SPY ${(c.active*100).toFixed(2)}% · ${a.n_days} sessions</span></div>
+      ${wfRow("cash effect", c.cash_eff)}
+      ${wfRow("thesis allocation", c.alloc_eff)}
+      ${wfRow("selection", c.selection)}
+    </div>`;
+  }).join("");
+
+  // ---- B5: backtest sub-tab ----
+  const bt = S.thesisBT || {};
+  const btRows = Object.entries(bt.tiers || {}).map(([tid, t]) => {
+    const ts = tierSpec(tid); const c = t.cum || {};
+    return `<tr>
+      <td style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</td>
+      <td>${t.n_periods}</td>
+      <td class="${c.active > 0 ? 'pos' : 'neg'}">${(c.active*100).toFixed(0)}%</td>
+      <td class="${c.cash_eff > 0 ? 'pos' : 'neg'}">${(c.cash_eff*100).toFixed(0)}%</td>
+      <td class="${c.alloc_eff > 0 ? 'pos' : 'neg'}">${(c.alloc_eff*100).toFixed(0)}%</td>
+      <td class="${c.selection > 0 ? 'pos' : 'neg'}">${(c.selection*100).toFixed(0)}%</td>
+      <td style="color:var(--t3);text-align:left">${Object.entries(t.avg_exposure || {}).slice(0,3).map(([k,v]) => `${thesisLabel(k)} ${(v*100).toFixed(0)}%`).join(" · ")}</td>
+    </tr>`;
+  }).join("");
+  const btCaveats = (bt.caveats || []).map(c => `<div class="th-caveat">⚠ ${c}</div>`).join("");
+
+  const liveBody = `
+    <div class="th-block">
+      <h4>B1 · EXPOSURE & CONCENTRATION
+        <span class="th-toggle">
+          <button class="${view==='invested' ? 'on' : ''}" data-thesis-view="invested">INVESTED</button>
+          <button class="${view==='total' ? 'on' : ''}" data-thesis-view="total">TOTAL incl. cash</button>
+        </span></h4>
+      ${tierRows}
+      <div class="th-legend">${legend}</div>
+      ${overlapTable}
+      <div class="th-caveat">${td.method_caption}</div>
+    </div>
+    <div class="th-block">
+      <h4>B2 · THESIS BASKETS — performance & drawdown (context, not signal)</h4>
+      <table class="th-table">
+        <tr><th>THESIS</th><th>1D</th><th>1W</th><th>SINCE 05-20</th><th>DD</th><th>PROXY 1W</th><th>DIV</th></tr>
+        ${basketRows}
+      </table>
+      <div style="margin-top:10px">
+        <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
+          RELATIVE STRENGTH — ai_infra / fin_plumbing · ai_infra / hard_assets
+          <span style="font-weight:400;letter-spacing:0;color:var(--t5)">· ${td.rs_caption}</span></div>
+        <div class="th-rs-wrap"><canvas id="thesis-rs-chart"></canvas></div>
+      </div>
+      <div class="th-caveat">${td.small_n_caveat}</div>
+    </div>
+    <div class="th-block">
+      <h4>B3 · THESIS REGISTER — claims · kill criteria · log (auto = mechanical event-day entries; analyst = Werner)</h4>
+      ${claimCards}
+    </div>
+    <div class="th-block">
+      <h4>B4 · ATTRIBUTION — cash | allocation | selection (sums to active vs SPY; residual-defined)</h4>
+      ${attrBlocks}
+      <div class="th-caveat">${td.small_n_caveat} Components are arithmetic sums of daily effects; no CIs fabricated on ${td.sessions_since_inception} points.</div>
+    </div>`;
+
+  const btBody = `
+    <div class="th-block">
+      <h4>B5 · BACKTEST ATTRIBUTION — full walk-forward, ${(bt.tiers && Object.values(bt.tiers)[0] || {}).n_periods || "—"} monthly periods</h4>
+      <table class="th-table">
+        <tr><th>TIER</th><th>PERIODS</th><th>CUM ACTIVE</th><th>CASH</th><th>ALLOCATION</th><th>SELECTION</th><th style="text-align:left">AVG TOP EXPOSURES</th></tr>
+        ${btRows}
+      </table>
+      ${btCaveats}
+    </div>`;
+
+  return `<section class="thesis">
+    <div class="thesis-head">
+      <div>
+        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span style="font:500 9px var(--m);color:var(--t4);margin-left:8px">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
+        <div class="sub">the meso level: cross-sectional structure of the bets — risk accounting, not a return forecaster</div>
+      </div>
+      <span class="th-toggle">
+        <button class="${tab==='live' ? 'on' : ''}" data-thesis-tab="live">LIVE</button>
+        <button class="${tab==='backtest' ? 'on' : ''}" data-thesis-tab="backtest">BACKTEST</button>
+      </span>
+    </div>
+    ${tab === "live" ? liveBody : btBody}
+  </section>`;
+}
+
+function renderThesisRsChart(){
+  const td = S.thesis;
+  if (!td || !td.rs_series) return;
+  const ctx = document.getElementById("thesis-rs-chart");
+  if (!ctx) return;
+  if (S.thesisRsChart) { try { S.thesisRsChart.destroy(); } catch(e){} }
+  const toIdx = arr => (arr || []).map((p, i) => ({x: i, y: p.v, d: p.d}));
+  const s1 = toIdx(td.rs_series.ai_infra_vs_fin_plumbing);
+  const s2 = toIdx(td.rs_series.ai_infra_vs_hard_assets);
+  // Regime shading: amber boxes over spans where R_t >= 0.5 (HIGH+) within window
+  const annotations = {};
+  if (S.regimeDaily && s1.length) {
+    const dates = s1.map(p => p.d);
+    const rmap = {};
+    S.regimeDaily.forEach(r => { if (r.date && r.R_t != null) rmap[String(r.date).slice(0,10)] = +r.R_t; });
+    let spanStart = null;
+    dates.forEach((d, i) => {
+      const hot = (rmap[d] ?? 0) >= 0.5;
+      if (hot && spanStart === null) spanStart = i;
+      if ((!hot || i === dates.length - 1) && spanStart !== null) {
+        annotations["regime" + spanStart] = {
+          type: "box", xMin: spanStart, xMax: i, yScaleID: "y",
+          backgroundColor: "rgba(219,162,62,0.08)", borderWidth: 0,
+        };
+        spanStart = null;
+      }
+    });
+  }
+  const xTickCb = arr => v => {
+    const i = Math.round(v);
+    return (i >= 0 && i < arr.length && arr[i]) ? arr[i].d.slice(0, 7) : "";
+  };
+  try {
+    S.thesisRsChart = new Chart(ctx, {
+      type: "line",
+      data: { datasets: [
+        { label: "ai_infra / fin_plumbing", data: s1, borderColor: "#6B9BEA",
+          borderWidth: 1.4, pointRadius: 0, tension: 0.1 },
+        { label: "ai_infra / hard_assets", data: s2, borderColor: "#C9A86A",
+          borderWidth: 1.4, pointRadius: 0, tension: 0.1 },
+      ]},
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+        scales: {
+          x: {type: "linear", min: 0, max: Math.max(0, s1.length - 1),
+              grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 8},
+                      maxRotation: 0, stepSize: Math.max(1, Math.floor(s1.length/6)),
+                      callback: xTickCb(s1)}},
+          y: {grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 8}}},
+        },
+        plugins: {
+          legend: {position: "top", align: "end",
+                    labels: {color: "#B3AA9B", font: {family: "Pagella, Spectral, serif", size: 10, style: "italic"},
+                             usePointStyle: true, boxWidth: 6, padding: 8}},
+          tooltip: {backgroundColor: "rgba(0,0,0,0.9)",
+                    callbacks: { title: items => (items[0] && s1[items[0].dataIndex]?.d) || "",
+                                  label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(3)}` }},
+          annotation: {annotations},
+        },
+      },
+    });
+  } catch (e) {
+    console.error("[thesis-rs] Chart.js failed:", e);
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────
 // Scanner: list all tickers with computed signals side-by-side, with two
 // mini-bars per row (quality + trade-now) and the divergence flag. The
 // dashboard's other views (regime gauge, tier rows) are organised by
@@ -1994,7 +2415,7 @@ function renderScanner(){
   return `<section class="scanner">
     <div class="scanner-head">
       <div>
-        <h2>SCANNER — BUSINESS QUALITY × TRADE NOW</h2>
+        <h2>SCANNER — BUSINESS QUALITY × TRADE NOW${asOfBadge(S.signals && S.signals.updated)}</h2>
         <div class="sc-sub">${rows.length} of ${rows0.length} names · top of list = best divergence quadrant</div>
       </div>
       <div class="filter-row">
@@ -2439,6 +2860,9 @@ function render(){
   // ---- 1b. REGIME & OVERLAY (vol-regime + attribution) ----
   h += renderRegimeOverlayPanel();
 
+  // ---- 1c. THESIS (meso layer: exposure / falsification / attribution) ----
+  h += renderThesisSection();
+
   // ---- 2. TWO-SCORE SCANNER ----
   h += renderScanner();
 
@@ -2497,7 +2921,7 @@ function render(){
     : "";
 
   h += `<div class="lbtable">
-    <div class="lb-h"><h2>LEADERBOARD</h2>
+    <div class="lb-h"><h2>LEADERBOARD${asOfBadge(live && live.date)}</h2>
       <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"}${toggleHtml}</div></div>
     ${condCap}
     <table>
@@ -2648,11 +3072,23 @@ function render(){
     S.leaderboardCondMode = b.dataset.condMode === "on";
     render();
   }));
+  // Thesis section toggles
+  document.querySelectorAll("[data-thesis-view]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.thesisView = b.dataset.thesisView;
+    render();
+  }));
+  document.querySelectorAll("[data-thesis-tab]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.thesisTab = b.dataset.thesisTab;
+    render();
+  }));
 
   // Draw charts after DOM
   setTimeout(() => {
     renderRegimeTimeline();
     renderRopCurveChart();
+    renderThesisRsChart();
     renderChart(allSeries, S.period);
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
@@ -2690,6 +3126,11 @@ async function init(){
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");
   S.eventCal   = await loadJSON("data/event_calendar.json");
+  S.regimePub  = await loadCSV("data/regime_daily_published.csv");
+  S.thesis     = await loadJSON("data/thesis_daily.json");
+  S.thesisReg  = await loadJSON("data/thesis_registry.json");
+  S.thesisClaims = await loadJSON("data/thesis_claims.json");
+  S.thesisBT   = await loadJSON("data/thesis_backtest.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 

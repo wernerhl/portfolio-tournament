@@ -339,7 +339,49 @@ def main():
     compat = pd.DataFrame({"R_t": r_full.round(4), "n_indicators": n_full})
     compat.index.name = "date"
     compat.dropna(subset=["R_t"]).to_csv(DATA / "regime_daily.csv")
-    print(f"  saved regime_daily.csv (compat shim: R_t = R_full)")
+    print(f"  saved regime_daily.csv (compat shim: R_t = R_full — REVISED vintage; "
+          f"recomputed under current inputs every run)")
+
+    # ---- PUBLISHED vintage (AUDIT FIX 4) ----
+    # regime_daily.csv above is the REVISED series: a full recompute under
+    # today's (possibly revised/backfilled) inputs. The PUBLISHED series is
+    # append-only — each date's R_t frozen at the value the system first
+    # printed for it. FRED series revise and publish T+1; the published
+    # vintage is what the system actually knew in real time, and it is the
+    # only legitimate series for real-time performance claims.
+    pub_path = DATA / "regime_daily_published.csv"
+    if pub_path.exists():
+        pub = pd.read_csv(pub_path, index_col="date")
+        pub.index = pub.index.astype(str)
+    else:
+        # Seed from tournament.json history — those rows were written
+        # nightly at publish time and never recomputed.
+        pub = pd.DataFrame(columns=["R_t_published"])
+        pub.index.name = "date"
+        try:
+            tj = json.load(open(DATA / "tournament.json"))
+            seed = {h["date"]: h["R_t"] for h in tj.get("history", []) if h.get("R_t") is not None}
+            pub = pd.DataFrame({"R_t_published": pd.Series(seed)})
+            pub.index.name = "date"
+            print(f"  seeded regime_daily_published.csv from tournament.json ({len(pub)} as-published rows)")
+        except Exception as e:
+            print(f"  warn publish-seed: {e}")
+    _latest_pub = out_df.dropna(subset=["R_full"]).iloc[-1]
+    today_key = _latest_pub.name.strftime("%Y-%m-%d")
+    # Append-only: NEVER overwrite an existing date. AND never freeze a value
+    # for an in-progress session — only append once the session is complete
+    # (as_of strictly before today, or today after ~21:30 UTC ≈ 16:30 ET).
+    from datetime import datetime as _dtt, timezone as _tz
+    _now = _dtt.now(_tz.utc)
+    _session_complete = (today_key < _now.strftime("%Y-%m-%d")) or \
+                        (_now.hour > 21 or (_now.hour == 21 and _now.minute >= 30))
+    if today_key not in pub.index and _session_complete:
+        pub.loc[today_key, "R_t_published"] = round(float(_latest_pub["R_full"]), 4)
+        print(f"  appended published vintage: {today_key} R_t = {float(_latest_pub['R_full']):.4f}")
+    elif today_key not in pub.index:
+        print(f"  published vintage: session {today_key} not complete — not freezing a partial value")
+    pub.sort_index().to_csv(pub_path)
+    print(f"  saved regime_daily_published.csv ({len(pub)} frozen rows)")
 
     # ---- Dashboard snapshot JSON ----
     latest_row = out_df.dropna(subset=["R_full"]).iloc[-1]

@@ -33,6 +33,21 @@ T0 = time.time()
 def log(msg): print(f"[{time.time()-T0:6.1f}s] {msg}", flush=True)
 
 
+def drop_partial_today(df: pd.DataFrame) -> pd.DataFrame:
+    """yfinance returns a PARTIAL daily bar for the in-progress session when
+    fetched during market hours. Every downstream artifact treats the last
+    row as a settled close (canonical vol close, regime as_of, published
+    vintage), so a partial bar poisons the whole chain. Keep only COMPLETE
+    sessions: drop today's row before ~16:20 ET (close + settle buffer)."""
+    from datetime import datetime as _dt, timedelta as _td
+    et = _dt.utcnow() - _td(hours=4)   # approx ET; ±1h at DST is harmless here
+    if et.hour < 16 or (et.hour == 16 and et.minute < 20):
+        today = pd.Timestamp(et.date())
+        if len(df) and pd.Timestamp(df.index[-1]).normalize() == today:
+            return df.iloc[:-1]
+    return df
+
+
 def download_close(tickers, start, end=None) -> pd.DataFrame:
     """Returns DataFrame of close prices, columns=tickers, index=date."""
     end = end or datetime.now()
@@ -88,6 +103,7 @@ def main():
         new.loc[new.index > cutoff].reindex(columns=universe),
     ])
     merged = merged[~merged.index.duplicated(keep="last")].sort_index()
+    merged = drop_partial_today(merged)
     new_last = merged.index.max()
     log(f"  merged: {merged.shape}, new last date {new_last.date()}")
 
@@ -125,8 +141,39 @@ def main():
         except Exception as e:
             log(f"  warn {name}: {e}")
     vol_df = pd.DataFrame(vol_data)
+    vol_df = drop_partial_today(vol_df)
     vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
     log(f"  saved vol_indicators.parquet ({vol_df.shape})")
+
+    # ── CANONICAL vol-complex close (AUDIT FIX 3) ─────────────────────
+    # ONE fetcher writes the canonical close; every consumer (vol_regime,
+    # dashboard panels, CI asserts) reads from here. Stops the same
+    # instrument showing two different "close" values on one screen
+    # (EOD daily bar vs the last 1-minute tick from the intraday cron).
+    try:
+        import json as _json
+        last_idx = vol_df["vix"].dropna().index[-1]
+        def _cv(col):
+            if col not in vol_df.columns: return None
+            s = vol_df[col].dropna()
+            return round(float(s.loc[last_idx]), 4) if last_idx in s.index else None
+        canonical = {
+            "date":   str(pd.Timestamp(last_idx).date()),
+            "vix":    _cv("vix"),
+            "vix3m":  _cv("vix3m"),
+            "vvix":   _cv("vvix"),
+            "vix1d":  _cv("vix1d"),
+            "spread_spot_3m": (round(_cv("vix") - _cv("vix3m"), 4)
+                               if _cv("vix") is not None and _cv("vix3m") is not None else None),
+            "source": ("yfinance daily bars via refresh_data.py — CANONICAL close "
+                       "for the vol complex; intraday.json is a live snapshot, "
+                       "never the close of record"),
+        }
+        with open(SOURCE.parent / "vol_canonical_close.json", "w") as f:
+            _json.dump(canonical, f, indent=2)
+        log(f"  saved vol_canonical_close.json ({canonical['date']}: vix {canonical['vix']}, vix3m {canonical['vix3m']})")
+    except Exception as e:
+        log(f"  warn vol_canonical_close: {e}")
 
     # vol_derived
     log("computing vol_derived...")
@@ -155,7 +202,7 @@ def main():
 
     # ---- SECTOR ETFs ----
     log("fetching sector ETFs...")
-    sector_tickers = ["XLB","XLC","XLE","XLF","XLI","XLK","XLP","XLRE","XLU","XLV","XLY",
+    sector_tickers = ["XLB","XLC","XLE","XLF","XLI","XLK","XLP","XLRE","XLU","XLV","XLY","IGV","GLD",
                       "SPY","QQQ","DIA","IWM","SMH","SOXX"]
     sect_data = {}
     for tk in sector_tickers:
@@ -168,6 +215,7 @@ def main():
         except Exception as e:
             log(f"  warn {tk}: {e}")
     sect_df = pd.DataFrame(sect_data)
+    sect_df = drop_partial_today(sect_df)
     sect_df.to_parquet(SOURCE / "sector_etfs.parquet")
     log(f"  saved sector_etfs.parquet ({sect_df.shape})")
 

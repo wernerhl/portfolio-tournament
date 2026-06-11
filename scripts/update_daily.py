@@ -21,6 +21,13 @@ DATA = ROOT / "data"
 scripts = [
     "refresh_data.py",
     "compute_regime_v2.py",
+    "score_regime_v4_daily.py",    # AUDIT FIX 2a: v4 was never in the daily
+                                   # pipeline (CI lacked scikit-learn), so
+                                   # regime_v4_daily.csv froze at its last
+                                   # manual run while the headline kept
+                                   # quoting it. Light numpy-only scorer —
+                                   # bit-compatible isotonic via saved knots;
+                                   # full regime_v4_ml.py recalibrates monthly.
     "compute_nav.py",
     "build_ticker_data.py",
     "build_indicator_series.py",
@@ -28,6 +35,7 @@ scripts = [
     "compute_intraday.py",         # best-effort; OK to fail (yfinance flake)
     "compute_vol_regime.py",       # VIX term-structure regime + attribution
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
+    "compute_thesis_daily.py",     # MESO layer: thesis exposure + attribution + auto-log
 ]
 
 for script in scripts:
@@ -79,6 +87,108 @@ def validate_outputs() -> None:
     intra = DATA / "intraday.json"
     if not intra.exists():
         print("  note: data/intraday.json absent (intraday workflow may not have run yet)")
+
+    # ── AUDIT FIX 2b: per-file freshness — every published artifact with a
+    # date axis must cover the last trading session. The v4 freeze (stuck at
+    # 06-02 while the headline kept quoting it) died silently because only
+    # intraday.json had a staleness watch.
+    from datetime import datetime, timedelta, timezone
+
+    def last_trading_session():
+        now = datetime.now(timezone.utc)
+        d = now.date()
+        # Before ~21:30 UTC a weekday's close data can't exist yet.
+        if not (d.weekday() < 5 and now.hour >= 21 and (now.hour > 21 or now.minute >= 30)):
+            d = d - timedelta(days=1)
+        while d.weekday() >= 5:
+            d = d - timedelta(days=1)
+        return d.strftime("%Y-%m-%d")
+
+    session = last_trading_session()
+
+    def check_fresh(label, last_date_str):
+        if last_date_str is None:
+            errors.append(f"FRESHNESS {label}: no date found")
+        elif str(last_date_str)[:10] < session:
+            errors.append(f"FRESHNESS {label}: max date {str(last_date_str)[:10]} < last session {session}")
+
+    try:
+        import pandas as _pd
+        t2 = json.load(open(DATA / "tournament.json"))
+        check_fresh("tournament.json", t2["history"][-1]["date"] if t2.get("history") else None)
+        for csv_name, date_col in [("regime_daily.csv", "date"),
+                                    ("regime_v2_daily.csv", "date"),
+                                    ("regime_daily_published.csv", "date"),
+                                    ("regime_v4_daily.csv", "date")]:
+            p = DATA / csv_name
+            if not p.exists():
+                errors.append(f"FRESHNESS {csv_name}: file missing")
+                continue
+            df = _pd.read_csv(p)
+            col = date_col if date_col in df.columns else df.columns[0]
+            check_fresh(csv_name, df[col].dropna().astype(str).max())
+        vr = json.load(open(DATA / "vol_regime.json"))
+        check_fresh("vol_regime.json", vr.get("as_of"))
+
+        # ── THESIS layer validations ──────────────────────────────────
+        td_p = DATA / "thesis_daily.json"
+        if td_p.exists():
+            td = json.load(open(td_p))
+            check_fresh("thesis_daily.json", td.get("as_of"))
+            reg = json.load(open(DATA / "thesis_registry.json"))
+            if td.get("registry_version") != reg.get("version"):
+                errors.append(f"THESIS: thesis_daily registry v{td.get('registry_version')} "
+                              f"!= registry file v{reg.get('version')}")
+            # Σ thesis weights per name ≤ 1.0
+            per_name = {}
+            for _t, _th in reg["theses"].items():
+                for nm, w in _th["members"].items():
+                    per_name[nm] = per_name.get(nm, 0.0) + float(w)
+            for nm, tot in per_name.items():
+                if tot > 1.0 + 1e-9:
+                    errors.append(f"THESIS REGISTRY: {nm} Σweights = {tot:.2f} > 1.0")
+            # exposure_total must sum to 1 (every held name maps or counts unclassified)
+            for tid, t in td.get("tiers", {}).items():
+                s = sum(t.get("exposure_total", {}).values())
+                if abs(s - 1.0) > 0.02:
+                    errors.append(f"THESIS COVERAGE {tid}: exposure_total sums to {s:.3f} != 1")
+            # attribution components must reconstruct active return (≤1bp/day)
+            for tid, a in td.get("attribution", {}).items():
+                if a.get("check_max_residual_bp", 0) > 1.0:
+                    errors.append(f"THESIS ATTRIBUTION {tid}: max daily residual "
+                                  f"{a['check_max_residual_bp']}bp > 1bp")
+        else:
+            errors.append("FRESHNESS thesis_daily.json: file missing")
+
+        # AUDIT FIX 2b, calibrated by diagnosis: the audit proposed "no two
+        # consecutive identical rows", but isotonic calibration quantizes
+        # every probability column into 8-19 step values, so LEGITIMATE
+        # consecutive repeats are pervasive (893 of 5330 historical rows are
+        # identical to t-1). The actual freeze symptom is the date axis
+        # (covered by the freshness assert above) plus a fully-flat TAIL:
+        # assert the trailing 10 rows contain at least 2 distinct
+        # probability rows — a constant 10-row run never happens under
+        # live inputs but is exactly what frozen features produce.
+        v4 = _pd.read_csv(DATA / "regime_v4_daily.csv")
+        prob_cols = [c for c in v4.columns if c.startswith("p_")]
+        tail = v4[prob_cols].tail(10).reset_index(drop=True)
+        if len(tail) >= 10 and all((tail.iloc[i] == tail.iloc[0]).all() for i in range(1, len(tail))):
+            errors.append("V4 FLAT TAIL: trailing 10 rows identical across all "
+                          "probability columns — frozen-feature symptom")
+
+        # AUDIT FIX 3: canonical vol-complex close must equal vol_regime curve.
+        canon_p = DATA / "vol_canonical_close.json"
+        if canon_p.exists():
+            canon = json.load(open(canon_p))
+            curve = vr.get("curve", {})
+            if canon.get("date") == vr.get("as_of"):
+                for k_vr, k_c in [("spot_vix", "vix"), ("vix3m", "vix3m")]:
+                    a, b = curve.get(k_vr), canon.get(k_c)
+                    if a is not None and b is not None and abs(a - b) > 0.01:
+                        errors.append(f"VOL SOURCE SPLIT: vol_regime.curve.{k_vr}={a} "
+                                      f"!= canonical.{k_c}={b}")
+    except Exception as e:
+        errors.append(f"FRESHNESS CHECK CRASHED: {e}")
 
     if errors:
         print("\n" + "="*60 + "\nVALIDATION FAILED:")

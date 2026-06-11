@@ -531,6 +531,27 @@ def main():
     tradable_at = last_date + pd.tseries.offsets.BDay(1)
     assert tradable_at > last_date, "look-ahead detected — tradable_at must be > signal date"
 
+    # ── CANONICAL close equality (AUDIT FIX 3) ─────────────────────────
+    # This module reads vol_indicators.parquet, which is the same artifact
+    # refresh_data.py derives the canonical close from — assert they agree
+    # so a future refactor can't silently re-introduce a second source.
+    canonical_check = "skipped (vol_canonical_close.json absent)"
+    try:
+        _canon = json.load(open(DATA / "vol_canonical_close.json"))
+        if _canon.get("date") == last_date.strftime("%Y-%m-%d"):
+            _cv_vix   = float(vol["vix"].dropna().iloc[-1])
+            _cv_vix3m = float(vol["vix3m"].dropna().iloc[-1])
+            assert abs(_cv_vix - _canon["vix"]) <= 0.01, \
+                f"vol_regime vix {_cv_vix} != canonical {_canon['vix']}"
+            assert abs(_cv_vix3m - _canon["vix3m"]) <= 0.01, \
+                f"vol_regime vix3m {_cv_vix3m} != canonical {_canon['vix3m']}"
+            canonical_check = "PASS"
+        else:
+            canonical_check = (f"date mismatch: canonical {_canon.get('date')} vs "
+                                f"vol_regime {last_date.date()} — refresh_data must run first")
+    except FileNotFoundError:
+        pass
+
     # ── Build payload ──────────────────────────────────────────────────
     # Recent state history (last 252 days) for the dashboard history strip
     history_recent = []
@@ -658,6 +679,7 @@ def main():
         "validation": {
             "walk_forward":         wf,
             "no_lookahead_passed":  True,
+            "canonical_close_check": canonical_check,
         },
 
         "history_recent": history_recent,

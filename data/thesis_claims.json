@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "frozen_at": null,
+  "proposed_at": "2026-06-11",
+  "note": "PROPOSED drafts \u2014 Werner reviews/edits the claims, confirmers, disconfirmers and kill criteria, then sets frozen_at. After freezing, the agent NEVER edits these silently. The 'log' arrays carry two channels: AUTO entries appended mechanically by the nightly job on scheduled-event days (date, event, basket 1d return \u2014 no narrative), and MANUAL entries appended by Werner (tagged analyst). Kill-criteria status is computed mechanically from the log, never inferred.",
+  "claims": [
+    {
+      "thesis_id": "ai_infra",
+      "claim": "Hyperscaler AI capex sustains datacenter/semis demand growth through 2027; power buildout is the binding constraint.",
+      "confirmers": [
+        "capex guidance raised",
+        "accel revenue beats",
+        "power PPA announcements"
+      ],
+      "disconfirmers": [
+        "capex guidance cut",
+        "inference-cost collapse narrative with order cuts",
+        "rate path repricing higher (long-duration multiple compression)"
+      ],
+      "kill_criteria": "Two consecutive quarters of aggregate hyperscaler capex guidance cuts, OR thesis basket -30% from peak with confirmed order-cut reporting.",
+      "log": [
+        {
+          "date": "2026-06-05",
+          "type": "auto",
+          "event": "NFP",
+          "basket_ret_1d": -0.06065
+        },
+        {
+          "date": "2026-06-10",
+          "type": "auto",
+          "event": "CPI",
+          "basket_ret_1d": -0.03091
+        }
+      ]
+    },
+    {
+      "thesis_id": "fin_plumbing",
+      "claim": "Transaction volumes and net interest economics stay resilient; exchanges/processors compound through the rate cycle with toll-road economics.",
+      "confirmers": [
+        "payment volume growth beats",
+        "exchange volume records",
+        "net interest income guidance raised"
+      ],
+      "disconfirmers": [
+        "consumer credit deterioration spilling into volumes",
+        "regulatory interchange action",
+        "deposit-flight stress at brokers"
+      ],
+      "kill_criteria": "Two consecutive quarters of negative aggregate payment-volume growth, OR thesis basket -25% from peak alongside credit-loss provisioning spikes at the brokers.",
+      "log": [
+        {
+          "date": "2026-06-05",
+          "type": "auto",
+          "event": "NFP",
+          "basket_ret_1d": -0.00917
+        },
+        {
+          "date": "2026-06-10",
+          "type": "auto",
+          "event": "CPI",
+          "basket_ret_1d": -0.01146
+        }
+      ]
+    },
+    {
+      "thesis_id": "hard_assets",
+      "claim": "Structural underinvestment in energy and gold supply plus fiscal dominance keeps real-asset cash flows and royalty streams bid.",
+      "confirmers": [
+        "sustained energy capex discipline",
+        "central-bank gold accumulation",
+        "royalty acreage monetization"
+      ],
+      "disconfirmers": [
+        "sustained supply response (shale or OPEC spare capacity)",
+        "real rates ripping higher",
+        "demand destruction"
+      ],
+      "kill_criteria": "WTI below $50 for a quarter with rig counts RISING, OR thesis basket -30% from peak.",
+      "log": [
+        {
+          "date": "2026-06-05",
+          "type": "auto",
+          "event": "NFP",
+          "basket_ret_1d": -0.0466
+        },
+        {
+          "date": "2026-06-10",
+          "type": "auto",
+          "event": "CPI",
+          "basket_ret_1d": -0.00431
+        }
+      ]
+    },
+    {
+      "thesis_id": "defensive_quality",
+      "claim": "Staples/health quality compounds with low beta; holds value in drawdowns and funds redeployment at regime turns.",
+      "confirmers": [
+        "margin resilience in prints",
+        "outperformance on shock days"
+      ],
+      "disconfirmers": [
+        "GLP-1 volume erosion in staples",
+        "pricing-power loss (private-label share gains)"
+      ],
+      "kill_criteria": "Basket FAILS its defensive function: declines more than SPY in two consecutive 5%+ SPY drawdowns.",
+      "log": [
+        {
+          "date": "2026-06-05",
+          "type": "auto",
+          "event": "NFP",
+          "basket_ret_1d": 0.01748
+        },
+        {
+          "date": "2026-06-10",
+          "type": "auto",
+          "event": "CPI",
+          "basket_ret_1d": -0.00581
+        }
+      ]
+    },
+    {
+      "thesis_id": "ldg_ex_ai",
+      "claim": "Vertical-software moats (life sciences, creative, SMB finance) keep pricing power and net retention independent of the AI capex cycle.",
+      "confirmers": [
+        "net revenue retention >110%",
+        "price increases sticking"
+      ],
+      "disconfirmers": [
+        "AI-native substitution of seat-based software",
+        "net retention compression below 100%"
+      ],
+      "kill_criteria": "Two consecutive quarters of aggregate net-retention below 100%, OR thesis basket -35% from peak with churn-driven guidance cuts.",
+      "log": [
+        {
+          "date": "2026-06-05",
+          "type": "auto",
+          "event": "NFP",
+          "basket_ret_1d": -0.01309
+        },
+        {
+          "date": "2026-06-10",
+          "type": "auto",
+          "event": "CPI",
+          "basket_ret_1d": -0.02979
+        }
+      ]
+    },
+    {
+      "thesis_id": "consumer_cyclical",
+      "claim": "Services/experiences spending stays prioritized over goods; travel and luxury demand survives a mild slowdown.",
+      "confirmers": [
+        "forward bookings growth",
+        "RevPAR/ADR strength",
+        "luxury comp resilience"
+      ],
+      "disconfirmers": [
+        "booking-window shortening",
+        "trade-down behavior in luxury",
+        "jobless claims trending up"
+      ],
+      "kill_criteria": "Two consecutive quarters of negative aggregate bookings growth, OR unemployment +1pp from cycle low (Sahm-rule trigger) while basket is -20% from peak.",
+      "log": [
+        {
+          "date": "2026-06-05",
+          "type": "auto",
+          "event": "NFP",
+          "basket_ret_1d": -0.00362
+        },
+        {
+          "date": "2026-06-10",
+          "type": "auto",
+          "event": "CPI",
+          "basket_ret_1d": -0.03036
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-10T23:41:32.834114",
+  "updated": "2026-06-11T04:05:02.966703",
   "as_of": "2026-06-10",
   "tradable_at": "2026-06-11",
   "config": {
@@ -97,18 +97,20 @@
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-06-17",
+    "date": "2026-06-11",
     "types": [
-      "FOMC"
+      "TREASURY"
     ],
-    "sessions_away": 5
+    "sessions_away": 1
   },
   "event_today": [
+    "CPI",
     "TREASURY"
   ],
   "conditioning": {
     "event_flag": true,
     "event_types": [
+      "CPI",
       "TREASURY"
     ],
     "delta_2y_bps": 1.4,
@@ -151,20 +153,21 @@
         "threshold_sigma": 0.5
       },
       "event_day_only_reversion": {
-        "n": 10,
-        "n_reverted": 9,
-        "hit_rate": 0.9,
+        "n": 14,
+        "n_reverted": 13,
+        "hit_rate": 0.9285714285714286,
         "wilson_95ci": [
-          0.5958436145024278,
-          0.9821242504842788
+          0.6853073044604219,
+          0.9872781138877085
         ],
         "horizon_sessions": 10,
         "threshold_sigma": 0.5
       },
-      "event_day_caveat": "event-day n = 10 \u2192 95% CI 59\u201398%; not yet evidence",
+      "event_day_caveat": "event-day n = 14 \u2192 95% CI 68\u201398%; not yet evidence",
       "note": "`all_triggers_reversion` measures all fired triggers with a fully elapsed N-session horizon \u2014 the right denominator for the spread-spike reversion question. `event_day_only_reversion` is the event-day subsample; by construction it has handful-per-year n."
     },
-    "no_lookahead_passed": true
+    "no_lookahead_passed": true,
+    "canonical_close_check": "PASS"
   },
   "history_recent": [
     {
@@ -1463,7 +1466,7 @@
       "d": "2026-02-12",
       "delta_spread": 1.37,
       "state": "contango",
-      "event": null
+      "event": "TREASURY"
     },
     {
       "d": "2026-02-23",
@@ -1499,7 +1502,7 @@
       "d": "2026-03-12",
       "delta_spread": 1.08,
       "state": "flattening",
-      "event": null
+      "event": "TREASURY"
     },
     {
       "d": "2026-03-20",
@@ -1547,7 +1550,7 @@
       "d": "2026-06-10",
       "delta_spread": 0.77,
       "state": "flattening",
-      "event": "TREASURY"
+      "event": "CPI"
     }
   ]
 }

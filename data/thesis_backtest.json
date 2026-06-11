@@ -1,0 +1,430 @@
+{
+  "updated": "2026-06-11T03:59:51.913453",
+  "registry_version": 1,
+  "caveats": [
+    "SURVIVORSHIP: basket returns come from today's surviving 537-ticker universe \u2014 the same inflation source quantified in the paper applies here.",
+    "RETROSPECTIVE REGISTRY: registry v1 is applied to history where no registry existed. Descriptive lens only, per the vintage convention.",
+    "Cash rate approximated at 4% annualized over the backtest (matches backtest.py's EFFR sleeve).",
+    "Cumulative components are arithmetic sums of monthly arithmetic effects."
+  ],
+  "tiers": {
+    "1_cap_pres": {
+      "n_periods": 195,
+      "cum": {
+        "active": -1.2459,
+        "cash_eff": -1.2148,
+        "alloc_eff": 0.2052,
+        "selection": -0.2363
+      },
+      "avg_exposure": {
+        "cash": 0.5884,
+        "unclassified": 0.2907,
+        "fin_plumbing": 0.0791,
+        "defensive_quality": 0.0291,
+        "ldg_ex_ai": 0.0083,
+        "ai_infra": 0.0043
+      },
+      "periods_tail": [
+        {
+          "d": "2025-05",
+          "active": -0.04556,
+          "cash_eff": -0.04285,
+          "alloc_eff": -0.00693,
+          "selection": 0.00421
+        },
+        {
+          "d": "2025-06",
+          "active": -0.02602,
+          "cash_eff": -0.02359,
+          "alloc_eff": 0.00137,
+          "selection": -0.0038
+        },
+        {
+          "d": "2025-07",
+          "active": -0.01348,
+          "cash_eff": -0.00163,
+          "alloc_eff": -0.01299,
+          "selection": 0.00115
+        },
+        {
+          "d": "2025-08",
+          "active": -0.0193,
+          "cash_eff": -0.01516,
+          "alloc_eff": -0.00475,
+          "selection": 0.00061
+        },
+        {
+          "d": "2025-09",
+          "active": -0.03742,
+          "cash_eff": -0.02331,
+          "alloc_eff": -0.0183,
+          "selection": 0.00419
+        },
+        {
+          "d": "2025-10",
+          "active": -0.03233,
+          "cash_eff": -0.00957,
+          "alloc_eff": -0.02597,
+          "selection": 0.00321
+        },
+        {
+          "d": "2025-11",
+          "active": 0.01025,
+          "cash_eff": 0.00452,
+          "alloc_eff": 0.00361,
+          "selection": 0.00211
+        },
+        {
+          "d": "2025-12",
+          "active": 0.00076,
+          "cash_eff": -0.00223,
+          "alloc_eff": 0.00604,
+          "selection": -0.00305
+        },
+        {
+          "d": "2026-01",
+          "active": -0.01496,
+          "cash_eff": -0.00763,
+          "alloc_eff": -0.01485,
+          "selection": 0.00752
+        },
+        {
+          "d": "2026-02",
+          "active": 0.00479,
+          "cash_eff": 0.00886,
+          "alloc_eff": -0.00729,
+          "selection": 0.00322
+        },
+        {
+          "d": "2026-03",
+          "active": 0.01848,
+          "cash_eff": 0.03061,
+          "alloc_eff": -0.01083,
+          "selection": -0.0013
+        },
+        {
+          "d": "2026-04",
+          "active": -0.10344,
+          "cash_eff": -0.07604,
+          "alloc_eff": -0.02449,
+          "selection": -0.00291
+        }
+      ]
+    },
+    "2_balanced": {
+      "n_periods": 195,
+      "cum": {
+        "active": -0.476,
+        "cash_eff": -0.9892,
+        "alloc_eff": 0.7005,
+        "selection": -0.1873
+      },
+      "avg_exposure": {
+        "cash": 0.4658,
+        "unclassified": 0.2819,
+        "fin_plumbing": 0.0839,
+        "ai_infra": 0.0522,
+        "hard_assets": 0.052,
+        "consumer_cyclical": 0.036,
+        "ldg_ex_ai": 0.017,
+        "defensive_quality": 0.0112
+      },
+      "periods_tail": [
+        {
+          "d": "2025-05",
+          "active": -0.02437,
+          "cash_eff": -0.03513,
+          "alloc_eff": 0.01826,
+          "selection": -0.0075
+        },
+        {
+          "d": "2025-06",
+          "active": -0.01771,
+          "cash_eff": -0.01853,
+          "alloc_eff": 0.0003,
+          "selection": 0.00051
+        },
+        {
+          "d": "2025-07",
+          "active": -0.02232,
+          "cash_eff": -0.00125,
+          "alloc_eff": -0.00879,
+          "selection": -0.01228
+        },
+        {
+          "d": "2025-08",
+          "active": -0.01561,
+          "cash_eff": -0.01193,
+          "alloc_eff": -0.00413,
+          "selection": 0.00044
+        },
+        {
+          "d": "2025-09",
+          "active": 0.00424,
+          "cash_eff": -0.01813,
+          "alloc_eff": 0.03724,
+          "selection": -0.01487
+        },
+        {
+          "d": "2025-10",
+          "active": -0.06629,
+          "cash_eff": -0.00735,
+          "alloc_eff": -0.04089,
+          "selection": -0.01805
+        },
+        {
+          "d": "2025-11",
+          "active": 0.0063,
+          "cash_eff": 0.00357,
+          "alloc_eff": -0.00554,
+          "selection": 0.00827
+        },
+        {
+          "d": "2025-12",
+          "active": 0.0118,
+          "cash_eff": -0.00175,
+          "alloc_eff": 0.00316,
+          "selection": 0.01039
+        },
+        {
+          "d": "2026-01",
+          "active": -0.06379,
+          "cash_eff": -0.00591,
+          "alloc_eff": -0.04696,
+          "selection": -0.01093
+        },
+        {
+          "d": "2026-02",
+          "active": 0.0054,
+          "cash_eff": 0.0069,
+          "alloc_eff": -0.01216,
+          "selection": 0.01066
+        },
+        {
+          "d": "2026-03",
+          "active": 0.02739,
+          "cash_eff": 0.02471,
+          "alloc_eff": 0.00217,
+          "selection": 0.00051
+        },
+        {
+          "d": "2026-04",
+          "active": -0.06935,
+          "cash_eff": -0.06291,
+          "alloc_eff": -0.00976,
+          "selection": 0.00333
+        }
+      ]
+    },
+    "3_aggressive": {
+      "n_periods": 195,
+      "cum": {
+        "active": 0.8327,
+        "cash_eff": -0.5902,
+        "alloc_eff": 1.3642,
+        "selection": 0.0587
+      },
+      "avg_exposure": {
+        "unclassified": 0.3288,
+        "cash": 0.2805,
+        "fin_plumbing": 0.1258,
+        "ai_infra": 0.1003,
+        "hard_assets": 0.0737,
+        "consumer_cyclical": 0.0501,
+        "ldg_ex_ai": 0.031,
+        "defensive_quality": 0.0099
+      },
+      "periods_tail": [
+        {
+          "d": "2025-05",
+          "active": -0.00238,
+          "cash_eff": -0.02093,
+          "alloc_eff": 0.03391,
+          "selection": -0.01537
+        },
+        {
+          "d": "2025-06",
+          "active": -0.03243,
+          "cash_eff": -0.01117,
+          "alloc_eff": -0.01245,
+          "selection": -0.00881
+        },
+        {
+          "d": "2025-07",
+          "active": -0.01635,
+          "cash_eff": -0.00076,
+          "alloc_eff": -0.00384,
+          "selection": -0.01175
+        },
+        {
+          "d": "2025-08",
+          "active": 0.00703,
+          "cash_eff": -0.00721,
+          "alloc_eff": 0.01452,
+          "selection": -0.00028
+        },
+        {
+          "d": "2025-09",
+          "active": 0.05744,
+          "cash_eff": -0.01098,
+          "alloc_eff": 0.0916,
+          "selection": -0.02318
+        },
+        {
+          "d": "2025-10",
+          "active": -0.03374,
+          "cash_eff": -0.00447,
+          "alloc_eff": -0.00214,
+          "selection": -0.02714
+        },
+        {
+          "d": "2025-11",
+          "active": -0.01059,
+          "cash_eff": 0.00215,
+          "alloc_eff": -0.01643,
+          "selection": 0.00368
+        },
+        {
+          "d": "2025-12",
+          "active": 0.02762,
+          "cash_eff": -0.00106,
+          "alloc_eff": 0.01069,
+          "selection": 0.01799
+        },
+        {
+          "d": "2026-01",
+          "active": -0.04777,
+          "cash_eff": -0.00359,
+          "alloc_eff": -0.03625,
+          "selection": -0.00794
+        },
+        {
+          "d": "2026-02",
+          "active": 0.00757,
+          "cash_eff": 0.00418,
+          "alloc_eff": 0.00716,
+          "selection": -0.00377
+        },
+        {
+          "d": "2026-03",
+          "active": 0.02016,
+          "cash_eff": 0.0148,
+          "alloc_eff": 0.01794,
+          "selection": -0.01258
+        },
+        {
+          "d": "2026-04",
+          "active": -0.03746,
+          "cash_eff": -0.03734,
+          "alloc_eff": -0.02741,
+          "selection": 0.0273
+        }
+      ]
+    },
+    "4_tactical": {
+      "n_periods": 195,
+      "cum": {
+        "active": 0.2062,
+        "cash_eff": -1.041,
+        "alloc_eff": 1.0965,
+        "selection": 0.1507
+      },
+      "avg_exposure": {
+        "cash": 0.4512,
+        "unclassified": 0.2174,
+        "fin_plumbing": 0.0989,
+        "ai_infra": 0.0904,
+        "hard_assets": 0.0778,
+        "consumer_cyclical": 0.0374,
+        "ldg_ex_ai": 0.022,
+        "defensive_quality": 0.0048
+      },
+      "periods_tail": [
+        {
+          "d": "2025-05",
+          "active": -0.0272,
+          "cash_eff": -0.0378,
+          "alloc_eff": 0.02653,
+          "selection": -0.01593
+        },
+        {
+          "d": "2025-06",
+          "active": -0.02232,
+          "cash_eff": -0.01748,
+          "alloc_eff": -0.00261,
+          "selection": -0.00223
+        },
+        {
+          "d": "2025-07",
+          "active": -0.01455,
+          "cash_eff": -0.00109,
+          "alloc_eff": 0.00534,
+          "selection": -0.0188
+        },
+        {
+          "d": "2025-08",
+          "active": 0.00192,
+          "cash_eff": -0.01137,
+          "alloc_eff": 0.015,
+          "selection": -0.00171
+        },
+        {
+          "d": "2025-09",
+          "active": 0.04743,
+          "cash_eff": -0.01656,
+          "alloc_eff": 0.07828,
+          "selection": -0.01429
+        },
+        {
+          "d": "2025-10",
+          "active": -0.01739,
+          "cash_eff": -0.00644,
+          "alloc_eff": -0.00468,
+          "selection": -0.00627
+        },
+        {
+          "d": "2025-11",
+          "active": -0.00742,
+          "cash_eff": 0.00343,
+          "alloc_eff": -0.01904,
+          "selection": 0.00818
+        },
+        {
+          "d": "2025-12",
+          "active": 0.02788,
+          "cash_eff": -0.00167,
+          "alloc_eff": 0.00839,
+          "selection": 0.02115
+        },
+        {
+          "d": "2026-01",
+          "active": -0.04299,
+          "cash_eff": -0.00532,
+          "alloc_eff": -0.03032,
+          "selection": -0.00735
+        },
+        {
+          "d": "2026-02",
+          "active": -0.00955,
+          "cash_eff": 0.00638,
+          "alloc_eff": 0.00896,
+          "selection": -0.0249
+        },
+        {
+          "d": "2026-03",
+          "active": 0.02071,
+          "cash_eff": 0.02544,
+          "alloc_eff": 0.00688,
+          "selection": -0.01161
+        },
+        {
+          "d": "2026-04",
+          "active": -0.06084,
+          "cash_eff": -0.06919,
+          "alloc_eff": -0.01153,
+          "selection": 0.01987
+        }
+      ]
+    }
+  }
+}
