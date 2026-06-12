@@ -1,7 +1,7 @@
 {
-  "updated": "2026-06-11T23:43:49.317929",
-  "as_of": "2026-06-11",
-  "tradable_at": "2026-06-12",
+  "updated": "2026-06-12T23:25:56.467459",
+  "as_of": "2026-06-12",
+  "tradable_at": "2026-06-15",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -19,10 +19,10 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 1,
-  "spread": -1.98,
-  "delta_spread": -1.31,
-  "sigma_threshold": 0.982,
+  "state_age": 2,
+  "spread": -2.83,
+  "delta_spread": -0.85,
+  "sigma_threshold": 1.001,
   "trigger_fired": false,
   "entry": {
     "current_entry_dspread": -1.31,
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 19.44,
-    "vix1d": 21.09,
-    "vix3m": 21.42,
-    "spread_spot_3m": -1.98,
+    "spot_vix": 17.68,
+    "vix1d": 19.12,
+    "vix3m": 20.51,
+    "spread_spot_3m": -2.83,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,21 +101,17 @@
     "types": [
       "FOMC"
     ],
-    "sessions_away": 4
+    "sessions_away": 3
   },
-  "event_today": [
-    "TREASURY"
-  ],
+  "event_today": [],
   "conditioning": {
-    "event_flag": true,
-    "event_types": [
-      "TREASURY"
-    ],
-    "delta_2y_bps": -8.2,
+    "event_flag": false,
+    "event_types": [],
+    "delta_2y_bps": 1.8,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
-    "front_end_repriced": true,
-    "held_close_proxy": 0.6,
+    "front_end_repriced": false,
+    "held_close_proxy": 0.34,
     "held_close": false
   },
   "attribution": {
@@ -123,11 +119,11 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": 0.068,
-      "breadth_delta_pp": 4.85,
+      "smh_1d_return": 0.017,
+      "breadth_delta_pp": 4.71,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.07,
-      "breadth_z": 1.19,
+      "breadth_delta_sigma_1y_pp": 4.08,
+      "breadth_z": 1.15,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -138,7 +134,7 @@
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-06-11",
+      "today_excluded_from_metrics": "2026-06-12",
       "all_triggers_reversion": {
         "n": 785,
         "n_reverted": 674,
@@ -168,11 +164,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-06-11",
-      "state": "deep_contango",
-      "spread": -3.04
-    },
     {
       "d": "2025-06-12",
       "state": "contango",
@@ -1427,6 +1418,11 @@
       "d": "2026-06-11",
       "state": "contango",
       "spread": -1.98
+    },
+    {
+      "d": "2026-06-12",
+      "state": "contango",
+      "spread": -2.83
     }
   ],
   "past_spikes": [
