@@ -1,7 +1,7 @@
 {
-  "updated": "2026-06-15T23:52:55.072524",
-  "as_of": "2026-06-15",
-  "tradable_at": "2026-06-16",
+  "updated": "2026-06-16T23:41:23.808784",
+  "as_of": "2026-06-16",
+  "tradable_at": "2026-06-17",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -20,15 +20,15 @@
   },
   "state": "deep_contango",
   "state_age": 1,
-  "spread": -3.16,
-  "delta_spread": -0.33,
-  "sigma_threshold": 0.993,
+  "spread": -3.12,
+  "delta_spread": -0.29,
+  "sigma_threshold": 0.992,
   "trigger_fired": false,
   "entry": {
-    "current_entry_dspread": -0.33,
+    "current_entry_dspread": -0.29,
     "state_mean_entry": -0.573,
     "state_sigma_entry": 0.503,
-    "entry_zscore": 0.48,
+    "entry_zscore": 0.56,
     "atypical_entry": false,
     "rule": "Atypical when |entry \u0394spread \u2212 state mean| > 2\u03c3. Caveat: pooled transition stats may not describe a shock-entered episode."
   },
@@ -43,8 +43,8 @@
         "backwardation": 1,
         "flattening": 2
       },
-      "entry_dspread_mean": -0.5728641111873886,
-      "entry_dspread_sigma": 0.5033800970349258,
+      "entry_dspread_mean": -0.5726699412447734,
+      "entry_dspread_sigma": 0.5034819387170422,
       "entry_dspread_n": 206
     },
     "contango": {
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 16.2,
-    "vix1d": 12.92,
-    "vix3m": 19.36,
-    "spread_spot_3m": -3.16,
+    "spot_vix": 16.41,
+    "vix1d": 16.09,
+    "vix3m": 19.53,
+    "spread_spot_3m": -3.12,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,17 +101,17 @@
     "types": [
       "FOMC"
     ],
-    "sessions_away": 2
+    "sessions_away": 1
   },
   "event_today": [],
   "conditioning": {
     "event_flag": false,
     "event_types": [],
-    "delta_2y_bps": 4.8,
+    "delta_2y_bps": -1.4,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.13,
+    "held_close_proxy": 0.16,
     "held_close": false
   },
   "attribution": {
@@ -119,11 +119,11 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": 0.044,
-      "breadth_delta_pp": 1.69,
+      "smh_1d_return": -0.048,
+      "breadth_delta_pp": 2.62,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.079,
-      "breadth_z": 0.41,
+      "breadth_delta_sigma_1y_pp": 4.063,
+      "breadth_z": 0.65,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -134,7 +134,7 @@
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-06-15",
+      "today_excluded_from_metrics": "2026-06-16",
       "all_triggers_reversion": {
         "n": 785,
         "n_reverted": 674,
@@ -1420,9 +1420,9 @@
       "spread": -2.83
     },
     {
-      "d": "2026-06-15",
+      "d": "2026-06-16",
       "state": "deep_contango",
-      "spread": -3.16
+      "spread": -3.12
     }
   ],
   "past_spikes": [
