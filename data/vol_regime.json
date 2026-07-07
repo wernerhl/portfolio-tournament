@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-06T23:14:37.321071",
-  "as_of": "2026-07-06",
-  "tradable_at": "2026-07-07",
+  "updated": "2026-07-07T23:09:01.421566",
+  "as_of": "2026-07-07",
+  "tradable_at": "2026-07-08",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -18,23 +18,23 @@
     "reversion_X_sigma": 0.5,
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
-  "state": "deep_contango",
-  "state_age": 1,
-  "spread": -3.21,
-  "delta_spread": -0.32,
-  "sigma_threshold": 1.08,
+  "state": "contango",
+  "state_age": 10,
+  "spread": -2.88,
+  "delta_spread": 0.01,
+  "sigma_threshold": 1.077,
   "trigger_fired": false,
   "entry": {
-    "current_entry_dspread": -0.32,
-    "state_mean_entry": -0.574,
-    "state_sigma_entry": 0.502,
-    "entry_zscore": 0.51,
+    "current_entry_dspread": 0.69,
+    "state_mean_entry": -0.101,
+    "state_sigma_entry": 0.851,
+    "entry_zscore": 0.93,
     "atypical_entry": false,
     "rule": "Atypical when |entry \u0394spread \u2212 state mean| > 2\u03c3. Caveat: pooled transition stats may not describe a shock-entered episode."
   },
   "dynamics": {
     "deep_contango": {
-      "n_episodes": 208,
+      "n_episodes": 207,
       "p25_sessions": 1,
       "median_sessions": 2,
       "p75_sessions": 4,
@@ -43,9 +43,9 @@
         "backwardation": 1,
         "flattening": 2
       },
-      "entry_dspread_mean": -0.5736538767814636,
-      "entry_dspread_sigma": 0.5020877902367824,
-      "entry_dspread_n": 208
+      "entry_dspread_mean": -0.5748792593029962,
+      "entry_dspread_sigma": 0.5029930976638481,
+      "entry_dspread_n": 207
     },
     "contango": {
       "n_episodes": 432,
@@ -54,7 +54,7 @@
       "p75_sessions": 7,
       "next_state_distribution": {
         "flattening": 213,
-        "deep_contango": 207,
+        "deep_contango": 206,
         "backwardation": 12
       },
       "entry_dspread_mean": -0.10087963386818215,
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 15.57,
-    "vix1d": 8.73,
-    "vix3m": 18.78,
-    "spread_spot_3m": -3.21,
+    "spot_vix": 16.13,
+    "vix1d": 10.66,
+    "vix3m": 19.01,
+    "spread_spot_3m": -2.88,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,17 +101,17 @@
     "types": [
       "TREASURY"
     ],
-    "sessions_away": 2
+    "sessions_away": 1
   },
   "event_today": [],
   "conditioning": {
     "event_flag": false,
     "event_types": [],
-    "delta_2y_bps": -1.2,
+    "delta_2y_bps": 6.6,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.0,
+    "held_close_proxy": 0.08,
     "held_close": false
   },
   "attribution": {
@@ -119,22 +119,22 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": 0.02,
-      "breadth_delta_pp": 0.56,
+      "smh_1d_return": -0.038,
+      "breadth_delta_pp": -1.5,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.041,
-      "breadth_z": 0.14,
+      "breadth_delta_sigma_1y_pp": 4.038,
+      "breadth_z": -0.37,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
   "overlay_scalar": {
-    "value": 1.0,
+    "value": 0.7,
     "label": "DIAGNOSTIC",
     "caption": "Regime-sized overlay scalar. Gated as DIAGNOSTIC until backtest shows regime-conditional sizing beats static sizing on risk-adjusted return. Do not execute on this value."
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-07-06",
+      "today_excluded_from_metrics": "2026-07-07",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1420,9 +1420,9 @@
       "spread": -2.89
     },
     {
-      "d": "2026-07-06",
-      "state": "deep_contango",
-      "spread": -3.21
+      "d": "2026-07-07",
+      "state": "contango",
+      "spread": -2.88
     }
   ],
   "past_spikes": [
