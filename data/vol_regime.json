@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-08T01:30:22.060703",
-  "as_of": "2026-07-07",
-  "tradable_at": "2026-07-08",
+  "updated": "2026-07-08T23:15:45.662573",
+  "as_of": "2026-07-08",
+  "tradable_at": "2026-07-09",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -20,9 +20,9 @@
   },
   "state": "contango",
   "state_age": 10,
-  "spread": -2.88,
-  "delta_spread": 0.01,
-  "sigma_threshold": 1.077,
+  "spread": -2.56,
+  "delta_spread": 0.33,
+  "sigma_threshold": 1.079,
   "trigger_fired": false,
   "entry": {
     "current_entry_dspread": 0.69,
@@ -90,14 +90,14 @@
     }
   },
   "curve": {
-    "spot_vix": 16.13,
-    "vix1d": 10.66,
-    "vix3m": 19.01,
-    "spread_spot_3m": -2.88,
+    "spot_vix": 16.9,
+    "vix1d": 12.68,
+    "vix3m": 19.46,
+    "spread_spot_3m": -2.56,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-07-08",
+    "date": "2026-07-09",
     "types": [
       "TREASURY"
     ],
@@ -111,11 +111,11 @@
     "event_types": [
       "TREASURY"
     ],
-    "delta_2y_bps": 6.4,
+    "delta_2y_bps": 3.2,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.08,
+    "held_close_proxy": 0.2,
     "held_close": false
   },
   "attribution": {
@@ -123,11 +123,11 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.038,
-      "breadth_delta_pp": -1.5,
+      "smh_1d_return": 0.02,
+      "breadth_delta_pp": -3.75,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.038,
-      "breadth_z": -0.37,
+      "breadth_delta_sigma_1y_pp": 4.034,
+      "breadth_z": -0.93,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -138,7 +138,7 @@
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-07-07",
+      "today_excluded_from_metrics": "2026-07-08",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1424,9 +1424,9 @@
       "spread": -2.89
     },
     {
-      "d": "2026-07-07",
+      "d": "2026-07-08",
       "state": "contango",
-      "spread": -2.88
+      "spread": -2.56
     }
   ],
   "past_spikes": [
