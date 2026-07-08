@@ -113,8 +113,17 @@ INDICATORS = [
       "Consumers cautious",          "Consumers pessimistic"]),
 
     # ---------------- Tier B — Contemporaneous ----------------
-    ("hyg_lqd",      "B", "lower",  "vol_derived", "hyg_lqd_ratio",
-     "HYG/LQD",  "{v:.2f}",
+    # JULY AUDIT FIX 6a — credit channel: HY OAS replaces HYG/LQD.
+    # The HYG/LQD ratio is DURATION-CONFOUNDED: LQD carries ~2x HYG's
+    # duration, so on a rates-up day the ratio "improves" with zero credit
+    # information (2026-07-07: +0.64% "improvement" ≈ LQD duration selling
+    # off). HY OAS (FRED BAMLH0A0HYM2) is the direct spread measure; T+1
+    # publication is acceptable for the nightly composite. The old
+    # hyg_lqd_ratio series remains in vol_derived.parquet for continuity
+    # with the published vintage (values published before 2026-07-07 were
+    # computed under the old indicator; see README vintage note).
+    ("hy_oas",       "B", "higher", "fred_indicators", "hy_oas",
+     "HY OAS",   "{v:.0f}bp",
      ["Credit spreads tight",        "Credit stable",
       "Credit spreads widening",     "Credit stress acute"]),
     ("gold_spx",     "B", "higher", "vol_derived", "gold_spx",
@@ -203,12 +212,26 @@ def build_daily_panel(series_dict: dict[str, pd.Series]) -> pd.DataFrame:
     if not series_dict:
         return pd.DataFrame()
     all_idx = pd.DatetimeIndex(sorted({d for s in series_dict.values() for d in s.index}))
-    # Build daily business-day grid spanning the union range
+    # Build daily business-day grid spanning the union range, ffill weekly/
+    # monthly series onto it...
     start, end = all_idx.min(), all_idx.max()
     daily_idx = pd.date_range(start, end, freq="B")
     out = pd.DataFrame(index=daily_idx)
     for key, s in series_dict.items():
         out[key] = s.reindex(daily_idx).ffill()
+    # ...then keep only REAL exchange sessions (JULY AUDIT FIX 5). freq="B"
+    # includes NYSE holidays (e.g. 2026-07-03, July 4 observed), and ffill
+    # was manufacturing phantom regime rows from stale closes on days the
+    # market never traded. A session is real iff the vol complex printed a
+    # bar (VIX is daily and never missing on a true session).
+    if "vix" in series_dict:
+        real_days = series_dict["vix"].dropna().index
+        out = out.loc[out.index.isin(real_days)]
+    try:
+        from trading_calendar import is_trading_day
+        out = out.loc[[d for d in out.index if is_trading_day(d)]]
+    except ImportError:
+        pass
     return out
 
 
@@ -254,11 +277,30 @@ def compute_composites(risk: pd.DataFrame):
 
 
 def classify(r_full, r_lead, divergence):
-    regime = pd.Series("UNKNOWN", index=r_full.index, dtype=object)
-    regime[r_full < 0.30] = "LOW RISK"
-    regime[(r_full >= 0.30) & (r_full < 0.50)] = "ELEVATED"
-    regime[(r_full >= 0.50) & (r_full < 0.70)] = "HIGH RISK"
-    regime[r_full >= 0.70] = "CRISIS"
+    # JULY AUDIT FIX 4b — label HYSTERESIS on the regime label only.
+    # R crossed the 0.30 edge 3 times in 4 sessions (0.2983→0.3003→0.3008),
+    # flapping the headline. Bands keep their centers (0.30/0.50/0.70) but
+    # transitions need a ±0.02 corridor: enter the higher band at
+    # edge+0.02, drop back below edge−0.02. The R VALUES and the published
+    # vintage are untouched — this shapes only the label column.
+    LEVELS = ["LOW RISK", "ELEVATED", "HIGH RISK", "CRISIS"]
+    EDGES  = [0.30, 0.50, 0.70]
+    H      = 0.02
+    labels = []
+    level = None
+    for r in r_full.values:
+        if pd.isna(r):
+            labels.append("UNKNOWN"); continue
+        if level is None:
+            # First observation: plain band assignment (no history yet)
+            level = sum(r >= e for e in EDGES)
+        else:
+            while level < 3 and r >= EDGES[level] + H:
+                level += 1
+            while level > 0 and r < EDGES[level - 1] - H:
+                level -= 1
+        labels.append(LEVELS[level])
+    regime = pd.Series(labels, index=r_full.index, dtype=object)
 
     ew = pd.Series("UNKNOWN", index=r_lead.index, dtype=object)
     ew[r_lead < 0.35] = "CLEAR"
@@ -438,21 +480,29 @@ def main():
     R_full_v = float(latest_row["R_full"])
     divv     = float(latest_row["divergence"])
 
-    # ── Complacency flag — AUDIT FIX 4: align with indicator encoding ──────
-    # The SKEW indicator uses direction='lower', so HIGH SKEW = active tail
-    # hedging = SAFE in the card narratives. The old flag fired on HIGH SKEW
-    # + LOW VIX, which directly contradicted the card. Resolution: complacency
-    # is when NO ONE is pricing tails AND no one is hedging — i.e. LOW SKEW
-    # AND LOW VIX. Both encodings now agree.
+    # ── Complacency flag — JULY AUDIT FIX 2 ────────────────────────────────
+    # Definition (per the July audit, REVERSING the June low-SKEW variant):
+    # HIGH SKEW (>140) + LOW VIX (<17) = tail risk priced in options while
+    # spot fear is absent — the classic pre-gap complacency configuration.
+    # The June flip had made the flag contradict this; July restores it and
+    # the intraday flag uses the SAME definition so the two never disagree.
+    # NULL-GUARD: a safety check must NEVER return boolean-false on missing
+    # input — that certifies calm it never evaluated. Missing input →
+    # complacency_flag = "impaired", rendered loud.
     raw_lookup = {i["key"]: i for i in indicator_payload}
     skew_raw = (raw_lookup.get("skew") or {}).get("value")
     vix_raw  = (raw_lookup.get("vix")  or {}).get("value")
-    complacency_flag = bool(skew_raw is not None and vix_raw is not None
-                            and skew_raw < 130 and vix_raw < 15)
-    complacency_reason = (f"SKEW {skew_raw:.0f} < 130 and VIX {vix_raw:.1f} < 15 — "
-                          f"no tail premium and no hedging — market complacent"
-                          ) if complacency_flag else None
-    R_lead_displayed = round(min(1.0, R_lead_v + (0.05 if complacency_flag else 0.0)), 4)
+    if skew_raw is None or vix_raw is None:
+        complacency_flag = "impaired"
+        missing = [n for n, v in (("SKEW", skew_raw), ("VIX", vix_raw)) if v is None]
+        complacency_reason = f"COMPLACENCY CHECK IMPAIRED — {'/'.join(missing)} feed unavailable"
+        print(f"  WARN: {complacency_reason}", file=sys.stderr)
+    else:
+        complacency_flag = bool(skew_raw > 140 and vix_raw < 17)
+        complacency_reason = (f"SKEW {skew_raw:.0f} > 140 and VIX {vix_raw:.1f} < 17 — "
+                              f"tail priced, spot fear absent — market complacent"
+                              ) if complacency_flag else None
+    R_lead_displayed = round(min(1.0, R_lead_v + (0.05 if complacency_flag is True else 0.0)), 4)
 
     # AUDIT FIX 6: verdict was a deployment recommendation that didn't know about
     # intraday shocks, so the dashboard ignored it (built its own via
@@ -469,8 +519,10 @@ def main():
                    f"of {len(indicator_payload)} channels. R_full {R_full_v:.2f}.")
 
     # Prepend the complacency callout so it's the first thing the user reads.
-    if complacency_flag:
+    if complacency_flag is True:
         verdict = f"COMPLACENCY FLAG — {complacency_reason}. " + verdict
+    elif complacency_flag == "impaired":
+        verdict = f"{complacency_reason}. " + verdict
 
     payload = {
         "updated":      datetime.now().isoformat(),

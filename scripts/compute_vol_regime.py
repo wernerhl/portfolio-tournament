@@ -535,9 +535,12 @@ def main():
     # This module reads vol_indicators.parquet, which is the same artifact
     # refresh_data.py derives the canonical close from — assert they agree
     # so a future refactor can't silently re-introduce a second source.
-    canonical_check = "skipped (vol_canonical_close.json absent)"
+    canonical_check = "skipped (canonical close file absent)"
     try:
-        _canon = json.load(open(DATA / "vol_canonical_close.json"))
+        _cp = DATA / "vol_close_canonical.json"
+        if not _cp.exists():
+            _cp = DATA / "vol_canonical_close.json"   # pre-July filename
+        _canon = json.load(open(_cp))
         if _canon.get("date") == last_date.strftime("%Y-%m-%d"):
             _cv_vix   = float(vol["vix"].dropna().iloc[-1])
             _cv_vix3m = float(vol["vix3m"].dropna().iloc[-1])

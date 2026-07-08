@@ -87,6 +87,50 @@ def main():
     combined = pd.concat([kept, block.reindex(columns=kept.columns if len(kept) else block.columns)])
     combined.index.name = "date"
     combined.to_csv(csv_p)
+
+    # ── JULY AUDIT FIX 4a: delta attribution for the production probability ──
+    # p = iso(mean of 23 risk scores). Finite-difference: re-score today
+    # substituting each feature's YESTERDAY value one at a time;
+    # contribution_i = p_today − p_counterfactual_i. Because isotonic is a
+    # step function the contributions don't sum exactly to Δp — the residual
+    # is reported honestly, never hidden.
+    try:
+        risk_f = risk.fillna(0.5)
+        if len(risk_f) >= 2:
+            x_t, x_y = risk_f.iloc[-1], risk_f.iloc[-2]
+            d_t, d_y = risk_f.index[-1], risk_f.index[-2]
+            n = len(x_t)
+            knots = params["targets"]["p_5_40_calibrated"]
+            p_t = float(iso_predict(np.array([x_t.mean()]), knots)[0])
+            p_y = float(iso_predict(np.array([x_y.mean()]), knots)[0])
+            contribs = []
+            for col in risk_f.columns:
+                cf_mean = x_t.mean() - (x_t[col] - x_y[col]) / n
+                p_cf = float(iso_predict(np.array([cf_mean]), knots)[0])
+                contribs.append({"feature": col,
+                                  "delta_feature": round(float(x_t[col] - x_y[col]), 4),
+                                  "contribution_pp": round((p_t - p_cf) * 100, 2)})
+            contribs.sort(key=lambda c: -abs(c["contribution_pp"]))
+            explained = sum(c["contribution_pp"] for c in contribs)
+            residual = round((p_t - p_y) * 100 - explained, 2)
+            attr = {
+                "as_of": d_t.strftime("%Y-%m-%d"),
+                "prev":  d_y.strftime("%Y-%m-%d"),
+                "p_today": round(p_t, 4), "p_prev": round(p_y, 4),
+                "delta_pp": round((p_t - p_y) * 100, 2),
+                "top3": contribs[:3],
+                "all": contribs,
+                "residual_pp": residual,
+                "method": ("finite difference through the isotonic curve, one feature "
+                            "at a time; contributions approximate (isotonic is piecewise-"
+                            "constant) — residual reported, not hidden"),
+            }
+            with open(DATA / "v4_delta_attribution.json", "w") as f:
+                json.dump(attr, f, indent=2)
+            top = " · ".join(f"{c['feature']} {c['contribution_pp']:+.1f}pp" for c in contribs[:3])
+            print(f"  Δp(5/40) {attr['delta_pp']:+.2f}pp — moved by: {top} (residual {residual:+.2f}pp)")
+    except Exception as e:
+        print(f"  warn delta attribution: {e}", file=sys.stderr)
     for d in block.index:
         print(f"  appended {d}: p_5_40 = {block.loc[d, 'p_5_40_calibrated']:.4f} "
               f"→ {block.loc[d, 'graduated_regime']}")

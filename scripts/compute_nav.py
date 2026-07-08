@@ -185,6 +185,19 @@ def main():
     regime = regime_label(R_t)
     effr_daily = effr_daily_rate()
     today = datetime.now().strftime("%Y-%m-%d")
+    # JULY AUDIT FIX 5: never stamp a row with a non-session date. UTC-evening
+    # and weekend runs previously wrote phantom rows (a Saturday 2026-06-06,
+    # Memorial Day 2026-05-25) carrying the prior session's prices under a
+    # date the market never traded. Label the row with the session the
+    # prices actually belong to.
+    try:
+        from trading_calendar import is_trading_day, prev_trading_day
+        if not is_trading_day(today):
+            relabeled = prev_trading_day(today)
+            print(f"  {today} is not a trading day — labeling row {relabeled} (prices belong to that session)")
+            today = relabeled
+    except ImportError:
+        pass
     print(f"Date: {today}  (R_t as of {r_date})")
     print(f"R_t: {R_t:.3f} → {regime}  ·  EFFR daily ann ≈ {effr_daily*252*100:.2f}%")
 

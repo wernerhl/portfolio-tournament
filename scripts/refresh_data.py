@@ -145,35 +145,73 @@ def main():
     vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
     log(f"  saved vol_indicators.parquet ({vol_df.shape})")
 
-    # ── CANONICAL vol-complex close (AUDIT FIX 3) ─────────────────────
-    # ONE fetcher writes the canonical close; every consumer (vol_regime,
-    # dashboard panels, CI asserts) reads from here. Stops the same
-    # instrument showing two different "close" values on one screen
-    # (EOD daily bar vs the last 1-minute tick from the intraday cron).
+    # ── CANONICAL vol-complex close (JULY AUDIT FIX 3) ─────────────────
+    # ONE fetcher writes data/vol_close_canonical.json once after each close;
+    # intraday.json (post-close reconcile) and vol_regime.json READ from it,
+    # and CI asserts equality ≤ 0.01. Provider chain, PINNED and documented:
+    #   1. Cboe official close (cdn.cboe.com delayed-quotes historical JSON) —
+    #      the index owner; our June audit found yfinance disagreeing with
+    #      Cboe's own site by ~0.10 on VIX prior close.
+    #   2. Fallback: yfinance daily bar (what vol_indicators.parquet holds).
+    # The provider actually used is recorded per field.
     try:
         import json as _json
+        import urllib.request as _url
         last_idx = vol_df["vix"].dropna().index[-1]
-        def _cv(col):
+        canon_date = str(pd.Timestamp(last_idx).date())
+
+        def _yf(col):
             if col not in vol_df.columns: return None
             s = vol_df[col].dropna()
             return round(float(s.loc[last_idx]), 4) if last_idx in s.index else None
-        canonical = {
-            "date":   str(pd.Timestamp(last_idx).date()),
-            "vix":    _cv("vix"),
-            "vix3m":  _cv("vix3m"),
-            "vvix":   _cv("vvix"),
-            "vix1d":  _cv("vix1d"),
-            "spread_spot_3m": (round(_cv("vix") - _cv("vix3m"), 4)
-                               if _cv("vix") is not None and _cv("vix3m") is not None else None),
-            "source": ("yfinance daily bars via refresh_data.py — CANONICAL close "
-                       "for the vol complex; intraday.json is a live snapshot, "
-                       "never the close of record"),
-        }
-        with open(SOURCE.parent / "vol_canonical_close.json", "w") as f:
+
+        def _cboe_close(symbol):
+            """Official Cboe close for canon_date via the public CDN."""
+            try:
+                u = f"https://cdn.cboe.com/api/global/delayed_quotes/charts/historical/{symbol}.json"
+                req = _url.Request(u, headers={"User-Agent": "Mozilla/5.0"})
+                with _url.urlopen(req, timeout=10) as r:
+                    j = _json.loads(r.read().decode())
+                for row in reversed(j.get("data", [])):
+                    # rows: [date, open, high, low, close] (date "YYYY-MM-DD")
+                    if str(row[0])[:10] == canon_date:
+                        return round(float(row[4]), 4)
+            except Exception:
+                return None
+            return None
+
+        fields = {"vix": "_VIX", "vix3m": "_VIX3M", "vvix": "_VVIX",
+                  "vix1d": "_VIX1D", "skew": "_SKEW"}
+        canonical = {"date": canon_date,
+                      "fetched_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                      "provider_chain": "Cboe official close (cdn.cboe.com) → yfinance daily bar",
+                      "providers": {}}
+        for name, cboe_sym in fields.items():
+            v = _cboe_close(cboe_sym)
+            if v is not None:
+                canonical[name] = v
+                canonical["providers"][name] = "cboe"
+            else:
+                canonical[name] = _yf(name)
+                canonical["providers"][name] = "yfinance" if canonical[name] is not None else "unavailable"
+        canonical["spread_spot_3m"] = (round(canonical["vix"] - canonical["vix3m"], 4)
+                                        if canonical.get("vix") is not None and canonical.get("vix3m") is not None else None)
+        canonical["source"] = ("CANONICAL close for the vol complex — the single close of "
+                                "record. intraday.json is a live snapshot; post-close it "
+                                "reconciles to this file.")
+        with open(SOURCE.parent / "vol_close_canonical.json", "w") as f:
             _json.dump(canonical, f, indent=2)
-        log(f"  saved vol_canonical_close.json ({canonical['date']}: vix {canonical['vix']}, vix3m {canonical['vix3m']})")
+        # If Cboe's official close differs from the yfinance bar, align the
+        # parquet row so every downstream z-score uses the close of record.
+        for name in fields:
+            cv = canonical.get(name)
+            if cv is not None and name in vol_df.columns and canonical["providers"][name] == "cboe":
+                vol_df.loc[last_idx, name] = cv
+        vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
+        log(f"  saved vol_close_canonical.json ({canon_date}: vix {canonical['vix']} "
+            f"[{canonical['providers']['vix']}], vix3m {canonical['vix3m']}, skew {canonical['skew']})")
     except Exception as e:
-        log(f"  warn vol_canonical_close: {e}")
+        log(f"  warn vol_close_canonical: {e}")
 
     # vol_derived
     log("computing vol_derived...")

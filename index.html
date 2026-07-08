@@ -1162,8 +1162,20 @@ function renderTopBanner(){
     </div>`;
   }
 
-  // 3) COMPLACENCY only — info chip
-  if (id.complacency_active) {
+  // 3) COMPLACENCY — active chip (purple) or IMPAIRED chip (amber).
+  // JULY AUDIT FIX 2: a safety check with missing input must render
+  // IMPAIRED, never silently read as calm.
+  if (id.complacency_active === "impaired") {
+    return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
+       border-radius:8px;padding:10px 14px;margin-bottom:16px">
+      <div style="font:700 11px var(--m);color:var(--y);letter-spacing:.08em">
+        ⚠ COMPLACENCY CHECK IMPAIRED</div>
+      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+        ${id.complacency_reason}. The check did NOT evaluate — this is not an all-clear.
+        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+    </div>`;
+  }
+  if (id.complacency_active === true) {
     return `<div style="background:rgba(168,85,247,0.10);border:1px solid #a855f7;
        border-radius:8px;padding:10px 14px;margin-bottom:16px">
       <div style="font:700 11px var(--m);color:#c084fc;letter-spacing:.08em">
@@ -1173,6 +1185,28 @@ function renderTopBanner(){
     </div>`;
   }
   return "";
+}
+
+// JULY AUDIT FIX 1a — governance banner: registry unapproved or coverage hole.
+function renderRegistryBanner(){
+  const td = S.thesis;
+  if (!td) return "";
+  const holes = Object.entries(td.tiers || {})
+    .filter(([_, t]) => (t.unclassified_share || 0) > 0.15);
+  const unfrozen = !td.registry_frozen;
+  if (!holes.length && !unfrozen) return "";
+  const nNames = new Set(holes.flatMap(([_, t]) => t.unclassified_names || [])).size;
+  const parts = [];
+  if (unfrozen) parts.push(`registry v${td.registry_version} unapproved`);
+  if (holes.length) parts.push(`${nNames} names unclassified across ${holes.length} tier${holes.length > 1 ? "s" : ""} (${holes.map(([tid, t]) => `${(tierSpec(tid)||{}).short || tid} ${(t.unclassified_share*100).toFixed(0)}%`).join(" · ")})`);
+  return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
+     border-radius:8px;padding:11px 15px;margin-bottom:16px">
+    <div style="font:700 11px var(--m);color:var(--y);letter-spacing:.08em">
+      ⚠ THESIS REGISTRY NEEDS ATTENTION</div>
+    <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+      ${parts.join(" · ")}. Review <span style="font-family:var(--m)">data/registry_proposals.json</span>
+      and approve into the registry with a version bump — the agent never auto-merges.</div>
+  </div>`;
 }
 
 // ──────────────────────────────────────────────────────────────────
@@ -1342,6 +1376,16 @@ function renderRegimeCommandCenter(R){
       ${probCell("≥5% over NEXT 40D · CAL", p5_40, v4reg)}
       ${probCell("≥10% over NEXT 60D", p10_60, "")}
     </div>
+    ${(() => {
+      // JULY AUDIT FIX 4a: render the delta attribution under the probability
+      const a = S.v4Attr;
+      if (!a || !a.top3 || a.as_of !== v4AsOfCC) return "";
+      const movers = a.top3.map(c => `${c.feature} ${c.contribution_pp >= 0 ? "+" : ""}${c.contribution_pp}pp`).join(" · ");
+      return `<div style="margin-top:5px;font:400 10px var(--m);color:var(--t3);text-align:center;line-height:1.5">
+        Δ ${a.delta_pp >= 0 ? "+" : ""}${a.delta_pp}pp vs ${a.prev} — moved by: ${movers}
+        <span style="color:var(--t4)">(contributions approximate; residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp)</span>
+      </div>`;
+    })()}
     <div style="margin-top:6px;font:400 9.5px var(--m);color:var(--t4);text-align:center;line-height:1.4">
       Multi-week drawdown probabilities (cumulative over the horizon). Does NOT protect against
       single-day gaps — see the intraday banner at the top for same-session risk.
@@ -1370,6 +1414,9 @@ function renderRegimeCommandCenter(R){
       R<sub>full</sub> <strong style="color:${ewColor(rgm)}">${R_full.toFixed(3)} ${rgm}</strong>
       &middot; R<sub>lead</sub> <strong style="color:${ewColor(ew)}">${R_lead.toFixed(3)} ${ew}</strong>
       &middot; div <strong style="color:${ewColor(divlab)}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
+      <div style="margin-top:3px;font:italic 400 10px var(--s);color:var(--t5)">
+        Regime label uses ±0.02 hysteresis at band edges (enter ELEVATED ≥ 0.32, exit &lt; 0.28)
+        to stop edge-flapping; R values themselves are untouched.</div>
     </div>` : "";
 
   // AUDIT FIX 3: 4-bucket count matches card colors (green / blue / amber / red)
@@ -2233,6 +2280,10 @@ function renderThesisSection(){
       <h4>B4 · ATTRIBUTION — cash | allocation | selection (sums to active vs SPY; residual-defined)</h4>
       ${attrBlocks}
       <div class="th-caveat">${td.small_n_caveat} Components are arithmetic sums of daily effects; no CIs fabricated on ${td.sessions_since_inception} points.</div>
+      <div class="th-caveat">"Selection" is measured against equal-weight thesis baskets; with coarse
+        buckets, within-thesis composition (e.g. memory-semis vs megacap-AI) appears as selection.
+        Finer sub-theses would reclassify part of it as allocation — a memory_semis sub-thesis
+        proposal is in registry_proposals.json to demonstrate this bucket-dependence live.</div>
     </div>`;
 
   const btBody = `
@@ -2853,6 +2904,7 @@ function render(){
 
   // ---- 0. INTRADAY SHOCK / STALENESS BANNER (renders ABOVE the regime gauge) ----
   h += renderTopBanner();
+  h += renderRegistryBanner();
 
   // ---- 1. REGIME COMMAND CENTER ----
   h += renderRegimeCommandCenter(R);
@@ -3131,6 +3183,8 @@ async function init(){
   S.thesisReg  = await loadJSON("data/thesis_registry.json");
   S.thesisClaims = await loadJSON("data/thesis_claims.json");
   S.thesisBT   = await loadJSON("data/thesis_backtest.json");
+  S.v4Attr     = await loadJSON("data/v4_delta_attribution.json");
+  S.regProposals = await loadJSON("data/registry_proposals.json");
   const rows   = await loadCSV("data/backtest_equity_curves.csv");
   S.backtest   = rows ? {rows} : null;
 

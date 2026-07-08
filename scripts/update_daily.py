@@ -176,8 +176,11 @@ def validate_outputs() -> None:
             errors.append("V4 FLAT TAIL: trailing 10 rows identical across all "
                           "probability columns — frozen-feature symptom")
 
-        # AUDIT FIX 3: canonical vol-complex close must equal vol_regime curve.
-        canon_p = DATA / "vol_canonical_close.json"
+        # JULY AUDIT FIX 3c: canonical close equality ENFORCED for BOTH
+        # consumers — vol_regime.curve AND the post-close intraday snapshot.
+        canon_p = DATA / "vol_close_canonical.json"
+        if not canon_p.exists():
+            canon_p = DATA / "vol_canonical_close.json"
         if canon_p.exists():
             canon = json.load(open(canon_p))
             curve = vr.get("curve", {})
@@ -187,6 +190,35 @@ def validate_outputs() -> None:
                     if a is not None and b is not None and abs(a - b) > 0.01:
                         errors.append(f"VOL SOURCE SPLIT: vol_regime.curve.{k_vr}={a} "
                                       f"!= canonical.{k_c}={b}")
+            # Intraday post-close snapshot must reconcile to canonical
+            intra_p = DATA / "intraday.json"
+            if intra_p.exists():
+                intra = json.load(open(intra_p))
+                if intra.get("reconciled_to_canonical") == canon.get("date"):
+                    for k_i, k_c in [("vix_now", "vix"), ("vix3m", "vix3m"), ("skew", "skew")]:
+                        a, b = intra.get(k_i), canon.get(k_c)
+                        if a is not None and b is not None and abs(a - b) > 0.01:
+                            errors.append(f"VOL SOURCE SPLIT: intraday.{k_i}={a} "
+                                          f"!= canonical.{k_c}={b}")
+
+        # JULY AUDIT FIX 5c: every date in every published time series must be
+        # a trading day (shared calendar). Weekday-only before 2025.
+        sys.path.insert(0, str(HERE))
+        from trading_calendar import is_trading_day
+        for csv_name in ["regime_daily.csv", "regime_v2_daily.csv",
+                          "regime_daily_published.csv", "regime_v4_daily.csv"]:
+            p2 = DATA / csv_name
+            if not p2.exists(): continue
+            df2 = _pd.read_csv(p2)
+            col2 = "date" if "date" in df2.columns else df2.columns[0]
+            bad = [d for d in df2[col2].dropna().astype(str)
+                   if d >= "2025-01-01" and not is_trading_day(d)]
+            if bad:
+                errors.append(f"PHANTOM DATES in {csv_name}: {bad[:5]}"
+                              f"{' (+' + str(len(bad)-5) + ' more)' if len(bad) > 5 else ''}")
+        for h2 in json.load(open(DATA / 'tournament.json')).get("history", []):
+            if h2["date"] >= "2025-01-01" and not is_trading_day(h2["date"]):
+                errors.append(f"PHANTOM DATE in tournament.json: {h2['date']}")
     except Exception as e:
         errors.append(f"FRESHNESS CHECK CRASHED: {e}")
 

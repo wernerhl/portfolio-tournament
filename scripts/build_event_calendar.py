@@ -114,21 +114,26 @@ def main():
                         "label": "FOMC", "source_url": SRC_FOMC,
                         "retrieved_at": RETRIEVED_AT, "provenance": "official"})
 
-    # Treasury — monthly refunding pattern: 3Y Tue / 10Y Wed / 30Y Thu of the
-    # second full week. Pattern-based (TreasuryDirect publishes only a rolling
-    # window of exact dates).
+    # Treasury — monthly refunding pattern anchored on the 2nd WEDNESDAY
+    # (10Y), with 3Y the Tuesday BEFORE and 30Y the Thursday AFTER — one
+    # contiguous Tue/Wed/Thu sequence, matching the actual refunding order.
+    # JULY AUDIT FIX 6b: the old independent nth-weekday rule inverted the
+    # sequence in months starting Wed-Sun (July 2026 gave 3Y 07-14 AFTER 10Y
+    # 07-08; TreasuryDirect confirms 3Y 07-07 / 10Y 07-08 / 30Y 07-09).
+    from datetime import timedelta as _td
     for y in range(2024, 2028):
         for m in range(1, 13):
-            d3  = nth_weekday(y, m, weekday=1, n=2)   # 2nd Tuesday  → 3Y note
-            d10 = nth_weekday(y, m, weekday=2, n=2)   # 2nd Wednesday → 10Y note
-            d30 = nth_weekday(y, m, weekday=3, n=2)   # 2nd Thursday → 30Y bond
+            d10 = nth_weekday(y, m, weekday=2, n=2)   # 2nd Wednesday → 10Y note (anchor)
+            d3  = d10 - _td(days=1)                    # Tuesday before → 3Y note
+            d30 = d10 + _td(days=1)                    # Thursday after → 30Y bond
+            assert d3 < d10 < d30, f"refunding order broken {y}-{m}"
             for d, lbl, name in [(d3, "3Y", "3Y Note Auction"),
                                   (d10, "10Y", "10Y Note Auction"),
                                   (d30, "30Y", "30Y Bond Auction")]:
                 events.append({"date": d.isoformat(), "type": "TREASURY", "name": name,
                                 "label": lbl, "source_url": SRC_TSY,
                                 "retrieved_at": RETRIEVED_AT,
-                                "provenance": "refunding weekday pattern"})
+                                "provenance": "refunding pattern (2nd-Wed anchor; verified vs TreasuryDirect for Jul-2026)"})
 
     events.sort(key=lambda e: (e["date"], e["type"], e["label"]))
 
@@ -140,6 +145,10 @@ def main():
     assert ("2026-06-09", "CPI") not in by, "ASSERT FAIL: stale 2026-06-09 CPI entry present"
     assert ("2026-06-05", "NFP") in by, "ASSERT FAIL: June NFP must be 2026-06-05"
     assert ("2026-06-17", "FOMC") in by, "ASSERT FAIL: 2026-06-17 FOMC decision missing"
+    # JULY AUDIT FIX 6b: refunding sequence for July 2026 (TreasuryDirect-verified)
+    jul = {(e["date"], e["label"]) for e in events if e["type"] == "TREASURY" and e["date"].startswith("2026-07")}
+    assert ("2026-07-07", "3Y") in jul and ("2026-07-08", "10Y") in jul and ("2026-07-09", "30Y") in jul, \
+        f"ASSERT FAIL: July-2026 refunding sequence wrong: {sorted(jul)}"
     import datetime as _dt
     for e in events:
         wd = _dt.date.fromisoformat(e["date"]).weekday()

@@ -347,6 +347,85 @@ def main():
     with open(DATA / "thesis_daily.json", "w") as f:
         json.dump(_clean(payload), f, indent=2, allow_nan=False)
 
+    # ── JULY AUDIT FIX 1b/c + 7: registry proposals (agent NEVER auto-merges) ──
+    # For every unclassified held name, emit a PROPOSED mapping with a
+    # one-line rationale. Werner approves by moving entries into the
+    # registry with a version bump; nothing here touches the registry.
+    # Explicit v2 proposals from the July audit for the current tier-1
+    # seven; sector-heuristic proposals for anything else; plus the
+    # memory_semis sub-thesis proposal (bucket-dependence demonstration).
+    EXPLICIT_PROPOSALS = {
+        "CME":  ({"fin_plumbing": 1.0},  "derivatives exchange — pure transaction-toll economics"),
+        "MSCI": ({"fin_plumbing": 1.0},  "index/analytics licensing — financial-infrastructure fee stream"),
+        "PFE":  ({"defensive_quality": 1.0}, "large-cap pharma — defensive health cash flows"),
+        "GILD": ({"defensive_quality": 1.0}, "large-cap biopharma — defensive health cash flows"),
+        "BSX":  ({"defensive_quality": 0.7, "ldg_ex_ai": 0.3}, "medical devices — defensive demand with a growth-multiple leg"),
+        "DXCM": ({"ldg_ex_ai": 0.6, "defensive_quality": 0.4}, "CGM devices — long-duration growth on a health-staple base"),
+        "IDXX": ({"defensive_quality": 0.6, "ldg_ex_ai": 0.4}, "veterinary diagnostics — recurring-revenue quality with growth multiple"),
+    }
+    SECTOR_HEURISTIC = {
+        "Financial Services": "fin_plumbing", "Financials": "fin_plumbing",
+        "Energy": "hard_assets", "Basic Materials": "hard_assets",
+        "Consumer Defensive": "defensive_quality", "Healthcare": "defensive_quality",
+        "Technology": "ldg_ex_ai", "Communication Services": "ldg_ex_ai",
+        "Consumer Cyclical": "consumer_cyclical", "Industrials": "consumer_cyclical",
+        "Utilities": "hard_assets",
+    }
+    try:
+        fund = pd.read_parquet(SOURCE / "fundamentals_snapshot.parquet")
+    except Exception:
+        fund = pd.DataFrame()
+    all_uncl = sorted({nm for t in tiers_out.values() for nm in t["unclassified_names"]})
+    # Holdings-change detection (FIX 1d): proposals regenerate nightly; note
+    # whether any tier's holdings changed vs the prior session.
+    holdings_changed = []
+    if len(history) >= 2:
+        for tid in history[-1]["tiers"]:
+            h_now = set(history[-1]["tiers"][tid].get("holdings", []))
+            h_prev = set(history[-2]["tiers"].get(tid, {}).get("holdings", []))
+            if h_now != h_prev:
+                holdings_changed.append(tid)
+    proposals = []
+    for nm in all_uncl:
+        if nm in EXPLICIT_PROPOSALS:
+            mapping, rationale = EXPLICIT_PROPOSALS[nm]
+            src = "july-audit explicit proposal"
+        else:
+            sector = str(fund.loc[nm, "sector"]) if (len(fund) and nm in fund.index and "sector" in fund.columns) else ""
+            industry = str(fund.loc[nm, "industry"]) if (len(fund) and nm in fund.index and "industry" in fund.columns) else ""
+            tid_guess = SECTOR_HEURISTIC.get(sector)
+            mapping = {tid_guess: 1.0} if tid_guess else {}
+            rationale = f"sector heuristic — {sector or 'unknown'}{(' · ' + industry) if industry and industry != 'nan' else ''} — review before approving"
+            src = "sector heuristic"
+        proposals.append({"ticker": nm, "proposed": mapping, "rationale": rationale,
+                           "source": src, "status": "pending"})
+    proposals.append({
+        "type": "new_thesis",
+        "thesis_id": "memory_semis",
+        "label": "Memory semiconductors (sub-thesis of ai_infra)",
+        "proposed_members": {"MU": 1.0, "SNDK": 1.0},
+        "rationale": ("Bucket-dependence demonstration: with memory split out of "
+                       "ai_infra, part of Tier-4 'selection' reclassifies as "
+                       "allocation. Approving lets the attribution render under "
+                       "both resolutions."),
+        "status": "pending",
+    })
+    prop_payload = {
+        "generated_at": datetime.now().isoformat(),
+        "as_of": as_of,
+        "registry_version_current": registry["version"],
+        "registry_frozen": frozen,
+        "holdings_changed_today": holdings_changed,
+        "note": ("PROPOSALS ONLY — the agent never auto-merges. Werner approves "
+                  "by moving entries into thesis_registry.json with a version "
+                  "bump. Regenerated nightly; re-checked on any holdings change."),
+        "proposals": proposals,
+    }
+    with open(DATA / "registry_proposals.json", "w") as f:
+        json.dump(_clean(prop_payload), f, indent=2, allow_nan=False)
+    print(f"  registry_proposals.json: {len(proposals)} proposals "
+          f"({len(all_uncl)} unclassified names; holdings changed today: {holdings_changed or 'none'})")
+
     print(f"  as_of {as_of} · registry v{registry['version']} ({'frozen' if frozen else 'PENDING APPROVAL'})")
     for tid, t in tiers_out.items():
         top = next(iter(t["exposure_invested"].items()), ("—", 0))
