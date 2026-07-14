@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-13T23:02:37.623547",
-  "as_of": "2026-07-13",
-  "tradable_at": "2026-07-14",
+  "updated": "2026-07-14T23:02:49.050685",
+  "as_of": "2026-07-14",
+  "tradable_at": "2026-07-15",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -20,15 +20,15 @@
   },
   "state": "contango",
   "state_age": 1,
-  "spread": -2.48,
-  "delta_spread": 1.06,
-  "sigma_threshold": 0.594,
+  "spread": -2.8,
+  "delta_spread": 0.74,
+  "sigma_threshold": 0.567,
   "trigger_fired": true,
   "entry": {
-    "current_entry_dspread": 1.06,
-    "state_mean_entry": -0.097,
-    "state_sigma_entry": 0.851,
-    "entry_zscore": 1.36,
+    "current_entry_dspread": 0.74,
+    "state_mean_entry": -0.098,
+    "state_sigma_entry": 0.85,
+    "entry_zscore": 0.99,
     "atypical_entry": false,
     "rule": "Atypical when |entry \u0394spread \u2212 state mean| > 2\u03c3. Caveat: pooled transition stats may not describe a shock-entered episode."
   },
@@ -57,8 +57,8 @@
         "deep_contango": 208,
         "backwardation": 12
       },
-      "entry_dspread_mean": -0.09721198499477404,
-      "entry_dspread_sigma": 0.8509876085077782,
+      "entry_dspread_mean": -0.09794931148054413,
+      "entry_dspread_sigma": 0.8501208304089491,
       "entry_dspread_n": 434
     },
     "flattening": {
@@ -90,51 +90,55 @@
     }
   },
   "curve": {
-    "spot_vix": 17.16,
-    "vix1d": 14.63,
-    "vix3m": 19.64,
-    "spread_spot_3m": -2.48,
+    "spot_vix": 16.5,
+    "vix1d": 10.57,
+    "vix3m": 19.3,
+    "spread_spot_3m": -2.8,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-07-14",
+    "date": "2026-07-29",
     "types": [
+      "FOMC"
+    ],
+    "sessions_away": 11
+  },
+  "event_today": [
+    "CPI"
+  ],
+  "conditioning": {
+    "event_flag": true,
+    "event_types": [
       "CPI"
     ],
-    "sessions_away": 1
-  },
-  "event_today": [],
-  "conditioning": {
-    "event_flag": false,
-    "event_types": [],
-    "delta_2y_bps": 4.0,
+    "delta_2y_bps": -8.4,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
-    "front_end_repriced": false,
-    "held_close_proxy": 0.48,
+    "front_end_repriced": true,
+    "held_close_proxy": 0.33,
     "held_close": false
   },
   "attribution": {
-    "primary_driver": "unclassified_noise",
-    "primary_reversion": "high",
+    "primary_driver": "regime_repricing_weak",
+    "primary_reversion": "med",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.042,
-      "breadth_delta_pp": -3.0,
+      "smh_1d_return": 0.025,
+      "breadth_delta_pp": -1.5,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.045,
-      "breadth_z": -0.74,
+      "breadth_delta_sigma_1y_pp": 4.032,
+      "breadth_z": -0.37,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
   "overlay_scalar": {
-    "value": 0.7,
+    "value": 0.0,
     "label": "DIAGNOSTIC",
     "caption": "Regime-sized overlay scalar. Gated as DIAGNOSTIC until backtest shows regime-conditional sizing beats static sizing on risk-adjusted return. Do not execute on this value."
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-07-13",
+      "today_excluded_from_metrics": "2026-07-14",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1420,9 +1424,9 @@
       "spread": -3.54
     },
     {
-      "d": "2026-07-13",
+      "d": "2026-07-14",
       "state": "contango",
-      "spread": -2.48
+      "spread": -2.8
     }
   ],
   "past_spikes": [
@@ -1541,10 +1545,10 @@
       "event": "CPI"
     },
     {
-      "d": "2026-07-13",
-      "delta_spread": 1.06,
+      "d": "2026-07-14",
+      "delta_spread": 0.74,
       "state": "contango",
-      "event": null
+      "event": "CPI"
     }
   ]
 }
