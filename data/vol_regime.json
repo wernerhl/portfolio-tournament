@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-23T23:04:40.623523",
-  "as_of": "2026-07-23",
-  "tradable_at": "2026-07-24",
+  "updated": "2026-07-24T23:08:45.734405",
+  "as_of": "2026-07-24",
+  "tradable_at": "2026-07-27",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -20,8 +20,8 @@
   },
   "state": "contango",
   "state_age": 3,
-  "spread": -1.9,
-  "delta_spread": -0.13,
+  "spread": -1.93,
+  "delta_spread": -0.16,
   "sigma_threshold": 0.537,
   "trigger_fired": false,
   "entry": {
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 18.7,
-    "vix1d": 14.71,
-    "vix3m": 20.6,
-    "spread_spot_3m": -1.9,
+    "spot_vix": 18.58,
+    "vix1d": 15.43,
+    "vix3m": 20.51,
+    "spread_spot_3m": -1.93,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,13 +101,13 @@
     "types": [
       "FOMC"
     ],
-    "sessions_away": 4
+    "sessions_away": 3
   },
   "event_today": [],
   "conditioning": {
     "event_flag": false,
     "event_types": [],
-    "delta_2y_bps": 4.4,
+    "delta_2y_bps": -2.8,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
@@ -119,11 +119,11 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.011,
-      "breadth_delta_pp": -5.07,
-      "breadth_holds": false,
-      "breadth_delta_sigma_1y_pp": 3.961,
-      "breadth_z": -1.28,
+      "smh_1d_return": -0.033,
+      "breadth_delta_pp": 6.75,
+      "breadth_holds": true,
+      "breadth_delta_sigma_1y_pp": 3.982,
+      "breadth_z": 1.7,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -134,7 +134,7 @@
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-07-23",
+      "today_excluded_from_metrics": "2026-07-24",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1420,9 +1420,9 @@
       "spread": -1.77
     },
     {
-      "d": "2026-07-23",
+      "d": "2026-07-24",
       "state": "contango",
-      "spread": -1.9
+      "spread": -1.93
     }
   ],
   "past_spikes": [
