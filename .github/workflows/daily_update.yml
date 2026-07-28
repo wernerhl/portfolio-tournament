@@ -2,7 +2,13 @@ name: Daily Update
 
 on:
   schedule:
-    - cron: '0 22 * * 1-5'   # ~6pm ET weekdays (DST drift ±1h)
+    # CLOSE run — the authoritative daily update: full pipeline (settled
+    # regime, NAV, signals, thesis, v4, published vintage). 22:00 UTC ≈ 6pm ET,
+    # safely after the 4pm close in BOTH DST regimes with buffer for EOD bars
+    # to settle. Earlier risks a partial bar that the no-look-ahead guard
+    # rejects (→ reproduces yesterday). Morning refresh = market_open.yml;
+    # all-day shock watch = intraday.yml.
+    - cron: '0 22 * * 1-5'
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,71 @@
+name: Market Open Refresh
+
+# Dedicated morning intraday snapshot ~30 min after the open.
+#
+# Why a separate workflow instead of relying on intraday.yml's */30 watch:
+# GitHub throttles high-frequency scheduled workflows under load — the
+# every-30-min shock watch actually fires ~every 90 min in practice, so the
+# morning snapshot was landing ~2h after open. A dedicated low-frequency
+# schedule gets its own slot and is reliably honored near its cron time.
+#
+# This refreshes LIVE conditions only (VIX/SPX/SKEW, shock + complacency,
+# LIVE-badged card values). The authoritative regime/NAV/thesis math
+# finalizes at the close (daily_update.yml) — by the no-look-ahead design,
+# it cannot update pre-close.
+
+on:
+  schedule:
+    # 14:00 UTC = 10:00 ET (EDT) = 30 min after the 09:30 open.
+    # 15:00 UTC keeps it ~30 min after open when the US is on EST (winter).
+    # Both fire; the intraday snapshot is idempotent, so the extra run is a
+    # harmless redeploy.
+    - cron: '0 14 * * 1-5'
+    - cron: '0 15 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install yfinance numpy pandas
+
+      - name: Run intraday snapshot
+        run: python scripts/compute_intraday.py
+
+      - name: Commit
+        run: |
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/intraday.json
+          git diff --cached --quiet || git commit -m "🔔 market-open snapshot $(date -u +%H:%M)"
+          git pull --rebase --strategy-option=ours || true
+          git push
+
+  deploy:
+    needs: snapshot
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4
