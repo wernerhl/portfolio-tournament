@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-27T23:12:24.394114",
-  "as_of": "2026-07-27",
-  "tradable_at": "2026-07-28",
+  "updated": "2026-07-28T23:07:04.908736",
+  "as_of": "2026-07-28",
+  "tradable_at": "2026-07-29",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -20,9 +20,9 @@
   },
   "state": "contango",
   "state_age": 3,
-  "spread": -1.53,
-  "delta_spread": 0.24,
-  "sigma_threshold": 0.536,
+  "spread": -1.65,
+  "delta_spread": 0.12,
+  "sigma_threshold": 0.535,
   "trigger_fired": false,
   "entry": {
     "current_entry_dspread": 0.47,
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 18.67,
-    "vix1d": 13.09,
-    "vix3m": 20.2,
-    "spread_spot_3m": -1.53,
+    "spot_vix": 18.21,
+    "vix1d": 15.77,
+    "vix3m": 19.86,
+    "spread_spot_3m": -1.65,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,17 +101,17 @@
     "types": [
       "FOMC"
     ],
-    "sessions_away": 2
+    "sessions_away": 1
   },
   "event_today": [],
   "conditioning": {
     "event_flag": false,
     "event_types": [],
-    "delta_2y_bps": 2.0,
+    "delta_2y_bps": -0.8,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.97,
+    "held_close_proxy": 0.85,
     "held_close": true
   },
   "attribution": {
@@ -119,11 +119,11 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.023,
-      "breadth_delta_pp": 3.56,
+      "smh_1d_return": -0.035,
+      "breadth_delta_pp": 2.63,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 3.981,
-      "breadth_z": 0.9,
+      "breadth_delta_sigma_1y_pp": 3.983,
+      "breadth_z": 0.66,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -134,7 +134,7 @@
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-07-27",
+      "today_excluded_from_metrics": "2026-07-28",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1420,9 +1420,9 @@
       "spread": -1.77
     },
     {
-      "d": "2026-07-27",
+      "d": "2026-07-28",
       "state": "contango",
-      "spread": -1.53
+      "spread": -1.65
     }
   ],
   "past_spikes": [
