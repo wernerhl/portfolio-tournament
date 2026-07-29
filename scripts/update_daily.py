@@ -38,6 +38,38 @@ scripts = [
     "compute_thesis_daily.py",     # MESO layer: thesis exposure + attribution + auto-log
 ]
 
+# ─────────────────────────────────────────────────────────────────────
+# [5] Run guard (written instruction 2026-07-29): this pipeline writes the
+# served close-of-day artifacts, so it may run only after the close
+# (>= 16:15 ET) on trading sessions, or under --force-publish REASON.
+# The guard refuses BEFORE any sub-script writes — served data stays intact.
+# The intraday/market-open bots are intentionally exempt (session-scoped,
+# separate workflows). Non-trading days pass (no mid-session hazard).
+# ─────────────────────────────────────────────────────────────────────
+def _run_guard():
+    import argparse
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--force-publish", metavar="REASON", default=None,
+                    help="run despite the session guard; reason recorded in status.json")
+    args, _ = ap.parse_known_args()
+    now_et = datetime.now(ZoneInfo("America/New_York"))
+    try:
+        from trading_calendar import is_trading_day
+        trading = is_trading_day(now_et.date())
+    except Exception:
+        trading = now_et.weekday() < 5
+    after_close = (now_et.hour, now_et.minute) >= (16, 15)
+    if trading and not after_close and args.force_publish is None:
+        print(f"[5] RUN GUARD: {now_et:%H:%M} ET is pre-close on a trading session and no "
+              "--force-publish REASON was given — refusing to run the publish pipeline. "
+              "Nothing was written.")
+        sys.exit(78)
+    return args.force_publish, now_et
+
+FORCE_REASON, NOW_ET = _run_guard()
+
 for script in scripts:
     print(f"\n{'='*60}\nRunning {script}\n{'='*60}")
     rc = subprocess.call([sys.executable, str(HERE / script)])
@@ -231,5 +263,35 @@ def validate_outputs() -> None:
     print("\nValidation passed.")
 
 
-validate_outputs()
+# [5] status.json on BOTH outcomes — the pipeline-level session stamp.
+# (Per-artifact session stamps live in the artifacts themselves: thesis_daily
+# carries as_of/updated; status.json is the tournament's pipeline equivalent
+# of the screener's scores.json session_date/computed_at fields.)
+def _write_status(ok: bool, reason) -> None:
+    try:
+        from trading_calendar import last_trading_session
+        session = last_trading_session()
+    except Exception:
+        session = None
+    path = DATA / "status.json"
+    prev = {}
+    try:
+        prev = json.load(open(path))
+    except Exception:
+        pass
+    computed_at = NOW_ET.isoformat(timespec="seconds")
+    json.dump({
+        "last_attempt": computed_at,
+        "last_success": computed_at if ok else prev.get("last_success"),
+        "failure_reason": None if ok else str(reason),
+        "session_date": session,
+        "forced_publish_reason": FORCE_REASON,
+    }, open(path, "w"), indent=1)
+
+try:
+    validate_outputs()
+except SystemExit as e:
+    _write_status(False, f"validation failed (exit {e.code})")
+    raise
+_write_status(True, None)
 print("\nDaily update complete.")

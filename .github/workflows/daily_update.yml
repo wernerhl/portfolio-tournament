@@ -30,6 +30,11 @@ jobs:
         run: pip install yfinance fredapi pandas numpy scipy pyarrow
 
       - name: Run daily pipeline
+        id: pipeline
+        # [5] continue-on-error: a validation rejection still publishes
+        # data/status.json (failure_reason) while served artifacts keep their
+        # last good state; the job is re-failed in the propagate step.
+        continue-on-error: true
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/update_daily.py
@@ -40,10 +45,20 @@ jobs:
           git config user.email "bot@tournament"
           git add data/
           git diff --cached --quiet || git commit -m "📊 $(date -u +%Y-%m-%d)"
+          git pull --rebase --strategy-option=ours origin main || true
           git push
+
+      - name: Propagate pipeline failure
+        if: steps.pipeline.outcome == 'failure'
+        run: |
+          echo "pipeline was rejected — served artifacts preserved, status.json published"
+          exit 1
 
   deploy:
     needs: update
+    # [5] deploy even on rejection: main carries preserved artifacts + the new
+    # status.json so the dashboard can surface the failure.
+    if: always()
     runs-on: ubuntu-latest
     environment:
       name: github-pages
