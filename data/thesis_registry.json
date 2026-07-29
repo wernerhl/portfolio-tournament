@@ -1,56 +1,92 @@
 {
-  "version": 1,
-  "frozen_at": null,
-  "proposed_at": "2026-06-11",
-  "weighting": "equal_within_basket",
-  "note": "PROPOSED from the current books — Werner reviews/edits, then sets frozen_at to freeze. After freezing, classification changes happen ONLY via an explicit version bump (new version object appended to data/thesis_registry_history.json). Names may belong to multiple theses with split weights summing <= 1 per name; the residual maps to 'unclassified'.",
-  "theses": {
-    "ai_infra": {
-      "label": "AI infrastructure",
-      "proxy_etf": "SMH",
-      "members": {
-        "NVDA": 1.0, "AVGO": 1.0, "TSM": 1.0, "MU": 1.0, "SNDK": 1.0, "ANET": 1.0,
-        "MSFT": 0.7, "GOOG": 0.7, "META": 0.6, "PLTR": 0.7,
-        "ETN": 0.6, "VRT": 0.8, "CEG": 0.6, "VST": 0.5
-      },
-      "notes": "Chips/memory/networking full weight; hyperscalers partial (also other businesses); power-buildout leg partial."
-    },
-    "fin_plumbing": {
-      "label": "Financial plumbing & rate beneficiaries",
-      "proxy_etf": "XLF",
-      "members": {
-        "MA": 1.0, "V": 1.0, "ICE": 1.0, "NDAQ": 1.0, "AMP": 1.0, "FISV": 1.0,
-        "SCHW": 1.0, "RJF": 1.0, "BX": 1.0, "CPAY": 1.0, "PYPL": 0.8, "INTU": 0.5
-      }
-    },
-    "hard_assets": {
-      "label": "Hard assets / inflation beneficiaries",
-      "proxy_etf": "XLE",
-      "proxy_note": "GLD tracked alongside",
-      "members": {
-        "TPL": 1.0, "EOG": 1.0, "APA": 1.0, "NEM": 1.0
-      }
-    },
-    "defensive_quality": {
-      "label": "Defensive quality (staples / health)",
-      "proxy_etf": "XLP",
-      "members": {
-        "ZTS": 0.8, "MO": 1.0, "PEP": 1.0, "PODD": 0.6, "CMCSA": 0.7
-      }
-    },
-    "ldg_ex_ai": {
-      "label": "Long-duration growth ex-AI",
-      "proxy_etf": "IGV",
-      "members": {
-        "VEEV": 1.0, "ADBE": 1.0, "INTU": 0.5, "PODD": 0.4, "PYPL": 0.2
-      }
-    },
-    "consumer_cyclical": {
-      "label": "Consumer cyclical / travel",
-      "proxy_etf": "XLY",
-      "members": {
-        "TPR": 1.0, "LVS": 1.0, "BKNG": 1.0, "EXPE": 1.0
-      }
-    }
+ "version": 1,
+ "frozen_at": "2026-07-29",
+ "proposed_at": "2026-06-11",
+ "weighting": "equal_within_basket",
+ "note": "PROPOSED from the current books \u2014 Werner reviews/edits, then sets frozen_at to freeze. After freezing, classification changes happen ONLY via an explicit version bump (new version object appended to data/thesis_registry_history.json). Names may belong to multiple theses with split weights summing <= 1 per name; the residual maps to 'unclassified'.",
+ "theses": {
+  "ai_infra": {
+   "label": "AI infrastructure",
+   "proxy_etf": "SMH",
+   "members": {
+    "NVDA": 1.0,
+    "AVGO": 1.0,
+    "TSM": 1.0,
+    "MU": 1.0,
+    "SNDK": 1.0,
+    "ANET": 1.0,
+    "MSFT": 0.7,
+    "GOOG": 0.7,
+    "META": 0.6,
+    "PLTR": 0.7,
+    "ETN": 0.6,
+    "VRT": 0.8,
+    "CEG": 0.6,
+    "VST": 0.5
+   },
+   "notes": "Chips/memory/networking full weight; hyperscalers partial (also other businesses); power-buildout leg partial."
+  },
+  "fin_plumbing": {
+   "label": "Financial plumbing & rate beneficiaries",
+   "proxy_etf": "XLF",
+   "members": {
+    "MA": 1.0,
+    "V": 1.0,
+    "ICE": 1.0,
+    "NDAQ": 1.0,
+    "AMP": 1.0,
+    "FISV": 1.0,
+    "SCHW": 1.0,
+    "RJF": 1.0,
+    "BX": 1.0,
+    "CPAY": 1.0,
+    "PYPL": 0.8,
+    "INTU": 0.5
+   }
+  },
+  "hard_assets": {
+   "label": "Hard assets / inflation beneficiaries",
+   "proxy_etf": "XLE",
+   "proxy_note": "GLD tracked alongside",
+   "members": {
+    "TPL": 1.0,
+    "EOG": 1.0,
+    "APA": 1.0,
+    "NEM": 1.0
+   }
+  },
+  "defensive_quality": {
+   "label": "Defensive quality (staples / health)",
+   "proxy_etf": "XLP",
+   "members": {
+    "ZTS": 0.8,
+    "MO": 1.0,
+    "PEP": 1.0,
+    "PODD": 0.6,
+    "CMCSA": 0.7
+   }
+  },
+  "ldg_ex_ai": {
+   "label": "Long-duration growth ex-AI",
+   "proxy_etf": "IGV",
+   "members": {
+    "VEEV": 1.0,
+    "ADBE": 1.0,
+    "INTU": 0.5,
+    "PODD": 0.4,
+    "PYPL": 0.2
+   }
+  },
+  "consumer_cyclical": {
+   "label": "Consumer cyclical / travel",
+   "proxy_etf": "XLY",
+   "members": {
+    "TPR": 1.0,
+    "LVS": 1.0,
+    "BKNG": 1.0,
+    "EXPE": 1.0
+   }
   }
+ },
+ "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review \u2014 nothing auto-merged."
 }
