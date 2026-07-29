@@ -1,6 +1,6 @@
 {
- "version": 1,
- "frozen_at": "2026-07-29",
+ "version": 2,
+ "frozen_at": "2026-07-29T14:32:40-03:00",
  "proposed_at": "2026-06-11",
  "weighting": "equal_within_basket",
  "note": "PROPOSED from the current books \u2014 Werner reviews/edits, then sets frozen_at to freeze. After freezing, classification changes happen ONLY via an explicit version bump (new version object appended to data/thesis_registry_history.json). Names may belong to multiple theses with split weights summing <= 1 per name; the residual maps to 'unclassified'.",
@@ -41,7 +41,9 @@
     "BX": 1.0,
     "CPAY": 1.0,
     "PYPL": 0.8,
-    "INTU": 0.5
+    "INTU": 0.5,
+    "CME": 1.0,
+    "MSCI": 1.0
    }
   },
   "hard_assets": {
@@ -52,7 +54,9 @@
     "TPL": 1.0,
     "EOG": 1.0,
     "APA": 1.0,
-    "NEM": 1.0
+    "NEM": 1.0,
+    "CF": 1.0,
+    "EQT": 1.0
    }
   },
   "defensive_quality": {
@@ -63,7 +67,12 @@
     "MO": 1.0,
     "PEP": 1.0,
     "PODD": 0.6,
-    "CMCSA": 0.7
+    "CMCSA": 0.7,
+    "BSX": 0.7,
+    "DXCM": 0.4,
+    "GILD": 1.0,
+    "IDXX": 0.6,
+    "PFE": 1.0
    }
   },
   "ldg_ex_ai": {
@@ -74,7 +83,16 @@
     "ADBE": 1.0,
     "INTU": 0.5,
     "PODD": 0.4,
-    "PYPL": 0.2
+    "PYPL": 0.2,
+    "ADSK": 1.0,
+    "BSX": 0.3,
+    "DXCM": 0.6,
+    "FICO": 1.0,
+    "GEN": 1.0,
+    "IDXX": 0.4,
+    "NTAP": 1.0,
+    "ORCL": 1.0,
+    "PTC": 1.0
    }
   },
   "consumer_cyclical": {
@@ -88,5 +106,35 @@
    }
   }
  },
- "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review \u2014 nothing auto-merged."
+ "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review \u2014 nothing auto-merged.",
+ "approved_by": "Werner Hernani-Limarino (written instruction, 2026-07-29)",
+ "approved_at": "2026-07-29T14:32:40-03:00",
+ "supersedes": 1,
+ "proposals_source": {
+  "repo_head": "a881266f40d92aeb436a08e15d8faf7ccc617109",
+  "file": "data/registry_proposals.json",
+  "entries_at_head": 16,
+  "note": "order prose said 19; file at pinned head has 16 (15 ticker + memory_semis). File governs per authority note."
+ },
+ "history": [
+  {
+   "version": 1,
+   "frozen_at": "2026-07-29",
+   "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review \u2014 nothing auto-merged.",
+   "ratified": "same batch authority per written instruction 2026-07-29; v1 member map preserved at git a881266f40d92aeb436a08e15d8faf7ccc617109"
+  }
+ ],
+ "v3_queue": [
+  {
+   "type": "new_thesis",
+   "id": "memory_semis",
+   "label": "Memory semiconductors (sub-thesis of ai_infra)",
+   "reason": "deferred by written instruction item 1.5 \u2014 changes attribution resolution; goes to v3"
+  },
+  {
+   "ticker": "BMNR",
+   "reason": "tier-5 residual \u2014 unclassified share 15.8% > 15% at v2 preview (as_of 2026-07-28). No existing thesis covers this exposure; needs a v3 thesis or explicit unclassified designation. Mechanical flag only \u2014 classification is judgment, not auto-assigned."
+  }
+ ],
+ "effective": "forward from the 2026-07-29 close run; no historical recomputation (order item 1.3)"
 }
