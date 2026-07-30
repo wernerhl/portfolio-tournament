@@ -69,12 +69,36 @@ def main():
                           tech["rs6m_rank"].fillna(0.5)) / 3 * 25
 
     # --- Fundamental metrics ---
+    # #93 leverage: ND/EBITDA from the canonical artifact (same repo, built
+    # nightly by build_canonical.py). Financials excluded -> NaN -> skipna
+    # mean, exactly how every other missing metric is already handled.
+    # Negative-EBITDA names with debt >10% of mcap get a worst-rank sentinel.
+    canon_path = DATA / "canonical" / "fundamentals.json"
+    if canon_path.exists():
+        canon = json.loads(canon_path.read_text())["tickers"]
+        nd = {}
+        for tk, r in canon.items():
+            if (r.get("sector") or "") == "Financial Services":
+                continue
+            td, tc, eb = r.get("totalDebt"), r.get("totalCash"), r.get("ebitda")
+            if td is None or eb is None:
+                continue
+            if eb > 0:
+                nd[tk] = (td - (tc or 0)) / eb
+            elif (r.get("marketCap") or 0) and td > 0.10 * r["marketCap"]:
+                nd[tk] = 99.0          # levered cash burner ranks worst
+        fund["nd_ebitda"] = pd.Series(nd).reindex(fund.index)
+        print(f"  leverage (#93): nd_ebitda for {int(fund['nd_ebitda'].notna().sum())} names from canonical")
+    else:
+        print("  leverage (#93): canonical missing — nd_ebitda skipped (5-metric fund score)")
+
     fund_metrics = [
         ("forwardPE",       -1),
         ("revenueGrowth",   +1),
         ("grossMargins",    +1),
         ("returnOnEquity",  +1),
         ("operatingMargins",+1),
+        ("nd_ebitda",       -1),   # #93 leverage, inverted (higher = worse)
     ]
     f = pd.DataFrame(index=fund.index)
     for col, sign in fund_metrics:
@@ -90,7 +114,8 @@ def main():
     # Sector + name + market cap from fundamentals snapshot
     meta_cols = ["sector", "industry", "shortName", "marketCap",
                  "forwardPE", "revenueGrowth", "grossMargins",
-                 "returnOnEquity", "operatingMargins", "freeCashflow"]
+                 "returnOnEquity", "operatingMargins", "freeCashflow",
+                 "nd_ebitda"]   # #93 raw ratio rides along with its rank
     meta = fund[[c for c in meta_cols if c in fund.columns]].copy()
 
     # --- Combine ---
@@ -114,9 +139,9 @@ def main():
             "ma200_dist", "rsi", "rel_str_6m",
             "ma200_rank", "rsi_rank", "rs6m_rank",
             "forwardPE", "revenueGrowth", "grossMargins",
-            "returnOnEquity", "operatingMargins", "freeCashflow",
+            "returnOnEquity", "operatingMargins", "freeCashflow", "nd_ebitda",
             "forwardPE_rank", "revenueGrowth_rank", "grossMargins_rank",
-            "returnOnEquity_rank", "operatingMargins_rank"]
+            "returnOnEquity_rank", "operatingMargins_rank", "nd_ebitda_rank"]
     cols = [c for c in cols if c in out.columns]
     out = out[cols].sort_values("composite", ascending=False)
     out.to_csv(DATA / "scored_universe.csv", index=False)
