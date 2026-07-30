@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-29T23:04:23.208908",
-  "as_of": "2026-07-29",
-  "tradable_at": "2026-07-30",
+  "updated": "2026-07-30T23:13:50.442439",
+  "as_of": "2026-07-30",
+  "tradable_at": "2026-07-31",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -18,17 +18,17 @@
     "reversion_X_sigma": 0.5,
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
-  "state": "flattening",
-  "state_age": 1,
-  "spread": -0.84,
-  "delta_spread": 0.93,
-  "sigma_threshold": 0.568,
-  "trigger_fired": true,
+  "state": "contango",
+  "state_age": 3,
+  "spread": -2.41,
+  "delta_spread": -0.64,
+  "sigma_threshold": 0.558,
+  "trigger_fired": false,
   "entry": {
-    "current_entry_dspread": 0.93,
-    "state_mean_entry": 0.262,
-    "state_sigma_entry": 1.175,
-    "entry_zscore": 0.57,
+    "current_entry_dspread": 0.47,
+    "state_mean_entry": -0.096,
+    "state_sigma_entry": 0.85,
+    "entry_zscore": 0.67,
     "atypical_entry": false,
     "rule": "Atypical when |entry \u0394spread \u2212 state mean| > 2\u03c3. Caveat: pooled transition stats may not describe a shock-entered episode."
   },
@@ -53,7 +53,7 @@
       "median_sessions": 3,
       "p75_sessions": 7,
       "next_state_distribution": {
-        "flattening": 214,
+        "flattening": 213,
         "deep_contango": 209,
         "backwardation": 12
       },
@@ -62,7 +62,7 @@
       "entry_dspread_n": 435
     },
     "flattening": {
-      "n_episodes": 305,
+      "n_episodes": 304,
       "p25_sessions": 1,
       "median_sessions": 2,
       "p75_sessions": 4,
@@ -70,9 +70,9 @@
         "contango": 223,
         "backwardation": 81
       },
-      "entry_dspread_mean": 0.26173778283791466,
-      "entry_dspread_sigma": 1.1753484071438498,
-      "entry_dspread_n": 305
+      "entry_dspread_mean": 0.25953955085654007,
+      "entry_dspread_sigma": 1.1766581519300856,
+      "entry_dspread_n": 304
     },
     "backwardation": {
       "n_episodes": 95,
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 20.66,
-    "vix1d": 19.45,
-    "vix3m": 21.5,
-    "spread_spot_3m": -0.84,
+    "spot_vix": 17.09,
+    "vix1d": 14.14,
+    "vix3m": 19.5,
+    "spread_spot_3m": -2.41,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,44 +101,40 @@
     "types": [
       "NFP"
     ],
-    "sessions_away": 7
+    "sessions_away": 6
   },
-  "event_today": [
-    "FOMC"
-  ],
+  "event_today": [],
   "conditioning": {
-    "event_flag": true,
-    "event_types": [
-      "FOMC"
-    ],
-    "delta_2y_bps": -1.4,
+    "event_flag": false,
+    "event_types": [],
+    "delta_2y_bps": -2.8,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 1.0,
-    "held_close": true
+    "held_close_proxy": 0.37,
+    "held_close": false
   },
   "attribution": {
-    "primary_driver": "event_bump_sticky",
-    "primary_reversion": "med",
+    "primary_driver": "no_trigger",
+    "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.048,
-      "breadth_delta_pp": -5.07,
-      "breadth_holds": false,
-      "breadth_delta_sigma_1y_pp": 3.98,
-      "breadth_z": -1.27,
+      "smh_1d_return": 0.069,
+      "breadth_delta_pp": -2.25,
+      "breadth_holds": true,
+      "breadth_delta_sigma_1y_pp": 3.982,
+      "breadth_z": -0.57,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
   "overlay_scalar": {
-    "value": 0.0,
+    "value": 0.7,
     "label": "DIAGNOSTIC",
     "caption": "Regime-sized overlay scalar. Gated as DIAGNOSTIC until backtest shows regime-conditional sizing beats static sizing on risk-adjusted return. Do not execute on this value."
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-07-29",
+      "today_excluded_from_metrics": "2026-07-30",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1424,12 +1420,18 @@
       "spread": -1.77
     },
     {
-      "d": "2026-07-29",
-      "state": "flattening",
-      "spread": -0.84
+      "d": "2026-07-30",
+      "state": "contango",
+      "spread": -2.41
     }
   ],
   "past_spikes": [
+    {
+      "d": "2026-01-20",
+      "delta_spread": 1.94,
+      "state": "contango",
+      "event": null
+    },
     {
       "d": "2026-02-03",
       "delta_spread": 0.68,
@@ -1543,12 +1545,6 @@
       "delta_spread": 1.0,
       "state": "contango",
       "event": null
-    },
-    {
-      "d": "2026-07-29",
-      "delta_spread": 0.93,
-      "state": "flattening",
-      "event": "FOMC"
     }
   ]
 }
