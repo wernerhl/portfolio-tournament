@@ -36,6 +36,11 @@ scripts = [
     "compute_vol_regime.py",       # VIX term-structure regime + attribution
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
     "compute_thesis_daily.py",     # MESO layer: thesis exposure + attribution + auto-log
+    "build_canonical.py",          # #92 canonical artifact: ONE fundamentals fetch
+                                   # for both repos (screener consumes at 23:15 UTC).
+                                   # Best-effort by position: a canonical failure never
+                                   # blocks the tournament's own outputs above; the
+                                   # screener's freshness assert catches staleness.
 ]
 
 # ─────────────────────────────────────────────────────────────────────
