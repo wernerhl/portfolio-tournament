@@ -64,6 +64,60 @@ def range_check(tk: str, rec: dict) -> list[str]:
     return flags
 
 
+def fetch_one(tk: str) -> dict | None:
+    """Per-name fallback ladder (2026-08-06): Yahoo's quoteSummary endpoint
+    (.info) broke server-side for a growing symbol shard — 3 names on 07-29,
+    73 by 08-05, megacaps included (MU, AMD, JPM, PG). fast_info is a
+    DIFFERENT endpoint and stayed healthy. Ladder:
+      1. .info with marketCap            -> full record
+      2. .info partial (no marketCap)    -> merge fast_info mcap/price, flag 'fundamentals_partial'
+      3. .info dead, fast_info alive     -> minimal record, flag 'fundamentals_degraded'
+      4. both dead                       -> None (genuinely unreachable)
+    Degraded names stay SCORED downstream (missing fields hit the same
+    neutral defaults as any absent metric) instead of vanishing and tripping
+    the named-seven publish block — availability without silent substitution:
+    every partial record carries its flag and provenance counts them."""
+    info = {}
+    try:
+        info = yf.Ticker(tk).info or {}
+    except Exception:
+        info = {}
+
+    rec = {f: info.get(f) for f in FIELDS}
+    rec["currentPrice"] = info.get("currentPrice") or info.get("regularMarketPrice")
+    ladder_flag = None
+
+    if not info.get("marketCap"):
+        try:
+            fi = yf.Ticker(tk).fast_info
+            mcap = fi.get("marketCap") if hasattr(fi, "get") else getattr(fi, "market_cap", None)
+            if mcap is None and hasattr(fi, "get"):
+                mcap = fi.get("market_cap")
+            px = (fi.get("lastPrice") if hasattr(fi, "get") else None) or \
+                 (fi.get("last_price") if hasattr(fi, "get") else None)
+            if mcap:
+                rec["marketCap"] = float(mcap)
+                if rec.get("currentPrice") is None and px:
+                    rec["currentPrice"] = float(px)
+                ladder_flag = ("fundamentals_partial" if any(
+                    info.get(k) is not None for k in ("grossMargins", "forwardPE", "revenueGrowth"))
+                    else "fundamentals_degraded")
+        except Exception:
+            pass
+
+    if not rec.get("marketCap"):
+        return None
+
+    # String fields are '' not None — yfinance omits them for some names,
+    # and downstream .lower()/slicing must never see None.
+    for s in ("sector", "industry", "shortName"):
+        rec[s] = rec.get(s) or ("" if s != "shortName" else tk)
+    rec["flags"] = range_check(tk, rec)
+    if ladder_flag:
+        rec["flags"].append(ladder_flag)
+    return rec
+
+
 def fetch(tickers: list[str], retry_pass: bool = False) -> tuple[dict, list[str]]:
     out, failed = {}, []
     for i, tk in enumerate(tickers):
@@ -72,21 +126,11 @@ def fetch(tickers: list[str], retry_pass: bool = False) -> tuple[dict, list[str]
             time.sleep(2)
         if retry_pass:
             time.sleep(4)
-        try:
-            info = yf.Ticker(tk).info
-            if not info or "marketCap" not in info:
-                failed.append(tk)
-                continue
-            rec = {f: info.get(f) for f in FIELDS}
-            rec["currentPrice"] = info.get("currentPrice") or info.get("regularMarketPrice")
-            # String fields are '' not None — yfinance omits them for some
-            # names, and downstream .lower()/slicing must never see None.
-            for s in ("sector", "industry", "shortName"):
-                rec[s] = rec.get(s) or ("" if s != "shortName" else tk)
-            rec["flags"] = range_check(tk, rec)
-            out[tk] = rec
-        except Exception:
+        rec = fetch_one(tk)
+        if rec is None:
             failed.append(tk)
+        else:
+            out[tk] = rec
     return out, failed
 
 
@@ -110,8 +154,12 @@ def main() -> int:
         recs.update(rec2)
 
     n_flags = sum(len(r["flags"]) for r in recs.values())
+    n_partial = sum(1 for r in recs.values()
+                    if any(f in ("fundamentals_partial", "fundamentals_degraded")
+                           for f in r["flags"]))
     coverage = 100.0 * len(recs) / len(universe)
     provenance = {
+        "n_partial_or_degraded": n_partial,
         "built_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "session_date": session_date,
         "source": "yfinance",
