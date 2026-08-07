@@ -184,17 +184,26 @@ def main():
     R_t, r_date = latest_R_t()
     regime = regime_label(R_t)
     effr_daily = effr_daily_rate()
-    today = datetime.now().strftime("%Y-%m-%d")
-    # JULY AUDIT FIX 5: never stamp a row with a non-session date. UTC-evening
-    # and weekend runs previously wrote phantom rows (a Saturday 2026-06-06,
-    # Memorial Day 2026-05-25) carrying the prior session's prices under a
-    # date the market never traded. Label the row with the session the
-    # prices actually belong to.
+    # JULY AUDIT FIX 5 + AUG-7 FIX: never stamp a row with a non-session date,
+    # and never with a session that HASN'T CLOSED YET. The July fix caught
+    # weekends/holidays but used server-clock datetime.now() (UTC on runners):
+    # a cron throttled past 00:00 UTC ran at 21:30 ET Aug 6 and stamped
+    # "2026-08-07" — a perfectly valid FUTURE trading day, so is_trading_day
+    # passed and a phantom row shipped (as_of masking staleness math).
+    # The label must be the ET session the prices actually belong to:
+    # ET date, rolled back while it's a non-session day OR a session that
+    # hasn't reached the close.
+    from zoneinfo import ZoneInfo
+    now_et = datetime.now(ZoneInfo("America/New_York"))
+    today = now_et.strftime("%Y-%m-%d")
     try:
         from trading_calendar import is_trading_day, prev_trading_day
-        if not is_trading_day(today):
+        while (not is_trading_day(today)) or (
+                today == now_et.strftime("%Y-%m-%d")
+                and (now_et.hour, now_et.minute) < (16, 0)):
             relabeled = prev_trading_day(today)
-            print(f"  {today} is not a trading day — labeling row {relabeled} (prices belong to that session)")
+            print(f"  {today} is not a completed session — labeling row {relabeled} "
+                  "(prices belong to that session)")
             today = relabeled
     except ImportError:
         pass
