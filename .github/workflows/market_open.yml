@@ -54,6 +54,12 @@ jobs:
           git push
 
   deploy:
+    # Shared Pages-deploy concurrency guard (see intraday.yml for the full
+    # rationale): serialize the three overlapping Pages deployers so they no
+    # longer collide and briefly 404 the live site.
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     needs: snapshot
     runs-on: ubuntu-latest
     environment:

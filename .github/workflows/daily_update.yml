@@ -55,6 +55,12 @@ jobs:
           exit 1
 
   deploy:
+    # Shared Pages-deploy concurrency guard (see intraday.yml for the full
+    # rationale): serialize the three overlapping Pages deployers so they no
+    # longer collide and briefly 404 the live site.
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     needs: update
     # [5] deploy even on rejection: main carries preserved artifacts + the new
     # status.json so the dashboard can surface the failure.

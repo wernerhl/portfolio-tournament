@@ -37,6 +37,17 @@ jobs:
           git push
 
   deploy:
+    # GitHub Pages allows ONE deployment to the environment at a time. Three
+    # workflows here (daily_update / market_open / intraday) deploy this repo's
+    # Pages and overlap during market hours — without this guard the concurrent
+    # deploy-pages calls collided: one job failed and the live swap could
+    # briefly 404 (the intermittent "site not working"). A shared group across
+    # all three serializes them; cancel-in-progress:false lets an in-flight
+    # deploy finish cleanly instead of tearing down mid-swap. Newest queued
+    # deploy still wins the single pending slot, so data stays fresh.
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     needs: intraday
     runs-on: ubuntu-latest
     environment:
