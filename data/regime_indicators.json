@@ -1,24 +1,24 @@
 {
-  "updated": "2026-09-01T01:11:19.479366",
-  "as_of": "2026-08-31",
-  "R_lead": 0.1673,
-  "R_lead_displayed": 0.2173,
-  "R_full": 0.1915,
-  "divergence": -0.0242,
+  "updated": "2026-09-01T23:56:16.556135",
+  "as_of": "2026-09-01",
+  "R_lead": 0.2224,
+  "R_lead_displayed": 0.2724,
+  "R_full": 0.2365,
+  "divergence": -0.0141,
   "regime": "LOW RISK",
   "early_warning": "CLEAR",
   "divergence_alert": "CONSISTENT",
-  "n_lead_indicators": 13,
-  "n_full_indicators": 22,
+  "n_lead_indicators": 14,
+  "n_full_indicators": 23,
   "complacency_flag": true,
-  "complacency_reason": "SKEW 149 > 140 and VIX 14.9 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
-  "R_t": 0.1915,
-  "n_indicators": 22,
+  "complacency_reason": "SKEW 149 > 140 and VIX 16.3 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
+  "R_t": 0.2365,
+  "n_indicators": 23,
   "n_safe": 18,
   "n_neutral": 1,
-  "n_elevated": 3,
+  "n_elevated": 4,
   "n_crisis": 0,
-  "verdict": "COMPLACENCY FLAG \u2014 SKEW 149 > 140 and VIX 14.9 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent. 18 safe \u00b7 1 neutral \u00b7 3 elevated \u00b7 0 crisis of 22 channels. R_full 0.19.",
+  "verdict": "COMPLACENCY FLAG \u2014 SKEW 149 > 140 and VIX 16.3 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent. 18 safe \u00b7 1 neutral \u00b7 4 elevated \u00b7 0 crisis of 23 channels. R_full 0.24.",
   "indicators": [
     {
       "key": "nfci",
@@ -32,7 +32,7 @@
       "status": "safe",
       "narrative": "Financial conditions easy",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "anfci",
@@ -46,35 +46,35 @@
       "status": "safe",
       "narrative": "No financial stress",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "yield_3m10y",
       "label": "3m-10y",
       "tier": "A",
       "weight": 2.0,
-      "value": 0.8300000000000005,
-      "value_str": "+0.83",
-      "z": -1.282121737519806,
-      "phi": 0.0998999723246588,
+      "value": 0.8399999999999999,
+      "value_str": "+0.84",
+      "z": -1.318832333025091,
+      "phi": 0.09361258611924772,
       "status": "safe",
       "narrative": "Curve normal",
       "direction": "lower",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "breakeven_5y",
       "label": "BE 5Y",
       "tier": "A",
       "weight": 2.0,
-      "value": 2.31,
-      "value_str": "2.31",
-      "z": -0.7498276127790215,
-      "phi": 0.22667926797769528,
+      "value": 2.37,
+      "value_str": "2.37",
+      "z": -0.30094327125283293,
+      "phi": 0.38172887659866017,
       "status": "safe",
       "narrative": "Inflation expectations stable",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "baa_aaa",
@@ -88,49 +88,63 @@
       "status": "safe",
       "narrative": "Quality spread normal",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
+    },
+    {
+      "key": "vix_term",
+      "label": "VIX term",
+      "tier": "A",
+      "weight": 2.0,
+      "value": -1.989999771118164,
+      "value_str": "-2.0",
+      "z": 0.2457439129460628,
+      "phi": 0.5970597616519241,
+      "status": "neutral",
+      "narrative": "Term flat",
+      "direction": "higher",
+      "as_of": "2026-09-01"
     },
     {
       "key": "skew",
       "label": "SKEW",
       "tier": "A",
       "weight": 2.0,
-      "value": 148.52999877929688,
+      "value": 149.22999572753906,
       "value_str": "149",
-      "z": -0.658560896066192,
-      "phi": 0.2550888902335874,
+      "z": -0.7868052719192985,
+      "phi": 0.21569793344732807,
       "status": "safe",
       "narrative": "Tail risk priced",
       "direction": "lower",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "vix",
       "label": "VIX",
       "tier": "A",
       "weight": 2.0,
-      "value": 14.920000076293945,
-      "value_str": "14.92",
-      "z": -0.9727432712118775,
-      "phi": 0.1653404567211495,
+      "value": 16.34000015258789,
+      "value_str": "16.34",
+      "z": -0.5454510413201072,
+      "phi": 0.29272167200260407,
       "status": "safe",
       "narrative": "Calm hedging demand",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "vvix",
       "label": "VVIX",
       "tier": "A",
       "weight": 2.0,
-      "value": 86.29000091552734,
-      "value_str": "86.3",
-      "z": -1.2385931746543217,
-      "phi": 0.10774809850729983,
+      "value": 91.25,
+      "value_str": "91.2",
+      "z": -0.7954060419941519,
+      "phi": 0.21318867322846718,
       "status": "safe",
       "narrative": "Tail protection cheap",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "mfg_new_orders",
@@ -144,7 +158,7 @@
       "status": "safe",
       "narrative": "New orders trending up",
       "direction": "lower",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "kcfsi",
@@ -158,7 +172,7 @@
       "status": "safe",
       "narrative": "KC stress below average",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "stlfsi",
@@ -172,7 +186,7 @@
       "status": "safe",
       "narrative": "St. Louis FSI calm",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "loan_tightening",
@@ -186,7 +200,7 @@
       "status": "safe",
       "narrative": "Banks easing credit",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "consumer_expect",
@@ -200,133 +214,133 @@
       "status": "elevated",
       "narrative": "Consumers cautious",
       "direction": "lower",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "hy_oas",
       "label": "HY OAS",
       "tier": "B",
       "weight": 1.0,
-      "value": 2.6,
+      "value": 2.63,
       "value_str": "3bp",
-      "z": -1.6171334562233366,
-      "phi": 0.05292473823169269,
+      "z": -1.4398138376738117,
+      "phi": 0.07496003758047537,
       "status": "safe",
       "narrative": "Credit spreads tight",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "gold_spx",
       "label": "Gold/SPX",
       "tier": "B",
       "weight": 1.0,
-      "value": 0.5857296276049847,
-      "value_str": "0.59",
-      "z": -0.6022236517401403,
-      "phi": 0.2735126369736849,
+      "value": 0.5736771391028271,
+      "value_str": "0.57",
+      "z": -0.7849259085943388,
+      "phi": 0.21624850525532763,
       "status": "safe",
       "narrative": "No safe-haven bid",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "tlt_spx",
       "label": "TLT/SPX",
       "tier": "B",
       "weight": 1.0,
-      "value": 0.01073620766408438,
+      "value": 0.010727946312014567,
       "value_str": "0.011",
-      "z": -1.8240506784612756,
-      "phi": 0.034072205493496835,
+      "z": -1.8341340007905766,
+      "phi": 0.03331705270809561,
       "status": "safe",
       "narrative": "No flight to quality",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "def_cyc",
       "label": "Def/cyc",
       "tier": "B",
       "weight": 1.0,
-      "value": 0.419710331704098,
-      "value_str": "0.42",
-      "z": -1.3244395210661655,
-      "phi": 0.09267855821337573,
+      "value": 0.4285618589823452,
+      "value_str": "0.43",
+      "z": -1.0494251842110427,
+      "phi": 0.14699123613765247,
       "status": "safe",
       "narrative": "Cyclical leadership",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "dxy",
       "label": "DXY",
       "tier": "B",
       "weight": 1.0,
-      "value": 99.41300201416016,
-      "value_str": "99.4",
-      "z": 0.34511259397106564,
-      "phi": 0.6349951370857008,
+      "value": 99.66100311279297,
+      "value_str": "99.7",
+      "z": 0.5624170062356935,
+      "phi": 0.7130840325372424,
       "status": "elevated",
       "narrative": "Dollar strengthening",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "realized_vol",
       "label": "Real vol",
       "tier": "C",
       "weight": 0.5,
-      "value": 9.503960268224597,
-      "value_str": "9.5%",
-      "z": -0.9454608322016869,
-      "phi": 0.17221182905732618,
+      "value": 7.364728870698564,
+      "value_str": "7.4%",
+      "z": -1.650153267572119,
+      "phi": 0.049455796118739105,
       "status": "safe",
       "narrative": "Below-average volatility",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "spx_ret_60d",
       "label": "SPX 60d",
       "tier": "C",
       "weight": 0.5,
-      "value": 1.342641286264623,
-      "value_str": "+1.3%",
-      "z": 0.7399904209591494,
-      "phi": 0.7703470966465664,
+      "value": 3.355074428477911,
+      "value_str": "+3.4%",
+      "z": 0.283858684426039,
+      "phi": 0.6117406601627878,
       "status": "elevated",
       "narrative": "Momentum negative",
       "direction": "lower",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "spx_drawdown",
       "label": "SPX DD",
       "tier": "C",
       "weight": 0.5,
-      "value": -1.446983446124206,
-      "value_str": "-1.4%",
-      "z": 0.023965969647112766,
-      "phi": 0.5095601234032743,
-      "status": "neutral",
-      "narrative": "Mild pullback",
+      "value": -2.1479706282088284,
+      "value_str": "-2.1%",
+      "z": 0.4487985081760321,
+      "phi": 0.6732114924961653,
+      "status": "elevated",
+      "narrative": "In drawdown",
       "direction": "lower",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     },
     {
       "key": "oil_60d_vel",
       "label": "Oil 60d",
       "tier": "C",
       "weight": 0.5,
-      "value": -6.964749885177779,
-      "value_str": "-7.0%",
-      "z": -0.49429150189646653,
-      "phi": 0.31055016295209115,
+      "value": 0.2540266459171381,
+      "value_str": "+0.3%",
+      "z": -0.259622936547109,
+      "phi": 0.39757732102651816,
       "status": "safe",
       "narrative": "No supply shock",
       "direction": "higher",
-      "as_of": "2026-08-31"
+      "as_of": "2026-09-01"
     }
   ]
 }
