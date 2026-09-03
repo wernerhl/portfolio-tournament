@@ -1,7 +1,7 @@
 {
-  "updated": "2026-09-01T23:56:26.444891",
-  "as_of": "2026-09-01",
-  "tradable_at": "2026-09-02",
+  "updated": "2026-09-02T23:58:30.110451",
+  "as_of": "2026-09-02",
+  "tradable_at": "2026-09-03",
   "config": {
     "spread_definition": "VIX \u2212 VIX3M (FRED VIXCLS \u2212 VXVCLS proxy via yfinance)",
     "state_breaks": {
@@ -20,9 +20,9 @@
   },
   "state": "contango",
   "state_age": 3,
-  "spread": -1.99,
-  "delta_spread": -0.22,
-  "sigma_threshold": 0.539,
+  "spread": -2.53,
+  "delta_spread": -0.76,
+  "sigma_threshold": 0.566,
   "trigger_fired": false,
   "entry": {
     "current_entry_dspread": 0.47,
@@ -90,10 +90,10 @@
     }
   },
   "curve": {
-    "spot_vix": 16.34,
-    "vix1d": 10.8,
-    "vix3m": 18.33,
-    "spread_spot_3m": -1.99,
+    "spot_vix": 15.2,
+    "vix1d": 10.43,
+    "vix3m": 17.73,
+    "spread_spot_3m": -2.53,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -101,29 +101,29 @@
     "types": [
       "NFP"
     ],
-    "sessions_away": 3
+    "sessions_away": 2
   },
   "event_today": [],
   "conditioning": {
     "event_flag": false,
     "event_types": [],
-    "delta_2y_bps": 3.8,
+    "delta_2y_bps": -2.8,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.93,
-    "held_close": true
+    "held_close_proxy": 0.45,
+    "held_close": false
   },
   "attribution": {
     "primary_driver": "no_trigger",
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.02,
-      "breadth_delta_pp": -3.76,
+      "smh_1d_return": 0.01,
+      "breadth_delta_pp": 1.88,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 3.898,
-      "breadth_z": -0.96,
+      "breadth_delta_sigma_1y_pp": 3.881,
+      "breadth_z": 0.48,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -134,7 +134,7 @@
   },
   "validation": {
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-09-01",
+      "today_excluded_from_metrics": "2026-09-02",
       "all_triggers_reversion": {
         "n": 787,
         "n_reverted": 675,
@@ -1420,9 +1420,9 @@
       "spread": -1.77
     },
     {
-      "d": "2026-09-01",
+      "d": "2026-09-02",
       "state": "contango",
-      "spread": -1.99
+      "spread": -2.53
     }
   ],
   "past_spikes": [
