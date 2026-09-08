@@ -1300,7 +1300,10 @@ function headlineVerdict(){
 
   consider(reg.regime);
   consider(reg.early_warning);
-  consider(v4reg);
+  // Decision Memo 9-Sept-2026 §5: v4's calibrated probability has no out-of-fold
+  // skill over the base rate (Brier 0.1989 vs 0.1918, B2). It no longer votes in
+  // the headline; the headline is the regime index whose value C3 measured. v4
+  // stays on the panel as a RANKING signal (AUC ≈ 0.64) with its numbers beside it.
   if ((reg.n_crisis || 0) >= 1) consider("DEFENSIVE");
   if ((reg.n_crisis || 0) >= 4) consider("CRISIS");
   // Complacency: NEVER show DEPLOY when SKEW>140 + VIX<17
@@ -1333,6 +1336,7 @@ function headlineVerdict(){
     inputs: {
       v2_regime: reg.regime, v2_ew: reg.early_warning,
       v4_regime: v4reg,
+      v4_excluded: "no out-of-fold skill over the base rate; ranking only (memo 9-Sept-2026 §5)",
       v4_stale: v4Stale, v4_as_of: v4AsOf,
       n_crisis: reg.n_crisis || 0,
       complacent: complacent,
@@ -1340,6 +1344,17 @@ function headlineVerdict(){
       shock_prior_session: !!(S.intraday && S.intraday.shock_active && !shockLive),
     },
   };
+}
+
+// Decision Memo 9-Sept-2026 §1: the C3 verdict of record under v1 is never removed
+// from the dashboard; the amendment paragraph travels with the v2 verdict.
+function c3VerdictLine(){
+  const r = S.c3; if (!r || !r.decision) return "";
+  const d1 = r.decision, d2 = r.decision_v2;
+  const ci = d2 && d2.paired_diff_return_per_vol_ci90;
+  const sg = x => (x >= 0 ? "+" : "") + (+x).toFixed(3);
+  const yrs = r.window ? `${String(r.window[0]).slice(0,4)}–${String(r.window[1]).slice(2,4)}` : "2010–26";
+  return `<div style="font:400 10px var(--m);color:var(--t4);margin-top:4px" title="Pre-registered test C3 (reports/retirement_test_C3_regime_vs_rules.md). v1 rule: the regime's return-per-volatility margin over the best one-line rule had to exceed the half-width of the regime's own 90% bootstrap interval — a bar no monthly overlay on this window could clear (the rules' own half-widths are 0.44–0.45). v2 (registration amended 9-Sept-2026 AFTER the v1 result, disclosed in reports/c3_registration_v2.md): the paired 90% interval must lie above zero. Both verdicts stay on record.">C3 regime vs one-line rules (${yrs}, tier-4 overlay, net of costs): <span style="color:var(--r)">v1 verdict FAIL</span> (margin ${d1.margin != null ? sg(d1.margin) : "—"} vs required ${d1.half_width_regime_ci90 != null ? (+d1.half_width_regime_ci90).toFixed(3) : "—"})${d2 ? ` · <span style="color:${d2.regime_passes ? "var(--g)" : "var(--r)"}">v2 verdict ${d2.regime_passes ? "PASS" : "FAIL"}</span> (paired interval [${ci ? sg(ci[0]) + ", " + sg(ci[1]) : "—"}]; drawdown reduction ${(d2.dd_reduction_regime*100).toFixed(1)}% vs ${(d2.dd_reduction_best_rule*100).toFixed(1)}%)` : ""} · amendment made after the v1 result, disclosed.</div>`;
 }
 
 function renderRegimeCommandCenter(R){
@@ -1384,8 +1399,8 @@ function renderRegimeCommandCenter(R){
   const inputs = headline.inputs;
   const inputLine = [
     inputs.v2_regime ? `v2 ${inputs.v2_regime}` : null,
-    inputs.v4_regime ? `v4 ${inputs.v4_regime}` : null,
-    inputs.v4_stale ? `<span style="color:var(--y)">v4: stale (as of ${inputs.v4_as_of || "?"}), excluded</span>` : null,
+    inputs.v4_regime ? `v4 ${inputs.v4_regime} <span style="color:var(--t5)" title="${inputs.v4_excluded || ""}">(ranking only, not voting)</span>` : null,
+    inputs.v4_stale ? `<span style="color:var(--y)">v4: stale (as of ${inputs.v4_as_of || "?"})</span>` : null,
     inputs.n_crisis > 0 ? `${inputs.n_crisis} crisis ch.` : null,
     inputs.complacent ? `complacent` : null,
     inputs.shock ? `intraday shock` : null,
@@ -1414,7 +1429,7 @@ function renderRegimeCommandCenter(R){
   const scoreRow = v4Last ? `${v4StaleCC ? `<div style="margin-top:8px;text-align:center">
       <span style="font:600 9px var(--m);letter-spacing:.08em;padding:3px 9px;border-radius:4px;
         background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.45);color:var(--y)">
-        ⚠ v4 STALE · as of ${v4AsOfCC} · excluded from headline</span>
+        ⚠ v4 STALE · as of ${v4AsOfCC}</span>
     </div>` : ""}<div class="score-row" ${v4StaleCC ? 'style="opacity:.55"' : ''}>
       ${probCell("≥3% over NEXT 20D", p3_20, "")}
       ${probCell("≥5% over NEXT 40D · CAL", p5_40, v4reg)}
@@ -1473,16 +1488,21 @@ function renderRegimeCommandCenter(R){
   return `<section class="rcc">
     <div class="rcc-top">
       <div class="rcc-card">
-        <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">composite verdict</span>' : ''}${asOfBadge(reg.as_of)}</h3>
+        <h3>CYCLE POSITION · <span style="color:var(--t5);font-weight:500" title="Decision Memo 9-Sept-2026 §5: the headline is the regime index whose value C3 measured; v4 no longer votes">regime index</span>${asOfBadge(reg.as_of)}</h3>
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
-        <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>${asOfBadge(v4AsOfCC)}` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
+        <div class="gauge-rt">R<sub>full</sub> = <span class="r-num">${rDisp}</span></div>
         ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div style="font:500 10.5px var(--m);color:var(--t3);margin-top:2px">raw score <span style="color:var(--t1)">${(+v4Last.raw_score).toFixed(3)}</span> <span style="color:var(--t5)">(pre-calibration)</span></div>
         <div style="font:italic 400 10px var(--s);color:var(--t4);margin-top:1px">calibrated probability moves in steps; the raw score moves continuously.</div>
         ${(() => { // order 9-Sept B1.2: model-change note, shown for 30 sessions after the change, with OUT-OF-FOLD numbers (B2)
           const rows = Array.isArray(S.regimeV4) ? S.regimeV4.filter(r => r && r.date && String(r.date) > "2026-09-07") : [];
           return rows.length < 30 ? `<div style="font:500 10px var(--m);color:var(--y);margin-top:3px" title="model_version ${v4Last.model_version || ""} · out-of-fold = leave-one-crisis-out folds, isotonic fitted on training predictions only">model changed 2026-09-07: equal-weight replaces logistic; out-of-fold Brier 0.1989 vs 0.2145 (logistic) — base rate 0.1918: no out-of-fold skill over the base rate on Brier; in-sample 0.1835 was the isotonic fit.</div>` : ``; })()}` : ``}
         ${scoreRow}
+        ${v4Last ? (() => { // Decision Memo 9-Sept-2026 §5: standing note — v4 is a ranking signal, not a forecast
+          const c = S.v4Cal || {}; const m = (c.methods && c.methods[c.winning_method || "equal_weight"]) || {};
+          const oof = m.brier_out_of_fold, base = c.base_rate_brier;
+          return `<div style="font:500 10px var(--m);color:var(--t3);margin-top:5px;padding:5px 7px;border:1px dashed var(--line);border-radius:4px" title="out-of-fold = 15 leave-one-crisis-out folds, isotonic fitted on training predictions only (B2); the underlying index retains ranking skill (AUC ≈ 0.64, C2). No in-sample reliability figure is shown: isotonic fitting makes it look perfect by construction.">v4 graduated probability — <strong style="color:var(--t1)">ranking signal, not a forecast</strong>: out-of-fold Brier <strong style="color:var(--t1)">${oof != null ? (+oof).toFixed(4) : "—"}</strong> vs base rate <strong style="color:var(--t1)">${base != null ? (+base).toFixed(4) : "—"}</strong> — does not beat the base rate out of fold; use as a ranking, not a forecast. Not a headline input.</div>`; })() : ``}
+        ${c3VerdictLine()}
         <div class="verdict">${verdict}</div>
         ${v2Foot}
       </div>
@@ -3025,7 +3045,7 @@ function render(){
 
   h += `<div class="lbtable">
     <div class="lb-h"><h2>LEADERBOARD${asOfBadge(live && live.date)}</h2>
-      <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"} · <span title="C1: costs = half-spread + impact, one-way, on NAV-weight turnover at every rebalance">net of costs (${(S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.cost_model) || "10 bps one-way"})</span>${toggleHtml}</div></div>
+      <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"} · <span title="C1: costs = half-spread + impact, one-way, on NAV-weight turnover at every rebalance">net of costs (${(S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.cost_model) || "10 bps one-way"})</span>${c2DisclosureHtml()}${toggleHtml}</div></div>
     ${condCap}
     <table>
       <tr>
@@ -3064,7 +3084,7 @@ function render(){
       <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
       <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
       <td class="num">${m.sharpe.toFixed(2)}</td>
-      <td class="num neg">${fmtP1(m.maxDD)}</td>
+      <td class="num neg" title="${c2TierTitle(tid)}">${fmtP1(m.maxDD)}${c2TierSub(tid)}</td>
       <td class="num ${m.alpha!=null?pnlc(m.alpha):'neut'}">${m.alpha!=null?fmtP1(m.alpha):"—"}</td>
       <td class="num">${nPos != null ? nPos : "—"}</td>
       <td><span class="chev ${open?"open":""}">›</span></td>
@@ -3213,6 +3233,28 @@ async function loadCSV(path){
   } catch(e){ return null; }
 }
 
+// Decision Memo 9-Sept-2026 §6: standing disclosure on the backtest panel — the
+// regime-index history uses revised FRED inputs; the point-in-time figure (C2)
+// is shown beside the displayed one. Served tier sizing uses the internal vol
+// index (no FRED inputs), so the displayed max DD itself is not the revised-input
+// number; the C2 pair is the 24-indicator overlay through the same engine.
+function c2DisclosureHtml(){
+  const c = S.c2; const t4 = c && c.drawdown_reduction && c.drawdown_reduction["4_tactical"];
+  if (!t4 || !t4.rev || !t4.pit) return "";
+  const rv = t4.rev.dd_reduction_vs_spy * 100, pt = t4.pit.dd_reduction_vs_spy * 100;
+  return ` · <span style="color:var(--y)" title="C2 (reports/retirement_test_C2_input_vintages.md): the regime-index history uses revised FRED inputs. Rebuilt on ALFRED point-in-time inputs, the 24-indicator overlay's drawdown reduction vs SPY through the same engine is ${pt.toFixed(1)}% against ${rv.toFixed(1)}% on revised inputs (tier 4). Revisions account for roughly a third of the apparent reduction, release lag for almost none. Served tier sizing uses the internal vol-based index (no FRED inputs). Hover a MAX DD cell for the per-tier pair.">backtest history on revised inputs · point-in-time drawdown reduction ${pt.toFixed(0)}% vs ${rv.toFixed(0)}% revised (C2)</span>`;
+}
+function c2TierSub(tid){
+  const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
+  if (!c || !c.rev || !c.pit) return "";
+  return `<div style="font:500 9px var(--m);color:var(--t5)" title="C2 drawdown reduction vs SPY: point-in-time vs revised inputs (24-indicator overlay, same engine)">DD red. PIT ${(c.pit.dd_reduction_vs_spy*100).toFixed(0)}% · rev ${(c.rev.dd_reduction_vs_spy*100).toFixed(0)}%</div>`;
+}
+function c2TierTitle(tid){
+  const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
+  if (!c || !c.rev || !c.pit) return "max drawdown of the displayed series";
+  return `C2: 24-indicator overlay through the same engine — drawdown reduction vs SPY ${(c.rev.dd_reduction_vs_spy*100).toFixed(1)}% on revised inputs (max DD ${(c.rev.max_dd*100).toFixed(1)}%) vs ${(c.pit.dd_reduction_vs_spy*100).toFixed(1)}% on point-in-time inputs (max DD ${(c.pit.max_dd*100).toFixed(1)}%). The displayed max DD is the served series (internal vol-index sizing, no FRED inputs).`;
+}
+
 async function init(){
   S.config     = await loadJSON("config.json");
   S.tournament = await loadJSON("data/tournament.json");
@@ -3226,6 +3268,8 @@ async function init(){
   S.signals    = await loadJSON("data/ticker_signals.json");
   S.regimeV4   = await loadCSV("data/regime_v4_daily.csv");
   S.v4Cal      = await loadJSON("data/v4_calibration.json");
+  try { S.c2 = await loadJSON("data/c2_vintage_comparison.json"); } catch (e) { S.c2 = null; }   // memo §6 disclosure
+  try { S.c3 = await loadJSON("data/c3_results.json"); } catch (e) { S.c3 = null; }             // memo §1 verdicts of record
   S.intraday   = await loadJSON("data/intraday.json");
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");
