@@ -1,0 +1,2727 @@
+"use strict";
+const S = {tournament:null, backtest:null, holdings:null, config:null, tickers:null, metrics:null,
+           regime:null, regimeDaily:null,
+           period:"ALL", expanded:null, expandedTicker:null,
+           chart:null, tickerChart:null, regimeChart:null, tickerChartPeriod:"6M",
+           expandedIndicator:null, indPeriod:"1Y",
+           scannerSort:"quad", scannerSortDir:"desc", scannerFilter:"all",
+           leaderboardCondMode:false};   // tournament conditional/unconditional toggle
+
+const fmt   = n => (typeof n === "number") ? n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "—";
+const fmt2  = n => (typeof n === "number") ? n.toFixed(2) : "—";
+const fmtP  = n => (typeof n === "number") ? ((n>=0?"+":"") + n.toFixed(2) + "%") : "—";
+const fmtP1 = n => (typeof n === "number") ? ((n>=0?"+":"") + n.toFixed(1) + "%") : "—";
+const pnlc  = n => (n>0 ? "pos" : (n<0 ? "neg" : "neut"));
+
+const TIER_ORDER = ["1_cap_pres","2_balanced","3_aggressive","4_tactical","5_werner"];
+const BENCH_FOR_TIER = {"1_cap_pres":"60_40", "2_balanced":"spy", "3_aggressive":"qqq", "4_tactical":"sso", "5_werner":"spy"};
+
+function tierSpec(tid){ if (tid === "5_werner") return S.config.werner_picks; return (S.config.tier_specs || {})[tid]; }
+function regimeLabel(R){ return R<0.3?"Low risk":R<0.5?"Elevated":R<0.7?"High risk":"Crisis"; }
+function regimeColor(R){ return R<0.3?"var(--g)":R<0.5?"var(--y)":R<0.7?"var(--o)":"var(--r)"; }
+function regimeHex(R){ return R<0.3?"#4ade80":R<0.5?"#facc15":R<0.7?"#fb923c":"#f87171"; }
+function statusHex(s){ return ({safe:"#4ade80",neutral:"#60a5fa",elevated:"#facc15",crisis:"#f87171"})[s] || "#737373"; }
+function statusLabel(s){ return ({safe:"Safe",neutral:"Neutral",elevated:"Caution",crisis:"Crisis"})[s] || s; }
+
+// SVG semicircle gauge: 0 → 1 mapped to -90° → +90°.
+// Returns inline SVG markup.
+function gaugeSVG(R){
+  if (R == null) R = 0;
+  const cx = 110, cy = 110, r = 90, arc_w = 18;
+  // Build 4 colored arcs over [-90°, +90°] (i.e. top half)
+  const segs = [
+    {from:0.00, to:0.30, color:"#4ade80"}, // safe
+    {from:0.30, to:0.50, color:"#facc15"}, // elevated
+    {from:0.50, to:0.70, color:"#fb923c"}, // high
+    {from:0.70, to:1.00, color:"#f87171"}, // crisis
+  ];
+  const toXY = t => {
+    // t ∈ [0,1] → angle ∈ [180°, 360°] in standard math coords (top semicircle)
+    const ang = Math.PI * (1 + t);
+    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  };
+  const arcs = segs.map(s => {
+    const [x0,y0] = toXY(s.from);
+    const [x1,y1] = toXY(s.to);
+    const large = (s.to - s.from) > 0.5 ? 1 : 0;
+    return `<path d="M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}"
+                  fill="none" stroke="${s.color}" stroke-width="${arc_w}" stroke-linecap="butt"/>`;
+  }).join("");
+  // Needle
+  const [nx, ny] = toXY(Math.max(0, Math.min(1, R)));
+  const needle = `<line x1="${cx}" y1="${cy}" x2="${nx.toFixed(2)}" y2="${ny.toFixed(2)}"
+                       stroke="#d4d4d4" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="${cx}" cy="${cy}" r="6" fill="#d4d4d4"/>`;
+  // Labels
+  const labels = `<text x="14" y="135" font-family="IBM Plex Mono" font-size="10" fill="#737373">safe</text>
+                  <text x="186" y="135" font-family="IBM Plex Mono" font-size="10" fill="#737373" text-anchor="end">danger</text>`;
+  return `<svg class="gauge-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+            ${arcs}${needle}${labels}
+          </svg>`;
+}
+
+// Renders the indicator cards grouped by tier (A/B/C). If S.expandedIndicator is
+// set, the detail panel is inlined immediately after the tier grid that owns
+// the expanded card (was previously appended at the bottom of the rcc-card,
+// which put the panel ~3 sections off-screen for a Tier A click).
+function renderIndicators(){
+  if (!S.regime || !S.regime.indicators) return "";
+  const all = S.regime.indicators;
+  const hasTiers = all.some(i => i.tier);
+  if (!hasTiers) {
+    return `<div class="ind-grid">${all.map(renderIndCard).join("")}</div>`
+         + (S.expandedIndicator ? renderIndicatorDetail() : "");
+  }
+  const tiers = {
+    A: {label:"TIER A — FORWARD-LOOKING",  desc:"what markets expect (weight 2.0)", items:[]},
+    B: {label:"TIER B — CONTEMPORANEOUS",  desc:"what's happening now (weight 1.0)", items:[]},
+    C: {label:"TIER C — CONFIRMING",       desc:"what already happened (weight 0.5)", items:[]},
+  };
+  all.forEach(i => { if (tiers[i.tier]) tiers[i.tier].items.push(i); });
+  return Object.entries(tiers).map(([k, t]) => {
+    if (t.items.length === 0) return "";
+    const ownsExpanded = S.expandedIndicator && t.items.some(i => i.key === S.expandedIndicator);
+    return `
+    <div class="ind-tier-head">
+      <span><span class="tier-pill ${k}">${k}</span>${t.label.replace(/^TIER [ABC] — /, "")}</span>
+      <span class="desc">${t.desc} · ${t.items.length} channel${t.items.length>1?"s":""}</span>
+    </div>
+    <div class="ind-grid">${t.items.map(renderIndCard).join("")}</div>
+    ${ownsExpanded ? renderIndicatorDetail() : ""}`;
+  }).join("");
+}
+// AUDIT FIX 2: prefer the intraday-snapshot value when it covers the same
+// instrument and is fresher than the EOD payload. Card and banner now agree
+// on VIX/VVIX/VIX3M/DXY/SKEW etc. The z-score / phi / status are KEPT from
+// the EOD regime computation — those need historical context the intraday
+// snapshot lacks.
+//
+// Mapping: regime-indicator key → intraday.prices[*] key.
+const INTRADAY_KEY_MAP = {
+  vix: "vix", vvix: "vvix", skew: "skew", dxy: "dxy",
+  // vix_term = vix - vix3m; recompute if both legs present.
+  vix_term: "_vix_term",
+  // SPX (used by spx_drawdown, spx_ret_60d, realized_vol) intentionally
+  // NOT overridden — those are derived series, not the raw SPX level.
+};
+function intradayValueFor(key){
+  const id = S.intraday;
+  if (!id || !id.prices) return null;
+  // Staleness gate: if snapshot is > 90 min old, don't override.
+  if (id.timestamp){
+    const ageMin = (Date.now() - new Date(id.timestamp + "Z").getTime()) / 60000;
+    if (ageMin > 90) return null;
+  }
+  const mapped = INTRADAY_KEY_MAP[key];
+  if (!mapped) return null;
+  if (mapped === "_vix_term"){
+    const v = id.prices.vix?.last, t = id.prices.vix3m?.last;
+    return (v != null && t != null) ? +(v - t).toFixed(2) : null;
+  }
+  return id.prices[mapped]?.last ?? null;
+}
+function formatIndicatorValue(key, val, fallbackStr){
+  if (val == null) return fallbackStr || "—";
+  // Match the precision of the EOD value_str roughly per indicator family.
+  if (key === "skew" || key === "mfg_new_orders") return val.toFixed(0);
+  if (key === "vvix" || key === "vix") return val.toFixed(2);
+  if (key === "dxy") return val.toFixed(1);
+  if (key === "vix_term") return val.toFixed(2);
+  return (typeof val === "number") ? val.toFixed(2) : String(val);
+}
+
+function renderIndCard(i){
+  const c = statusHex(i.status);
+  const open = (S.expandedIndicator === i.key);
+  const intradayVal = intradayValueFor(i.key);
+  const displayedStr = intradayVal != null
+    ? formatIndicatorValue(i.key, intradayVal, i.value_str)
+    : (i.value_str || "—");
+  const liveBadge = intradayVal != null
+    ? ` <span title="Intraday snapshot" style="font:600 7px var(--m);color:var(--accent);letter-spacing:.1em;vertical-align:top">·LIVE</span>`
+    : "";
+  return `<div class="ind-card ${i.status} ${open?"expanded":""}" data-ind="${i.key}">
+    <div class="ind-lbl ${i.status}">${i.label}${liveBadge}</div>
+    <div class="ind-val">${displayedStr}</div>
+    <div class="ind-narr">${i.narrative || ""}</div>
+    <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
+  </div>`;
+}
+
+// -------- Indicator detail panel --------
+function renderIndicatorDetail(){
+  if (!S.expandedIndicator || !S.indicatorSeries) return "";
+  const key = S.expandedIndicator;
+  const ind = S.indicatorSeries.indicators[key];
+  if (!ind) return "";
+  const c = ind.current || {};
+  const st = ind.stats || {};
+  const tierColor = ({A:"#f87171", B:"#60a5fa", C:"#a3a3a3"})[ind.tier] || "#737373";
+  const stat = (k, v) => `<div class="id-stat-row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+
+  // Build interpretation text
+  const dirWord = ind.direction === "higher" ? "higher = more risk" : "lower = more risk";
+  const phi = c.phi != null ? c.phi.toFixed(3) : "—";
+  const z = c.z != null ? c.z.toFixed(2) : "—";
+  const pct = c.percentile_1y != null ? c.percentile_1y.toFixed(0) : "—";
+  let interp = "";
+  if (c.phi != null) {
+    if (c.phi < 0.40) interp = `Below historical risk threshold. Z-score ${z} (${pct}th 1-year percentile). Not contributing to elevated regime.`;
+    else if (c.phi < 0.60) interp = `Near neutral. Z-score ${z} (${pct}th percentile). Mild signal.`;
+    else if (c.phi < 0.80) interp = `Elevated risk reading. Z-score ${z} (${pct}th percentile). Contributing to ${ind.tier === "A" ? "early warning" : "regime"} signal.`;
+    else interp = `Crisis-level reading. Z-score ${z} (${pct}th percentile). Strong contribution to risk score.`;
+  }
+
+  return `<div class="ind-detail">
+    <div class="ind-detail-head">
+      <div class="ind-detail-title">
+        <h3 style="color:${tierColor}">${ind.label} <small style="color:var(--t4);font-size:11px">· ${ind.display_name}</small></h3>
+        <div class="sub">TIER ${ind.tier} · WEIGHT ${ind.weight} · ${dirWord.toUpperCase()} · ${ind.source_label}</div>
+        <div class="ind-detail-desc">${ind.description || ""}</div>
+      </div>
+      <button class="ind-detail-close" data-close-ind="1">CLOSE ✕</button>
+    </div>
+
+    <div class="id-charts">
+      <div class="id-chart-wrap">
+        <div class="id-chart-head">
+          <div class="id-chart-title">RAW VALUE · DASHED = ±1σ · DOTTED = ±2σ FROM 1Y MEAN</div>
+          <div class="id-periods">
+            ${["1Y","2Y","5Y","ALL"].map(p => `<button class="id-period-btn ${S.indPeriod===p?"on":""}" data-indp="${p}">${p}</button>`).join("")}
+          </div>
+        </div>
+        <div class="id-chart-canvas"><canvas id="ind-raw-chart"></canvas></div>
+      </div>
+      <div class="id-chart-wrap">
+        <div class="id-chart-head">
+          <div class="id-chart-title">Z-SCORE · GREEN BELOW 0 · RED ABOVE 0  (already direction-flipped)</div>
+          <div></div>
+        </div>
+        <div class="id-chart-canvas"><canvas id="ind-z-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="id-stats">
+      <div class="id-stat-block">
+        <div class="head">CURRENT STATE  ·  ${c.date || "—"}</div>
+        ${stat("Value",      c.value_str || "—")}
+        ${stat("Z-score",    z)}
+        ${stat("Risk score (Φ)", phi)}
+        ${stat("Status",     `<span style="color:${statusHex(c.status||'')}">${(c.status||'—').toUpperCase()}</span>`)}
+        ${stat("1Y percentile", pct + "th")}
+      </div>
+      <div class="id-stat-block">
+        <div class="head">STATISTICS  ·  ${st.n_obs || "—"} obs from ${st.start || "—"}</div>
+        ${stat("1Y mean",    (st.mean_1y!=null?st.mean_1y:"—"))}
+        ${stat("1Y std",     (st.std_1y !=null?st.std_1y :"—"))}
+        ${stat("1Y range",   `${st.min_1y} → ${st.max_1y}`)}
+        ${stat("All-time range", `${st.min_all} → ${st.max_all}`)}
+      </div>
+    </div>
+
+    <div class="id-interp"><span class="k">INTERPRETATION</span>${interp}</div>
+  </div>`;
+}
+
+// Apply a 1Y / 2Y / 5Y / ALL window to a [{d, v}] series
+function indFilterPeriod(arr, period){
+  if (!arr || !arr.length || period === "ALL") return arr;
+  // Default to 1Y when period is undefined. Without this, switch hits no case,
+  // `start` stays at the LAST data point's date, and the filter keeps only
+  // that single point. A 1-point line has no horizontal extent → Y-axis
+  // labels render but no blue line shows (the "empty graphs" bug).
+  const p = period || "1Y";
+  const last = new Date(arr[arr.length-1].d);
+  const start = new Date(last);
+  switch(p){
+    case "1Y": start.setFullYear(start.getFullYear()-1); break;
+    case "2Y": start.setFullYear(start.getFullYear()-2); break;
+    case "5Y": start.setFullYear(start.getFullYear()-5); break;
+    default:   start.setFullYear(start.getFullYear()-1); break;
+  }
+  return arr.filter(p => new Date(p.d) >= start);
+}
+
+function renderIndicatorCharts(){
+  if (!S.expandedIndicator || !S.indicatorSeries) return;
+  // Wait one rAF so the parent .id-chart-canvas has non-zero clientWidth/Height
+  // before Chart.js measures it. Without this, Chart.js can construct at 0×0
+  // and render nothing visible even though no error is thrown.
+  requestAnimationFrame(() => _doRenderIndicatorCharts());
+}
+
+function _doRenderIndicatorCharts(){
+  if (!S.expandedIndicator || !S.indicatorSeries) return;
+  const ind = S.indicatorSeries.indicators[S.expandedIndicator];
+  if (!ind) return;
+  // Use the data-point INDEX as x (linear scale). This sidesteps the
+  // chartjs-adapter-date-fns parsing pipeline entirely — earlier attempts with
+  // type:"time" (both string dates and ms timestamps) resulted in only the
+  // most recent few points being plotted, regardless of data length. The date
+  // string is preserved as a 'd' field for tooltip + tick callbacks.
+  const toIdx = arr => arr.map((p, i) => ({x: i, y: p.v, d: p.d}))
+                           .filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+  const raw = toIdx(indFilterPeriod(ind.chart, S.indPeriod));
+  const zs  = toIdx(indFilterPeriod(ind.z_chart, S.indPeriod));
+  // Hand-tick ~6 evenly-spaced x labels from the date strings
+  const xTickCb = arr => v => {
+    const i = Math.round(v);
+    return (i >= 0 && i < arr.length && arr[i] && arr[i].d) ? arr[i].d.slice(0, 7) : "";
+  };
+  const xStep = arr => Math.max(1, Math.floor(arr.length / 6));
+
+  // ---- Raw value chart ----
+  const rawCtx = document.getElementById("ind-raw-chart");
+  if (rawCtx && raw.length) {
+    if (S.indRawChart) { try { S.indRawChart.destroy(); } catch(e){} }
+    const m  = (ind.stats && Number.isFinite(ind.stats.mean_1y)) ? ind.stats.mean_1y : null;
+    const sd = (ind.stats && Number.isFinite(ind.stats.std_1y))  ? ind.stats.std_1y  : null;
+    // Horizon lines now only need 2 points (start + end of x range)
+    const horizon = (yval, color, dash, lbl) => ({
+      label: lbl,
+      data: [{x: 0, y: yval}, {x: Math.max(0, raw.length - 1), y: yval}],
+      borderColor: color, borderDash: dash, borderWidth: 0.6, pointRadius: 0, fill: false, tension: 0, showLine: true,
+    });
+    const datasets = [
+      {label: ind.label, data: raw,
+       borderColor: "#60a5fa", borderWidth: 1.6, pointRadius: 0, tension: 0.1, fill: false},
+    ];
+    if (m != null && sd != null) {
+      datasets.push(horizon(m,        "#9ca3af", [4,4], "mean (1y)"));
+      datasets.push(horizon(m + sd,   "#facc15", [3,3], "+1σ"));
+      datasets.push(horizon(m - sd,   "#facc15", [3,3], "-1σ"));
+      datasets.push(horizon(m + 2*sd, "#f87171", [2,3], "+2σ"));
+      datasets.push(horizon(m - 2*sd, "#f87171", [2,3], "-2σ"));
+    }
+    try {
+      S.indRawChart = new Chart(rawCtx, {
+        type: "line",
+        data: {datasets},
+        options: {
+          responsive:true, maintainAspectRatio:false, animation:{duration:200},
+          interaction:{mode:"nearest",axis:"x",intersect:false},
+          // No parsing:false — Chart.js 4 default parser handles {x,y} fine on a
+          // linear scale, and parsing:false combined with segment/tooltip
+          // callbacks reading ctx.parsed.y throws silently and kills the render.
+          scales: {
+            x: {type:"linear", min: 0, max: Math.max(0, raw.length - 1),
+                grid:{color:"rgba(255,255,255,0.03)"},
+                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0,
+                       stepSize: xStep(raw), callback: xTickCb(raw)}},
+            y: {grid:{color:"rgba(255,255,255,0.03)"},
+                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+          },
+          plugins:{legend:{display:false},
+                   tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
+                            titleFont:{family:"IBM Plex Mono",size:10},bodyFont:{family:"IBM Plex Mono",size:10},
+                            callbacks:{
+                              title: items => (items[0] && raw[items[0].dataIndex] && raw[items[0].dataIndex].d) || "",
+                              label: ctx => ` ${ctx.dataset.label || ind.label}: ${ctx.parsed.y}`,
+                            }}},
+        },
+      });
+    } catch (e) {
+      console.error("[ind-raw-chart] Chart.js failed:", e);
+    }
+  }
+
+  // ---- Z-score chart ----
+  const zCtx = document.getElementById("ind-z-chart");
+  if (zCtx && zs.length) {
+    if (S.indZChart) { try { S.indZChart.destroy(); } catch(e){} }
+    try {
+    S.indZChart = new Chart(zCtx, {
+      type: "line",
+      data: {datasets: [
+        {label: "z", data: zs,
+         borderColor: "#60a5fa",
+         borderWidth: 1.6, pointRadius: 0, tension: 0.1,
+         // Defensive: ctx.p1.parsed may be missing in some Chart.js paths.
+         // Fall back to ctx.p1.raw which is always the original data point.
+         segment: {borderColor: ctx => {
+           const y = (ctx.p1 && ctx.p1.parsed && ctx.p1.parsed.y != null)
+             ? ctx.p1.parsed.y
+             : (ctx.p1 && ctx.p1.raw && ctx.p1.raw.y != null) ? ctx.p1.raw.y : 0;
+           return y > 0 ? "#f87171" : "#4ade80";
+         }},
+         fill: {target: "origin",
+                above: "rgba(248,113,113,0.15)",
+                below: "rgba(74,222,128,0.10)"}},
+      ]},
+      options: {
+        responsive:true, maintainAspectRatio:false, animation:{duration:200},
+        interaction:{mode:"nearest",axis:"x",intersect:false},
+        // (See raw chart above) — no parsing:false; Chart.js 4 handles {x,y}.
+        scales: {
+          x: {type:"linear", min: 0, max: Math.max(0, zs.length - 1),
+              grid:{color:"rgba(255,255,255,0.03)"},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0,
+                     stepSize: xStep(zs), callback: xTickCb(zs)}},
+          y: {grid:{color:"rgba(255,255,255,0.03)"},
+              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+        },
+        plugins: {legend: {display:false},
+                  tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
+                           callbacks:{
+                             title: items => (items[0] && zs[items[0].dataIndex] && zs[items[0].dataIndex].d) || "",
+                             label: ctx => ` z = ${ctx.parsed.y.toFixed(2)} (${ctx.parsed.y > 0 ? "above" : "below"} avg)`,
+                           }}},
+      },
+    });
+    } catch (e) {
+      console.error("[ind-z-chart] Chart.js failed:", e);
+    }
+  }
+}
+
+// Renders the deployment cards for all 5 tiers
+function renderDeployment(R){
+  return `<div class="deploy-grid">${TIER_ORDER.map(tid => {
+    const sp = tierSpec(tid); if (!sp) return "";
+    const cashFloor = sp.cash_floor ?? 0;
+    const cashSlope = sp.cash_slope ?? 0.7;
+    const cashMax   = sp.cash_max   ?? 1.0;
+    const cashPct   = R != null ? Math.max(cashFloor, Math.min(cashMax, cashFloor + R * cashSlope)) : cashFloor;
+    const deployPct = (1 - cashPct) * 100;
+    // Status: based on deployed share
+    let status = "Full"; let scolor = "var(--g)";
+    if (deployPct < 30)      { status = "Defensive"; scolor = "var(--r)"; }
+    else if (deployPct < 60) { status = "Cautious";  scolor = "var(--y)"; }
+    else if (deployPct < 85) { status = "Standard";  scolor = "var(--b)"; }
+    return `<div class="deploy-card">
+      <div class="deploy-lbl" style="color:${sp.color}">${sp.short}</div>
+      <div class="deploy-pct" style="color:${sp.color}">${deployPct.toFixed(0)}%</div>
+      <div class="deploy-status" style="color:${scolor}">${status}</div>
+      <div class="deploy-bar"><div class="fill" style="width:${deployPct}%;background:${sp.color}"></div></div>
+      <div class="deploy-sub">${(cashPct*100).toFixed(0)}% cash</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// Renders the regime timeline chart from regime_daily.csv (Chart.js)
+function renderRegimeTimeline(){
+  const ctx = document.getElementById("regime-timeline");
+  if (!ctx || !S.regimeDaily) return;
+  if (S.regimeChart) S.regimeChart.destroy();
+  // AUDIT FIX 4: chart the PUBLISHED vintage where it exists (live period
+  // since inception 2026-05-20); revised recompute elsewhere. Published =
+  // what the system actually printed that night; inputs revise afterwards.
+  const pubMap = {};
+  (S.regimePub || []).forEach(r => {
+    if (r && r.date && r.R_t_published != null && !isNaN(r.R_t_published))
+      pubMap[String(r.date).slice(0,10)] = +r.R_t_published;
+  });
+  const points = S.regimeDaily
+    .filter(r => r.date && r.R_t != null && !isNaN(r.R_t))
+    .map(r => {
+      const d = String(r.date).slice(0,10);
+      return {x: r.date, y: (d in pubMap) ? pubMap[d] : +r.R_t};
+    });
+  if (!points.length) return;
+  S.regimeChart = new Chart(ctx, {
+    type: "line",
+    data: {datasets: [{
+      label: "R_t",
+      data: points,
+      borderWidth: 1.2,
+      pointRadius: 0,
+      tension: 0.05,
+      fill: true,
+      // Color each segment + fill by Y value
+      segment: {
+        borderColor: ctx => regimeHex(ctx.p1.parsed.y),
+      },
+      backgroundColor: (ctx) => {
+        const chart = ctx.chart;
+        const {ctx: c2d, chartArea} = chart;
+        if (!chartArea) return "rgba(74,222,128,0.10)";
+        const g = c2d.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        g.addColorStop(0,    "rgba(248,113,113,0.25)");  // top  = crisis
+        g.addColorStop(0.30, "rgba(251,146,60,0.18)");
+        g.addColorStop(0.55, "rgba(250,204,21,0.12)");
+        g.addColorStop(1,    "rgba(74,222,128,0.10)");   // bottom = safe
+        return g;
+      },
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+      interaction: {mode:"nearest", axis:"x", intersect:false},
+      scales: {
+        x: {type:"time", time:{unit:"year"},
+            grid:{color:"rgba(255,255,255,0.03)"},
+            ticks:{color:"#737373", font:{family:"IBM Plex Mono", size:9}, maxRotation:0}},
+        y: {min:0, max:1,
+            grid:{color:"rgba(255,255,255,0.03)"},
+            ticks:{color:"#737373", font:{family:"IBM Plex Mono", size:9},
+                   callback:v => v===0?"safe":(v===0.5?"elevated":(v===1?"crisis":""))}},
+      },
+      plugins: {
+        legend: {display: false},
+        tooltip: {backgroundColor:"rgba(0,0,0,0.9)",
+                  titleFont:{family:"IBM Plex Mono", size:10},
+                  bodyFont:{family:"IBM Plex Mono", size:10}, padding:8,
+                  callbacks:{ label: ctx => ` R_t = ${ctx.parsed.y.toFixed(3)}  (${regimeLabel(ctx.parsed.y)})` }},
+      },
+    },
+  });
+}
+
+// Word color for the three classification labels
+function ewColor(label){
+  return ({"CLEAR":"var(--g)","WATCH":"var(--y)","WARNING":"var(--o)","DANGER":"var(--r)",
+           "LOW RISK":"var(--g)","ELEVATED":"var(--y)","HIGH RISK":"var(--o)","CRISIS":"var(--r)",
+           "CONSISTENT":"var(--t2)","LEADING RISK":"var(--r)","RECOVERY":"var(--g)"}[label]) || "var(--t2)";
+}
+
+// The full Regime Command Center section — built fresh on each render()
+// v4 graduated regime: color + action verb for the 4 bands
+function v4RegimeColor(reg){
+  return ({DEPLOY:"var(--g)",CAUTIOUS:"var(--y)",DEFENSIVE:"var(--o)",CRISIS:"var(--r)"})[reg] || "var(--t3)";
+}
+function v4RegimeAction(reg){
+  return ({
+    DEPLOY:    "Full sizing; new entries OK; sell out-of-the-money premium.",
+    CAUTIOUS:  "Reduce new entries to 75%; favour limit orders at lower levels.",
+    DEFENSIVE: "Trim concentrated holdings; activate put spreads; raise cash to tier maximum.",
+    CRISIS:    "Full Portfolio OS crisis mode.",
+  })[reg] || "—";
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Top banner: intraday SHOCK (red) or staleness (amber).
+// Renders ABOVE everything so the user never reads a calm gauge
+// without first seeing that the tape has cracked.
+// ──────────────────────────────────────────────────────────────────
+// ---- Session/staleness helpers (AUDIT FIX 2c + 5) -----------------
+// Approximate ET as UTC−4. A DST-precise conversion isn't needed for
+// badge logic; worst case the boundary slips one hour twice a year.
+function _etDateISO(d){ return new Date(d.getTime() - 4*3600e3).toISOString().slice(0,10); }
+function lastTradingSessionISO(){
+  const now = new Date();
+  const et = new Date(now.getTime() - 4*3600e3);
+  let d = new Date(Date.UTC(et.getUTCFullYear(), et.getUTCMonth(), et.getUTCDate()));
+  // Before the 16:00 ET close, today's session data can't exist yet.
+  if (et.getUTCHours() < 16) d.setUTCDate(d.getUTCDate() - 1);
+  // SEPT AUDIT [5.2]: holiday-aware — mirrors scripts/trading_calendar.py
+  // NYSE_HOLIDAYS (2025-2027; keep in sync). Without this, the day after a
+  // holiday badged every current panel STALE (Labor Day 2026-09-07).
+  const NYSE_HOLIDAYS = new Set([
+    "2025-01-01","2025-01-09","2025-01-20","2025-02-17","2025-04-18","2025-05-26",
+    "2025-06-19","2025-07-04","2025-09-01","2025-11-27","2025-12-25",
+    "2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25",
+    "2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25",
+    "2027-01-01","2027-01-18","2027-02-15","2027-03-26","2027-05-31",
+    "2027-06-18","2027-07-05","2027-09-06","2027-11-25","2027-12-24"]);
+  while ([0,6].includes(d.getUTCDay()) || NYSE_HOLIDAYS.has(d.toISOString().slice(0,10)))
+    d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0,10);
+}
+function isStaleAsOf(dateStr){
+  if (!dateStr) return true;
+  return String(dateStr).slice(0,10) < lastTradingSessionISO();
+}
+// Small chip rendered next to panel titles: grey when fresh, amber when stale.
+function asOfBadge(dateStr){
+  const d = dateStr ? String(dateStr).slice(0,10) : "—";
+  if (isStaleAsOf(d)) {
+    return `<span style="font:600 9px var(--m);letter-spacing:.08em;padding:2px 7px;border-radius:4px;
+      background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.4);color:var(--y);margin-left:8px">
+      STALE · as of ${d}</span>`;
+  }
+  return `<span style="font:500 9px var(--m);letter-spacing:.06em;color:var(--t4);margin-left:8px">as of ${d}</span>`;
+}
+function _fmtSnapTime(snap){
+  if (!snap) return "—";
+  return snap.toLocaleString("en-US", {timeZone:"America/New_York",
+    month:"short", day:"numeric", hour:"2-digit", minute:"2-digit"}) + " ET";
+}
+
+// Order item 6: status strip — the pipeline's last outcome and the nightly
+// audit sweep. CRITICAL (red) means the served artifacts are the last good
+// board; HIGH (grey) is logged, never blocking; nothing renders when clean.
+function renderStatusStrip(){
+  const st = S.status;
+  if (!st) return "";
+  const parts = [];
+  const strip = (bg, bd, col, txt) => `<div style="background:${bg};border:1px solid ${bd};border-radius:6px;
+      padding:6px 12px;margin-bottom:10px;font:500 11px var(--m);color:${col};line-height:1.5">${txt}</div>`;
+  const a = st.audit || {};
+  if (a.critical && a.critical.length)
+    parts.push(strip("rgba(220,38,38,.10)", "rgba(220,38,38,.45)", "#f87171",
+      `✗ audit CRITICAL — ${a.critical.join(", ")} · served artifacts are the last good board (session ${st.session_date || "?"})`));
+  else if (st.failure_reason)
+    parts.push(strip("rgba(219,162,62,.10)", "rgba(219,162,62,.45)", "var(--y)",
+      `⚠ last run rejected: ${st.failure_reason} · served artifacts are the last good board (session ${st.session_date || "?"}; last success ${String(st.last_success || "").slice(0,16)})`));
+  if (a.high && a.high.length)
+    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
+      `audit: ${a.high.length} HIGH — ${a.high.join(", ")} <span style="color:var(--t5)">(logged, non-blocking · ${String(a.ran_at || "").slice(0,16)})</span>`));
+  // B3: cross-file findings are reported in both repositories' strips and block neither;
+  // the other repository's CRITICALs are shown but never block this deploy.
+  if (a.xfile && a.xfile.length)
+    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
+      `cross-file: ${a.xfile.join(", ")} <span style="color:var(--t5)">(reported in both repositories; blocks neither)</span>`));
+  if (a.critical_other_repo && a.critical_other_repo.length)
+    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
+      `other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span style="color:var(--t5)">(does not block this deploy)</span>`));
+  return parts.join("");
+}
+
+function renderTopBanner(){
+  const id = S.intraday;
+  if (!id) return "";
+  const now = new Date();
+  const snap = id.timestamp ? new Date(id.timestamp + "Z") : null;
+  const ageMin = snap ? (now - snap) / 60000 : 9999;
+  const snapStr = _fmtSnapTime(snap);
+
+  // Market hours (rough UTC envelope covering EST + EDT)
+  const utcH = now.getUTCHours(), utcMin = now.getUTCMinutes();
+  const dow = now.getUTCDay();
+  const marketOpen = dow >= 1 && dow <= 5 &&
+    ((utcH > 13 || (utcH === 13 && utcMin >= 30)) && utcH < 21);
+  // AUDIT FIX 5: session scoping — a snapshot from a previous ET calendar
+  // day describes the PRIOR session, not live conditions.
+  const snapIsCurrentSession = snap && _etDateISO(snap) === _etDateISO(now);
+  const shockIsLive = id.shock_active && marketOpen && snapIsCurrentSession;
+
+  const spxStr = (id.spx_change_pct >= 0 ? "+" : "") + (id.spx_change_pct ?? 0) + "%";
+  const vixStr = (id.vix_change_pct >= 0 ? "+" : "") + (id.vix_change_pct ?? 0) + "%";
+
+  // 1) LIVE SHOCK — red, only when it is happening NOW
+  if (shockIsLive) {
+    const reasons = (id.shock_reasons || []).join(" · ");
+    return `<div style="background:rgba(220,38,38,0.15);border:1px solid #dc2626;
+       border-radius:8px;padding:14px 18px;margin-bottom:16px">
+      <div style="font:800 13px var(--m);color:#f87171;letter-spacing:.1em">
+        ⚠ INTRADAY STRESS — ACUTE RISK IN CURRENT SESSION</div>
+      <div style="font:400 12px var(--s);color:#fca5a5;margin-top:6px;line-height:1.55">
+        ${reasons}. SPX <strong>${spxStr}</strong> intraday, VIX
+        <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>).
+        The end-of-day regime below is <strong>STALE</strong> and does not reflect this move.
+        Do not deploy new capital until the close.
+        <span style="color:#fca5a570">snapshot ${snapStr} · ${Math.round(ageMin)} min ago</span></div>
+    </div>`;
+  }
+
+  // 1b) PRIOR-SESSION SHOCK — amber. Red means happening now; amber means
+  // happened, market closed (or the cron hasn't caught up to a new session).
+  if (id.shock_active && !shockIsLive) {
+    return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
+       border-radius:8px;padding:12px 16px;margin-bottom:16px">
+      <div style="font:700 12px var(--m);color:var(--y);letter-spacing:.08em">
+        ◷ PRIOR SESSION WAS A SHOCK DAY</div>
+      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+        SPX <strong>${spxStr}</strong>, VIX <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>)
+        in the last session. Market ${marketOpen ? "is open but the intraday snapshot hasn't refreshed yet" : "is closed"};
+        this banner reflects the prior session, not live conditions.
+        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+    </div>`;
+  }
+
+  // 2) STALENESS — amber when market open and either old or moved
+  const spxMoved = Math.abs(id.spx_change_pct || 0) > 1.0;
+  if (marketOpen && (ageMin > 60 || spxMoved)) {
+    return `<div style="background:rgba(250,204,21,0.12);border:1px solid #facc15;
+       border-radius:8px;padding:12px 16px;margin-bottom:16px">
+      <div style="font:700 12px var(--m);color:#facc15;letter-spacing:.08em">
+        ⚠ REGIME SNAPSHOT IS STALE</div>
+      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+        Regime computed on prior close. SPX <strong>${spxStr}</strong> since,
+        VIX now <strong>${id.vix_now}</strong>. The DEPLOY/CAUTIOUS call below
+        does NOT reflect the current session.
+        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+    </div>`;
+  }
+
+  // 3) COMPLACENCY — active chip (purple) or IMPAIRED chip (amber).
+  // JULY AUDIT FIX 2: a safety check with missing input must render
+  // IMPAIRED, never silently read as calm.
+  if (id.complacency_active === "impaired") {
+    return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
+       border-radius:8px;padding:10px 14px;margin-bottom:16px">
+      <div style="font:700 11px var(--m);color:var(--y);letter-spacing:.08em">
+        ⚠ COMPLACENCY CHECK IMPAIRED</div>
+      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+        ${id.complacency_reason}. The check did NOT evaluate — this is not an all-clear.
+        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+    </div>`;
+  }
+  if (id.complacency_active === true) {
+    return `<div style="background:rgba(168,85,247,0.10);border:1px solid #a855f7;
+       border-radius:8px;padding:10px 14px;margin-bottom:16px">
+      <div style="font:700 11px var(--m);color:#c084fc;letter-spacing:.08em">
+        COMPLACENCY FLAG</div>
+      <div style="font:400 11px var(--s);color:#ddd6fe;margin-top:4px;line-height:1.55">
+        ${id.complacency_reason}. <span style="color:#ddd6fe99">snapshot ${snapStr}</span></div>
+    </div>`;
+  }
+  return "";
+}
+
+// JULY AUDIT FIX 1a — governance banner: registry unapproved or coverage hole.
+function renderRegistryBanner(){
+  const td = S.thesis;
+  if (!td) return "";
+  const holes = Object.entries(td.tiers || {})
+    .filter(([_, t]) => (t.unclassified_share || 0) > 0.15);
+  const unfrozen = !td.registry_frozen;
+  const prov = td.provisional || {};
+  if (!holes.length && !unfrozen && !(prov.count > 0)) return "";
+  const nNames = new Set(holes.flatMap(([_, t]) => t.unclassified_names || [])).size;
+  const parts = [];
+  if (unfrozen) parts.push(`registry v${td.registry_version} unapproved`);
+  // A1: provisional mappings count toward coverage but are never silently permanent
+  if (prov.count > 0) parts.push(`<span style="color:var(--y);font:600 10px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px">PROVISIONAL</span> ${prov.count} agent-proposed mapping${prov.count > 1 ? "s" : ""} applied — they expire back to unclassified from ${prov.expires_earliest || "?"} unless approved into the registry`);
+  if (holes.length) parts.push(`${nNames} names unclassified across ${holes.length} tier${holes.length > 1 ? "s" : ""} (${holes.map(([tid, t]) => `${(tierSpec(tid)||{}).short || tid} ${(t.unclassified_share*100).toFixed(0)}%`).join(" · ")})`);
+  return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
+     border-radius:8px;padding:11px 15px;margin-bottom:16px">
+    <div style="font:700 11px var(--m);color:var(--y);letter-spacing:.08em">
+      ⚠ THESIS REGISTRY NEEDS ATTENTION</div>
+    <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+      ${parts.join(" · ")}. Review <span style="font-family:var(--m)">data/registry_proposals.json</span>
+      and approve into the registry with a version bump — the agent never auto-merges.</div>
+  </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────────
+// headlineVerdict — show the WORST of all signals, never the calmest.
+// Ranks v2 regime, v4 graduated regime, crisis-channel count,
+// complacency flag, and intraday shock. Returns {label, color, action}.
+// ──────────────────────────────────────────────────────────────────
+function headlineVerdict(){
+  const reg = S.regime || {};
+  const v4Last = (S.regimeV4 && S.regimeV4.length)
+    ? S.regimeV4.filter(r => r && r.p_5_40_calibrated != null && !isNaN(r.p_5_40_calibrated)).slice(-1)[0]
+    : null;
+  // AUDIT FIX 2c: a stale calm signal must never be able to vote. If the
+  // v4 series hasn't been computed for the last trading session, exclude
+  // it from the worst-of ranking and annotate the exclusion.
+  const v4AsOf  = v4Last ? String(v4Last.date || "").slice(0,10) : null;
+  const v4Stale = isStaleAsOf(v4AsOf);
+  const v4reg = (v4Last && !v4Stale) ? v4Last.graduated_regime : null;
+
+  // Severity rankings (higher = more cautious)
+  const rank = {
+    "DEPLOY": 0, "LOW RISK": 0, "CLEAR": 0,
+    "CAUTIOUS": 1, "ELEVATED": 1, "WATCH": 1,
+    "DEFENSIVE": 2, "HIGH RISK": 2, "WARNING": 2,
+    "CRISIS": 3, "DANGER": 3,
+  };
+  const colorMap = {
+    "DEPLOY":"#4ade80", "CAUTIOUS":"#facc15", "DEFENSIVE":"#fb923c", "CRISIS":"#f87171",
+    "INTRADAY STRESS":"#dc2626", "COMPLACENT":"#c084fc",
+  };
+  const actionMap = {
+    "DEPLOY":     "Full sizing; new entries OK; sell out-of-the-money premium.",
+    "CAUTIOUS":   "Trim sizing to 75%; require quality screens; tighten stops.",
+    "DEFENSIVE":  "Trim sizing to 50%; raise cash; no new positions in cyclicals.",
+    "CRISIS":     "Defensive: max cash, exit weak positions, hedge remaining longs.",
+    "INTRADAY STRESS": "Do not deploy new capital until the close. Hedge or wait.",
+    "COMPLACENT": "Cheap protection available; consider buying VIX/puts before re-deploying.",
+  };
+
+  let worst = "DEPLOY";
+  let worstRank = 0;
+  const consider = (label) => {
+    if (!label) return;
+    const r = rank[label];
+    if (r != null && r > worstRank) { worstRank = r; worst = label; }
+  };
+
+  consider(reg.regime);
+  consider(reg.early_warning);
+  // Decision Memo 9-Sept-2026 §5: v4's calibrated probability has no out-of-fold
+  // skill over the base rate (Brier 0.1989 vs 0.1918, B2). It no longer votes in
+  // the headline; the headline is the regime index whose value C3 measured. v4
+  // stays on the panel as a RANKING signal (AUC ≈ 0.64) with its numbers beside it.
+  if ((reg.n_crisis || 0) >= 1) consider("DEFENSIVE");
+  if ((reg.n_crisis || 0) >= 4) consider("CRISIS");
+  // Complacency: NEVER show DEPLOY when SKEW>140 + VIX<17
+  const complacent = !!(reg.complacency_flag || (S.intraday && S.intraday.complacency_active));
+  if (complacent && worstRank < 1) { worst = "COMPLACENT"; worstRank = 1; }
+  // Shock overrides everything — but ONLY a live one. A prior-session shock
+  // is already baked into the EOD v2 regime; letting yesterday's snapshot
+  // keep shouting INTRADAY STRESS pre-open is the mirror image of the
+  // stale-calm bug. (AUDIT FIX 5 applied to the headline too.)
+  const _snap = (S.intraday && S.intraday.timestamp) ? new Date(S.intraday.timestamp + "Z") : null;
+  const _now = new Date();
+  const _utcH = _now.getUTCHours(), _utcMin = _now.getUTCMinutes(), _dow = _now.getUTCDay();
+  const _mktOpen = _dow >= 1 && _dow <= 5 && ((_utcH > 13 || (_utcH === 13 && _utcMin >= 30)) && _utcH < 21);
+  const shockLive = !!(S.intraday && S.intraday.shock_active && _mktOpen
+                        && _snap && _etDateISO(_snap) === _etDateISO(_now));
+  if (shockLive) { worst = "INTRADAY STRESS"; worstRank = 99; }
+
+  // Map v2 → action vocabulary
+  if (worst === "LOW RISK")  worst = "DEPLOY";
+  if (worst === "ELEVATED")  worst = "CAUTIOUS";
+  if (worst === "HIGH RISK") worst = "DEFENSIVE";
+  if (worst === "WATCH")     worst = "CAUTIOUS";
+  if (worst === "WARNING")   worst = "DEFENSIVE";
+  if (worst === "DANGER")    worst = "CRISIS";
+
+  return {
+    label:  worst,
+    color:  colorMap[worst] || "#a3a3a3",
+    action: actionMap[worst] || "",
+    inputs: {
+      v2_regime: reg.regime, v2_ew: reg.early_warning,
+      v4_regime: v4reg,
+      v4_excluded: "no out-of-fold skill over the base rate; ranking only (memo 9-Sept-2026 §5)",
+      v4_stale: v4Stale, v4_as_of: v4AsOf,
+      n_crisis: reg.n_crisis || 0,
+      complacent: complacent,
+      shock: shockLive,
+      shock_prior_session: !!(S.intraday && S.intraday.shock_active && !shockLive),
+    },
+  };
+}
+
+// Decision Memo 9-Sept-2026 §1: the C3 verdict of record under v1 is never removed
+// from the dashboard; the amendment paragraph travels with the v2 verdict.
+function c3VerdictLine(){
+  const r = S.c3; if (!r || !r.decision) return "";
+  const d1 = r.decision, d2 = r.decision_v2;
+  const ci = d2 && d2.paired_diff_return_per_vol_ci90;
+  const sg = x => (x >= 0 ? "+" : "") + (+x).toFixed(3);
+  const yrs = r.window ? `${String(r.window[0]).slice(0,4)}–${String(r.window[1]).slice(2,4)}` : "2010–26";
+  return `<div style="font:400 10px var(--m);color:var(--t4);margin-top:4px" title="Pre-registered test C3 (reports/retirement_test_C3_regime_vs_rules.md). v1 rule: the regime's return-per-volatility margin over the best one-line rule had to exceed the half-width of the regime's own 90% bootstrap interval — a bar no monthly overlay on this window could clear (the rules' own half-widths are 0.44–0.45). v2 (registration amended 9-Sept-2026 AFTER the v1 result, disclosed in reports/c3_registration_v2.md): the paired 90% interval must lie above zero. Both verdicts stay on record.">C3 regime vs one-line rules (${yrs}, tier-4 overlay, net of costs): <span style="color:var(--r)">v1 verdict FAIL</span> (margin ${d1.margin != null ? sg(d1.margin) : "—"} vs required ${d1.half_width_regime_ci90 != null ? (+d1.half_width_regime_ci90).toFixed(3) : "—"})${d2 ? ` · <span style="color:${d2.regime_passes ? "var(--g)" : "var(--r)"}">v2 verdict ${d2.regime_passes ? "PASS" : "FAIL"}</span> (paired interval [${ci ? sg(ci[0]) + ", " + sg(ci[1]) : "—"}]; drawdown reduction ${(d2.dd_reduction_regime*100).toFixed(1)}% vs ${(d2.dd_reduction_best_rule*100).toFixed(1)}%)` : ""} · amendment made after the v1 result, disclosed.</div>`;
+}
+
+function renderRegimeCommandCenter(R){
+  const reg = S.regime || {};
+  const total = reg.n_indicators || 12;
+  const safe  = reg.n_safe || 0;
+  const neu   = reg.n_neutral || 0;       // AUDIT FIX 3: separate bucket
+  const ele   = reg.n_elevated || 0;
+  const cri   = reg.n_crisis || 0;
+
+  // v2 fields: R_lead / R_full / divergence + their classifications
+  const R_lead = reg.R_lead;
+  const R_full = reg.R_full != null ? reg.R_full : (reg.R_t != null ? reg.R_t : R);
+  const divv   = reg.divergence;
+  const ew     = reg.early_warning;
+  const rgm    = reg.regime;
+  const divlab = reg.divergence_alert;
+  const v2 = (R_lead != null && R_full != null);
+
+  // v4 fields: latest row of regime_v4_daily.csv — with freshness check.
+  // AUDIT FIX 2c: stale v4 still DISPLAYS (with an amber as-of badge) but
+  // never votes in the headline (handled in headlineVerdict).
+  const v4Last = (S.regimeV4 && S.regimeV4.length)
+    ? S.regimeV4.filter(r => r && r.p_5_40_calibrated != null && !isNaN(r.p_5_40_calibrated)).slice(-1)[0]
+    : null;
+  const v4AsOfCC  = v4Last ? String(v4Last.date || "").slice(0,10) : null;
+  const v4StaleCC = isStaleAsOf(v4AsOfCC);
+  const p5_40 = v4Last ? +v4Last.p_5_40_calibrated : null;
+  const p3_20 = v4Last && v4Last.p_3_20_equal_weight != null ? +v4Last.p_3_20_equal_weight : null;
+  const p10_60 = v4Last && v4Last.p_10_60_equal_weight != null ? +v4Last.p_10_60_equal_weight : null;
+  const p7_40 = v4Last && v4Last.p_7_40_equal_weight != null ? +v4Last.p_7_40_equal_weight : null;
+  const v4reg = v4Last ? v4Last.graduated_regime : null;
+  const v4color = v4RegimeColor(v4reg);
+
+  // Headline = WORST of v2 / v4 / crisis-count / complacency / shock
+  const headline = headlineVerdict();
+  const lbl = headline.label;
+  const lblColor = headline.color;
+  const rDisp = R_full != null ? R_full.toFixed(3) : "—";
+
+  // Verdict prefers headline action; surface the per-source inputs so the user sees WHY
+  const inputs = headline.inputs;
+  const inputLine = [
+    inputs.v2_regime ? `v2 ${inputs.v2_regime}` : null,
+    inputs.v4_regime ? `v4 ${inputs.v4_regime} <span style="color:var(--t5)" title="${inputs.v4_excluded || ""}">(ranking only, not voting)</span>` : null,
+    inputs.v4_stale ? `<span style="color:var(--y)">v4: stale (as of ${inputs.v4_as_of || "?"})</span>` : null,
+    inputs.n_crisis > 0 ? `${inputs.n_crisis} crisis ch.` : null,
+    inputs.complacent ? `complacent` : null,
+    inputs.shock ? `intraday shock` : null,
+    inputs.shock_prior_session ? `prior-session shock (not voting)` : null,
+  ].filter(Boolean).join(" · ");
+  const verdict = `<strong style="color:${lblColor}">${headline.label}.</strong> ${headline.action}
+    <div style="margin-top:6px;font:400 10px var(--m);color:var(--t4)">${inputLine}</div>
+    ${eventTodayBadge()}
+    ${nextEventLine()}`;
+
+  // ---- New score row: graduated probabilities (v4) + v2 R_full as backup ----
+  const probCell = (label, p, action) => {
+    if (p == null) return `<div class="score-cell">
+        <div class="k">${label}</div><div class="v" style="color:var(--t4)">—</div></div>`;
+    const pctText = (p * 100).toFixed(0) + "%";
+    let cellColor = "var(--g)";
+    if (p > 0.45) cellColor = "var(--o)";
+    else if (p > 0.25) cellColor = "var(--y)";
+    if (p > 0.65) cellColor = "var(--r)";
+    return `<div class="score-cell">
+        <div class="k">${label}</div>
+        <div class="v" style="color:${cellColor}">${pctText}</div>
+        ${action ? `<div class="s" style="color:${cellColor}">${action}</div>` : ""}
+      </div>`;
+  };
+  const scoreRow = v4Last ? `${v4StaleCC ? `<div style="margin-top:8px;text-align:center">
+      <span style="font:600 9px var(--m);letter-spacing:.08em;padding:3px 9px;border-radius:4px;
+        background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.45);color:var(--y)">
+        ⚠ v4 STALE · as of ${v4AsOfCC}</span>
+    </div>` : ""}<div class="score-row" ${v4StaleCC ? 'style="opacity:.55"' : ''}>
+      ${probCell("≥3% over NEXT 20D", p3_20, "")}
+      ${probCell("≥5% over NEXT 40D · CAL", p5_40, v4reg)}
+      ${probCell("≥10% over NEXT 60D", p10_60, "")}
+    </div>
+    ${(() => {
+      // JULY AUDIT FIX 4a: render the delta attribution under the probability
+      const a = S.v4Attr;
+      if (!a || !a.top3 || a.as_of !== v4AsOfCC) return "";
+      const movers = a.top3.map(c => `${c.feature} ${c.contribution_pp >= 0 ? "+" : ""}${c.contribution_pp}pp`).join(" · ");
+      return `<div style="margin-top:5px;font:400 10px var(--m);color:var(--t3);text-align:center;line-height:1.5">
+        Δ ${a.delta_pp >= 0 ? "+" : ""}${a.delta_pp}pp vs ${a.prev} — moved by: ${movers}
+        <span style="color:var(--t4)">(contributions approximate; residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp)</span>
+      </div>`;
+    })()}
+    <div style="margin-top:6px;font:400 9.5px var(--m);color:var(--t4);text-align:center;line-height:1.4">
+      Multi-week drawdown probabilities (cumulative over the horizon). Does NOT protect against
+      single-day gaps — see the intraday banner at the top for same-session risk.
+    </div>` : (v2 ? `<div class="score-row">
+      <div class="score-cell">
+        <div class="k">EARLY WARNING</div>
+        <div class="v">${R_lead.toFixed(3)}</div>
+        <div class="s" style="color:${ewColor(ew)}">${ew}</div>
+      </div>
+      <div class="score-cell">
+        <div class="k">CURRENT REGIME</div>
+        <div class="v">${R_full.toFixed(3)}</div>
+        <div class="s" style="color:${ewColor(rgm)}">${rgm}</div>
+      </div>
+      <div class="score-cell">
+        <div class="k">DIVERGENCE</div>
+        <div class="v">${divv >= 0 ? "+" : ""}${divv.toFixed(3)}</div>
+        <div class="s" style="color:${ewColor(divlab)}">${divlab}</div>
+      </div>
+    </div>` : "");
+
+  // Compact v2 footnote: R_full / R_lead / divergence on one line
+  const v2Foot = v2 ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--bd);
+       font:400 10px var(--m);color:var(--t4);text-align:center;line-height:1.6">
+      <span style="color:var(--t3)">v2:</span>
+      R<sub>full</sub> <strong style="color:${ewColor(rgm)}">${R_full.toFixed(3)} ${rgm}</strong>
+      &middot; R<sub>lead</sub> <strong style="color:${ewColor(ew)}">${R_lead.toFixed(3)} ${ew}</strong>
+      &middot; div <strong style="color:${ewColor(divlab)}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
+      <div style="margin-top:3px;font:italic 400 10px var(--s);color:var(--t5)">
+        Regime label uses ±0.02 hysteresis at band edges (enter ELEVATED ≥ 0.32, exit &lt; 0.28)
+        to stop edge-flapping; R values themselves are untouched.</div>
+    </div>` : "";
+
+  // AUDIT FIX 3: 4-bucket count matches card colors (green / blue / amber / red)
+  const tierCounts = `<span style="margin-left:auto;font:400 10px var(--m);color:var(--t3);letter-spacing:0;text-transform:none">
+    <span style="color:var(--g)">${safe} safe</span> ·
+    <span style="color:var(--b)">${neu} neutral</span> ·
+    <span style="color:var(--y)">${ele} elevated</span> ·
+    <span style="color:var(--r)">${cri} crisis</span></span>`;
+
+  return `<section class="rcc">
+    <div class="rcc-top">
+      <div class="rcc-card">
+        <h3>CYCLE POSITION · <span style="color:var(--t5);font-weight:500" title="Decision Memo 9-Sept-2026 §5: the headline is the regime index whose value C3 measured; v4 no longer votes">regime index</span>${asOfBadge(reg.as_of)}</h3>
+        ${gaugeSVG(R_full)}
+        <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
+        <div class="gauge-rt">R<sub>full</sub> = <span class="r-num">${rDisp}</span></div>
+        ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div style="font:500 10.5px var(--m);color:var(--t3);margin-top:2px">raw score <span style="color:var(--t1)">${(+v4Last.raw_score).toFixed(3)}</span> <span style="color:var(--t5)">(pre-calibration)</span></div>
+        <div style="font:italic 400 10px var(--s);color:var(--t4);margin-top:1px">calibrated probability moves in steps; the raw score moves continuously.</div>
+        ${(() => { // order 9-Sept B1.2: model-change note, shown for 30 sessions after the change, with OUT-OF-FOLD numbers (B2)
+          const rows = Array.isArray(S.regimeV4) ? S.regimeV4.filter(r => r && r.date && String(r.date) > "2026-09-07") : [];
+          return rows.length < 30 ? `<div style="font:500 10px var(--m);color:var(--y);margin-top:3px" title="model_version ${v4Last.model_version || ""} · out-of-fold = leave-one-crisis-out folds, isotonic fitted on training predictions only">model changed 2026-09-07: equal-weight replaces logistic; out-of-fold Brier 0.1989 vs 0.2145 (logistic) — base rate 0.1918: no out-of-fold skill over the base rate on Brier; in-sample 0.1835 was the isotonic fit.</div>` : ``; })()}` : ``}
+        ${scoreRow}
+        ${v4Last ? (() => { // Decision Memo 9-Sept-2026 §5: standing note — v4 is a ranking signal, not a forecast
+          const c = S.v4Cal || {}; const m = (c.methods && c.methods[c.winning_method || "equal_weight"]) || {};
+          const oof = m.brier_out_of_fold, base = c.base_rate_brier;
+          return `<div style="font:500 10px var(--m);color:var(--t3);margin-top:5px;padding:5px 7px;border:1px dashed var(--line);border-radius:4px" title="out-of-fold = 15 leave-one-crisis-out folds, isotonic fitted on training predictions only (B2); the underlying index retains ranking skill (AUC ≈ 0.64, C2). No in-sample reliability figure is shown: isotonic fitting makes it look perfect by construction.">v4 graduated probability — <strong style="color:var(--t1)">ranking signal, not a forecast</strong>: out-of-fold Brier <strong style="color:var(--t1)">${oof != null ? (+oof).toFixed(4) : "—"}</strong> vs base rate <strong style="color:var(--t1)">${base != null ? (+base).toFixed(4) : "—"}</strong> — does not beat the base rate out of fold; use as a ranking, not a forecast. Not a headline input.</div>`; })() : ``}
+        ${c3VerdictLine()}
+        <div class="verdict">${verdict}</div>
+        ${v2Foot}
+      </div>
+      <div class="rcc-card">
+        <h3 style="display:flex;align-items:baseline">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
+        ${renderIndicators()}
+      </div>
+    </div>
+
+    <div class="rcc-card">
+      <h3>DEPLOYMENT SIGNAL PER TIER</h3>
+      ${renderDeployment(R_full)}
+    </div>
+
+    <div class="rcc-card">
+      <h3>REGIME TIMELINE — R<sub>full</sub> with regime bands (safe → elevated → crisis)</h3>
+      <div class="timeline-wrap"><canvas id="regime-timeline"></canvas></div>
+      <div style="margin-top:6px;font:italic 400 10.5px var(--s);color:var(--t4);line-height:1.45">
+        Vintages: indicator inputs revise after the fact (several FRED series publish T+1 or weekly).
+        Since inception 2026-05-20 this chart shows the <strong style="font-style:normal">as-published</strong>
+        values — what the system printed that night — preserved in regime_daily_published.csv.
+        Earlier history is the revised recompute. Real-time performance claims must use the published vintage.
+        ${(() => { const rows = Array.isArray(S.regimePub) ? S.regimePub : []; const np = rows.filter(r => r && r.date && (r.R_t_published == null || r.R_t_published === "" || isNaN(+r.R_t_published))); return rows.length ? `<div style="margin-top:4px;font-style:normal;color:var(--t3)">Reliability: <strong>${np.length}</strong> no-publish session${np.length === 1 ? "" : "s"} of ${rows.length} since inception${np.length ? " — " + np.map(r => String(r.date).slice(0,10)).join(", ") + " (reasons in regime_daily_published.csv)" : ""}</div>` : ``; })()}
+      </div>
+    </div>
+  </section>`;
+}
+function rankColor(pct){ return pct>=70?"var(--g)":pct>=40?"var(--y)":"var(--r)"; }
+function corrColor(c){ const a=Math.abs(c); return a>=0.7?"var(--r)":a>=0.4?"var(--y)":"var(--g)"; }
+
+// -------- Build unified series per tier (backtest + live, rebased at seam) --------
+function buildSeries(){
+  const series = {};                   // tier_id → [{date, nav}]
+  const benchSeries = {spy:[], qqq:[], "60_40":[], sso:[]};
+
+  if (S.backtest && S.backtest.rows) {
+    const rows = S.backtest.rows;
+    TIER_ORDER.forEach(tid => {
+      series[tid] = rows.filter(r => r[tid] != null && !isNaN(r[tid]))
+                        .map(r => ({date:r.date, nav:+r[tid]}));
+    });
+    Object.keys(benchSeries).forEach(b => {
+      benchSeries[b] = rows.filter(r => r[b] != null && !isNaN(r[b]))
+                            .map(r => ({date:r.date, nav:+r[b]}));
+    });
+  }
+
+  if (S.tournament && S.tournament.history && S.tournament.history.length > 0) {
+    TIER_ORDER.forEach(tid => {
+      const liveDays = S.tournament.history.filter(h => h.tiers && h.tiers[tid] && h.tiers[tid].nav > 0);
+      if (liveDays.length === 0) return;
+      series[tid] = series[tid] || [];
+      const btDates = new Set(series[tid].map(r => r.date));
+      const btLastDate = series[tid].length > 0 ? series[tid][series[tid].length-1].date : null;
+      // Find a live entry whose date OVERLAPS with backtest — use that pair for rebasing
+      // so that live[seam] · k = backtest[seam].
+      let k = 1.0;
+      if (tid !== "5_werner") {
+        const overlap = liveDays.find(d => btDates.has(d.date));
+        if (overlap) {
+          const btMatch = series[tid].find(r => r.date === overlap.date);
+          if (btMatch && overlap.tiers[tid].nav > 0) k = btMatch.nav / overlap.tiers[tid].nav;
+        } else if (series[tid].length > 0) {
+          // No overlap — fall back to ratio of last backtest vs first live
+          k = series[tid][series[tid].length-1].nav / liveDays[0].tiers[tid].nav;
+        }
+      }
+      // Append ONLY live entries whose date is strictly AFTER the backtest endpoint.
+      liveDays.forEach(d => {
+        if (!btLastDate || d.date > btLastDate) {
+          series[tid].push({date:d.date, nav:d.tiers[tid].nav * k, live:true});
+        }
+      });
+      series[tid].sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+    });
+    // Benchmarks: same rules
+    Object.keys(benchSeries).forEach(b => {
+      const live = S.tournament.history
+        .filter(h => h.benchmarks && h.benchmarks[b] && h.benchmarks[b].nav != null)
+        .map(h => ({date:h.date, nav:h.benchmarks[b].nav}));
+      if (live.length === 0) return;
+      const btDates = new Set(benchSeries[b].map(r => r.date));
+      const btLastDate = benchSeries[b].length > 0 ? benchSeries[b][benchSeries[b].length-1].date : null;
+      let k = 1.0;
+      const overlap = live.find(d => btDates.has(d.date));
+      if (overlap) {
+        const btMatch = benchSeries[b].find(r => r.date === overlap.date);
+        if (btMatch && overlap.nav > 0) k = btMatch.nav / overlap.nav;
+      } else if (benchSeries[b].length > 0) {
+        k = benchSeries[b][benchSeries[b].length-1].nav / live[0].nav;
+      }
+      live.forEach(d => {
+        if (!btLastDate || d.date > btLastDate) benchSeries[b].push({date:d.date, nav:d.nav * k});
+      });
+      benchSeries[b].sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+    });
+  }
+  return {tiers:series, bench:benchSeries};
+}
+
+function applyPeriod(series, period){
+  if (!series.length) return series;
+  if (period === "ALL") return series;
+  const lastDate = new Date(series[series.length-1].date);
+  let start = new Date(lastDate);
+  switch(period){
+    case "1M": start.setMonth(start.getMonth()-1); break;
+    case "3M": start.setMonth(start.getMonth()-3); break;
+    case "6M": start.setMonth(start.getMonth()-6); break;
+    case "YTD": start = new Date(lastDate.getFullYear(), 0, 1); break;
+    case "1Y": start.setFullYear(start.getFullYear()-1); break;
+    case "5Y": start.setFullYear(start.getFullYear()-5); break;
+    default: return series;
+  }
+  return series.filter(r => new Date(r.date) >= start);
+}
+
+function rebase(series){
+  if (!series.length) return series;
+  const base = series[0].nav;
+  return series.map(r => ({...r, nav: r.nav / base}));
+}
+
+function tierMetrics(series, benchSeries){
+  if (!series || series.length < 2) return null;
+  const first = series[0].nav, last = series[series.length-1].nav;
+  const total = (last/first - 1) * 100;
+  const lastDate = new Date(series[series.length-1].date);
+  const wAgo = new Date(lastDate); wAgo.setDate(wAgo.getDate()-7);
+  const mAgo = new Date(lastDate); mAgo.setMonth(mAgo.getMonth()-1);
+  const findPrior = d => { for (let i = series.length-1; i >= 0; i--) if (new Date(series[i].date) <= d) return series[i].nav; return null; };
+  const w1 = (() => { const p = findPrior(wAgo); return p ? (last/p - 1) * 100 : null; })();
+  const m1 = (() => { const p = findPrior(mAgo); return p ? (last/p - 1) * 100 : null; })();
+
+  const rets = [];
+  let runMax = first, maxDD = 0;
+  for (let i = 1; i < series.length; i++){
+    rets.push(series[i].nav / series[i-1].nav - 1);
+    runMax = Math.max(runMax, series[i].nav);
+    maxDD  = Math.min(maxDD, series[i].nav / runMax - 1);
+  }
+  const mean = rets.reduce((a,b)=>a+b,0) / rets.length;
+  const sd = Math.sqrt(rets.reduce((s,r)=>s+(r-mean)**2,0) / rets.length);
+  const sharpe = sd > 0 ? (mean * 252) / (sd * Math.sqrt(252)) : 0;
+
+  let alpha = null;
+  if (benchSeries && benchSeries.length >= 2){
+    const bRet = (benchSeries[benchSeries.length-1].nav / benchSeries[0].nav - 1) * 100;
+    alpha = total - bRet;
+  }
+  return {total, w1, m1, sharpe, maxDD:maxDD*100, alpha};
+}
+
+// -------- Race chart --------
+function renderChart(allSeries, period){
+  const ctx = document.getElementById("race-chart");
+  if (!ctx) return;
+  if (S.chart) S.chart.destroy();
+  const datasets = [];
+  TIER_ORDER.forEach(tid => {
+    const t = tierSpec(tid);
+    const ser = allSeries.tiers[tid];
+    if (!t || !ser || ser.length === 0) return;
+    const periodSer = applyPeriod(ser, period);
+    const rebased = rebase(periodSer);
+    datasets.push({
+      label: t.short,
+      data: rebased.map(r => ({x:r.date, y:r.nav})),
+      borderColor: t.color,
+      backgroundColor: t.color + "22",
+      borderWidth: 1.6, pointRadius: 0, tension: 0.05,
+    });
+  });
+  // SPY benchmark
+  const spy = applyPeriod(allSeries.bench.spy, period);
+  if (spy.length > 0){
+    const reb = rebase(spy);
+    datasets.push({
+      label: "SPY",
+      data: reb.map(r => ({x:r.date, y:r.nav})),
+      borderColor: "#6b7280", backgroundColor: "transparent",
+      borderWidth: 1.0, borderDash: [4, 3], pointRadius: 0, tension: 0.05,
+    });
+  }
+  S.chart = new Chart(ctx, {
+    type: "line", data: {datasets},
+    options: {
+      responsive: true, maintainAspectRatio: false, animation:{duration:300},
+      interaction: {mode:"nearest", axis:"x", intersect:false},
+      scales: {
+        x: { type:"time",
+             time:{ unit: period==="1M"||period==="3M"?"week":(period==="6M"||period==="YTD"||period==="1Y"?"month":"year") },
+             grid:{color:"rgba(255,255,255,0.04)"},
+             ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:9}}, },
+        y: { type:"logarithmic",
+             grid:{color:"rgba(255,255,255,0.04)"},
+             ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:9},
+                    callback: v => v.toFixed(2)}, },
+      },
+      plugins: {
+        legend:{position:"bottom",
+                labels:{color:"#a3a3a3", font:{family:"Inter",size:11}, usePointStyle:true, padding:14}},
+        tooltip:{backgroundColor:"rgba(0,0,0,0.9)", titleColor:"#d4d4d4",
+                 titleFont:{family:"IBM Plex Mono",size:10}, bodyFont:{family:"IBM Plex Mono",size:10},
+                 padding:8, borderColor:"rgba(255,255,255,0.1)", borderWidth:1,
+                 callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}× (${((ctx.parsed.y-1)*100>=0?"+":"")}${((ctx.parsed.y-1)*100).toFixed(1)}%)` }},
+      },
+    },
+  });
+}
+
+// -------- Ticker drill-down --------
+function renderTickerChart(tk){
+  const tdata = S.tickers[tk];
+  if (!tdata || !tdata.chart) return;
+  const period = S.tickerChartPeriod;
+  const days = {"3M":63, "6M":126, "1Y":252}[period] || 126;
+  const chart = tdata.chart.slice(-days);
+  const ctx = document.getElementById("ticker-chart");
+  if (!ctx) return;
+  if (S.tickerChart) S.tickerChart.destroy();
+
+  // Pull annotation lines from ticker_signals.json (branch on mode)
+  const sig = S.signals && S.signals.signals && S.signals.signals[tk];
+  const hline = (yval, color, label, dash=[4,4]) => ({
+    type: "line", yMin: yval, yMax: yval,
+    borderColor: color, borderWidth: 1, borderDash: dash,
+    label: { content: label, display: true, position: "start",
+             font: {family: "IBM Plex Mono", size: 9},
+             color: color, backgroundColor: "transparent" },
+  });
+  const annotations = {};
+  if (sig && sig.mode === "position") {
+    if (sig.position?.cost_basis)  annotations.cost  = hline(sig.position.cost_basis, "#60a5fa", `Cost $${sig.position.cost_basis.toFixed(2)}`);
+    if (sig.stops?.active_stop)    annotations.stop  = hline(sig.stops.active_stop,   "#f87171", `${sig.stops.active_stop_type === "trailing" ? "Trail" : "Stop"} $${sig.stops.active_stop.toFixed(2)}`);
+    if (sig.trim?.trigger_price)   annotations.trim  = hline(sig.trim.trigger_price,  "#facc15", `Trim ${sig.trim.trim_pct}% at $${sig.trim.trigger_price.toFixed(2)}`, [2,4]);
+    if (sig.hedge?.type === "covered_call" && sig.hedge.strike) {
+      annotations.cc = hline(sig.hedge.strike, "#a78bfa", `CC $${sig.hedge.strike}`, [3,3]);
+    }
+  } else if (sig) {
+    if (sig.entry?.primary)  annotations.entry  = hline(sig.entry.primary,  "#60a5fa", `Entry $${sig.entry.primary.toFixed(2)}`);
+    if (sig.stop?.price)     annotations.stop   = hline(sig.stop.price,     "#f87171", `Stop $${sig.stop.price.toFixed(2)}`);
+    if (sig.target?.base)    annotations.target = hline(sig.target.base,    "#4ade80", `Target $${sig.target.base.toFixed(2)}`);
+  }
+
+  S.tickerChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      datasets: [
+        {label:"Price",  data: chart.map(c => ({x:c.d, y:c.c})),  borderColor:"#60a5fa", borderWidth:1.4, pointRadius:0},
+        {label:"MA50",   data: chart.map(c => ({x:c.d, y:c.m50})), borderColor:"#facc15", borderWidth:0.9, borderDash:[3,2], pointRadius:0},
+        {label:"MA200",  data: chart.map(c => ({x:c.d, y:c.m200})),borderColor:"#a78bfa", borderWidth:0.9, borderDash:[3,2], pointRadius:0},
+      ],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false, animation:{duration:200},
+      interaction:{mode:"nearest",axis:"x",intersect:false},
+      scales: {
+        x: {type:"time", time:{unit: period==="3M"?"week":"month"},
+            grid:{color:"rgba(255,255,255,0.03)"},
+            ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}, },
+        y: {grid:{color:"rgba(255,255,255,0.03)"},
+            ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8},
+                   callback: v => "$"+v.toFixed(0)}},
+      },
+      plugins: {
+        legend:{position:"top",align:"end",
+                labels:{color:"#a3a3a3",font:{family:"Inter",size:10},usePointStyle:true,padding:8,boxWidth:6}},
+        tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
+                 callbacks:{ label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` }},
+        annotation: {annotations},
+      },
+    },
+  });
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Two-Score system: Business Quality (0-50) vs Trade Now (0-100).
+// They answer DIFFERENT questions; the divergence between them is the
+// actionable insight (great business + bad entry = pullback watch-list).
+// Used by the detail header and the universe scanner list.
+// ──────────────────────────────────────────────────────────────────────
+function qualityColor(q){          // 0-50 scale
+  if (q >= 38) return "#4ade80";
+  if (q >= 25) return "#facc15";
+  return "#f87171";
+}
+function tradeColor(t){            // 0-100 scale
+  if (t >= 70) return "#4ade80";
+  if (t >= 40) return "#facc15";
+  return "#f87171";
+}
+function divergenceState(quality, qPct, trade, sig){
+  // Signal-aware short-circuits: a SELL or position-management signal must
+  // never get flagged as "↗ momo (momentum trade)" — the strength score in
+  // those modes means "definitely act," not "good entry." Buy quadrants only
+  // apply when the signal is actually BUY or STRONG BUY.
+  const S = (sig || "").toUpperCase();
+  if (S.startsWith("SELL"))            return {cls:"exit",   color:"#f87171", icon:"▼",
+                                                text:"Exit signal — stop or thesis triggered."};
+  if (S.startsWith("TRIM"))            return {cls:"trim",   color:"#facc15", icon:"✂",
+                                                text:"Trim signal — profit-take threshold crossed."};
+  if (S.includes("HEDGE"))             return {cls:"hedge",  color:"#a78bfa", icon:"🛡",
+                                                text:"Hedge signal — extended position, sell covered calls."};
+  if (S.includes("MONITOR"))           return {cls:"monitor",color:"#94a3b8", icon:"—",
+                                                text:"Monitor — multiple yellow flags but no exit."};
+  if (S.startsWith("HOLD"))            return {cls:"hold",   color:"#737373", icon:"—",
+                                                text:"Hold — no action."};
+  if (S.startsWith("WAIT") || S.startsWith("WATCH"))
+                                       return {cls:"wait",   color:"#facc15", icon:"⏸",
+                                                text:"Wait for entry — not at the price the model wants."};
+  // BUY / STRONG BUY → 4-quadrant divergence
+  const hiQ = quality >= 38;
+  const hiT = trade >= 70;
+  if ( hiQ &&  hiT) return {cls:"clean", color:"#4ade80", icon:"★",
+                            text:"Clean buy — top-tier business at a good entry."};
+  if ( hiQ && !hiT) return {cls:"watch", color:"#facc15", icon:"⚠",
+                            text:"Quality name, but NOT a good entry now — pullback watch-list."};
+  if (!hiQ &&  hiT) return {cls:"momo",  color:"#60a5fa", icon:"↗",
+                            text:"Decent entry on a middling business — momentum trade, lower conviction."};
+  return                    {cls:"avoid", color:"#737373", icon:"·",
+                            text:"Neither quality nor timing — pass."};
+}
+function tradeContext(s){
+  // One short phrase that summarises the trade-now reading using existing data.
+  if (!s) return "";
+  if (s.mode === "position"){
+    const p = s.position || {};
+    if (s.signal && s.signal.startsWith("SELL")) return `stop triggered · ${p.gain_pct >= 0 ? "+" : ""}${p.gain_pct?.toFixed?.(0) || "?"}%`;
+    if (s.signal && s.signal.startsWith("TRIM")) return `${p.gain_pct?.toFixed?.(0) || "?"}% gain · trim trigger`;
+    if (s.signal && s.signal.includes("HEDGE")) return `+${p.gain_pct?.toFixed?.(0) || "?"}% · extended · ${s.hedge?.strike ? "sell $" + s.hedge.strike + " calls" : "hedge"}`;
+    return `${p.gain_pct >= 0 ? "+" : ""}${p.gain_pct?.toFixed?.(0) || "?"}% gain · trail $${s.stops?.active_stop ?? "?"}`;
+  }
+  const d = s.data || {};
+  const bits = [];
+  if (d.rsi != null) {
+    if (d.rsi < 35) bits.push(`RSI ${d.rsi.toFixed(0)} (oversold)`);
+    else if (d.rsi > 65) bits.push(`RSI ${d.rsi.toFixed(0)} (overbought)`);
+    else bits.push(`RSI ${d.rsi.toFixed(0)}`);
+  }
+  if (s.extended) bits.push("extended");
+  if (d.ma200_dist != null && Math.abs(d.ma200_dist) < 5) bits.push("at 200-DMA");
+  return bits.join(" · ");
+}
+function twoScoreBar(value, max, color){
+  const pct = Math.max(0, Math.min(100, value / max * 100));
+  return `<div class="ts-bar">
+    <div class="ts-bar-fill" style="width:${pct.toFixed(0)}%;background:${color}"></div>
+  </div>`;
+}
+function renderTwoScore(tk){
+  const s = S.signals && S.signals.signals && S.signals.signals[tk];
+  if (!s) return "";
+  const quality = (s.data && s.data.composite != null) ? +s.data.composite : 0;
+  const qPct    = (s.data && s.data.composite_pct != null) ? +s.data.composite_pct : 0;
+  const rank    = (s.data && s.data.rank != null) ? +s.data.rank : null;
+  const trade   = s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength;
+  const sig     = s.signal || "—";
+  const note    = s.trade_now_note;
+  const div     = divergenceState(quality, qPct, trade, sig);
+
+  return `<div class="two-score">
+    <div class="ts-row">
+      <div class="ts-label">Business quality</div>
+      ${twoScoreBar(quality, 50, qualityColor(quality))}
+      <div class="ts-val">${quality.toFixed(1)}<span class="ts-of">/50</span></div>
+      <div class="ts-sub">${qPct.toFixed(0)}th pct${rank === 1 ? " · #1 in universe" : rank ? " · rank #" + rank : ""}</div>
+    </div>
+    <div class="ts-row">
+      <div class="ts-label">Trade now</div>
+      ${twoScoreBar(trade, 100, tradeColor(trade))}
+      <div class="ts-val"><span style="color:${tradeColor(trade)}">${sig}</span> · ${trade}<span class="ts-of">/100</span></div>
+      <div class="ts-sub">${note ? '<span style="color:#facc15">' + note + '</span>' : tradeContext(s)}</div>
+    </div>
+    <div class="ts-divergence" style="color:${div.color};border-left:3px solid ${div.color}">
+      ${div.icon} ${div.text}
+    </div>
+  </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// REGIME & OVERLAY panel — VIX term-structure regime + spike attribution.
+// CONDITIONING/uncertainty information only. NEVER renders a directional
+// implication for any event marker. The overlay scalar is shown but
+// gated as DIAGNOSTIC until backtest validation closes.
+// ──────────────────────────────────────────────────────────────────────
+function renderRegimeOverlayPanel(){
+  const r = S.volRegime;
+  if (!r) return "";
+
+  // State + dynamics
+  const dyn = (r.dynamics && r.dynamics[r.state]) || {};
+  const nextTypical = (() => {
+    const dist = dyn.next_state_distribution || {};
+    const keys = Object.keys(dist);
+    if (!keys.length) return null;
+    const top = keys.reduce((a,b) => dist[a] > dist[b] ? a : b);
+    const total = Object.values(dist).reduce((a,b) => a+b, 0);
+    return { state: top, pct: Math.round(dist[top] / total * 100) };
+  })();
+
+  // Conditioning row
+  const condRow = (k, v, on) => `<div class="rop-cond-row">
+    <span class="k">${k}</span>
+    <span class="v ${on === true ? 'on' : on === false ? 'off' : ''}">${v}</span>
+  </div>`;
+
+  // Attribution
+  const driver = r.attribution.primary_driver;
+  const reversion = r.attribution.primary_reversion;
+  const equityDrag = r.attribution.equity_drag;
+  const eqInputs = r.attribution.equity_drag_inputs || {};
+
+  // Term curve mini-chart datasets
+  const curve = r.curve || {};
+  const curvePoints = [
+    {tenor: "spot",   v: curve.spot_vix},
+    curve.vix1d ? {tenor: "1d",    v: curve.vix1d} : null,
+    {tenor: "3M",     v: curve.vix3m},
+  ].filter(Boolean);
+
+  // History strip
+  const history = (r.history_recent || []).slice(-180);
+  const stripCells = history.map(h => `<div class="cell" data-st="${h.state}" title="${h.d}: ${h.state} (${h.spread})"></div>`).join("");
+
+  // Past event-day spikes for the "past spikes" list
+  const pastSpikes = (r.past_spikes || []).slice().reverse().slice(0, 8);
+  const spikeList = pastSpikes.map(s => `
+    <div>${s.d} · <strong>${s.state}</strong> Δspread ${s.delta_spread >= 0 ? "+" : ""}${s.delta_spread}${s.event ? ' · ' + s.event : ''}</div>
+  `).join("");
+
+  // Overlay scalar
+  const ovs = r.overlay_scalar || {};
+
+  // RoP-FIX B1: two-horizon line — acute today vs reverts later. Pulls the
+  // VIX1D event-vol point + intraday VIX move so the reader sees the
+  // acute-now / calm-later split explicitly instead of having to
+  // reconcile a benign 73% reversion stat with an obviously stressed
+  // session.
+  const vixId   = S.intraday || {};
+  const vixChg  = (vixId.vix_change_pct != null && vixId.vix_now != null)
+    ? `${vixId.vix_change_pct >= 0 ? "+" : ""}${vixId.vix_change_pct}%` : null;
+  const vixNow  = vixId.vix_now != null ? vixId.vix_now : (r.curve && r.curve.spot_vix);
+  const twoHorizonLine = (nextTypical && r.curve && r.curve.vix1d != null) ? `
+    <div style="margin-top:8px;padding:8px 10px;background:rgba(168,143,229,0.05);
+         border-left:2px solid rgba(168,143,229,0.4);border-radius:0 4px 4px 0;
+         font:italic 400 11.5px var(--s);color:var(--t2);line-height:1.55">
+      <strong style="font-style:normal;font-family:var(--m);color:var(--t1);font-weight:600">Acute today:</strong>
+      VIX1D <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${r.curve.vix1d}</strong>,
+      VIX <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${vixNow}</strong>${vixChg ? ` (${vixChg})` : ""}
+      — front-end event vol elevated.
+      Term structure (spot−3M = <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>)
+      only mildly inverted; historically reverts to
+      <strong style="font-style:normal;color:var(--t1)">${nextTypical.state}</strong>
+      <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${nextTypical.pct}%</strong> of the time.
+    </div>` : "";
+
+  // RoP-FIX B2: atypical-entry caveat
+  const en = r.entry || {};
+  const atypicalCaveat = en.atypical_entry ? `
+    <div style="margin-top:8px;padding:8px 10px;background:rgba(219,162,62,0.06);
+         border-left:2px solid rgba(219,162,62,0.55);border-radius:0 4px 4px 0;
+         font:italic 400 11.5px var(--s);color:var(--y);line-height:1.55">
+      <strong style="font-style:normal;font-family:var(--m);letter-spacing:.06em">⚠ ENTERED VIA A
+      ${en.current_entry_dspread >= 0 ? "+" : ""}${en.current_entry_dspread} SHOCK</strong>
+      (z = <strong style="font-style:normal;font-family:var(--m)">${en.entry_zscore}</strong>σ of ${r.state} entries,
+      vs typical ${en.state_mean_entry >= 0 ? "+" : ""}${en.state_mean_entry}).
+      The reversion stat above pools mostly gentle entries and may not apply to a shock-entered state.
+    </div>` : "";
+
+  // Walk-forward validation — RoP-FIX 2: surface BOTH metrics with Wilson CI
+  // and honest small-n caveat. Today is excluded from both.
+  const wf  = (r.validation && r.validation.walk_forward) || {};
+  const at  = wf.all_triggers_reversion || {};
+  const ev  = wf.event_day_only_reversion || {};
+  const fmtCI = m => (m.wilson_95ci ? `${Math.round(m.wilson_95ci[0]*100)}–${Math.round(m.wilson_95ci[1]*100)}%` : "—");
+  const wfTextAll = at.hit_rate != null
+    ? `${at.n_reverted}/${at.n} (${Math.round(at.hit_rate*100)}%) · 95% CI ${fmtCI(at)}` : "—";
+  const wfTextEv  = ev.hit_rate != null
+    ? `${ev.n_reverted}/${ev.n} (${Math.round(ev.hit_rate*100)}%) · 95% CI ${fmtCI(ev)}`
+    : (wf.event_day_caveat || "—");
+
+  return `<section class="rop">
+    <div class="rop-head">
+      <div>
+        <h2>REGIME & OVERLAY${asOfBadge(r.session_date || r.as_of)}</h2>
+        <div class="sub">VIX term-structure state · spike attribution · diagnostic overlay</div>
+      </div>
+      <div style="font:400 11px var(--m);color:var(--t3)">
+        spread = <strong style="color:var(--t1)">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>
+        (Δ ${r.delta_spread >= 0 ? "+" : ""}${r.delta_spread})
+        · ${r.tradable_at ? `signal at close · tradable next open ${r.tradable_at}` : ""}
+      </div>
+    </div>
+
+    <div class="rop-grid">
+      <!-- State + dynamics -->
+      <div class="rop-block">
+        <h4>STATE · DYNAMICS</h4>
+        <div class="rop-state ${r.state}">${r.state.replace("_"," ")}</div>
+        <div class="rop-meta">
+          Age <strong>${r.state_age}</strong> session${r.state_age === 1 ? "" : "s"}
+          · median persistence <strong>${dyn.median_sessions || "—"}</strong>
+          (p25 ${dyn.p25_sessions || "—"} · p75 ${dyn.p75_sessions || "—"})
+          ${nextTypical ? `<div>most-common next state: <strong>${nextTypical.state}</strong> (${nextTypical.pct}% of transitions)</div>` : ""}
+        </div>
+        ${twoHorizonLine}
+        ${atypicalCaveat}
+        <div style="margin-top:10px">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">HISTORY · last 180 sessions</div>
+          <div class="rop-history-strip">${stripCells}</div>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">PAST TRIGGER SPIKES (most recent 8 · event-tagged if applicable)</div>
+          <div class="rop-spike-list">${spikeList || '<div style="color:var(--t4);font-style:italic">no recent trigger episodes</div>'}</div>
+        </div>
+        ${renderStatesLegend(r)}
+      </div>
+
+      <!-- Conditioning + attribution -->
+      <div class="rop-block">
+        <h4>CONDITIONING · ATTRIBUTION</h4>
+        ${condRow("Event flag",
+                  r.conditioning.event_flag ? r.conditioning.event_types.join(" · ") : "—",
+                  r.conditioning.event_flag)}
+        ${condRow("Δ2Y (bps)",
+                  r.conditioning.delta_2y_bps != null
+                    ? `${r.conditioning.delta_2y_bps >= 0 ? "+" : ""}${r.conditioning.delta_2y_bps} <span style="color:var(--t4);font-weight:400">(${r.conditioning.delta_2y_source})</span>`
+                    : '<span style="color:var(--t4)">unavailable (FRED T+1)</span>',
+                  r.conditioning.front_end_repriced)}
+        ${condRow("Close behaviour",
+                  `proxy ${r.conditioning.held_close_proxy} ${r.conditioning.held_close ? '· held' : '· faded'}`,
+                  r.conditioning.held_close)}
+        <div class="rop-attr">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">PRIMARY DRIVER ${r.trigger_fired ? "" : '<span style="color:var(--t5)">· no trigger</span>'}</div>
+          <div class="driver">${driver.replace(/_/g, " ")}</div>
+          <div class="reversion">reversion bucket: <strong style="color:var(--t1)">${reversion.toUpperCase()}</strong>
+            · horizon ${r.config.reversion_N} sessions within ${r.config.reversion_X_sigma}σ</div>
+          ${equityDrag ? `<div class="overlay-flag">↘ EQUITY DRAG OVERLAY · SMH ${(eqInputs.smh_1d_return*100).toFixed(1)}% · breadth Δ ${eqInputs.breadth_delta_pp >= 0 ? "+" : ""}${eqInputs.breadth_delta_pp}pp ${eqInputs.breadth_z != null ? `(z = ${eqInputs.breadth_z}σ, holds)` : ""}</div>` : ""}
+        </div>
+      </div>
+
+      <!-- Curve + overlay scalar + validation -->
+      <div class="rop-block">
+        <h4>TERM CURVE · OVERLAY</h4>
+        <div class="rop-curve-wrap"><canvas id="rop-curve"></canvas></div>
+        <div style="font:italic 400 10.5px var(--s);color:var(--t3);margin-top:6px;line-height:1.4">
+          Headline spread = <strong style="font-style:normal;font-family:var(--m);color:var(--t2)">spot − 3M</strong>
+          (VIX − VIX3M). The 1-day (VIX1D) point is event-vol context — plotted as
+          a separate marker, NOT part of the spread definition.
+        </div>
+        <div class="rop-overlay-scalar">
+          <div class="lbl">OVERLAY POSITION SCALAR</div>
+          <div class="v">${ovs.value >= 0 ? "+" : ""}${ovs.value} <span style="font:600 11px var(--m);color:var(--accent);letter-spacing:.14em">${ovs.label}</span></div>
+          <div class="cap">${ovs.caption || ""}</div>
+        </div>
+        <div class="rop-validation">
+          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
+            WALK-FORWARD REVERSION · horizon ${at.horizon_sessions || "—"} sessions / ±${at.threshold_sigma || "—"}σ
+            · today (${wf.today_excluded_from_metrics || "—"}) excluded
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div>All triggers (the well-evidenced number): <strong style="color:var(--t1)">${wfTextAll}</strong></div>
+            <div>Event-day only (handful per year): <strong style="color:var(--t2);font-style:italic">${wfTextEv}</strong></div>
+            ${ev.hit_rate != null && ev.n < 30 ? `<div style="color:var(--y);font-style:italic;font-size:10.5px;margin-top:2px">⚠ ${wf.event_day_caveat || ""}</div>` : ""}
+          </div>
+          <div style="margin-top:6px">No-look-ahead: <strong style="color:var(--g)">${r.validation && r.validation.no_lookahead_passed ? "PASS" : "—"}</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+// RoP-FIX 6: states legend — explains the four spread bands with verbal
+// descriptions. Mono caption underneath the STATE block.
+function renderStatesLegend(r){
+  const breaks = (r.config && r.config.state_breaks) || {};
+  const dc = breaks.deep_contango_max != null ? breaks.deep_contango_max.toFixed(1) : "−3.0";
+  const c  = breaks.contango_max != null ? breaks.contango_max.toFixed(1) : "−1.0";
+  const f  = breaks.flattening_max != null ? "+" + breaks.flattening_max.toFixed(1) : "+0.5";
+  const row = (name, band, gloss) => `
+    <div style="display:grid;grid-template-columns:96px 88px 1fr;gap:6px;padding:3px 0;border-bottom:1px dashed var(--hairline)">
+      <div style="font:600 10px var(--m);color:var(--t2);letter-spacing:.04em">${name}</div>
+      <div style="font:500 10px var(--m);color:var(--t3)">${band}</div>
+      <div style="font:italic 400 11px var(--s);color:var(--t3);line-height:1.4">${gloss}</div>
+    </div>`;
+  return `<div style="margin-top:10px">
+    <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
+      TERM-STRUCTURE STATES &nbsp;<span style="font-weight:400;color:var(--t5);letter-spacing:0">(spread = VIX − VIX3M)</span>
+    </div>
+    ${row("deep contango",  `spread &lt; ${dc}`,
+          "Front-month vol far below 3-month; steep, calm upward curve. Most favourable for roll-harvest.")}
+    ${row("contango",        `${dc} to ${c}`,
+          "Normal upward curve, front below back. Calm baseline; roll-harvest still works.")}
+    ${row("flattening",      `${c} to ${f}`,
+          "Curve near-flat — front catching up to back. Transitional; tension building. Trim short-vol. ‘Flattening’ here is a spread-LEVEL band; the direction/decay is in the dynamics line above.")}
+    ${row("backwardation",   `&gt; ${f}`,
+          "Front above back — market prices more fear now than later. Acute stress. Favours long-front / tail.")}
+  </div>`;
+}
+
+function renderRopCurveChart(){
+  const r = S.volRegime;
+  if (!r || !r.curve) return;
+  const ctx = document.getElementById("rop-curve");
+  if (!ctx) return;
+  if (S.ropCurveChart) { try { S.ropCurveChart.destroy(); } catch(e){} }
+  const curve = r.curve;
+  // The spread is spot−3M; plot those two as the "term curve" line.
+  // VIX1D (1-day event vol) is plotted as a SEPARATE marker so the reader
+  // doesn't mistake event-vol for part of the spread definition.
+  const spreadPoints = [
+    {x: 0, y: curve.spot_vix},
+    {x: 2, y: curve.vix3m},
+  ].filter(p => p.y != null);
+  const eventVolPoint = curve.vix1d != null ? [{x: 1, y: curve.vix1d}] : [];
+  // Color the spread line by current state (semantic)
+  const lineColor = r.spread > 0.5 ? "#E0664E" : (r.spread > -1 ? "#DBA23E" : "#5FB98E");
+  try {
+    S.ropCurveChart = new Chart(ctx, {
+      type: "line",
+      data: { datasets: [
+        { label: "term (spot ↔ 3M)", data: spreadPoints,
+          borderColor: lineColor, borderWidth: 2, tension: 0,
+          pointRadius: 6, pointBackgroundColor: lineColor, pointBorderColor: "#1C1916",
+          pointBorderWidth: 2, showLine: true, fill: false },
+        { label: "1-day VIX1D (event vol, off-spread)", data: eventVolPoint,
+          borderColor: "rgba(168,143,229,0.6)", borderWidth: 1, borderDash: [3,3],
+          pointRadius: 5, pointBackgroundColor: "rgba(168,143,229,0.0)",
+          pointBorderColor: "#A88FE5", pointBorderWidth: 2, showLine: false, fill: false },
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+        scales: {
+          x: {type: "linear", min: -0.3, max: 2.3,
+              grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 9},
+                      callback: v => ({0: "spot (1M)", 1: "1-day", 2: "3M"})[v] || ""}},
+          y: {grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 9}}},
+        },
+        plugins: {
+          legend: {display: true, position: "bottom",
+                    labels: {color: "#837A6B", font: {family: "Pagella, Spectral, serif", size: 10, style: "italic"},
+                             usePointStyle: true, padding: 6, boxWidth: 6}},
+          tooltip: {backgroundColor: "rgba(0,0,0,0.9)",
+                    callbacks: { label: ctx => ` ${({0:"spot (1M)",1:"1-day VIX1D",2:"3M"})[ctx.parsed.x] || ""}: ${ctx.parsed.y.toFixed(2)}` }},
+        },
+      },
+    });
+  } catch (e) {
+    console.error("[rop-curve] Chart.js failed:", e);
+  }
+}
+
+// Event-day badge for cycle position
+function eventTodayBadge(){
+  const r = S.volRegime;
+  if (!r || !r.event_today || !r.event_today.length) return "";
+  return `<div class="event-today-badge">
+    <span class="lbl">⊙</span> SCHEDULED MACRO EVENT TODAY · ${r.event_today.join(" · ")}
+    <div class="event-today-cap">Regime read is conditional; vol moves expected; do not deploy fresh capital pre-print.</div>
+  </div>`;
+}
+
+// "Next scheduled event in N sessions"
+function nextEventLine(){
+  const r = S.volRegime;
+  if (!r || !r.next_event) return "";
+  const n = r.next_event.sessions_away;
+  return `<div class="next-event-line">
+    Next scheduled event: <strong style="color:var(--t2)">${r.next_event.types.join("·")}</strong>
+    in <strong style="color:var(--t2)">${n}</strong> session${n === 1 ? "" : "s"}
+    (${r.next_event.date}) · model uncertainty elevated.
+  </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// THESIS layer — meso: cross-sectional structure of the bets.
+// Risk accounting + epistemics, NOT a return forecaster. Holdings-based
+// exposure only; no factor regressions on live data; no rotation signal;
+// the registry/claims are frozen judgment artifacts rendered verbatim.
+// ──────────────────────────────────────────────────────────────────────
+const THESIS_COLORS = {
+  ai_infra: "#6B9BEA", fin_plumbing: "#5FB98E", hard_assets: "#C9A86A",
+  defensive_quality: "#B3AA9B", ldg_ex_ai: "#A88FE5", consumer_cyclical: "#E6914A",
+  unclassified: "#5E5648", cash: "#2C2820",
+};
+function thesisColor(k){ return THESIS_COLORS[k] || "#737373"; }
+function thesisLabel(k){
+  const reg = S.thesisReg && S.thesisReg.theses;
+  if (k === "unclassified") return "unclassified";
+  if (k === "cash") return "cash";
+  return (reg && reg[k] && reg[k].label) || k;
+}
+
+function renderThesisSection(){
+  const td = S.thesis;
+  if (!td) return "";
+  const frozen = td.registry_frozen;
+  const view = S.thesisView || "invested";
+  const tab  = S.thesisTab || "live";
+  const expKey = view === "total" ? "exposure_total" : "exposure_invested";
+
+  // ---- B1: exposure stacked bars + N_eff + overlap ----
+  const tierRows = Object.entries(td.tiers || {}).map(([tid, t]) => {
+    const exp = t[expKey] || {};
+    const segs = Object.entries(exp).map(([k, w]) =>
+      `<div style="width:${(w*100).toFixed(1)}%;background:${thesisColor(k)}"
+        title="${thesisLabel(k)}: ${(w*100).toFixed(1)}%"></div>`).join("");
+    const ts = tierSpec(tid);
+    return `<div class="th-bar-row">
+      <div class="tname" style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</div>
+      <div class="th-stack">${segs}</div>
+      <div class="th-meta">N<sub>eff</sub> <strong style="color:var(--t1)">${t.n_eff}</strong>
+        · uncl ${(t.unclassified_share*100).toFixed(0)}%${t.provisional_share ?
+        ` · <span style="color:var(--y);font:600 9px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px" title="${(t.coverage_caveat||'').replace(/"/g,'&quot;')} — ${(t.provisional_names||[]).join(', ')}">PROVISIONAL ${(t.provisional_share*100).toFixed(0)}%</span>` : ''}${t.extend_registry_prompt ?
+        ' <span style="color:var(--y)" title="Unclassified > 15% of invested — extend the registry (version bump)">⚠ EXTEND</span>' : ''}</div>
+    </div>`;
+  }).join("");
+  const legend = Object.keys(THESIS_COLORS).map(k =>
+    `<span><span class="sw" style="background:${thesisColor(k)}"></span>${thesisLabel(k)}</span>`).join("");
+
+  const tids = Object.keys(td.tiers || {});
+  const om = td.overlap_matrix || {};
+  const heat = (v) => {
+    const a = Math.max(0, Math.min(1, v));
+    return `rgba(201,168,106,${(a*0.55).toFixed(2)})`;
+  };
+  const overlapTable = `<table class="th-table" style="margin-top:8px">
+    <tr><th>OVERLAP</th>${tids.map(t => `<th>${(tierSpec(t)||{}).short || t}</th>`).join("")}</tr>
+    ${tids.map(a => `<tr><td>${(tierSpec(a)||{}).short || a}</td>${tids.map(b =>
+      `<td style="background:${a===b ? 'transparent' : heat(om[a]?.[b] ?? 0)}">${a===b ? "—" : ((om[a]?.[b] ?? 0)).toFixed(2)}</td>`).join("")}</tr>`).join("")}
+  </table>`;
+
+  // ---- B2: basket performance table ----
+  const fmtPc = v => v == null ? "—" : ((v >= 0 ? "+" : "") + (v*100).toFixed(1) + "%");
+  const basketRows = Object.entries(td.baskets || {}).map(([k, b]) => `
+    <tr>
+      <td><span class="sw" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${thesisColor(k)};margin-right:6px"></span>${b.label}</td>
+      <td class="${b.ret_1d > 0 ? 'pos' : b.ret_1d < 0 ? 'neg' : ''}">${fmtPc(b.ret_1d)}</td>
+      <td class="${b.ret_1w > 0 ? 'pos' : b.ret_1w < 0 ? 'neg' : ''}">${fmtPc(b.ret_1w)}</td>
+      <td class="${b.ret_inception > 0 ? 'pos' : b.ret_inception < 0 ? 'neg' : ''}">${fmtPc(b.ret_inception)}</td>
+      <td class="neg">${fmtPc(b.drawdown_from_peak)}</td>
+      <td style="color:var(--t3)">${b.proxy_etf || "—"} ${fmtPc(b.proxy_ret_1w)}${(b.provisional_members||[]).length ? ` <span style="color:var(--y);font:600 9px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px" title="provisional members in this basket: ${b.provisional_members.join(', ')} — expire unless approved">PROVISIONAL +${b.provisional_members.length}</span>` : ''}</td>
+      <td>${b.divergence_flag ? `<span style="color:var(--y)" title="basket vs proxy diverge ${b.divergence_1w_pp}pp on the week — classification drift smell">⚠ ${b.divergence_1w_pp}pp</span>` : '<span style="color:var(--t4)">ok</span>'}</td>
+    </tr>`).join("");
+
+  // ---- B3: falsification register ----
+  const claims = (S.thesisClaims && S.thesisClaims.claims) || [];
+  const ks = td.kill_status || {};
+  const claimCards = claims.map(c => {
+    const k = ks[c.thesis_id] || {};
+    const status = k.met
+      ? `<span class="cl-status" style="color:var(--r)">KILL CRITERIA MET ON ${k.date}</span>`
+      : `<span class="cl-status" style="color:var(--g)">no kill criteria met</span>`;
+    const log = (c.log || []).slice(-6).reverse().map(l =>
+      l.type === "auto"
+        ? `<div>${l.date} · ${l.event} · basket 1d ${(l.basket_ret_1d*100).toFixed(2)}%</div>`
+        : `<div class="an">${l.date} · analyst entry · ${l.note || ""}${l.kill ? " · KILL" : ""}</div>`
+    ).join("");
+    return `<div class="th-claim">
+      <div class="cl-head">
+        <span class="cl-name" style="color:${thesisColor(c.thesis_id)}">${thesisLabel(c.thesis_id)}</span>
+        ${status}
+      </div>
+      <div class="cl-text">${c.claim}</div>
+      <div class="cl-kill"><span class="k">KILL</span>${c.kill_criteria}</div>
+      <div class="th-log">${log || '<div style="color:var(--t4);font-style:italic">no log entries</div>'}</div>
+    </div>`;
+  }).join("");
+
+  // ---- B4: attribution waterfalls ----
+  const attr = td.attribution || {};
+  const maxAbs = Math.max(0.0001, ...Object.values(attr).flatMap(a =>
+    a.cum ? Object.values(a.cum).map(Math.abs) : [0]));
+  const wfRow = (lbl, v) => {
+    const w = Math.abs(v) / maxAbs * 50;
+    const color = v >= 0 ? "var(--g)" : "var(--r)";
+    const left = v >= 0 ? 50 : 50 - w;
+    return `<div class="th-wf">
+      <span class="lbl">${lbl}</span>
+      <div class="barwrap"><div class="bar" style="left:${left}%;width:${w}%;background:${color}"></div>
+        <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--hairline-hi)"></div></div>
+      <span class="val">${(v*100).toFixed(2)}%</span>
+    </div>`;
+  };
+  const attrBlocks = Object.entries(attr).map(([tid, a]) => {
+    const ts = tierSpec(tid); const c = a.cum || {};
+    return `<div style="margin-bottom:10px">
+      <div style="font:600 11px var(--m);color:${ts ? ts.color : 'var(--t2)'};margin-bottom:3px">
+        ${ts ? ts.short : tid} <span style="color:var(--t4);font-weight:400">· active vs SPY ${(c.active*100).toFixed(2)}% · ${a.n_days} sessions</span></div>
+      ${wfRow("cash effect", c.cash_eff)}
+      ${wfRow("thesis allocation", c.alloc_eff)}
+      ${wfRow("selection", c.selection)}
+    </div>`;
+  }).join("");
+
+  // ---- B5: backtest sub-tab ----
+  const bt = S.thesisBT || {};
+  const btRows = Object.entries(bt.tiers || {}).map(([tid, t]) => {
+    const ts = tierSpec(tid); const c = t.cum || {};
+    return `<tr>
+      <td style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</td>
+      <td>${t.n_periods}</td>
+      <td class="${c.active > 0 ? 'pos' : 'neg'}">${(c.active*100).toFixed(0)}%</td>
+      <td class="${c.cash_eff > 0 ? 'pos' : 'neg'}">${(c.cash_eff*100).toFixed(0)}%</td>
+      <td class="${c.alloc_eff > 0 ? 'pos' : 'neg'}">${(c.alloc_eff*100).toFixed(0)}%</td>
+      <td class="${c.selection > 0 ? 'pos' : 'neg'}">${(c.selection*100).toFixed(0)}%</td>
+      <td style="color:var(--t3);text-align:left">${Object.entries(t.avg_exposure || {}).slice(0,3).map(([k,v]) => `${thesisLabel(k)} ${(v*100).toFixed(0)}%`).join(" · ")}</td>
+    </tr>`;
+  }).join("");
+  const btCaveats = (bt.caveats || []).map(c => `<div class="th-caveat">⚠ ${c}</div>`).join("");
+
+  const liveBody = `
+    <div class="th-block">
+      <h4>B1 · EXPOSURE & CONCENTRATION
+        <span class="th-toggle">
+          <button class="${view==='invested' ? 'on' : ''}" data-thesis-view="invested">INVESTED</button>
+          <button class="${view==='total' ? 'on' : ''}" data-thesis-view="total">TOTAL incl. cash</button>
+        </span></h4>
+      ${tierRows}
+      <div class="th-legend">${legend}</div>
+      ${overlapTable}
+      <div class="th-caveat">${td.method_caption}</div>
+    </div>
+    <div class="th-block">
+      <h4>B2 · THESIS BASKETS — performance & drawdown (context, not signal)</h4>
+      <table class="th-table">
+        <tr><th>THESIS</th><th>1D</th><th>1W</th><th>SINCE 05-20</th><th>DD</th><th>PROXY 1W</th><th>DIV</th></tr>
+        ${basketRows}
+      </table>
+      <div style="margin-top:10px">
+        <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
+          RELATIVE STRENGTH — ai_infra / fin_plumbing · ai_infra / hard_assets
+          <span style="font-weight:400;letter-spacing:0;color:var(--t5)">· ${td.rs_caption}</span></div>
+        <div class="th-rs-wrap"><canvas id="thesis-rs-chart"></canvas></div>
+      </div>
+      <div class="th-caveat">${td.small_n_caveat}</div>
+    </div>
+    <div class="th-block">
+      <h4>B3 · THESIS REGISTER — claims · kill criteria · log (auto = mechanical event-day entries; analyst = Werner)</h4>
+      ${claimCards}
+    </div>
+    <div class="th-block">
+      <h4>B4 · ATTRIBUTION — cash | allocation | selection (sums to active vs SPY; residual-defined)</h4>
+      ${attrBlocks}
+      <div class="th-caveat">${td.small_n_caveat} Components are arithmetic sums of daily effects; no CIs fabricated on ${td.sessions_since_inception} points.</div>
+      <div class="th-caveat">"Selection" is measured against equal-weight thesis baskets; with coarse
+        buckets, within-thesis composition (e.g. memory-semis vs megacap-AI) appears as selection.
+        Finer sub-theses would reclassify part of it as allocation — a memory_semis sub-thesis
+        proposal is in registry_proposals.json to demonstrate this bucket-dependence live.</div>
+    </div>`;
+
+  const btBody = `
+    <div class="th-block">
+      <h4>B5 · BACKTEST ATTRIBUTION — full walk-forward, ${(bt.tiers && Object.values(bt.tiers)[0] || {}).n_periods || "—"} monthly periods</h4>
+      <table class="th-table">
+        <tr><th>TIER</th><th>PERIODS</th><th>CUM ACTIVE</th><th>CASH</th><th>ALLOCATION</th><th>SELECTION</th><th style="text-align:left">AVG TOP EXPOSURES</th></tr>
+        ${btRows}
+      </table>
+      ${btCaveats}
+    </div>`;
+
+  return `<section class="thesis">
+    <div class="thesis-head">
+      <div>
+        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.session_date || td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span style="font:500 9px var(--m);color:var(--t4);margin-left:8px">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
+        <div class="sub">the meso level: cross-sectional structure of the bets — risk accounting, not a return forecaster</div>
+      </div>
+      <span class="th-toggle">
+        <button class="${tab==='live' ? 'on' : ''}" data-thesis-tab="live">LIVE</button>
+        <button class="${tab==='backtest' ? 'on' : ''}" data-thesis-tab="backtest">BACKTEST</button>
+      </span>
+    </div>
+    ${tab === "live" ? liveBody : btBody}
+  </section>`;
+}
+
+function renderThesisRsChart(){
+  const td = S.thesis;
+  if (!td || !td.rs_series) return;
+  const ctx = document.getElementById("thesis-rs-chart");
+  if (!ctx) return;
+  if (S.thesisRsChart) { try { S.thesisRsChart.destroy(); } catch(e){} }
+  const toIdx = arr => (arr || []).map((p, i) => ({x: i, y: p.v, d: p.d}));
+  const s1 = toIdx(td.rs_series.ai_infra_vs_fin_plumbing);
+  const s2 = toIdx(td.rs_series.ai_infra_vs_hard_assets);
+  // Regime shading: amber boxes over spans where R_t >= 0.5 (HIGH+) within window
+  const annotations = {};
+  if (S.regimeDaily && s1.length) {
+    const dates = s1.map(p => p.d);
+    const rmap = {};
+    S.regimeDaily.forEach(r => { if (r.date && r.R_t != null) rmap[String(r.date).slice(0,10)] = +r.R_t; });
+    let spanStart = null;
+    dates.forEach((d, i) => {
+      const hot = (rmap[d] ?? 0) >= 0.5;
+      if (hot && spanStart === null) spanStart = i;
+      if ((!hot || i === dates.length - 1) && spanStart !== null) {
+        annotations["regime" + spanStart] = {
+          type: "box", xMin: spanStart, xMax: i, yScaleID: "y",
+          backgroundColor: "rgba(219,162,62,0.08)", borderWidth: 0,
+        };
+        spanStart = null;
+      }
+    });
+  }
+  const xTickCb = arr => v => {
+    const i = Math.round(v);
+    return (i >= 0 && i < arr.length && arr[i]) ? arr[i].d.slice(0, 7) : "";
+  };
+  try {
+    S.thesisRsChart = new Chart(ctx, {
+      type: "line",
+      data: { datasets: [
+        { label: "ai_infra / fin_plumbing", data: s1, borderColor: "#6B9BEA",
+          borderWidth: 1.4, pointRadius: 0, tension: 0.1 },
+        { label: "ai_infra / hard_assets", data: s2, borderColor: "#C9A86A",
+          borderWidth: 1.4, pointRadius: 0, tension: 0.1 },
+      ]},
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+        scales: {
+          x: {type: "linear", min: 0, max: Math.max(0, s1.length - 1),
+              grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 8},
+                      maxRotation: 0, stepSize: Math.max(1, Math.floor(s1.length/6)),
+                      callback: xTickCb(s1)}},
+          y: {grid: {color: "rgba(255,255,255,0.03)"},
+              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 8}}},
+        },
+        plugins: {
+          legend: {position: "top", align: "end",
+                    labels: {color: "#B3AA9B", font: {family: "Pagella, Spectral, serif", size: 10, style: "italic"},
+                             usePointStyle: true, boxWidth: 6, padding: 8}},
+          tooltip: {backgroundColor: "rgba(0,0,0,0.9)",
+                    callbacks: { title: items => (items[0] && s1[items[0].dataIndex]?.d) || "",
+                                  label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(3)}` }},
+          annotation: {annotations},
+        },
+      },
+    });
+  } catch (e) {
+    console.error("[thesis-rs] Chart.js failed:", e);
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Scanner: list all tickers with computed signals side-by-side, with two
+// mini-bars per row (quality + trade-now) and the divergence flag. The
+// dashboard's other views (regime gauge, tier rows) are organised by
+// strategy; this view is organised by ACTIONABILITY across every name.
+// ──────────────────────────────────────────────────────────────────────
+function scannerRows(){
+  if (!S.signals || !S.signals.signals) return [];
+  const rows = [];
+  for (const [tk, s] of Object.entries(S.signals.signals)){
+    const quality = (s.data && s.data.composite != null) ? +s.data.composite : 0;
+    const qPct    = (s.data && s.data.composite_pct != null) ? +s.data.composite_pct : 0;
+    const rank    = (s.data && s.data.rank != null) ? +s.data.rank : 9999;
+    const trade   = s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength;
+    const sig     = s.signal || "—";
+    const div     = divergenceState(quality, qPct, trade, sig);
+    // quad order: actionable buys + exits at the top, holds at the bottom
+    const quadOrder = ({clean:9, exit:8, trim:7, watch:6, momo:5, hedge:4,
+                        wait:3, monitor:2, hold:1, avoid:0})[div.cls] ?? 0;
+    rows.push({tk, quality, qPct, rank, trade, sig, divCls:div.cls,
+               divColor:div.color, divIcon:div.icon, quadOrder,
+               mode:s.mode, note:s.trade_now_note});
+  }
+  return rows;
+}
+function scannerFilterFn(filter){
+  if (filter === "clean")     return r => r.divCls === "clean";
+  if (filter === "watch")     return r => r.divCls === "watch";
+  if (filter === "exit")      return r => r.divCls === "exit" || r.divCls === "trim";
+  if (filter === "quality")   return r => r.quality >= 38;
+  if (filter === "positions") return r => r.mode === "position";
+  return () => true;
+}
+function scannerSortFn(sortKey, dir){
+  const mult = dir === "asc" ? 1 : -1;
+  if (sortKey === "tk")      return (a,b) => mult * a.tk.localeCompare(b.tk);
+  if (sortKey === "quality") return (a,b) => mult * (a.quality - b.quality);
+  if (sortKey === "trade")   return (a,b) => mult * (a.trade   - b.trade);
+  // quad (default): divergence-quadrant ordering first, then quality desc
+  return (a,b) => (mult * (a.quadOrder - b.quadOrder))
+                || (b.quality - a.quality);
+}
+function renderScanner(){
+  const rows0 = scannerRows();
+  if (!rows0.length) return "";
+  const rows = rows0.filter(scannerFilterFn(S.scannerFilter))
+                    .sort(scannerSortFn(S.scannerSort, S.scannerSortDir));
+
+  const sortCls = (k) => k === S.scannerSort ? `sort ${S.scannerSortDir === "asc" ? "asc" : ""}` : "";
+
+  const filterChips = [
+    {k:"all",       lbl:`All (${rows0.length})`},
+    {k:"clean",     lbl:`★ Clean buys (${rows0.filter(r=>r.divCls==="clean").length})`},
+    {k:"watch",     lbl:`⚠ Pullback watch (${rows0.filter(r=>r.divCls==="watch").length})`},
+    {k:"exit",      lbl:`▼ Exit signals (${rows0.filter(r=>r.divCls==="exit"||r.divCls==="trim").length})`},
+    {k:"quality",   lbl:`Top quality (${rows0.filter(r=>r.quality>=38).length})`},
+    {k:"positions", lbl:`Owned (${rows0.filter(r=>r.mode==="position").length})`},
+  ];
+
+  const tradeColorFor = t => tradeColor(t);
+  const qColorFor     = q => qualityColor(q);
+
+  let body = "";
+  for (const r of rows){
+    const qPct = Math.max(0, Math.min(100, r.quality / 50 * 100));
+    const tPct = Math.max(0, Math.min(100, r.trade));
+    body += `<tr class="row" data-scanner-tk="${r.tk}">
+      <td class="tk">${r.tk}</td>
+      <td class="bar-cell">
+        <div class="minibar-wrap">
+          <div class="minibar"><div class="minibar-fill" style="width:${qPct.toFixed(0)}%;background:${qColorFor(r.quality)}"></div></div>
+        </div>
+      </td>
+      <td class="val">${r.quality.toFixed(1)}<small style="color:var(--t4)">/50</small>${r.rank===1 ? ' <span style="color:#fbbf24">#1</span>' : r.rank<=10 ? ` <span style="color:var(--t4)">#${r.rank}</span>` : ''}</td>
+      <td class="bar-cell">
+        <div class="minibar-wrap">
+          <div class="minibar"><div class="minibar-fill" style="width:${tPct.toFixed(0)}%;background:${tradeColorFor(r.trade)}"></div></div>
+        </div>
+      </td>
+      <td class="val"><span style="color:${tradeColorFor(r.trade)}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}</td>
+      <td class="flag" style="color:${r.divColor}">${r.divIcon} ${r.divCls}</td>
+    </tr>`;
+  }
+
+  return `<section class="scanner">
+    <div class="scanner-head">
+      <div>
+        <h2>SCANNER — BUSINESS QUALITY × TRADE NOW${asOfBadge(S.signals && S.signals.updated)}</h2>
+        <div class="sc-sub">${rows.length} of ${rows0.length} names · top of list = best divergence quadrant</div>
+      </div>
+      <div class="filter-row">
+        ${filterChips.map(f => `<button class="filter-btn ${S.scannerFilter===f.k?"on":""}" data-scfilter="${f.k}">${f.lbl}</button>`).join("")}
+      </div>
+    </div>
+    <table>
+      <thead><tr>
+        <th class="${sortCls("tk")}"      data-scsort="tk">TICKER</th>
+        <th class="${sortCls("quality")}" data-scsort="quality">BUSINESS QUALITY</th>
+        <th class="num"></th>
+        <th class="${sortCls("trade")}"   data-scsort="trade">TRADE NOW</th>
+        <th class="num"></th>
+        <th class="${sortCls("quad")}"    data-scsort="quad">FLAG</th>
+      </tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+  </section>`;
+}
+
+// -------- Signal box (entry/stop/target/size/why/risks) --------
+const SIG_COLORS = {
+  "STRONG BUY": {bg:"rgba(22,163,74,0.14)",  border:"rgba(22,163,74,0.40)", text:"#4ade80", icon:"▲▲"},
+  "BUY":        {bg:"rgba(22,163,74,0.08)",  border:"rgba(22,163,74,0.25)", text:"#4ade80", icon:"▲"},
+  "WATCH":      {bg:"rgba(96,165,250,0.08)", border:"rgba(96,165,250,0.25)", text:"#60a5fa", icon:"◉"},
+  "WAIT":       {bg:"rgba(250,204,21,0.10)", border:"rgba(250,204,21,0.30)", text:"#facc15", icon:"⏸"},
+  "HOLD":       {bg:"rgba(115,115,115,0.08)",border:"rgba(115,115,115,0.25)", text:"#a3a3a3", icon:"—"},
+  "TRIM":       {bg:"rgba(250,204,21,0.10)", border:"rgba(250,204,21,0.35)", text:"#facc15", icon:"✂"},
+  "SELL":       {bg:"rgba(220,38,38,0.10)",  border:"rgba(220,38,38,0.30)",  text:"#f87171", icon:"▼"},
+};
+function rrColor(rr){ return rr >= 2.0 ? "#4ade80" : rr >= 1.5 ? "#facc15" : "#f87171"; }
+function fmtMoney(v){ if (v == null || !Number.isFinite(v)) return "—"; return "$" + v.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function sigVerb(s){ return (s||"HOLD").split(/[\s—]+/)[0].toUpperCase(); }
+
+function renderSignalBox(tk){
+  const sig = S.signals && S.signals.signals && S.signals.signals[tk];
+  if (!sig) return "";
+  if (sig.mode === "position") return renderPositionBox(sig);
+  return renderEntryBox(sig);
+}
+
+function renderEntryBox(sig){
+  const baseSig = sigVerb(sig.signal);
+  const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
+  const rr = sig.target?.reward_risk ?? 0;
+  const rrc = rrColor(rr);
+
+  const cell = (label, value, sub) => `
+    <div>
+      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em;margin-bottom:3px">${label}</div>
+      ${value}${sub ? `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:2px">${sub}</div>` : ""}
+    </div>`;
+
+  const condList = obj => Object.entries(obj || {}).map(([k, v]) =>
+    `<div style="display:inline-block;margin-right:14px">
+       <span style="color:${v?'#4ade80':'#f87171'};font-weight:700">${v?'✓':'✗'}</span>
+       <span style="color:var(--t3)">${k.replace(/_/g,' ')}</span>
+     </div>`).join("");
+
+  return `<div style="background:${sc.bg};border:1px solid ${sc.border};border-radius:8px;padding:14px 16px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:14px;flex-wrap:wrap">
+      <div>
+        <span style="font:800 11px var(--m);letter-spacing:.15em;color:${sc.text};background:${sc.bg};
+                     padding:4px 10px;border-radius:4px;border:1px solid ${sc.border}">${sc.icon} ${sig.signal}</span>
+        <span style="font:500 10px var(--m);color:var(--t4);margin-left:10px">${sig.category} · strength ${sig.signal_strength}/100</span>
+      </div>
+      <div style="font:500 10px var(--m);color:var(--t3)">
+        R/R <strong style="color:${rrc}">${rr}:1</strong>
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${rrc};margin-left:4px;vertical-align:middle"></span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+      ${cell("ENTRY",
+        `<div style="font:700 16px var(--m);color:#60a5fa">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
+        `${sig.entry?.basis || ""}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)}`)}
+      ${cell("STOP",
+        `<div style="font:700 16px var(--m);color:#f87171">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
+        sig.stop?.category_rule || "")}
+      ${cell("TARGET",
+        `<div style="font:700 16px var(--m);color:#4ade80">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
+        `Cons: $${(sig.target?.conservative ?? 0).toFixed(2)}<br>Aggr: $${(sig.target?.aggressive ?? 0).toFixed(2)}`)}
+      ${cell("SIZE",
+        `<div style="font:700 16px var(--m);color:var(--t1)">${fmtMoney(sig.size?.dollars)}</div>`,
+        `${sig.size?.shares ?? 0} shares · ${sig.size?.pct_portfolio ?? 0}%<br>Max loss: ${fmtMoney(sig.size?.max_loss)}`)}
+    </div>
+
+    <div style="margin-bottom:8px">
+      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">WHY</span>
+      <p style="font:400 var(--fs-body) var(--s);color:var(--t2);line-height:1.6;margin-top:3px">${sig.why || ""}</p>
+    </div>
+    <div>
+      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">RISKS</span>
+      <p style="font:italic 400 14px var(--s);color:var(--t3);line-height:1.55;margin-top:3px">${sig.risks || ""}</p>
+    </div>
+
+    <details style="margin-top:8px">
+      <summary style="font:500 10px var(--m);color:var(--t4);cursor:pointer;letter-spacing:.05em">Signal conditions</summary>
+      <div style="margin-top:6px;font:400 10px var(--m);line-height:1.9">
+        <div><span style="color:var(--t4);font-weight:700">BUY:</span> ${condList(sig.conditions?.buy)}</div>
+        <div><span style="color:var(--t4);font-weight:700">STRONG:</span> ${condList(sig.conditions?.strong_buy)}</div>
+        <div><span style="color:var(--t4);font-weight:700">SELL:</span> ${condList(sig.conditions?.sell)}</div>
+      </div>
+    </details>
+  </div>`;
+}
+
+// -------- Position-mode signal box (owned stocks) --------
+function renderPositionBox(sig){
+  const p = sig.position, s = sig.stops;
+  const baseSig = sigVerb(sig.signal);
+  const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
+  const gainColor = p.gain_pct >= 0 ? "#4ade80" : "#f87171";
+
+  // Thesis dots
+  const thesisRows = (sig.thesis || []).map(t => {
+    const color = t.status === "green" ? "#4ade80" : t.status === "yellow" ? "#facc15" : "#f87171";
+    const icon  = t.status === "green" ? "✓"      : t.status === "yellow" ? "⚠"      : "✗";
+    return `<div style="font:400 12px var(--s);color:${color};line-height:1.7">${icon} ${t.text}</div>`;
+  }).join("");
+
+  // Hedge callout
+  const hedgeHtml = sig.hedge ? `
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(96,165,250,0.07);
+                border:1px solid rgba(96,165,250,0.22);border-radius:6px">
+      <div style="font:600 9px var(--m);color:#60a5fa;letter-spacing:.12em;margin-bottom:4px">ACTION</div>
+      <div style="font:400 12px var(--s);color:#93c5fd;line-height:1.55">${sig.hedge.text}</div>
+    </div>` : "";
+
+  // Trim status line
+  const trimHtml = sig.trim ? `
+    <div style="font:400 11px var(--m);color:var(--t4);margin-top:8px">
+      Next trim: <strong style="color:var(--t2)">${sig.trim.trim_pct}%</strong> at ${sig.trim.at_gain}
+      ($${sig.trim.trigger_price} · ${sig.trim.distance >= 0 ? "+" : ""}${sig.trim.distance}% from here)
+    </div>` : `
+    <div style="font:400 11px var(--m);color:var(--t4);margin-top:8px">No upcoming trim trigger</div>`;
+
+  const cell = (label, big, sub, color="var(--t1)") => `
+    <div>
+      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em;margin-bottom:3px">${label}</div>
+      <div style="font:700 16px var(--m);color:${color}">${big}</div>
+      ${sub ? `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:2px">${sub}</div>` : ""}
+    </div>`;
+
+  return `<div style="background:${sc.bg};border:1px solid ${sc.border};border-radius:8px;padding:14px 16px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:14px;flex-wrap:wrap">
+      <div>
+        <span style="font:800 11px var(--m);letter-spacing:.15em;color:${sc.text};background:${sc.bg};
+                     padding:4px 10px;border-radius:4px;border:1px solid ${sc.border}">${sc.icon} ${sig.signal}</span>
+        <span style="font:500 10px var(--m);color:var(--t4);margin-left:10px">${sig.category} · ${p.weight_pct}% of portfolio</span>
+      </div>
+      <div style="font:500 10px var(--m);color:var(--t4)">POSITION MODE</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px">
+      ${cell("COST",    "$" + p.cost_basis.toFixed(2),    `${p.shares} shares`, "var(--t2)")}
+      ${cell("CURRENT", "$" + p.current_price.toFixed(2), fmtMoney(p.position_value), "var(--t1)")}
+      ${cell("GAIN",    (p.gain_pct >= 0 ? "+" : "") + p.gain_pct.toFixed(1) + "%",
+                       (p.gain_dollars >= 0 ? "+" : "") + fmtMoney(p.gain_dollars), gainColor)}
+      ${cell("ACTIVE STOP", "$" + s.active_stop.toFixed(2),
+                            `${s.active_stop_type} · -${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak`,
+                            "#f87171")}
+    </div>
+
+    ${trimHtml}
+    ${hedgeHtml}
+
+    <div style="margin-top:14px">
+      <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.12em;margin-bottom:6px">THESIS CHECK</div>
+      ${thesisRows}
+    </div>
+
+    <div style="margin-top:12px">
+      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">POSITION MANAGEMENT</span>
+      <p style="font:400 var(--fs-body) var(--s);color:var(--t2);line-height:1.6;margin-top:3px">${sig.why || ""}</p>
+    </div>
+
+    <details style="margin-top:8px">
+      <summary style="font:500 10px var(--m);color:var(--t4);cursor:pointer;letter-spacing:.05em">Stop details</summary>
+      <div style="margin-top:6px;font:400 11px var(--m);color:var(--t3);line-height:1.7">
+        Trailing stop: $${s.trail_stop.toFixed(2)} (-${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak, bracket ${s.trail_bracket}) ·
+        Hard stop: $${s.hard_stop.toFixed(2)} (-${s.hard_stop_pct}% from cost) ·
+        Active = higher of the two = <strong style="color:#f87171">$${s.active_stop.toFixed(2)}</strong>
+      </div>
+    </details>
+  </div>`;
+}
+
+function renderTickerDetail(tk){
+  const data = S.tickers && S.tickers[tk];
+  if (!data) return `<div class="tk-detail"><div style="color:var(--t4)">No data for ${tk}</div></div>`;
+  const T = data.tech || {}, F = data.fund || {}, SC = data.score, C = data.corr || {};
+
+  // Score bar component
+  const scoreBar = (label, pct) => {
+    const v = (pct != null) ? pct : 50;
+    return `<div class="sb">
+      <div class="sb-lbl">${label}</div>
+      <div class="sb-bar"><div class="fill" style="width:${v}%;background:${rankColor(v)}"></div></div>
+      <div class="sb-val">${v.toFixed(0)}</div>
+    </div>`;
+  };
+  // Fundamental card
+  const fundCard = (label, val, unit="") => {
+    if (val == null) return `<div class="fund-card"><div class="k">${label}</div><div class="v" style="color:var(--t4)">—</div></div>`;
+    return `<div class="fund-card"><div class="k">${label}</div><div class="v">${val}${unit}</div></div>`;
+  };
+
+  return `<div class="tk-detail">
+    <div class="tk-head">
+      <div class="tk-title">
+        <h3>${tk} <small style="font-size:11px;color:var(--t4)">${data.name || ""}</small></h3>
+        <div class="sub">${data.sector || ""}${data.industry ? " · " + data.industry : ""}</div>
+        <div class="tk-tiers">IN: ${(data.in_tiers || []).map(t => {
+          const ts = tierSpec(t); return `<span style="color:${ts ? ts.color : "var(--t3)"}">${ts ? ts.short : t}</span>`;
+        }).join(" · ") || "—"}</div>
+      </div>
+      <button class="tk-close" data-close-tk="1">CLOSE ✕</button>
+    </div>
+
+    ${renderTwoScore(tk)}
+
+    ${renderSignalBox(tk)}
+
+    <div class="tk-grid">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em">PRICE — MA50 — MA200</div>
+          <div style="display:flex;gap:2px">
+            ${["3M","6M","1Y"].map(p => `<button class="period-btn ${S.tickerChartPeriod===p?"on":""}" data-tkp="${p}">${p}</button>`).join("")}
+          </div>
+        </div>
+        <div class="tk-chart-wrap"><canvas id="ticker-chart"></canvas></div>
+        <div class="tk-rets">
+          ${["1w","1m","3m","6m","1y"].map(p => {
+            const v = T["ret_"+p];
+            return `<div class="ret-card"><div class="k">${p.toUpperCase()}</div><div class="v ${v!=null?pnlc(v):'neut'}">${v!=null?fmtP1(v):"—"}</div></div>`;
+          }).join("")}
+        </div>
+      </div>
+      <div class="tk-stats">
+        <div class="stat"><div class="k">PRICE</div><div class="v">$${fmt2(T.price)}</div></div>
+        <div class="stat"><div class="k">RSI(14)</div><div class="v" style="color:${T.rsi>70?"var(--r)":T.rsi<30?"var(--g)":"var(--t1)"}">${T.rsi != null ? T.rsi.toFixed(1) : "—"}</div></div>
+        <div class="stat"><div class="k">vs MA50</div><div class="v ${pnlc(T.ma50_dist)}">${fmtP1(T.ma50_dist)}</div></div>
+        <div class="stat"><div class="k">vs MA200</div><div class="v ${pnlc(T.ma200_dist)}">${fmtP1(T.ma200_dist)}</div></div>
+        <div class="stat"><div class="k">52W RANGE</div><div class="v">${T.range_52w_pct != null ? T.range_52w_pct.toFixed(0) + "%" : "—"}<small> of high</small></div></div>
+        <div class="stat"><div class="k">REALIZED VOL</div><div class="v">${T.vol_20d != null ? T.vol_20d.toFixed(0) + "%" : "—"}</div></div>
+        <div class="stat"><div class="k">52W HIGH</div><div class="v">$${fmt2(T.high_52w)}</div></div>
+        <div class="stat"><div class="k">52W LOW</div><div class="v">$${fmt2(T.low_52w)}</div></div>
+      </div>
+    </div>
+
+    <div class="tk-grid2">
+      <div>
+        <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:6px">FUNDAMENTALS (snapshot)</div>
+        <div class="fund-grid">
+          ${fundCard("FWD P/E",   F.fwd_pe)}
+          ${fundCard("TRAIL P/E", F.trail_pe)}
+          ${fundCard("P/B",       F.pb)}
+          ${fundCard("P/S",       F.ps)}
+          ${fundCard("EV/EBITDA", F.ev_ebitda)}
+          ${fundCard("PEG",       F.peg)}
+          ${fundCard("REV GROWTH", F.rev_growth, "%")}
+          ${fundCard("GROSS MGN",  F.gross_mgn, "%")}
+          ${fundCard("OP MGN",     F.op_mgn, "%")}
+          ${fundCard("ROE",        F.roe, "%")}
+          ${fundCard("FCF",        F.fcf_B ? "$" + F.fcf_B + "B" : null)}
+          ${fundCard("MCAP",       F.mcap_B ? "$" + F.mcap_B + "B" : null)}
+        </div>
+      </div>
+      <div>
+        <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:6px">
+          SCORE BREAKDOWN ${SC ? `· rank #${SC.rank} (${SC.percentile.toFixed(0)}th pct)` : ""}
+        </div>
+        ${SC ? `<div style="display:flex;justify-content:space-between;font:600 10px var(--m);color:var(--t2);margin-bottom:8px">
+          <span>TECH ${SC.technical.toFixed(1)}/25</span>
+          <span>FUND ${SC.fundamental.toFixed(1)}/25</span>
+          <span style="color:var(--t1);font-weight:700">COMPOSITE ${SC.composite.toFixed(1)}/50</span>
+        </div>` : ""}
+        <div class="score-bars">
+          ${SC && SC.components ? Object.entries({
+            "MA200 dist":  SC.components.ma200_dist,
+            "RSI":         SC.components.rsi,
+            "Rel str 6m":  SC.components.rel_str_6m,
+            "Fwd P/E":     SC.components.fwd_pe,
+            "Rev growth":  SC.components.rev_growth,
+            "Gross mgn":   SC.components.gross_mgn,
+            "ROE":         SC.components.roe,
+            "Op mgn":      SC.components.op_mgn,
+          }).map(([k,v]) => scoreBar(k, v)).join("") : ""}
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:6px">
+        TOP-10 60-DAY CORRELATIONS (red >0.7, yellow 0.4-0.7, green <0.4)
+      </div>
+      <div class="corr-row">
+        ${Object.entries(C).slice(0, 10).map(([sym, v]) => `
+          <div class="corr-card">
+            <div class="tk">${sym}</div>
+            <div class="v" style="color:${corrColor(v)}">${v.toFixed(2)}</div>
+          </div>`).join("") || "<div style='color:var(--t4)'>No correlation data</div>"}
+      </div>
+    </div>
+  </div>`;
+}
+
+function hedgingNote(level){
+  return ({
+    "full":           "Buy SPY put spreads when R<sub>t</sub> > 0.6 (50% notional, 0.5%/q budget). Standing VIX call tail hedge.",
+    "moderate":       "Covered calls on +30% winners. SPY put spreads when R<sub>t</sub> > 0.7.",
+    "light":          "Covered calls on +40% winners. Put spreads only when R<sub>t</sub> > 0.85.",
+    "none_until_crisis": "No hedging. Exit to cash on R<sub>t</sub> > 0.85.",
+  })[level] || level;
+}
+
+function renderTierDetail(tid){
+  const t = tierSpec(tid);
+  if (!t) return "";
+  const live = S.tournament && S.tournament.history && S.tournament.history.length > 0
+    ? S.tournament.history[S.tournament.history.length-1].tiers[tid] : null;
+
+  let positions = [];
+  if (live && live.positions) {
+    positions = live.positions;
+  } else if (tid === "5_werner") {
+    positions = Object.entries(t.holdings).map(([tk, h]) => ({
+      ticker: tk, shares: h.shares, cost_basis: h.cost, price: null, value: null, gain_pct: null, _note: h._note,
+    }));
+  } else if (S.holdings && S.holdings.tiers && S.holdings.tiers[tid]) {
+    positions = S.holdings.tiers[tid].map(tk => ({ticker: tk}));
+  }
+
+  const targetCash = live ? live.target_cash_pct : (t.cash_floor * 100);
+  const actualCash = live ? live.actual_cash_pct : (t.cash_floor * 100);
+  const navStr = live ? "$" + fmt(live.nav) : "—";
+
+  let h = `<div class="td-grid">
+    <div>
+      <div class="td-block">
+        <div class="td-label">CASH ALLOCATION</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div class="td-val">${actualCash.toFixed(0)}<small style="font-size:11px;color:var(--t4)">% actual</small></div>
+          <div style="font:400 10px var(--m);color:var(--t3)">target ${targetCash.toFixed(0)}%</div>
+        </div>
+        <div class="gauge" style="margin-top:6px">
+          <div class="eq" style="width:${100-actualCash}%"></div>
+          <div class="csh" style="width:${actualCash}%"></div>
+        </div>
+        <div class="td-sub">equity ${(100-actualCash).toFixed(0)}% · cash ${actualCash.toFixed(0)}% · NAV ${navStr}</div>
+      </div>
+      <div class="hedge"><span class="k">HEDGING</span>${hedgingNote(t.hedging)}</div>
+    </div>
+    <div>
+      <div class="td-block">
+        <div class="td-label">DESCRIPTION</div>
+        <div style="font:400 11px var(--s);color:var(--t2);line-height:1.5">${t.description}</div>
+        <div class="td-sub" style="margin-top:8px">
+          benchmark: <strong style="color:var(--t2)">${t.benchmark}</strong> ·
+          ${tid !== "5_werner" && t.n_holdings ? `target N=${t.n_holdings} · ` : ""}
+          cash formula: <code>${t.cash_formula || `min(${t.cash_max}, ${t.cash_floor} + R · ${t.cash_slope})`}</code>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  h += `<table class="h-table"><tr>
+    <th>TICKER</th><th>SECTOR</th><th class="num">PRICE</th><th class="num">VALUE</th>
+    ${tid==="5_werner" ? '<th class="num">COST</th><th class="num">GAIN</th>' : ''}
+    <th class="num">WEIGHT</th><th></th>
+  </tr>`;
+  positions.forEach(p => {
+    const sector = S.tickers && S.tickers[p.ticker] ? S.tickers[p.ticker].sector : "";
+    const dim = (p.shares === 0 || p.value == null && tid==="5_werner");
+    const open = (S.expandedTicker === p.ticker);
+    h += `<tr class="tk-row ${open?"open":""}" data-tk="${p.ticker}"${dim ? ' style="opacity:.55"' : ''}>
+      <td><strong style="color:var(--t1)">${p.ticker}</strong></td>
+      <td style="color:var(--t3);font-size:10px">${sector || "—"}</td>
+      <td class="num">${p.price != null ? "$"+fmt2(p.price) : "—"}</td>
+      <td class="num">${p.value != null ? "$"+fmt(p.value) : "—"}</td>
+      ${tid==="5_werner" ? `
+        <td class="num">${p.cost_basis ? "$"+fmt2(p.cost_basis) : "—"}</td>
+        <td class="num ${p.gain_pct!=null?pnlc(p.gain_pct):'neut'}">${p.gain_pct!=null?fmtP1(p.gain_pct):"—"}</td>` : ""}
+      <td class="num">${p.weight != null ? p.weight.toFixed(1) + "%" : "—"}</td>
+      <td><span class="chev ${open?"open":""}">›</span></td>
+    </tr>`;
+    if (open) {
+      h += `<tr><td colspan="${tid==="5_werner"?8:6}" style="padding:0;background:rgba(0,0,0,.25)">${renderTickerDetail(p.ticker)}</td></tr>`;
+    }
+  });
+  h += `</table>`;
+  if (S.holdings && S.holdings.turnover && S.holdings.turnover[tid] != null && tid !== "5_werner") {
+    h += `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:8px;text-align:right">
+      monthly turnover (last rebalance): <strong style="color:var(--t2)">${(S.holdings.turnover[tid]*100).toFixed(0)}%</strong>
+    </div>`;
+  }
+  return h;
+}
+
+function render(){
+  const a = document.getElementById("app");
+  if (!S.config) { a.innerHTML = '<div class="ld">config.json missing</div>'; return; }
+
+  const live = S.tournament && S.tournament.history && S.tournament.history.length > 0
+    ? S.tournament.history[S.tournament.history.length-1] : null;
+  const R = live ? live.R_t : null;
+  const regime = live ? live.regime : "—";
+  const updated = S.tournament && S.tournament.last_updated
+    ? new Date(S.tournament.last_updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})
+    : "—";
+
+  const allSeries = buildSeries();
+  const tmMap = {};
+  TIER_ORDER.forEach(tid => {
+    const ser = allSeries.tiers[tid];
+    if (!ser || ser.length === 0) return;
+    const periodSer = applyPeriod(ser, S.period);
+    const benchTid = BENCH_FOR_TIER[tid];
+    const periodBench = applyPeriod(allSeries.bench[benchTid] || [], S.period);
+    tmMap[tid] = tierMetrics(periodSer, periodBench);
+  });
+  let leader = null, leaderRet = -Infinity;
+  Object.entries(tmMap).forEach(([tid, m]) => { if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; } });
+
+  // ---- Slim header ----
+  let h = `<div class="hd2">
+    <div>
+      <span class="hd-dot"></span><h1 style="display:inline">PORTFOLIO TOURNAMENT</h1>
+      <span style="font:400 9px var(--m);color:var(--t5);margin-left:6px">v2.0</span>
+      <div class="hd2-sub">${updated} · 4 algo tiers + Werner · monthly rescore + regime overlay</div>
+    </div>
+  </div>`;
+
+  // ---- 0. INTRADAY SHOCK / STALENESS BANNER (renders ABOVE the regime gauge) ----
+  h += renderStatusStrip() + renderTopBanner();
+  h += renderRegistryBanner();
+
+  // ---- 1. REGIME COMMAND CENTER ----
+  h += renderRegimeCommandCenter(R);
+
+  // ---- 1b. REGIME & OVERLAY (vol-regime + attribution) ----
+  h += renderRegimeOverlayPanel();
+
+  // ---- 1c. THESIS (meso layer: exposure / falsification / attribution) ----
+  h += renderThesisSection();
+
+  // ---- 2. TWO-SCORE SCANNER ----
+  h += renderScanner();
+
+  // ---- Leader banner ----
+  if (leader && tmMap[leader]) {
+    const lt = tierSpec(leader); const m = tmMap[leader];
+    h += `<div class="lb">
+      <div class="lb-crown">♛</div>
+      <div>
+        <div class="lb-name" style="color:${lt.color}">${lt.name} leads</div>
+        <div class="lb-stat">over ${S.period === "ALL" ? "full sample" : S.period}: <strong>${fmtP(m.total)}</strong> · Sharpe ${m.sharpe.toFixed(2)} · max DD ${fmtP1(m.maxDD)}</div>
+      </div>
+    </div>`;
+  }
+
+  // ---- Race chart ----
+  h += `<div class="chart-card">
+    <div class="chart-head">
+      <div class="chart-title">RACE CHART · LOG SCALE · NAV rebased to 1.0 at period start</div>
+      <div class="periods">
+        ${["1M","3M","6M","YTD","1Y","5Y","ALL"].map(p =>
+          `<button class="period-btn ${S.period===p?"on":""}" data-p="${p}">${p}</button>`).join("")}
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="race-chart"></canvas></div>
+    <div class="chart-meta">${TIER_ORDER.length} tiers + SPY benchmark · 5_werner is live-only (no backtest)</div>
+  </div>`;
+
+  // ---- Leaderboard ----
+  // Regime-conditional sorting: when toggle is on, sort by the current-state
+  // shrunk annualized return from the JS-shrunk conditional scores. The
+  // unconditional toggle keeps the existing total-return ordering.
+  const condMode = !!S.leaderboardCondMode;
+  const currentState = (S.volRegime && S.volRegime.state) || null;
+  const condFor = (tid) => {
+    const cs = S.condScores && S.condScores.sleeves && S.condScores.sleeves[tid];
+    if (!cs || !currentState) return null;
+    const cell = cs.per_state && cs.per_state[currentState];
+    return cell || null;
+  };
+  const sorted = Object.entries(tmMap).filter(([_,m]) => m != null).sort((a,b) => {
+    if (!condMode) return (b[1].total - a[1].total);
+    const ca = condFor(a[0]); const cb = condFor(b[0]);
+    return ((cb && cb.shrunk_ann_return) || -9e9) - ((ca && ca.shrunk_ann_return) || -9e9);
+  });
+
+  const toggleHtml = `<span class="cond-toggle">
+    <button class="${!condMode ? "on" : ""}" data-cond-mode="off">UNCONDITIONAL</button>
+    <button class="${condMode  ? "on" : ""}" data-cond-mode="on">CONDITIONAL · ${currentState || "—"}</button>
+  </span>`;
+
+  const sc = S.condScores || {};
+  const sn = (sc.state_day_counts || {})[currentState] || 0;
+  const condCap = condMode
+    ? `<div class="cond-caption">CONDITIONAL on <strong style="color:var(--accent)">${currentState || "—"}</strong>: scores are James-Stein shrunk toward unconditional. Bucket n = ${sn} days. ${sc.caption || ""}</div>`
+    : "";
+
+  h += `<div class="lbtable">
+    <div class="lb-h"><h2>LEADERBOARD${asOfBadge(live && live.date)}</h2>
+      <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"} · <span title="C1: costs = half-spread + impact, one-way, on NAV-weight turnover at every rebalance">net of costs (${(S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.cost_model) || "10 bps one-way"})</span>${c2DisclosureHtml()}${toggleHtml}</div></div>
+    ${condCap}
+    <table>
+      <tr>
+        <th>#</th><th>TIER</th>
+        <th class="num" title="net of transaction costs; hover a NAV for the pre-cost figure and the restated net (C1)">NAV <small style="color:var(--t4);font-weight:500">net</small></th>
+        <th class="num">TOTAL</th>
+        <th class="num">1M</th>
+        <th class="num">1W</th>
+        <th class="num">SHARPE</th>
+        <th class="num">MAX DD</th>
+        <th class="num">vs BENCH</th>
+        <th class="num">N</th>
+        <th></th>
+      </tr>`;
+  sorted.forEach(([tid, m], i) => {
+    const t = tierSpec(tid);
+    const liveTier = live ? live.tiers[tid] : null;
+    const navVal = liveTier ? liveTier.nav : null;
+    const nPos = liveTier ? liveTier.n_positions : null;
+    const open = (S.expanded === tid);
+    h += `<tr class="tier-row ${open?"open":""}" data-tid="${tid}">
+      <td class="rank ${i===0?"first":""}">${i+1}</td>
+      <td>
+        <span class="tier-dot" style="background:${t.color}"></span>
+        <span class="tier-name">${t.short}</span>
+        <div class="tier-desc">${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}</div>
+      </td>
+      <td class="num" title="${(() => { const cr = S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.tiers && S.tournament.cost_restatement.tiers[tid]; return cr ? `pre-cost $${fmt(cr.nav_pre_cost_last)} · restated net (spread+impact model) $${fmt(cr.nav_net_restated_last)} · cumulative cost charged ${cr.cumulative_cost_flat_pct}% (flat, as published) vs ${cr.cumulative_cost_model_pct}% (model) · one-way turnover ${cr.turnover_one_way_total} over ${cr.n_rebalances} rebalances` : "net of costs"; })()}">${navVal ? "$"+fmt(navVal) : "—"}</td>
+      <td class="num ${pnlc(m.total)}">${fmtP(m.total)}${(() => {
+        if (!condMode) return "";
+        const cc = condFor(tid);
+        if (!cc || cc.shrunk_ann_return == null) return ` <small style="color:var(--t4)">· n=0</small>`;
+        const s = cc.shrunk_ann_return;
+        return ` <small style="color:var(--accent);font-weight:500"> · ${currentState[0].toUpperCase()}: ${(s*100).toFixed(1)}%</small><small style="color:var(--t4)"> · n=${cc.n} · w=${cc.shrinkage_weight}</small>`;
+      })()}</td>
+      <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
+      <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
+      <td class="num">${m.sharpe.toFixed(2)}</td>
+      <td class="num neg" title="${c2TierTitle(tid)}">${fmtP1(m.maxDD)}${c2TierSub(tid)}</td>
+      <td class="num ${m.alpha!=null?pnlc(m.alpha):'neut'}">${m.alpha!=null?fmtP1(m.alpha):"—"}</td>
+      <td class="num">${nPos != null ? nPos : "—"}</td>
+      <td><span class="chev ${open?"open":""}">›</span></td>
+    </tr>`;
+    if (open) {
+      h += `<tr><td colspan="11" style="padding:0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
+    }
+  });
+  h += `</table></div>`;
+
+  // ---- Footer ----
+  h += `<div class="ft">
+    <span class="k">SCORING </span>4-factor cross-sectional model: technical (MA200 dist, RSI, 6m relative strength) + fundamental (Fwd P/E, rev growth, gross/op margins, ROE). Tier 3/4 double-weight 6m RS.<br>
+    <span class="k">SELECTION </span>Monthly. Each tier picks top-N from its filtered universe — Tier 1 restricted to defensive sectors with GM>30% and FCF>0; Tiers 2-4 use the full universe.<br>
+    <span class="k">REGIME </span>R<sub>t</sub> from 12 risk indicators z-scored over 252 days, mapped via Φ, equal-weight mean. Sizes cash sleeve per tier formula.<br>
+    <span class="k">TIER 5 (WERNER) </span>Manual picks from config.json. Not backtested (no discretionary history). Updated when Werner trades.<br>
+    <span class="k">DATA </span>Yahoo + FRED. Updated weekdays 6 pm ET (daily NAV) and 1st of month 10 am ET (rescore + reselect).
+  </div>`;
+
+  a.innerHTML = h;
+
+  // ---- Bindings ----
+  document.querySelectorAll(".period-btn[data-p]").forEach(b => b.addEventListener("click", () => {
+    S.period = b.dataset.p; render();
+  }));
+  document.querySelectorAll(".tier-row").forEach(r => r.addEventListener("click", (ev) => {
+    if (ev.target.closest(".tk-row") || ev.target.closest(".tk-detail")) return;
+    const tid = r.dataset.tid;
+    S.expanded = (S.expanded === tid) ? null : tid;
+    if (S.expanded !== tid) S.expandedTicker = null;
+    render();
+  }));
+  document.querySelectorAll(".tk-row").forEach(r => r.addEventListener("click", (ev) => {
+    if (ev.target.closest(".tk-detail")) return;
+    ev.stopPropagation();
+    const tk = r.dataset.tk;
+    S.expandedTicker = (S.expandedTicker === tk) ? null : tk;
+    render();
+  }));
+  document.querySelectorAll("[data-close-tk]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.expandedTicker = null;
+    render();
+  }));
+  document.querySelectorAll(".period-btn[data-tkp]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.tickerChartPeriod = b.dataset.tkp;
+    render();
+  }));
+  // ---- Indicator card clicks (open / close drill-down, inline under tier) ----
+  document.querySelectorAll(".ind-card[data-ind]").forEach(c => c.addEventListener("click", (ev) => {
+    if (ev.target.closest(".ind-detail")) return;
+    const k = c.dataset.ind;
+    S.expandedIndicator = (S.expandedIndicator === k) ? null : k;
+    render();
+  }));
+  document.querySelectorAll("[data-close-ind]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.expandedIndicator = null;
+    render();
+  }));
+  document.querySelectorAll(".id-period-btn[data-indp]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.indPeriod = b.dataset.indp;
+    render();
+  }));
+  // ---- Scanner: filter chips, sortable headers, row click → expand ticker
+  document.querySelectorAll(".scanner .filter-btn[data-scfilter]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.scannerFilter = b.dataset.scfilter;
+    render();
+  }));
+  document.querySelectorAll(".scanner th[data-scsort]").forEach(th => th.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    const k = th.dataset.scsort;
+    if (S.scannerSort === k) {
+      S.scannerSortDir = (S.scannerSortDir === "desc") ? "asc" : "desc";
+    } else {
+      S.scannerSort = k; S.scannerSortDir = "desc";
+    }
+    render();
+  }));
+  document.querySelectorAll(".scanner tr.row[data-scanner-tk]").forEach(tr => tr.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    const tk = tr.dataset.scannerTk;
+    // Find which tier this ticker lives in; expand that tier and the ticker.
+    const owner = TIER_ORDER.find(tid => {
+      const t = S.tournament && S.tournament.history && S.tournament.history.slice(-1)[0];
+      const holdings = t?.tiers?.[tid]?.holdings || [];
+      return holdings.includes(tk);
+    });
+    if (owner) {
+      S.expanded = owner;
+      S.expandedTicker = tk;
+    } else {
+      // Ticker not currently in any live tier — still try detail panel for it.
+      S.expandedTicker = tk;
+    }
+    render();
+    setTimeout(() => {
+      const row = document.querySelector(`tr[data-tk="${tk}"]`) || document.querySelector(".tk-detail");
+      if (row && row.scrollIntoView) row.scrollIntoView({behavior:"smooth", block:"center"});
+    }, 50);
+  }));
+  // Conditional/unconditional toggle on leaderboard
+  document.querySelectorAll("[data-cond-mode]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.leaderboardCondMode = b.dataset.condMode === "on";
+    render();
+  }));
+  // Thesis section toggles
+  document.querySelectorAll("[data-thesis-view]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.thesisView = b.dataset.thesisView;
+    render();
+  }));
+  document.querySelectorAll("[data-thesis-tab]").forEach(b => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    S.thesisTab = b.dataset.thesisTab;
+    render();
+  }));
+
+  // Draw charts after DOM
+  setTimeout(() => {
+    renderRegimeTimeline();
+    renderRopCurveChart();
+    renderThesisRsChart();
+    renderChart(allSeries, S.period);
+    if (S.expandedTicker) renderTickerChart(S.expandedTicker);
+    if (S.expandedIndicator) {
+      // Scroll FIRST so the panel area is committed to layout, then render
+      // charts (which rAF-defers to give Chart.js correct canvas dimensions).
+      const panel = document.querySelector(".ind-detail");
+      if (panel && panel.scrollIntoView) {
+        panel.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+      }
+      renderIndicatorCharts();
+    }
+  }, 10);
+}
+
+async function loadJSON(path){ try { const r = await fetch(path + "?" + Date.now()); if (r.ok) return await r.json(); } catch(e){} return null; }
+async function loadCSV(path){
+  try { const r = await fetch(path + "?" + Date.now()); if (!r.ok) return null;
+    return Papa.parse(await r.text(), {header:true, dynamicTyping:true, skipEmptyLines:true}).data;
+  } catch(e){ return null; }
+}
+
+// Decision Memo 9-Sept-2026 §6: standing disclosure on the backtest panel — the
+// regime-index history uses revised FRED inputs; the point-in-time figure (C2)
+// is shown beside the displayed one. Served tier sizing uses the internal vol
+// index (no FRED inputs), so the displayed max DD itself is not the revised-input
+// number; the C2 pair is the 24-indicator overlay through the same engine.
+function c2DisclosureHtml(){
+  const c = S.c2; const t4 = c && c.drawdown_reduction && c.drawdown_reduction["4_tactical"];
+  if (!t4 || !t4.rev || !t4.pit) return "";
+  const rv = t4.rev.dd_reduction_vs_spy * 100, pt = t4.pit.dd_reduction_vs_spy * 100;
+  return ` · <span style="color:var(--y)" title="C2 (reports/retirement_test_C2_input_vintages.md): the regime-index history uses revised FRED inputs. Rebuilt on ALFRED point-in-time inputs, the 24-indicator overlay's drawdown reduction vs SPY through the same engine is ${pt.toFixed(1)}% against ${rv.toFixed(1)}% on revised inputs (tier 4). Revisions account for roughly a third of the apparent reduction, release lag for almost none. Served tier sizing uses the internal vol-based index (no FRED inputs). Hover a MAX DD cell for the per-tier pair.">backtest history on revised inputs · point-in-time drawdown reduction ${pt.toFixed(0)}% vs ${rv.toFixed(0)}% revised (C2)</span>`;
+}
+function c2TierSub(tid){
+  const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
+  if (!c || !c.rev || !c.pit) return "";
+  return `<div style="font:500 9px var(--m);color:var(--t5)" title="C2 drawdown reduction vs SPY: point-in-time vs revised inputs (24-indicator overlay, same engine)">DD red. PIT ${(c.pit.dd_reduction_vs_spy*100).toFixed(0)}% · rev ${(c.rev.dd_reduction_vs_spy*100).toFixed(0)}%</div>`;
+}
+function c2TierTitle(tid){
+  const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
+  if (!c || !c.rev || !c.pit) return "max drawdown of the displayed series";
+  return `C2: 24-indicator overlay through the same engine — drawdown reduction vs SPY ${(c.rev.dd_reduction_vs_spy*100).toFixed(1)}% on revised inputs (max DD ${(c.rev.max_dd*100).toFixed(1)}%) vs ${(c.pit.dd_reduction_vs_spy*100).toFixed(1)}% on point-in-time inputs (max DD ${(c.pit.max_dd*100).toFixed(1)}%). The displayed max DD is the served series (internal vol-index sizing, no FRED inputs).`;
+}
+
+async function init(){
+  S.config     = await loadJSON("config.json");
+  S.tournament = await loadJSON("data/tournament.json");
+  S.holdings   = await loadJSON("data/tier_holdings.json");
+  S.tickers    = await loadJSON("data/ticker_indicators.json");
+  S.metrics    = await loadJSON("data/backtest_metrics.json");
+  S.regime     = await loadJSON("data/regime_indicators.json");
+  S.status     = await loadJSON("data/status.json");   // order item 6: pipeline + audit status strip
+  S.regimeDaily = await loadCSV("data/regime_daily.csv");
+  S.indicatorSeries = await loadJSON("data/indicator_series.json");
+  S.signals    = await loadJSON("data/ticker_signals.json");
+  S.regimeV4   = await loadCSV("data/regime_v4_daily.csv");
+  S.v4Cal      = await loadJSON("data/v4_calibration.json");
+  try { S.c2 = await loadJSON("data/c2_vintage_comparison.json"); } catch (e) { S.c2 = null; }   // memo §6 disclosure
+  try { S.c3 = await loadJSON("data/c3_results.json"); } catch (e) { S.c3 = null; }             // memo §1 verdicts of record
+  S.intraday   = await loadJSON("data/intraday.json");
+  S.volRegime  = await loadJSON("data/vol_regime.json");
+  S.condScores = await loadJSON("data/regime_conditional_scores.json");
+  S.eventCal   = await loadJSON("data/event_calendar.json");
+  S.regimePub  = await loadCSV("data/regime_daily_published.csv");
+  S.thesis     = await loadJSON("data/thesis_daily.json");
+  S.thesisReg  = await loadJSON("data/thesis_registry.json");
+  S.thesisClaims = await loadJSON("data/thesis_claims.json");
+  S.thesisBT   = await loadJSON("data/thesis_backtest.json");
+  S.v4Attr     = await loadJSON("data/v4_delta_attribution.json");
+  S.regProposals = await loadJSON("data/registry_proposals.json");
+  const rows   = await loadCSV("data/backtest_equity_curves.csv");
+  S.backtest   = rows ? {rows} : null;
+
+  if (!S.config) {
+    document.getElementById("app").innerHTML = '<div class="ld">config.json not found</div>';
+    return;
+  }
+  if (!S.tournament && !S.backtest) {
+    document.getElementById("app").innerHTML = `<div class="ld">No tournament data yet.</div>`;
+    return;
+  }
+  render();
+}
+init();
