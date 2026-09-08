@@ -210,18 +210,22 @@ def main():
     after_close = et.hour > 16 or (et.hour == 16 and et.minute >= 20)
     canon = _load_canonical()
     if after_close and canon.get("date") == et.strftime("%Y-%m-%d"):
-        for key_state, key_px, key_c in [("vix_now", "vix", "vix"), (None, "vix3m", "vix3m"),
-                                          (None, "vvix", "vvix"), (None, "vix1d", "vix1d"),
-                                          ("skew", "skew", "skew")]:
+        # Reconciliation memo 8-Sept, decision 2: ALL FIVE vol-complex fields
+        # reconcile to the canonical close. The old loop assigned only the
+        # vix_now/skew top-level keys and skipped any key that was already
+        # null — so a null VVIX stayed null although the canonical had 84.42.
+        reconciled = []
+        for key_c, key_state in (("vix", "vix_now"), ("vix3m", "vix3m"), ("vvix", "vvix"),
+                                 ("vix1d", "vix1d"), ("skew", "skew")):
             cv = canon.get(key_c)
-            if cv is None: continue
-            if key_px in state.get("prices", {}):
-                state["prices"][key_px]["last"] = cv
-            if key_state and state.get(key_state) is not None:
-                state[key_state] = cv
-        if canon.get("vix3m") is not None:
-            state["vix3m"] = canon["vix3m"]
+            if cv is None:
+                continue
+            state[key_state] = cv
+            if key_c in state.get("prices", {}):
+                state["prices"][key_c]["last"] = cv
+            reconciled.append(key_c)
         state["reconciled_to_canonical"] = canon.get("date")
+        state["reconciled_fields"] = reconciled
         print(f"  post-close: reconciled vol-complex fields to canonical close {canon.get('date')}")
 
     out = DATA / "intraday.json"
