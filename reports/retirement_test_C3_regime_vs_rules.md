@@ -11,7 +11,7 @@
 | after-cost return per unit of volatility | 0.993 | 0.822 | margin +0.171 must exceed the half-width of the regime's own 90% interval, 0.411 → **not met** |
 | drawdown reduction vs buy-and-hold | 63.9% | 29.7% | regime ≥ rule → **met** |
 
-The registered consequence reads: *"If it fails either condition, the regime layer is demoted to a context panel and tier sizing switches to the winning one-line rule; the indicator panel remains as information."* The winning one-line rule is volatility targeting (highest return per volatility among the three rules, and also the largest drawdown reduction among them). **That consequence has not been applied in this batch**: it changes served behaviour (the dashboard's regime layer and every tier's sizing), and the standing rule is that such a change is a human act with recorded provenance. Section 8 lays out the two routes the order itself allows.
+The registered consequence reads: *"If it fails either condition, the regime layer is demoted to a context panel and tier sizing switches to the winning one-line rule; the indicator panel remains as information."* The winning one-line rule is volatility targeting (highest return per volatility among the three rules, and also the largest drawdown reduction among them). **That consequence has not been applied in this batch**: it changes served behaviour (the dashboard's regime layer and every tier's sizing), and the standing rule is that such a change is a human act with recorded provenance. Section 10 lays out the two routes the order itself allows.
 
 ## 2. What the numbers say beyond the rule
 
