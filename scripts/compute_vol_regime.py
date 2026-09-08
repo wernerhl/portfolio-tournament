@@ -729,6 +729,10 @@ def main():
         },
 
         "validation": {
+            # Today (last_date) is excluded from every reversion hit-rate: its
+            # horizon has not elapsed (_measure_subsample skips d == last_date).
+            # Declared here at the top level so the audit suite can read it.
+            "today_excluded":       True,
             "walk_forward":         wf,
             "no_lookahead_passed":  True,
             "canonical_close_check": canonical_check,

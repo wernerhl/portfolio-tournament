@@ -1106,6 +1106,28 @@ function _fmtSnapTime(snap){
     month:"short", day:"numeric", hour:"2-digit", minute:"2-digit"}) + " ET";
 }
 
+// Order item 6: status strip — the pipeline's last outcome and the nightly
+// audit sweep. CRITICAL (red) means the served artifacts are the last good
+// board; HIGH (grey) is logged, never blocking; nothing renders when clean.
+function renderStatusStrip(){
+  const st = S.status;
+  if (!st) return "";
+  const parts = [];
+  const strip = (bg, bd, col, txt) => `<div style="background:${bg};border:1px solid ${bd};border-radius:6px;
+      padding:6px 12px;margin-bottom:10px;font:500 11px var(--m);color:${col};line-height:1.5">${txt}</div>`;
+  const a = st.audit || {};
+  if (a.critical && a.critical.length)
+    parts.push(strip("rgba(220,38,38,.10)", "rgba(220,38,38,.45)", "#f87171",
+      `✗ audit CRITICAL — ${a.critical.join(", ")} · served artifacts are the last good board (session ${st.session_date || "?"})`));
+  else if (st.failure_reason)
+    parts.push(strip("rgba(219,162,62,.10)", "rgba(219,162,62,.45)", "var(--y)",
+      `⚠ last run rejected: ${st.failure_reason} · served artifacts are the last good board (session ${st.session_date || "?"}; last success ${String(st.last_success || "").slice(0,16)})`));
+  if (a.high && a.high.length)
+    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
+      `audit: ${a.high.length} HIGH — ${a.high.join(", ")} <span style="color:var(--t5)">(logged, non-blocking · ${String(a.ran_at || "").slice(0,16)})</span>`));
+  return parts.join("");
+}
+
 function renderTopBanner(){
   const id = S.intraday;
   if (!id) return "";
@@ -2917,7 +2939,7 @@ function render(){
   </div>`;
 
   // ---- 0. INTRADAY SHOCK / STALENESS BANNER (renders ABOVE the regime gauge) ----
-  h += renderTopBanner();
+  h += renderStatusStrip() + renderTopBanner();
   h += renderRegistryBanner();
 
   // ---- 1. REGIME COMMAND CENTER ----
@@ -3183,6 +3205,7 @@ async function init(){
   S.tickers    = await loadJSON("data/ticker_indicators.json");
   S.metrics    = await loadJSON("data/backtest_metrics.json");
   S.regime     = await loadJSON("data/regime_indicators.json");
+  S.status     = await loadJSON("data/status.json");   // order item 6: pipeline + audit status strip
   S.regimeDaily = await loadCSV("data/regime_daily.csv");
   S.indicatorSeries = await loadJSON("data/indicator_series.json");
   S.signals    = await loadJSON("data/ticker_signals.json");
