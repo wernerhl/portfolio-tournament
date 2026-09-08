@@ -80,3 +80,6 @@ The `status:opaque` MEDIUM is the served Labor-Day status (pre-remediation code)
 2. **Textbook location** for item 7.
 3. **C5**: run when told; nothing else changes until then.
 4. **C4**: tell me when the subscriptions are active.
+5. **The paper's abstract (memo §3).** The only paper on this machine is `_paper/quant_system_architecture.tex` (May 2026, an architecture specification): its abstract contains no statement about drawdown reduction, so there is nothing to replace there, and the phrase "40 to 75 percent" appears in no file under `~/Documents`. The paper the memo means therefore lives with the textbook; send the location and I will place the §3 sentence. One stale claim to note in that May note regardless: its "What Constitutes 'Edge'" section cites an in-sample AUC of 0.81 for the composite, superseded by the June draft's leave-one-crisis-out result and by C2 (AUC 0.64 point-in-time and revised). Not edited: outside the order's named targets and outside the repositories.
+6. **Dashboard copy** carries no prior drawdown-reduction claim and none of the banned words; the only drawdown-reduction figures on the dashboard are the C2 pair and the C3 verdict line added in this batch.
+
