@@ -86,6 +86,14 @@ def main():
     # i.e. the equal-weight mean of the risk scores — persisted alongside the
     # stepped calibrated probability so the dashboard can show both.
     block["raw_score"] = means
+    # Order 9-Sept B1: model identity travels with the data. The id is keyed
+    # to the calibration file's as_of + winning method.
+    try:
+        _cal = json.load(open(DATA / "v4_calibration.json"))
+        model_version = f"v4-{str(_cal.get('as_of') or '')[:10] or 'unknown'}-{_cal.get('winning_method', 'unknown')}"
+    except Exception:
+        model_version = "v4-unknown"
+    block["model_version"] = model_version
     block.index.name = "date"
 
     n_appended = len([d for d in block.index if d not in existing.index])
@@ -106,6 +114,12 @@ def main():
     # Backfill raw_score for every historical row: the equal-weight mean is
     # model-state independent and the risk parquet holds the full history.
     combined["raw_score"] = row_mean.reindex(pd.to_datetime(combined.index)).values
+    # B1 backfill: rows without a model_version were produced by the calibration
+    # currently in force (the monthly run rewrites the whole series), so they
+    # carry its id — never a different version's id for values it did not produce.
+    if "model_version" not in combined.columns:
+        combined["model_version"] = None
+    combined["model_version"] = combined["model_version"].where(combined["model_version"].notna(), model_version)
     combined.to_csv(csv_p)
 
     # ── JULY AUDIT FIX 4a: delta attribution for the production probability ──

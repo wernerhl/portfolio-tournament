@@ -371,6 +371,10 @@ def main():
     cal_payload = {
         "production_target":       prod_col,
         "winning_method":          prod_winner,
+        "as_of":                   datetime.now().strftime("%Y-%m-%d"),
+        "cadence":                 "on_change",
+        "model_version":           f"v4-{datetime.now().strftime('%Y-%m-%d')}-{prod_winner}",
+        "evaluation":              "in_sample (run scripts/v4_oof_calibration.py for out-of-fold evidence)",
         "calibration_method":      "isotonic",
         "brier_score":             round(brier, 4),
         "brier_baseline":          round(float(y_train.mean() * (1 - y_train.mean())), 4),
@@ -400,6 +404,23 @@ def main():
     # Graduated classification driven by calibrated p_5_40
     daily_probs["graduated_regime"] = daily_probs["p_5_40_calibrated"].apply(graduated_regime)
     daily_probs.index.name = "date"
+    # Order 9-Sept B1: the monthly rewrite replaces every row, so the outgoing
+    # series is archived under its own model_version before it is overwritten,
+    # and every new row carries the new id. The series is self-describing
+    # across model changes; as-published values are never altered in place.
+    _today = datetime.now().strftime("%Y-%m-%d")
+    new_version = f"v4-{_today}-{prod_winner}"
+    _csv = DATA / "regime_v4_daily.csv"
+    if _csv.exists():
+        try:
+            _old = pd.read_csv(_csv)
+            _prev = str(_old["model_version"].dropna().iloc[-1]) if "model_version" in _old.columns and _old["model_version"].notna().any() else "pre-stamp"
+            _vd = DATA / "v4_vintages"; _vd.mkdir(exist_ok=True)
+            _old.to_csv(_vd / f"regime_v4_daily_{_prev}.csv", index=False)
+            print(f"  archived outgoing series as v4_vintages/regime_v4_daily_{_prev}.csv")
+        except Exception as e:
+            print(f"  warn: could not archive outgoing v4 series: {e}", file=sys.stderr)
+    daily_probs["model_version"] = new_version
     daily_probs.to_csv(DATA / "regime_v4_daily.csv")
     print(f"  saved regime_v4_daily.csv ({daily_probs.shape})")
 
