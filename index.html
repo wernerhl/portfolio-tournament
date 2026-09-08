@@ -1432,7 +1432,7 @@ function renderRegimeCommandCenter(R){
         <h3>CYCLE POSITION ${v4Last ? '· <span style="color:var(--t5);font-weight:500">composite verdict</span>' : ''}${asOfBadge(reg.as_of)}</h3>
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
-        <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
+        <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>${asOfBadge(v4AsOfCC)}` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
         ${scoreRow}
         <div class="verdict">${verdict}</div>
         ${v2Foot}
@@ -1918,7 +1918,7 @@ function renderRegimeOverlayPanel(){
   return `<section class="rop">
     <div class="rop-head">
       <div>
-        <h2>REGIME & OVERLAY${asOfBadge(r.as_of)}</h2>
+        <h2>REGIME & OVERLAY${asOfBadge(r.session_date || r.as_of)}</h2>
         <div class="sub">VIX term-structure state · spike attribution · diagnostic overlay</div>
       </div>
       <div style="font:400 11px var(--m);color:var(--t3)">
@@ -2299,7 +2299,7 @@ function renderThesisSection(){
   return `<section class="thesis">
     <div class="thesis-head">
       <div>
-        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span style="font:500 9px var(--m);color:var(--t4);margin-left:8px">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
+        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.session_date || td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span style="font:500 9px var(--m);color:var(--t4);margin-left:8px">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
         <div class="sub">the meso level: cross-sectional structure of the bets — risk accounting, not a return forecaster</div>
       </div>
       <span class="th-toggle">

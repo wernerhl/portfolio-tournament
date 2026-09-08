@@ -188,6 +188,24 @@ def validate_outputs() -> None:
                 errors.append(f"canonical_vol_close_optional_needs_reason: {f} null "
                               f"without a recorded reason")
 
+        # SEPT AUDIT [5.1]: every served JSON declares its date — daily files
+        # a session_date, static/on_change/weekly files cadence + as_of.
+        for fname, cadence in SERVED_CADENCE.items():
+            p3 = DATA / fname
+            if not p3.exists():
+                continue
+            try:
+                dj = json.load(open(p3))
+            except Exception:
+                errors.append(f"served_json_unparseable: {fname}")
+                continue
+            if not isinstance(dj, dict):
+                continue
+            if cadence == "daily" and not dj.get("session_date"):
+                errors.append(f"served_json_missing_session_date: {fname}")
+            if cadence != "daily" and not (dj.get("cadence") and dj.get("as_of")):
+                errors.append(f"served_json_missing_cadence_as_of: {fname}")
+
         # ── THESIS layer validations ──────────────────────────────────
         td_p = DATA / "thesis_daily.json"
         if td_p.exists():
@@ -313,6 +331,75 @@ def _write_status(ok: bool, reason) -> None:
         "session_date": session,
         "forced_publish_reason": FORCE_REASON,
     }, open(path, "w"), indent=1)
+
+# ─────────────────────────────────────────────────────────────────────
+# SEPT AUDIT [5.1]: declared dates on EVERY served JSON, in one place.
+# Daily files carry session_date (the completed session the pipeline just
+# produced); static / on_change / weekly files carry cadence + as_of so a
+# stale-badge or audit check can tell "old by design" from "stale". Writers
+# that already stamp themselves (intraday, vol_regime, canonical) are left
+# as-is; this pass is idempotent and never changes any data field.
+# ─────────────────────────────────────────────────────────────────────
+SERVED_CADENCE = {
+    # daily pipeline outputs → session_date
+    "indicator_series.json": "daily", "regime_indicators.json": "daily",
+    "thesis_daily.json": "daily", "ticker_indicators.json": "daily",
+    "ticker_signals.json": "daily", "tournament.json": "daily",
+    "v4_delta_attribution.json": "daily", "regime_conditional_scores.json": "daily",
+    "intraday.json": "daily", "vol_regime.json": "daily", "vol_close_canonical.json": "daily",
+    # on-change / static artifacts → cadence + as_of
+    "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
+    "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",
+    "thesis_backtest.json": "on_change", "backtest_metrics.json": "on_change",
+    "v4_calibration.json": "on_change", "v4_scoring_params.json": "on_change",
+    "v4_model_results.json": "on_change", "event_calendar.json": "weekly",
+    "benchmark_inception.json": "static", "regime_comparison.json": "static",
+    "regime_v2_auc.json": "static", "regime_v2_divergence_test.json": "static",
+    "vol_canonical_close.json": "static",   # legacy pre-July filename, superseded
+}
+
+def stamp_served_json() -> None:
+    import subprocess
+    from trading_calendar import served_meta, last_trading_session
+    session = last_trading_session()
+    for fname, cadence in SERVED_CADENCE.items():
+        p = DATA / fname
+        if not p.exists():
+            continue
+        try:
+            d = json.load(open(p))
+        except Exception:
+            continue
+        if not isinstance(d, dict):
+            continue
+        if cadence == "daily":
+            meta = served_meta("daily", session_date=d.get("session_date") or d.get("as_of") or session)
+        else:
+            as_of = (d.get("as_of") or d.get("frozen_at") or d.get("generated_at")
+                     or d.get("approved_at") or d.get("updated") or "")
+            as_of = str(as_of)[:10] if as_of else None
+            if not as_of:   # fall back to the file's last git change date
+                try:
+                    as_of = subprocess.check_output(
+                        ["git", "log", "-1", "--format=%ad", "--date=short", "--", str(p)],
+                        cwd=ROOT, text=True).strip() or None
+                except Exception:
+                    as_of = None
+            meta = served_meta(cadence, as_of=as_of)
+        changed = False
+        for k, v in meta.items():
+            if k == "computed_at":      # never churn a file only to bump a clock
+                continue
+            if d.get(k) != v:
+                d[k] = v; changed = True
+        if fname == "vol_canonical_close.json" and not d.get("superseded_by"):
+            d["superseded_by"] = "vol_close_canonical.json"; changed = True
+        if changed:
+            with open(p, "w") as f:
+                json.dump(d, f, indent=2, default=str)
+    print("  served-JSON date stamps: OK")
+
+stamp_served_json()
 
 try:
     validate_outputs()
