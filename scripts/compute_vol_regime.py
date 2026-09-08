@@ -256,6 +256,10 @@ def _measure_subsample(spread: pd.Series, fired_idx: pd.Index,
         "wilson_95ci": [ci_lo, ci_hi] if ci_lo is not None else None,
         "horizon_sessions": REVERSION_N,
         "threshold_sigma": REVERSION_X_SD,
+        # SEPT AUDIT [3.2]: small-n caveat on the subsample (event days are few)
+        "small_n": bool(n_attempts < 30),
+        "small_n_caveat": ("n < 30 — hit rate and CI are indicative only"
+                           if n_attempts < 30 else None),
     }
 
 
@@ -316,6 +320,18 @@ def main():
     sect = pd.read_parquet(SOURCE / "sector_etfs.parquet")
     prices = pd.read_parquet(SOURCE / "prices_daily.parquet")
     if "SPY_volume" in prices.columns: prices = prices.drop(columns=["SPY_volume"])
+
+    # SEPT AUDIT [3.3]: fail LOUDLY, naming the field, when a required input
+    # is null for the last session. The silent-freeze mode this prevents:
+    # spread.dropna() simply ended at the last date the provider served
+    # (yfinance ^VIX3M history collapsed to 2026-07-17 on Sept 3-4), the job
+    # "succeeded", and as_of went stale while status stayed green.
+    vol.index = pd.to_datetime(vol.index)
+    _last_vol = vol.index.max()
+    for _f in ("vix", "vix3m"):
+        if _f not in vol.columns or pd.isna(vol[_f].loc[_last_vol]):
+            raise AssertionError(f"vol_regime_required_input_null: {_f} is null for "
+                                 f"{_last_vol.date()} — refusing to write a stale vol_regime")
 
     # Spread series
     spread = (vol["vix"] - vol["vix3m"]).dropna().rename("spread_spot_3m")
@@ -564,6 +580,31 @@ def main():
         history_recent.append({"d": d.strftime("%Y-%m-%d"), "state": st,
                                 "spread": round(float(spread.loc[d]), 3)})
 
+    # SEPT AUDIT [3.1]: explicit backfill record from 2026-07-20 to the last
+    # session, with the SOURCE used per day. After the Cboe overlay, a day is
+    # "cboe" when both vix and vix3m fall inside Cboe's served range for that
+    # field; otherwise the yfinance bar is what the parquet holds.
+    _src = {}
+    try:
+        _canon_src = json.load(open(DATA / "vol_close_canonical.json")).get("series_sources", {})
+        for _f in ("vix", "vix3m"):
+            _s = _canon_src.get(_f, {})
+            if _s.get("provider") == "cboe":
+                _src[_f] = (_s.get("from"), _s.get("to"))
+    except Exception:
+        pass
+
+    def _day_source(d_str):
+        ok = all(_f in _src and _src[_f][0] <= d_str <= _src[_f][1] for _f in ("vix", "vix3m"))
+        return "cboe" if ok else "yfinance"
+
+    history_backfill = []
+    for d, st in states.loc[states.index >= pd.Timestamp("2026-07-20")].items():
+        d_str = d.strftime("%Y-%m-%d")
+        history_backfill.append({"d": d_str, "state": st,
+                                 "spread": round(float(spread.loc[d]), 3),
+                                 "source": _day_source(d_str)})
+
     # Recent trigger episodes for the dashboard "past spikes" list
     past_spikes = []
     fired_idx = fired[fired].index
@@ -607,7 +648,13 @@ def main():
     payload = {
         "updated":      datetime.now().isoformat(),
         "as_of":        last_date.strftime("%Y-%m-%d"),
+        "session_date": last_date.strftime("%Y-%m-%d"),   # SEPT AUDIT [5]: declared date
+        "cadence":      "daily",
         "tradable_at":  tradable_at.strftime("%Y-%m-%d"),
+        "history_backfill": history_backfill,               # SEPT AUDIT [3.1]
+        "backfill_note": ("2026-07-20 onward recomputed from the repaired canonical "
+                          "closes (Cboe official history overlaid on vol_indicators); "
+                          "source recorded per day"),
 
         "config": {
             "spread_definition":      "VIX − VIX3M (FRED VIXCLS − VXVCLS proxy via yfinance)",
