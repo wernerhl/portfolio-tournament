@@ -44,7 +44,10 @@ def load_inputs():
     spy = sect["spy"].dropna().astype(float)
     fred = pd.read_parquet(SOURCE / "fred_indicators.parquet"); fred.index = pd.to_datetime(fred.index)
     effr = fred["effr"].astype(float)
-    reg = pd.read_csv(DATA / "regime_v2_daily.csv", index_col="date", parse_dates=["date"])["R_full"].astype(float)
+    # Registered input is the as-published series. C3_REGIME_CSV (context runs ONLY —
+    # main() refuses it on the decision path) lets the point-in-time series be shown as context.
+    reg_path = os.environ.get("C3_REGIME_CSV") or str(DATA / "regime_v2_daily.csv")
+    reg = pd.read_csv(reg_path, index_col="date", parse_dates=["date"])["R_full"].astype(float)
     # Registered window = the served backtest equity curves' first and last session (B2).
     eq = pd.read_csv(DATA / "backtest_equity_curves.csv", index_col=0, parse_dates=True)
     start, end = pd.Timestamp(eq.index.min()), pd.Timestamp(eq.index.max())
@@ -92,6 +95,7 @@ def simulate(name: str, spec: dict, days: pd.DatetimeIndex, rebal: set, spy: pd.
     nav, eq, cash = 1.0, 0.0, 1.0
     navs, rets, turn = [], [], 0.0
     prev_nav = nav
+    started = False                                      # first rebalance of the run = initial position from all-cash
     for i, d in enumerate(days):
         if i > 0:                                        # accrue the day's return at yesterday's positions
             eq *= 1.0 + float(r_spy.loc[d]); cash *= 1.0 + float(effr_d.loc[d]); nav = eq + cash
@@ -99,17 +103,13 @@ def simulate(name: str, spec: dict, days: pd.DatetimeIndex, rebal: set, spy: pd.
             sig = signals_at(d, spy, reg, month_end)
             e_new = exposure_for(name, sig, spec)
             w_pre = eq / nav if nav > 0 else 0.0
-            t1 = abs(e_new - w_pre)
-            if name == "buy_and_hold" and i > 0:
-                t1 = 0.0                                 # true buy-and-hold in the pure overlay; constant-mix tiers rebalance
-                if spec["cash_floor"] > 0:
-                    t1 = abs(e_new - w_pre)
+            pure_bh_hold = (name == "buy_and_hold" and started and spec["cash_floor"] == 0)
+            t1 = 0.0 if pure_bh_hold else abs(e_new - w_pre)   # true buy-and-hold in the pure overlay; constant-mix tiers rebalance
             cost = nav * bps * t1
             nav -= cost; turn += t1
-            if not (name == "buy_and_hold" and i > 0 and spec["cash_floor"] == 0):
+            if not pure_bh_hold:
                 eq, cash = nav * e_new, nav * (1.0 - e_new)
-            else:
-                eq, cash = eq - cost * (eq / (eq + cash)), cash - cost * (cash / (eq + cash))
+            started = True
         navs.append(nav); rets.append(nav / prev_nav - 1.0); prev_nav = nav
     nav_s = pd.Series(navs, index=days, name=name)
     ret_s = pd.Series(rets, index=days, name=name)
@@ -246,9 +246,15 @@ def print_markdown(res: dict) -> None:
 
 def main() -> int:
     ctx = os.environ.get("C3_CONTEXT_WINDOW")
-    if ctx:
-        a, b = ctx.split(":")
-        res = run((pd.Timestamp(a), pd.Timestamp(b)), "_context", decision=False)
+    alt = os.environ.get("C3_REGIME_CSV")
+    if ctx or alt:
+        if ctx:
+            a, b = ctx.split(":")
+            w = (pd.Timestamp(a), pd.Timestamp(b))
+        else:                                            # registered window, alternative regime input, context only
+            _, _, _, _, s, e = load_inputs(); w = (s, e)
+        tag = "_context" + (("_" + Path(alt).stem.replace("regime_v2_daily_", "")) if alt else "")
+        res = run(w, tag, decision=False)
     else:
         res = run(None, "", decision=True)
     print_markdown(res)
