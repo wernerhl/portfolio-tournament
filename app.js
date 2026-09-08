@@ -2563,7 +2563,53 @@ function renderFactorStrip(key){
     <div class="mono t1 c-3 mt1">proxies: SPY · IWM−SPY · IWD−IWF · MTUM−SPY · weight-averaged betas over ${(p.covered_weight * 100).toFixed(0)}% of equity, ${p.n_names} names${p.excluded && p.excluded.length ? " · excluded " + p.excluded.join(", ") : ""} · session ${f.session_date}</div>
   </div>`;
 }
-function renderBookPanel(){ return ""; }          // P3.2
+// ── P3.2 The book: positions (weight, cost basis, price, unrealized P&L, one-day), totals,
+//    thesis exposure bars + N_eff, and the factor strip beside them. Sorted by weight. ──
+function thesisOf(tk){
+  const reg = (S.thesisReg && S.thesisReg.theses) || {};
+  const hits = Object.entries(reg).filter(([k, t]) => t.members && t.members[tk]).sort((a, b) => b[1].members[tk] - a[1].members[tk]);
+  if (!hits.length) return "unclassified";
+  const [k, t] = hits[0]; return `${thesisLabel(k)}${t.members[tk] < 0.999 ? " · " + t.members[tk].toFixed(2) : ""}`;
+}
+function renderBookPanel(){
+  const h = S.tournament && S.tournament.history; if (!h || !h.length) return "";
+  const last = h[h.length - 1], prev = h.length > 1 ? h[h.length - 2] : null;
+  const w = last.tiers && last.tiers["5_werner"]; if (!w) return "";
+  const prevPx = {}; ((prev && prev.tiers && prev.tiers["5_werner"] && prev.tiers["5_werner"].positions) || []).forEach(p => { if (p.price) prevPx[p.ticker] = p.price; });
+  const hf = S.holdingsFile; const acq = {}; ((hf && hf.holdings) || []).forEach(x => { acq[x.ticker] = x; });
+  const pos = (w.positions || []).filter(p => p.value > 0).map(p => {
+    const cost = p.cost_basis != null ? p.cost_basis : (acq[p.ticker] && acq[p.ticker].cost_basis);
+    const pl = cost ? (p.price - cost) * p.shares : null, plPct = cost ? p.price / cost - 1 : null;
+    const r1 = prevPx[p.ticker] ? p.price / prevPx[p.ticker] - 1 : null;
+    return {...p, cost, pl, plPct, r1};
+  }).sort((a, b) => b.value - a.value);
+  const equity = pos.reduce((s, p) => s + p.value, 0), cash = w.cash || 0, nav = equity + cash;
+  const costTot = pos.reduce((s, p) => s + (p.cost ? p.cost * p.shares : 0), 0);
+  const plTot = pos.reduce((s, p) => s + (p.pl || 0), 0);
+  const base1 = pos.reduce((s, p) => s + (p.r1 != null ? p.value / (1 + p.r1) : 0), 0);
+  const r1Tot = base1 > 0 ? pos.reduce((s, p) => s + (p.r1 != null ? p.value - p.value / (1 + p.r1) : 0), 0) / base1 : null;
+  const th = S.thesis && S.thesis.tiers && S.thesis.tiers["5_werner"];
+  const exp = (th && th.exposure_invested) || {};
+  const bars = Object.entries(exp).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
+    `<div class="th-exp-row"><span class="th-exp-k mono t1 c-2">${thesisLabel(k)}</span><span class="th-exp-bar"><span class="${cc(thesisColor(k), 'bg')}" style="width:${(v * 100).toFixed(1)}%"></span></span><span class="th-exp-v mono t1 c-1">${(v * 100).toFixed(0)}%</span></div>`).join("");
+  const money = v => "$" + fmt(Math.round(Math.abs(v)));
+  const pl = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : "−"}${money(v)}</span>`;
+  const pct = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%</span>`;
+  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">tier 5 · positions from data/holdings.json, the only holdings source</span>${asOfBadge(last.date)}</h3>
+    <div class="tbl-scroll"><table class="book-table">
+      <tr><th>TICKER</th><th class="num">WEIGHT</th><th class="num">SHARES</th><th class="num">COST</th><th class="num">PRICE</th><th class="num">UNREALIZED</th><th class="num">%</th><th class="num">1D</th><th>THESIS</th></tr>
+      ${pos.map(p => `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td class="num">${(p.value / nav * 100).toFixed(1)}%</td><td class="num">${p.shares}</td><td class="num">${p.cost != null ? p.cost.toFixed(2) : "—"}</td><td class="num">${p.price.toFixed(2)}</td><td class="num">${pl(p.pl)}</td><td class="num">${pct(p.plPct)}</td><td class="num">${pct(p.r1)}</td><td class="c-3 t1">${thesisOf(p.ticker)}${acq[p.ticker] && acq[p.ticker].acquired ? " · acquired " + acq[p.ticker].acquired : ""}</td></tr>`).join("")}
+      <tr class="book-total"><td class="mono t2 c-1 w6">TOTAL</td><td class="num">${(equity / nav * 100).toFixed(1)}%</td><td class="num">${pos.length} names</td><td class="num">${money(costTot)}</td><td class="num">${money(equity)}</td><td class="num">${pl(plTot)}</td><td class="num">${costTot ? pct(equity / costTot - 1) : "—"}</td><td class="num">${pct(r1Tot)}</td><td class="c-3 t1">cash ${money(cash)} · NAV ${money(nav)}</td></tr>
+    </table></div>
+    <div class="book-grid">
+      <div><div class="fx-head mono t1 c-3">THESIS EXPOSURE · <span class="c-3">N<sub>eff</sub> ${th && th.n_eff != null ? th.n_eff : "—"} effective bets · invested ${th && th.invested_share != null ? (th.invested_share * 100).toFixed(0) + "%" : "—"} of NAV</span></div>
+        ${bars || '<div class="mono t1 c-3">no classified exposure</div>'}
+        ${th && th.coverage_caveat ? `<div class="mono t1 c-warn mt1">${th.coverage_caveat}</div>` : ""}
+        <div class="mono t1 c-3 mt1">partial memberships leave a remainder counted as unclassified (registry policy)</div></div>
+      ${renderFactorStrip("book")}
+    </div>
+  </div>`;
+}
 function renderActionLog(){ return ""; }          // P4.1
 function renderCalibrationPanel(){ return ""; }   // P4.2
 function renderCalendarCard(){

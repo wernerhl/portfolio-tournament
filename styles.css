@@ -799,3 +799,13 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 .fx-zero{position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--hairline-hi)}
 .fx-fill{position:absolute;top:0;height:100%;border-radius:var(--radius-1);transition:width var(--tween),left var(--tween)}
 .fx-v{text-align:right}
+/* ── P3.2 The book ───────────────────────────────────────────────────── */
+.tbl-scroll{overflow-x:auto}
+.book-table td.num,.book-table th.num{text-align:right}
+.book-table tr.book-total td{border-top:2px solid var(--hairline-hi);font-weight:600;color:var(--text-1)}
+.book-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s3)}
+.th-exp-row{display:grid;grid-template-columns:150px 1fr 40px;gap:var(--s2);align-items:center;margin-bottom:var(--s1)}
+.th-exp-bar{height:var(--s2);background:var(--surface-2);border-radius:var(--radius-1);overflow:hidden}
+.th-exp-bar span{display:block;height:100%;transition:width var(--tween)}
+.th-exp-v{text-align:right}
+@media (max-width:820px){.book-grid{grid-template-columns:1fr}}
