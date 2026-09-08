@@ -1,29 +1,49 @@
-# Retirement test C3 — Regime index versus one-line rules (pre-registered)
+# Retirement test C3 — Regime index versus one-line rules (pre-registered; two verdicts of record)
 
-**Order** (Governance Decisions and the Retirement Tests, 9 Sept 2026, C3): *"This is the test that can retire the core of the system, and it is registered here before any of it is run."* Registration `reports/c3_registration.md` was committed at **c39e2aa** (2026-09-08 06:52 UTC) before the first computation; the run followed the same hour. Section 6 restates the registration verbatim and section 7 shows the mechanical diff against the committed registration: **empty**.
+**Order** (Governance Decisions and the Retirement Tests, 9 Sept 2026, C3): *"This is the test that can retire the core of the system, and it is registered here before any of it is run."* Registration v1 (`reports/c3_registration.md`) was committed at **c39e2aa** (2026-09-08 06:52 UTC) before the first computation. Registration v2 (`reports/c3_registration_v2.md`) was issued by the Decision Memo of 9 September 2026 **after the v1 result was known**, changes one condition, retains the v1 verdict, and carries the amendment paragraph. This report carries both verdicts; section 7 restates both registrations verbatim and section 8 shows the mechanical diffs (v1 against its commit: empty; v2 against its file: empty).
 
-## 1. Registered outcome
+## 1. Verdicts of record
 
-**The regime index fails the registered rule.** On tier 4 (the pure overlay: cash 0–100%, SPY, monthly, net of 10 bps one-way), over 2010-02-01 → 2026-05-21:
+**Under registration v1 — the regime index FAILS.** Tier 4 (pure overlay: cash 0–100%, SPY, monthly, net of 10 bps one-way), 2010-02-01 → 2026-05-21, revised inputs:
 
-| | regime index | best one-line rule (10% vol targeting) | condition |
+| | regime index | best one-line rule (10% vol targeting) | v1 condition |
 |---|---|---|---|
 | after-cost return per unit of volatility | 0.993 | 0.822 | margin +0.171 must exceed the half-width of the regime's own 90% interval, 0.411 → **not met** |
 | drawdown reduction vs buy-and-hold | 63.9% | 29.7% | regime ≥ rule → **met** |
 
-The registered consequence reads: *"If it fails either condition, the regime layer is demoted to a context panel and tier sizing switches to the winning one-line rule; the indicator panel remains as information."* The winning one-line rule is volatility targeting (highest return per volatility among the three rules, and also the largest drawdown reduction among them). **That consequence has not been applied in this batch**: it changes served behaviour (the dashboard's regime layer and every tier's sizing), and the standing rule is that such a change is a human act with recorded provenance. Section 10 lays out the two routes the order itself allows.
+**Under registration v2 — the regime index PASSES.** Same run, same resamples, same best rule:
 
-## 2. What the numbers say beyond the rule
+| | value | v2 condition |
+|---|---|---|
+| paired difference, regime − vol targeting, return per volatility, 90% interval | [+0.017, +0.318] | lies entirely above zero → **met** |
+| drawdown reduction vs buy-and-hold | 63.9% vs 29.7% | regime ≥ rule (unchanged) → **met** |
 
-- **The regime beats every rule on both metrics in the pure overlay, and the paired bootstrap says so with the same 90% coverage.** The registration reports the paired difference (regime − rule, same resampled paths) as context: against vol targeting the return-per-volatility difference is [+0.017, +0.318] and the drawdown-reduction difference is [+12.0, +39.5] points, both intervals entirely above zero. The registered criterion is stricter by construction: it asks the margin to exceed the half-width of the regime's *marginal* interval (0.411), which is dominated by market-path uncertainty common to all contestants and is more than twice the margin. No monthly overlay on this window clears such a bar; the three rules' own return-per-volatility intervals have half-widths of 0.44–0.45.
+**The amendment paragraph (Decision Memo §1, verbatim; travels with the v2 verdict everywhere it appears):**
+
+> The rule was defective, and the defect is objective rather than a matter of taste. Condition 1 compared a point-estimate margin to the half-width of the regime's own marginal bootstrap interval. That half-width (0.411) is dominated by market-path uncertainty shared by every contestant, because all of them hold the same index most of the time. The report shows no monthly overlay on this window could clear it: the rules' own half-widths are 0.44 to 0.45, larger than any plausible margin between two overlays. A test that no contestant can pass has no discriminating power. The correct statistic for comparing two strategies on one history is the paired difference, computed on the same resampled paths, which cancels the shared variance. The registration itself required the paired difference to be reported, as context.
+>
+> The asymmetry must be stated: had the regime passed under v1, this defect would not have been examined. The amendment is prompted by the result. That is exactly the situation the amendment clause exists for, and it is honest only if the v1 verdict stays on record and this paragraph travels with the v2 verdict everywhere it appears.
+
+**Context, reported alongside and binding on what may be claimed (Decision Memo §2, verbatim):**
+
+> Point-in-time inputs (C2's strict series): paired return-per-volatility interval [+0.006, +0.201], lower bound at zero for practical purposes; drawdown reduction 51.6 percent against 29.7. On real-time information the regime's drawdown advantage is intact and its return-per-volatility advantage is not distinguishable from nothing.
+> Crisis-inclusive window (2005-01-03 to 2026-09-04): drawdown reduction 63.7 percent against vol targeting's 57.0; paired return-per-volatility intervals against the moving-average and momentum rules include zero, against vol targeting [+0.007, +0.282]. In 2008, a one-line volatility-targeting rule captured most of the protection the regime layer provides.
+> Cost of the overlay: annualized return 7.92 percent against buy-and-hold's 14.52 over the decision window. The regime overlay is insurance with a substantial premium; its value is the ratio and the drawdowns, not the level of return.
+> Tier 3: the moving-average rule's drawdown reduction exceeds the regime's (33.1 against 27.9). The regime does not dominate in every operating range.
+
+**Consequence.** The v1 consequence (demotion; tier sizing to the winning rule) is not applied: the memo's §4 records why ("procedure over outcome, the ledger's Failure 11"). The regime layer keeps its role. The combination hypothesis raised by the context runs is registered as C5 (`reports/c5_registration.md`), not run, not adopted.
+
+## 2. What the numbers say beyond the rules
+
+- **The regime beats every rule on both metrics in the pure overlay, and the paired bootstrap says so at 90% coverage.** Against vol targeting the return-per-volatility difference is [+0.017, +0.318] and the drawdown-reduction difference [+12.0, +39.5] points. The v1 criterion asked the margin to exceed the half-width of the regime's *marginal* interval (0.411), more than twice the margin; the three rules' own return-per-volatility intervals have half-widths of 0.44–0.45.
 - **Drawdown reduction is where the regime layer is unambiguously different.** Regime 63.9% vs SMA 20.9%, momentum 0.0%, vol targeting 29.7%, with the regime's interval [41.5, 63.9] disjoint from momentum's and vol targeting's.
-- **It costs return.** Annualized return 7.92% vs buy-and-hold 14.52% (the rules: 7.85%, 12.78%, 9.37%). The regime overlay sits in cash a lot (mean exposure well below the rules'); its edge is in the ratio and the drawdowns, not in the level of return.
+- **It costs return.** Annualized return 7.92% vs buy-and-hold 14.52% (the rules: 7.85%, 12.78%, 9.37%). The regime overlay sits in cash a lot; its edge is in the ratio and the drawdowns, not in the level of return.
 - **Turnover is not the regime's problem at monthly cadence:** 0.97 one-way per year vs SMA 1.90, momentum 1.04, vol targeting 1.12.
-- **Tiers 1–3 (the regime's own operating ranges) tell the same story with smaller numbers**, because floors and caps compress every contestant: the regime has the highest return per volatility in each tier and the largest drawdown reduction in tiers 1, 2 and 4; in tier 3 the SMA rule's drawdown reduction is larger (33.1% vs 27.9%, interval [−9.7, 33.1] vs [19.2, 29.3]).
-- **On point-in-time inputs (C2's strict series; context, not decision) the picture holds but shrinks**, exactly as C2 predicted: regime return per volatility 0.930 (margin over vol targeting +0.108, paired interval [+0.006, +0.201]), drawdown reduction 51.6% vs 29.7%. The registered rule would give the same verdict — condition 1 fails, condition 2 holds with headroom.
-- **Over 2005–2026 (context; includes 2008)** the pure-overlay regime keeps the best return per volatility (0.875 vs 0.657 / 0.728 / 0.724) and the largest drawdown reduction (63.7% vs 51.7 / 38.9 / 57.0; buy-and-hold max drawdown −55.2%), but the rules close much of the gap in the crisis year and the paired return-per-volatility intervals against SMA and momentum include zero.
+- **Tiers 1–3 tell the same story with smaller numbers**, because floors and caps compress every contestant: the regime has the highest return per volatility in each tier and the largest drawdown reduction in tiers 1, 2 and 4; in tier 3 the SMA rule's drawdown reduction is larger (33.1% vs 27.9%).
+- **On point-in-time inputs the picture holds but shrinks**, as C2 predicted: regime return per volatility 0.930 (margin over vol targeting +0.108, paired interval [+0.006, +0.201]), drawdown reduction 51.6% vs 29.7%. Under v2 the paired interval's lower bound is +0.006: met on the letter, "at zero for practical purposes" on the substance, which is why the memo binds the claim to the point-in-time sentence.
+- **Over 2005–2026 (includes 2008)** the pure-overlay regime keeps the best return per volatility (0.875 vs 0.657 / 0.728 / 0.724) and the largest drawdown reduction (63.7% vs 51.7 / 38.9 / 57.0; buy-and-hold max drawdown −55.2%), but vol targeting closes most of the gap in the crisis year and the paired return-per-volatility intervals against SMA and momentum include zero.
 
-## 3. Decision-window results (verbatim output of `scripts/c3_regime_vs_rules.py`, `reports/c3_run_stdout.txt`)
+## 3. Decision-window results (verbatim output of `scripts/c3_regime_vs_rules.py`, `reports/c3_run_stdout.txt`; the v1 block is byte-identical to the 8 September run, the v2 block is appended)
 
 ```
 window 2010-02-01 → 2026-05-21 (4102 sessions, 196 rebalances)
@@ -73,6 +93,11 @@ best one-line rule: vol_target_10 (return/vol 0.822); regime 0.993; margin +0.17
 drawdown reduction: regime 63.9% vs best rule 29.7% → condition 2 MET
 paired difference (regime − vol_target_10) 90% CI, context: RpV [+0.017, +0.318]
 **REGIME FAILS**
+
+### Decision under registration v2 (amended 2026-09-09; v1 verdict above stays on record)
+condition 1 (v2): paired difference regime − vol_target_10 in return/vol, 90% CI [+0.017, +0.318] entirely above zero → MET
+condition 2 (unchanged): drawdown reduction regime 63.9% vs best rule 29.7% → MET
+**REGIME PASSES under v2** (v1 verdict: FAILS; amendment disclosed in reports/c3_registration_v2.md §C)
 ```
 
 ## 4. Context runs (explicitly outside the decision, registration B12)
@@ -141,11 +166,12 @@ paired differences (regime − rule), 90% CI: sma10: RpV [+0.103, +0.583], DDred
 ## 5. Implementation notes and corrections (none touch a registered constant)
 
 - The script's first invocation stopped on a `KeyError` (the tier parameters live under `tier_specs`, not `tiers` in `config.json`) before any computation; fixed in f11a6eb.
-- The pure buy-and-hold leg identified its initial purchase by "first session of the window", which is a rebalance day in the registered window (2010-02-01 is a month start) but not in the context window (2005-01-03), so tier-4 buy-and-hold in the first context run never bought. Fixed to "first rebalance of the run"; the decision-window output was re-generated and is byte-identical before and after the fix (checked with `diff`).
+- The pure buy-and-hold leg identified its initial purchase by "first session of the window", which is a rebalance day in the registered window (2010-02-01 is a month start) but not in the context window (2005-01-03), so tier-4 buy-and-hold in the first context run never bought. Fixed to "first rebalance of the run"; the decision-window output was re-generated and is byte-identical before and after the fix.
 - A context-only input override (`C3_REGIME_CSV`) was added for the point-in-time run; the decision path refuses it. The decision run was re-generated after this edit and is again byte-identical.
+- The v2 evaluation (`decision_v2`) was added on 9 September on the same run; the v1 portion of the output is byte-identical before and after (checked with `diff`).
 - Regime input provenance: `data/regime_v2_daily.csv` blob 61381af1c160 at HEAD c39e2aa (as-published inputs, C2's "rev" variant).
 
-## 6. Registered specification, restated verbatim (`reports/c3_registration.md` at c39e2aa)
+## 6. Registration v1, restated verbatim (`reports/c3_registration.md` at c39e2aa)
 
 # C3 registration — Regime index versus one-line rules (frozen before the run)
 
@@ -195,13 +221,58 @@ Registered 2026-09-08, before any C3 computation was run. Per the order, *"No me
 
 **B12. Context runs, explicitly outside the decision.** One additional run on the longer window 2005-01-03 → 2026-09-04 (full regime-index history, includes 2008) is reported under a "context, not decision" heading with the same code and constants. It cannot alter the decision.
 
-## 7. Diff of section 6 against the committed registration
+## 7. Registration v2, restated verbatim (`reports/c3_registration_v2.md`)
+
+# C3 registration v2 — amended 9 September 2026 (one change only)
+
+This document amends `reports/c3_registration.md` (v1, committed c39e2aa before any run). It is issued by the Decision Memo of 9 September 2026 after the v1 result was known. **The v1 verdict stays on record and is never removed from the paper, the dashboard, or the ledger; the amendment paragraph in section C travels with the v2 verdict everywhere it appears.**
+
+## A. The v1 verdict of record (retained verbatim from `reports/retirement_test_C3_regime_vs_rules.md`)
+
+> **The regime index fails the registered rule.** On tier 4 (the pure overlay: cash 0–100%, SPY, monthly, net of 10 bps one-way), over 2010-02-01 → 2026-05-21:
+>
+> | | regime index | best one-line rule (10% vol targeting) | condition |
+> |---|---|---|---|
+> | after-cost return per unit of volatility | 0.993 | 0.822 | margin +0.171 must exceed the half-width of the regime's own 90% interval, 0.411 → **not met** |
+> | drawdown reduction vs buy-and-hold | 63.9% | 29.7% | regime ≥ rule → **met** |
+
+## B. Registration v2 (Decision Memo, section 2, verbatim)
+
+> All of v1 stands except condition 1, which is replaced as follows. Condition 1: the 90 percent interval of the paired bootstrap difference (regime minus best rule, same resampled paths as v1's B10) in after-cost return per unit of volatility lies entirely above zero. Condition 2 unchanged: drawdown reduction of the regime is at least that of the best rule, point estimates. Consequence unchanged. Window, contestants, metrics, bootstrap, seed, cost model unchanged. Reason for amendment: v1's statistic admitted no passing contestant on this window and confounded strategy differences with shared market-path variance; the paired difference is the correct comparison and was already registered as a reported quantity.
+>
+> Verdict under v2, decision window (tier 4, 2010-02-01 to 2026-05-21, revised inputs, net of costs): condition 1 met, paired interval [+0.017, +0.318]; condition 2 met. Pass.
+>
+> Context, reported alongside and binding on what may be claimed:
+> Point-in-time inputs (C2's strict series): paired return-per-volatility interval [+0.006, +0.201], lower bound at zero for practical purposes; drawdown reduction 51.6 percent against 29.7. On real-time information the regime's drawdown advantage is intact and its return-per-volatility advantage is not distinguishable from nothing.
+> Crisis-inclusive window (2005-01-03 to 2026-09-04): drawdown reduction 63.7 percent against vol targeting's 57.0; paired return-per-volatility intervals against the moving-average and momentum rules include zero, against vol targeting [+0.007, +0.282]. In 2008, a one-line volatility-targeting rule captured most of the protection the regime layer provides.
+> Cost of the overlay: annualized return 7.92 percent against buy-and-hold's 14.52 over the decision window. The regime overlay is insurance with a substantial premium; its value is the ratio and the drawdowns, not the level of return.
+> Tier 3: the moving-average rule's drawdown reduction exceeds the regime's (33.1 against 27.9). The regime does not dominate in every operating range.
+
+## C. The amendment paragraph (Decision Memo, section 1, verbatim; travels with the v2 verdict)
+
+> The rule was defective, and the defect is objective rather than a matter of taste. Condition 1 compared a point-estimate margin to the half-width of the regime's own marginal bootstrap interval. That half-width (0.411) is dominated by market-path uncertainty shared by every contestant, because all of them hold the same index most of the time. The report shows no monthly overlay on this window could clear it: the rules' own half-widths are 0.44 to 0.45, larger than any plausible margin between two overlays. A test that no contestant can pass has no discriminating power. The correct statistic for comparing two strategies on one history is the paired difference, computed on the same resampled paths, which cancels the shared variance. The registration itself required the paired difference to be reported, as context.
+>
+> The asymmetry must be stated: had the regime passed under v1, this defect would not have been examined. The amendment is prompted by the result. That is exactly the situation the amendment clause exists for, and it is honest only if the v1 verdict stays on record and this paragraph travels with the v2 verdict everywhere it appears.
+
+## D. Mechanics
+
+`scripts/c3_regime_vs_rules.py` evaluates both rules on the same run: `decision` (v1, unchanged code path) and `decision_v2` (paired 90% interval of return-per-volatility, regime minus best rule, lower bound > 0; drawdown-reduction condition unchanged). The best rule is the same object in both (highest point-estimate return-per-volatility among the three rules). Bootstrap resamples, seed, block length, window, costs and contestants are those of v1; the v1 output is byte-identical before and after the addition of the v2 evaluation, and the results report shows that check.
+
+## 8. Mechanical diffs
+
+Section 6 against `reports/c3_registration.md` at c39e2aa:
 
 ```
 (empty — section 6 is byte-identical to reports/c3_registration.md at c39e2aa)
 ```
 
-## 8. Referee before / after (verbatim, `scripts/audit_nightly.py`)
+Section 7 against `reports/c3_registration_v2.md` on disk:
+
+```
+(empty — section 7 is byte-identical to reports/c3_registration_v2.md)
+```
+
+## 9. Referee before / after (verbatim, `scripts/audit_nightly.py`)
 
 Before (`reports/audit_after_C2.txt`, the state C3 started from):
 
@@ -251,20 +322,21 @@ last trading session: 2026-09-04
 16 findings; 0 CRITICAL
 ```
 
-Finding lines are identical; 0 CRITICAL. The C3 artifacts (`data/c3_results*.json` declare `cadence: on_change`; NAV paths under `data/c3/` are outside the scan and git-ignored) add nothing.
+Finding lines are identical; 0 CRITICAL. The C3 artifacts add nothing (`data/c3_results*.json` declare `cadence: on_change`; NAV paths under `data/c3/` are outside the scan and git-ignored).
 
-## 9. Commits
+## 10. Commits
 
 | commit | item |
 |---|---|
-| c39e2aa | [C3][registration] frozen spec + script, committed before any run |
+| c39e2aa | [C3][registration] frozen spec v1 + script, committed before any run |
 | f11a6eb | [C3] script: config key fix (pre-computation) |
-| (this) | [C3][results] buy-and-hold first-rebalance fix, context input override, results JSONs, stdout captures, this report, referee after |
+| 14e969a | [C3][results] v1 verdict, buy-and-hold first-rebalance fix, context runs, referee after |
+| 5f18559 | [C3][report] cross-reference fix |
+| (memo batch) | [C3-v2] registration v2, `decision_v2` evaluation, this report regenerated with both verdicts |
 
-## 10. Decisions for Werner (nothing applied)
+## 11. Decisions taken by the Decision Memo of 9 September 2026 (recorded, not made here)
 
-The order pre-commits a consequence and also provides the only alternative to it. Both are recorded here as they stand; neither has been executed.
-
-1. **Apply the registered consequence.** Demote the regime layer to a context panel; switch tier sizing to 10% volatility targeting (60-day realized, cap 100%, monthly) mapped into each tier's existing cash range as in registration B7; keep the indicator panel as information. This is a served-behaviour change to both the dashboard and the live tier NAV computation and needs a written go with the change list pinned to this report. If given, the switch is implemented behind the same run guard, with the current sizing archived as a vintage and the leaderboard carrying a model-change note for 30 sessions, as B1 did for v4.
-2. **Re-register with a stated reason and report both results.** The order allows a change to the rule only through a new registration that names its reason, with both outcomes reported. The material fact for that judgment is in section 2: under the registered criterion no monthly overlay could pass on this window, while the paired-difference intervals, which the registration itself defined as context, are entirely positive for both metrics against every rule in the pure overlay. Whether that is a reason to re-register is a governance call, not a modelling one; I have not made it.
-3. **C4** (point-in-time fundamentals purchase) was deferred by the order until C3 reports. This is that report. The order's own framing: if the regime layer is the only component with an edge, the fundamental sleeve's remaining value is a clean confirmation of the null for the paper.
+1. v1 verdict stays on record; registration v2 issued in the open with the amendment paragraph; v2 verdict: pass.
+2. Demotion not applied; regime layer keeps its role.
+3. C5 (regime plus vol targeting versus each alone, paired criterion) registered only; not run until told.
+4. The paper's abstract carries the deflated sentence of the memo's §3; the words "edge", "alpha" and "40 to 75 percent" do not appear.

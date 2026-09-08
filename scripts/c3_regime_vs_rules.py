@@ -207,6 +207,19 @@ def run(window: tuple[pd.Timestamp, pd.Timestamp], tag: str, decision: bool) -> 
             "regime_passes": bool(cond1 and cond2),
             "paired_diff_ci90_context": t["paired_diff_regime_minus_rule_ci90"][best],
         }
+        # Registration v2 (Decision Memo 9 Sept 2026, one change only): condition 1 = the 90%
+        # interval of the paired difference (regime − best rule, same resampled paths) in
+        # after-cost return per volatility lies entirely above zero. Condition 2, best rule,
+        # consequence, window, bootstrap, seed, costs unchanged. v1 stays on record above.
+        pd_ci = t["paired_diff_regime_minus_rule_ci90"][best]["return_per_vol"]
+        v2c1 = pd_ci[0] > 0.0
+        result["decision_v2"] = {
+            "registration": "reports/c3_registration_v2.md (amended 2026-09-09; v1 verdict retained)",
+            "tier": REG["decision_tier"], "best_rule": best,
+            "paired_diff_return_per_vol_ci90": pd_ci, "condition1_paired_interval_above_zero": bool(v2c1),
+            "dd_reduction_regime": dd_reg, "dd_reduction_best_rule": dd_best, "condition2_dd_reduction_ge": bool(cond2),
+            "regime_passes": bool(v2c1 and cond2),
+        }
     try:
         result["regime_csv_blob"] = subprocess.check_output(["git", "rev-parse", "HEAD:data/regime_v2_daily.csv"], cwd=REPO, text=True).strip()[:12]
         result["head"] = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, text=True).strip()
@@ -242,6 +255,16 @@ def print_markdown(res: dict) -> None:
         print(f"drawdown reduction: regime {d['dd_reduction_regime']*100:.1f}% vs best rule {d['dd_reduction_best_rule']*100:.1f}% → condition 2 {'MET' if d['condition_dd_reduction_ge'] else 'NOT MET'}")
         print(f"paired difference (regime − {d['best_rule']}) 90% CI, context: RpV [{d['paired_diff_ci90_context']['return_per_vol'][0]:+.3f}, {d['paired_diff_ci90_context']['return_per_vol'][1]:+.3f}]")
         print(f"**REGIME {'PASSES' if d['regime_passes'] else 'FAILS'}**")
+    if res.get("decision_v2"):
+        d2 = res["decision_v2"]
+        print(f"\n### Decision under registration v2 (amended 2026-09-09; v1 verdict above stays on record)")
+        print(f"condition 1 (v2): paired difference regime − {d2['best_rule']} in return/vol, 90% CI "
+              f"[{d2['paired_diff_return_per_vol_ci90'][0]:+.3f}, {d2['paired_diff_return_per_vol_ci90'][1]:+.3f}] "
+              f"{'entirely above zero → MET' if d2['condition1_paired_interval_above_zero'] else 'includes zero → NOT MET'}")
+        print(f"condition 2 (unchanged): drawdown reduction regime {d2['dd_reduction_regime']*100:.1f}% vs best rule "
+              f"{d2['dd_reduction_best_rule']*100:.1f}% → {'MET' if d2['condition2_dd_reduction_ge'] else 'NOT MET'}")
+        print(f"**REGIME {'PASSES' if d2['regime_passes'] else 'FAILS'} under v2** (v1 verdict: "
+              f"{'PASSES' if res['decision']['regime_passes'] else 'FAILS'}; amendment disclosed in reports/c3_registration_v2.md §C)")
 
 
 def main() -> int:
