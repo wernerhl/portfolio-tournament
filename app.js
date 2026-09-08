@@ -2747,6 +2747,8 @@ function render(){
         <th>#</th><th>TIER</th>
         <th class="num" title="net of transaction costs; hover a NAV for the pre-cost figure and the restated net (C1)">NAV <small class="c-3 w5">net</small></th>
         <th class="num">TOTAL</th>
+        <th class="num" title="C1: one-way turnover per year — backtest basis for tiers 1–4 (names and the cash sleeve, at every rebalance); hover a cell for the live-to-date figure">TURNOVER<small class="c-3 w5">/yr</small></th>
+        <th class="num" title="C1: cost drag on annualized return, basis points per year, backtest basis (3 bps half-spread + 7 bps impact, one-way, on NAV-weight turnover)">COST DRAG</th>
         <th class="num">1M</th>
         <th class="num">1W</th>
         <th class="num">SHARPE</th>
@@ -2776,6 +2778,12 @@ function render(){
         const s = cc.shrunk_ann_return;
         return ` <small class="c-accent w5"> · ${currentState[0].toUpperCase()}: ${(s*100).toFixed(1)}%</small><small class="c-3"> · n=${cc.n} · w=${cc.shrinkage_weight}</small>`;
       })()}</td>
+      ${(() => { // P3.4: C1's figures beside the net return
+        const bm = S.metrics && S.metrics[tid]; const cr = S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.tiers && S.tournament.cost_restatement.tiers[tid];
+        if (!bm || bm.turnover_one_way_annual == null) return `<td class="num c-3" title="discretionary tier: not costed by the C1 model; no backtest">—</td><td class="num c-3" title="discretionary tier: not costed">—</td>`;
+        const live = cr ? ` · live to date ${cr.turnover_one_way_total}× one-way over ${cr.n_rebalances} rebalances, model cost ${cr.cumulative_cost_model_pct}% cumulative (flat as published ${cr.cumulative_cost_flat_pct}%)` : "";
+        return `<td class="num" title="backtest basis: ${bm.turnover_one_way_annual}× one-way per year${live}">${(bm.turnover_one_way_annual * 100).toFixed(0)}%</td>
+      <td class="num" title="backtest basis: ${bm.cost_drag_cagr_pp} pp of CAGR per year${live}">${Math.round(bm.cost_drag_cagr_pp * 100)} bps</td>`; })()}
       <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
       <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
       <td class="num"><span data-tween="sh-${tid}" data-val="${m.sharpe}" data-fmt="n2">${m.sharpe.toFixed(2)}</span></td>
@@ -2785,7 +2793,7 @@ function render(){
       <td><span class="chev ${open?"open":""}">›</span></td>
     </tr>`;
     if (open) {
-      h += `<tr><td colspan="11" class="p0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
+      h += `<tr><td colspan="13" class="p0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
     }
   });
   h += `</table></div>`;
