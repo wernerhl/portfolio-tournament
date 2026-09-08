@@ -1125,6 +1125,14 @@ function renderStatusStrip(){
   if (a.high && a.high.length)
     parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
       `audit: ${a.high.length} HIGH — ${a.high.join(", ")} <span style="color:var(--t5)">(logged, non-blocking · ${String(a.ran_at || "").slice(0,16)})</span>`));
+  // B3: cross-file findings are reported in both repositories' strips and block neither;
+  // the other repository's CRITICALs are shown but never block this deploy.
+  if (a.xfile && a.xfile.length)
+    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
+      `cross-file: ${a.xfile.join(", ")} <span style="color:var(--t5)">(reported in both repositories; blocks neither)</span>`));
+  if (a.critical_other_repo && a.critical_other_repo.length)
+    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
+      `other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span style="color:var(--t5)">(does not block this deploy)</span>`));
   return parts.join("");
 }
 
@@ -1227,10 +1235,13 @@ function renderRegistryBanner(){
   const holes = Object.entries(td.tiers || {})
     .filter(([_, t]) => (t.unclassified_share || 0) > 0.15);
   const unfrozen = !td.registry_frozen;
-  if (!holes.length && !unfrozen) return "";
+  const prov = td.provisional || {};
+  if (!holes.length && !unfrozen && !(prov.count > 0)) return "";
   const nNames = new Set(holes.flatMap(([_, t]) => t.unclassified_names || [])).size;
   const parts = [];
   if (unfrozen) parts.push(`registry v${td.registry_version} unapproved`);
+  // A1: provisional mappings count toward coverage but are never silently permanent
+  if (prov.count > 0) parts.push(`<span style="color:var(--y);font:600 10px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px">PROVISIONAL</span> ${prov.count} agent-proposed mapping${prov.count > 1 ? "s" : ""} applied — they expire back to unclassified from ${prov.expires_earliest || "?"} unless approved into the registry`);
   if (holes.length) parts.push(`${nNames} names unclassified across ${holes.length} tier${holes.length > 1 ? "s" : ""} (${holes.map(([tid, t]) => `${(tierSpec(tid)||{}).short || tid} ${(t.unclassified_share*100).toFixed(0)}%`).join(" · ")})`);
   return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
      border-radius:8px;padding:11px 15px;margin-bottom:16px">
@@ -1467,7 +1478,10 @@ function renderRegimeCommandCenter(R){
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
         <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>${asOfBadge(v4AsOfCC)}` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
         ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div style="font:500 10.5px var(--m);color:var(--t3);margin-top:2px">raw score <span style="color:var(--t1)">${(+v4Last.raw_score).toFixed(3)}</span> <span style="color:var(--t5)">(pre-calibration)</span></div>
-        <div style="font:italic 400 10px var(--s);color:var(--t4);margin-top:1px">calibrated probability moves in steps; the raw score moves continuously.</div>` : ``}
+        <div style="font:italic 400 10px var(--s);color:var(--t4);margin-top:1px">calibrated probability moves in steps; the raw score moves continuously.</div>
+        ${(() => { // order 9-Sept B1.2: model-change note, shown for 30 sessions after the change, with OUT-OF-FOLD numbers (B2)
+          const rows = Array.isArray(S.regimeV4) ? S.regimeV4.filter(r => r && r.date && String(r.date) > "2026-09-07") : [];
+          return rows.length < 30 ? `<div style="font:500 10px var(--m);color:var(--y);margin-top:3px" title="model_version ${v4Last.model_version || ""} · out-of-fold = leave-one-crisis-out folds, isotonic fitted on training predictions only">model changed 2026-09-07: equal-weight replaces logistic; out-of-fold Brier 0.1989 vs 0.2145 (logistic) — base rate 0.1918: no out-of-fold skill over the base rate on Brier; in-sample 0.1835 was the isotonic fit.</div>` : ``; })()}` : ``}
         ${scoreRow}
         <div class="verdict">${verdict}</div>
         ${v2Foot}
@@ -2184,7 +2198,8 @@ function renderThesisSection(){
       <div class="tname" style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</div>
       <div class="th-stack">${segs}</div>
       <div class="th-meta">N<sub>eff</sub> <strong style="color:var(--t1)">${t.n_eff}</strong>
-        · uncl ${(t.unclassified_share*100).toFixed(0)}%${t.extend_registry_prompt ?
+        · uncl ${(t.unclassified_share*100).toFixed(0)}%${t.provisional_share ?
+        ` · <span style="color:var(--y);font:600 9px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px" title="${(t.coverage_caveat||'').replace(/"/g,'&quot;')} — ${(t.provisional_names||[]).join(', ')}">PROVISIONAL ${(t.provisional_share*100).toFixed(0)}%</span>` : ''}${t.extend_registry_prompt ?
         ' <span style="color:var(--y)" title="Unclassified > 15% of invested — extend the registry (version bump)">⚠ EXTEND</span>' : ''}</div>
     </div>`;
   }).join("");
@@ -2212,7 +2227,7 @@ function renderThesisSection(){
       <td class="${b.ret_1w > 0 ? 'pos' : b.ret_1w < 0 ? 'neg' : ''}">${fmtPc(b.ret_1w)}</td>
       <td class="${b.ret_inception > 0 ? 'pos' : b.ret_inception < 0 ? 'neg' : ''}">${fmtPc(b.ret_inception)}</td>
       <td class="neg">${fmtPc(b.drawdown_from_peak)}</td>
-      <td style="color:var(--t3)">${b.proxy_etf || "—"} ${fmtPc(b.proxy_ret_1w)}</td>
+      <td style="color:var(--t3)">${b.proxy_etf || "—"} ${fmtPc(b.proxy_ret_1w)}${(b.provisional_members||[]).length ? ` <span style="color:var(--y);font:600 9px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px" title="provisional members in this basket: ${b.provisional_members.join(', ')} — expire unless approved">PROVISIONAL +${b.provisional_members.length}</span>` : ''}</td>
       <td>${b.divergence_flag ? `<span style="color:var(--y)" title="basket vs proxy diverge ${b.divergence_1w_pp}pp on the week — classification drift smell">⚠ ${b.divergence_1w_pp}pp</span>` : '<span style="color:var(--t4)">ok</span>'}</td>
     </tr>`).join("");
 
