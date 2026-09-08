@@ -52979,5 +52979,51 @@
   ],
   "last_updated": "2026-09-08T00:08:28.958439",
   "cadence": "daily",
-  "session_date": "2026-09-04"
+  "session_date": "2026-09-04",
+  "cost_restatement": {
+    "cost_model": "3 bps half-spread + 7 bps impact = 10 bps one-way on NAV-weight turnover",
+    "note": "as-published NAVs untouched; pre-cost and restated-net figures are additive and labelled",
+    "tiers": {
+      "1_cap_pres": {
+        "as_published_basis": "flat 10 bps \u00d7 equity share charged on every holdings change (not turnover-based)",
+        "nav_as_published_last": 104140.81,
+        "nav_pre_cost_last": 104419.21,
+        "nav_net_restated_last": 104209.7,
+        "cumulative_cost_flat_pct": 0.2666,
+        "cumulative_cost_model_pct": 0.2006,
+        "turnover_one_way_total": 2.008,
+        "n_rebalances": 5
+      },
+      "2_balanced": {
+        "as_published_basis": "flat 10 bps \u00d7 equity share charged on every holdings change (not turnover-based)",
+        "nav_as_published_last": 108097.16,
+        "nav_pre_cost_last": 108448.08,
+        "nav_net_restated_last": 108189.31,
+        "cumulative_cost_flat_pct": 0.3236,
+        "cumulative_cost_model_pct": 0.2386,
+        "turnover_one_way_total": 2.3884,
+        "n_rebalances": 5
+      },
+      "3_aggressive": {
+        "as_published_basis": "flat 10 bps \u00d7 equity share charged on every holdings change (not turnover-based)",
+        "nav_as_published_last": 109738.48,
+        "nav_pre_cost_last": 110169.89,
+        "nav_net_restated_last": 109917.69,
+        "cumulative_cost_flat_pct": 0.3916,
+        "cumulative_cost_model_pct": 0.2289,
+        "turnover_one_way_total": 2.2912,
+        "n_rebalances": 5
+      },
+      "4_tactical": {
+        "as_published_basis": "flat 10 bps \u00d7 equity share charged on every holdings change (not turnover-based)",
+        "nav_as_published_last": 114440.53,
+        "nav_pre_cost_last": 114848.7,
+        "nav_net_restated_last": 114590.08,
+        "cumulative_cost_flat_pct": 0.3554,
+        "cumulative_cost_model_pct": 0.2252,
+        "turnover_one_way_total": 2.2538,
+        "n_rebalances": 5
+      }
+    }
+  }
 }

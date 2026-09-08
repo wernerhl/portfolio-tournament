@@ -29,6 +29,14 @@
   "system_settings": {
     "inception_capital_per_tier": 100000,
     "transaction_cost_bps": 10,
+    "cost_model": {
+      "_note": "Order 9-Sept C1: quoted spread + fixed impact per trade, one-way, applied to one-way turnover in NAV-weight space at every rebalance (names AND the regime overlay's cash-sleeve resizing). transaction_cost_bps above is the derived one-way total and must equal half_spread_bps + impact_bps.",
+      "half_spread_bps": 3,
+      "impact_bps": 7,
+      "one_way_bps": 10,
+      "applies_to": ["backtest tiers", "tournament live tiers", "60/40 benchmark rebalances"],
+      "not_applied": ["SPY/QQQ buy-and-hold (no trades)", "SSO synthetic 1.5x (proxy, no cost — labelled)"]
+    },
     "phase1_data_dir": "data/source",
     "backtest_start": "2010-01-04",
     "backtest_end":   "2026-05-21",

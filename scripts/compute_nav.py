@@ -174,6 +174,61 @@ def backfill_benchmark_navs(tournament_path: Path = None) -> int:
     return touched
 
 
+def cost_restatement(history: list, cost_rt: float, cost_label: str) -> dict:
+    """C1 (order 9-Sept): ADDITIVE restatement of the as-published algo-tier NAVs.
+    As published, the live NAV charged a FLAT 10 bps × equity share on every
+    holdings change (not turnover-based). Per tier this recomputes, from the
+    stored snapshots, the flat cost actually charged, the cost the spread+impact
+    model would have charged on NAV-weight turnover, the pre-cost NAV (flat
+    costs added back) and the restated net NAV. History is never altered."""
+    out = {}
+    for tid in ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical"):
+        flat_factor, model_factor, turn_total, n_reb = 1.0, 1.0, 0.0, 0
+        prev = None
+        for h in history:
+            t = (h.get("tiers") or {}).get(tid)
+            if not t:
+                continue
+            nav = float(t.get("nav") or 0)
+            if nav <= 0:
+                prev = t; continue
+            if prev is None or set(t.get("holdings", [])) != set(prev.get("holdings", [])):
+                ep = 1.0 - float(t.get("target_cash_pct", 0) or 0) / 100.0
+                flat = 0.0010 * ep                                   # what was charged
+                w_pre = {}
+                if prev:
+                    pnav = float(prev.get("nav") or 0)
+                    for p in prev.get("positions", []):
+                        if p.get("value") and pnav > 0:
+                            w_pre[p["ticker"]] = float(p["value"]) / pnav
+                w_pre["_cash"] = max(0.0, 1.0 - sum(v for k, v in w_pre.items() if k != "_cash"))
+                held = t.get("holdings", [])
+                w_new = {x: ep / len(held) for x in held} if held else {}
+                w_new["_cash"] = 1.0 - ep
+                turn = 0.5 * sum(abs(w_new.get(k, 0.0) - w_pre.get(k, 0.0)) for k in set(w_pre) | set(w_new))
+                flat_factor *= (1 - flat); model_factor *= (1 - cost_rt * turn)
+                turn_total += turn; n_reb += 1
+            prev = t
+        last = next(((h.get("tiers") or {}).get(tid) for h in reversed(history) if (h.get("tiers") or {}).get(tid)), None)
+        if not last:
+            continue
+        nav_last = float(last["nav"])
+        nav_pre = nav_last / flat_factor if flat_factor > 0 else nav_last
+        out[tid] = {
+            "as_published_basis": "flat 10 bps × equity share charged on every holdings change (not turnover-based)",
+            "nav_as_published_last": round(nav_last, 2),
+            "nav_pre_cost_last": round(nav_pre, 2),
+            "nav_net_restated_last": round(nav_pre * model_factor, 2),
+            "cumulative_cost_flat_pct": round((1 - flat_factor) * 100, 4),
+            "cumulative_cost_model_pct": round((1 - model_factor) * 100, 4),
+            "turnover_one_way_total": round(turn_total, 4),
+            "n_rebalances": n_reb,
+        }
+    return {"cost_model": cost_label,
+            "note": "as-published NAVs untouched; pre-cost and restated-net figures are additive and labelled",
+            "tiers": out}
+
+
 def main():
     from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
     require_trading_day("compute_nav")
@@ -182,6 +237,13 @@ def main():
     werner_spec  = cfg["werner_picks"]
     settings     = cfg["system_settings"]
     initial_cap  = float(settings["inception_capital_per_tier"])
+
+    # C1 (order 9-Sept): cost model — half-spread + impact, one-way — applied to
+    # NAV-weight turnover at rebalances (replaces the flat, hardcoded 10 bps).
+    _cm = settings.get("cost_model", {})
+    COST_RT = float(_cm.get("one_way_bps", settings.get("transaction_cost_bps", 10))) / 10000.0
+    COST_LABEL = (f"{_cm.get('half_spread_bps', '?')} bps half-spread + {_cm.get('impact_bps', '?')} bps impact "
+                  f"= {COST_RT*10000:.0f} bps one-way on NAV-weight turnover")
 
     R_t, r_date = latest_R_t()
     regime = regime_label(R_t)
@@ -264,17 +326,33 @@ def main():
         # If first observation or rebalance — fresh allocation
         prev_nav = prev_navs.get(tid)
         if prev_nav is None or set(held) != set(prev_holdings_per_tier.get(tid, [])):
-            # Rebalance day — equal weight across `held`, take 5 bps of trading cost on each side
-            cost = (10/10000) * 1.0 * ep if prev_nav is None else (10/10000) * 1.0 * ep
-            nav_after_cost = (prev_nav or initial_cap) * (1 - cost)
+            # Rebalance day — C1: cost = one-way turnover in NAV-weight space ×
+            # (half-spread + impact). Pre weights come from the last snapshot's
+            # position values; the first observation is all cash → turnover = ep.
+            nav_pre = prev_nav or initial_cap
+            last_tier = (history[-1]["tiers"].get(tid, {}) if history else {}) or {}
+            w_pre = {}
+            if prev_nav and last_tier.get("positions"):
+                for p in last_tier["positions"]:
+                    if p.get("value"):
+                        w_pre[p["ticker"]] = float(p["value"]) / nav_pre
+            w_pre["_cash"] = max(0.0, 1.0 - sum(v for k, v in w_pre.items() if k != "_cash"))
+            w_new = {t: ep / len(held) for t in held}
+            w_new["_cash"] = cp
+            turnover = 0.5 * sum(abs(w_new.get(k, 0.0) - w_pre.get(k, 0.0)) for k in set(w_pre) | set(w_new))
+            cost = COST_RT * turnover
+            nav_after_cost = nav_pre * (1 - cost)
             equity_value = nav_after_cost * ep
             cash_value   = nav_after_cost * cp
+            rebalance_info = {"turnover_one_way": round(turnover, 4), "cost_pct": round(cost * 100, 4),
+                              "cost_model": COST_LABEL}
             # Position snapshot
             shares = {t: (equity_value / len(held)) / prices[t] for t in held}
             tier_outputs[tid] = {
                 "nav":   round(equity_value + cash_value, 2),
                 "equity": round(equity_value, 2),
                 "cash":   round(cash_value, 2),
+                "rebalance": rebalance_info,          # C1: turnover + cost charged, recorded
 
                 "target_cash_pct": round(cp * 100, 1),
                 "actual_cash_pct": round(cash_value / (equity_value + cash_value) * 100, 1) if (equity_value+cash_value) > 0 else 0,
@@ -401,6 +479,7 @@ def main():
     else:
         history.append(entry)
     tournament["history"] = history
+    tournament["cost_restatement"] = cost_restatement(history, COST_RT, COST_LABEL)   # C1, additive
     tournament["last_updated"] = datetime.now().isoformat()
 
     with open(tournament_file, "w") as f:

@@ -66,7 +66,9 @@ STATIC = {'backtest_equity_curves.csv','backtest_metrics.json','thesis_registry.
           # analysis artifacts with no JSON cadence field to declare themselves (suite correction 2026-09-08:
           # the first after-run flagged these as CRITICAL-stale; a referee that alarms on static files trains
           # everyone to ignore it). JSON files declare `cadence` and are honored below.
-          'backtest_holdings_log.csv','regime_v2_leadtimes.csv','regime_v3_daily.csv','vol_canonical_close.json'}
+          'backtest_holdings_log.csv','regime_v2_leadtimes.csv','regime_v3_daily.csv','vol_canonical_close.json',
+          # C1 / B2 evaluation artifacts (backtest window ends 2026-05; OOF eval reruns monthly)
+          'backtest_equity_curves_gross.csv','v4_oof_predictions.csv'}
 NON_DAILY_CADENCE = {'static','on_change','weekly','monthly'}   # a served JSON's own declaration (order item 5)
 DECLARED = ('session_date','as_of','asof','date','last_updated')  # authoritative freshness keys, in priority order
 def declared_date(obj):

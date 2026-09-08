@@ -3025,12 +3025,12 @@ function render(){
 
   h += `<div class="lbtable">
     <div class="lb-h"><h2>LEADERBOARD${asOfBadge(live && live.date)}</h2>
-      <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"}${toggleHtml}</div></div>
+      <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"} · <span title="C1: costs = half-spread + impact, one-way, on NAV-weight turnover at every rebalance">net of costs (${(S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.cost_model) || "10 bps one-way"})</span>${toggleHtml}</div></div>
     ${condCap}
     <table>
       <tr>
         <th>#</th><th>TIER</th>
-        <th class="num">NAV</th>
+        <th class="num" title="net of transaction costs; hover a NAV for the pre-cost figure and the restated net (C1)">NAV <small style="color:var(--t4);font-weight:500">net</small></th>
         <th class="num">TOTAL</th>
         <th class="num">1M</th>
         <th class="num">1W</th>
@@ -3053,7 +3053,7 @@ function render(){
         <span class="tier-name">${t.short}</span>
         <div class="tier-desc">${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}</div>
       </td>
-      <td class="num">${navVal ? "$"+fmt(navVal) : "—"}</td>
+      <td class="num" title="${(() => { const cr = S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.tiers && S.tournament.cost_restatement.tiers[tid]; return cr ? `pre-cost $${fmt(cr.nav_pre_cost_last)} · restated net (spread+impact model) $${fmt(cr.nav_net_restated_last)} · cumulative cost charged ${cr.cumulative_cost_flat_pct}% (flat, as published) vs ${cr.cumulative_cost_model_pct}% (model) · one-way turnover ${cr.turnover_one_way_total} over ${cr.n_rebalances} rebalances` : "net of costs"; })()}">${navVal ? "$"+fmt(navVal) : "—"}</td>
       <td class="num ${pnlc(m.total)}">${fmtP(m.total)}${(() => {
         if (!condMode) return "";
         const cc = condFor(tid);

@@ -79,7 +79,14 @@ def main():
     SETTINGS = cfg["system_settings"]
     TIER_SPECS = cfg["tier_specs"]
     INITIAL_CAP = float(SETTINGS["inception_capital_per_tier"])
-    COST_RT     = SETTINGS["transaction_cost_bps"] / 10000.0
+    # C1 (order 9-Sept): cost model = half-spread + impact, one-way, from config;
+    # applied to one-way turnover in NAV-WEIGHT space at every rebalance.
+    COST_MODEL  = SETTINGS.get("cost_model", {})
+    _one_way    = float(COST_MODEL.get("one_way_bps", SETTINGS["transaction_cost_bps"]))
+    assert abs(_one_way - (COST_MODEL.get("half_spread_bps", 0) + COST_MODEL.get("impact_bps", _one_way))) < 1e-9, \
+        "cost_model: one_way_bps must equal half_spread_bps + impact_bps"
+    COST_RT     = _one_way / 10000.0
+    COST_LABEL  = f"{COST_MODEL.get('half_spread_bps', '?')} bps half-spread + {COST_MODEL.get('impact_bps', '?')} bps impact = {_one_way:.0f} bps one-way"
 
     START = pd.Timestamp(SETTINGS["backtest_start"])
     END   = pd.Timestamp(SETTINGS["backtest_end"])
@@ -215,6 +222,8 @@ def main():
 
     # -------- Run each tier --------
     tier_navs = {}
+    tier_navs_gross = {}      # C1: pre-cost twin, labelled
+    tier_turnover = {}        # C1: one-way turnover (NAV-weight space) per rebalance
     holdings_log_rows = []
 
     for tier_id, spec in TIER_SPECS.items():
@@ -222,7 +231,11 @@ def main():
         nav = INITIAL_CAP
         equity_value, cash_value = 0.0, INITIAL_CAP
         daily_nav = pd.Series(index=trading_days, dtype=float)
+        nav_g = INITIAL_CAP                                   # C1 gross twin
+        equity_value_g, cash_value_g = 0.0, INITIAL_CAP
+        daily_nav_gross = pd.Series(index=trading_days, dtype=float)
         prev_holdings = set()
+        turn_list = []
 
         for i, rd in enumerate(rebal):
             # 1. Score + select
@@ -237,25 +250,42 @@ def main():
             cash_pct = max(cash_pct, spec["cash_floor"])
             equity_pct = 1.0 - cash_pct
 
-            # 3. Cost (one-way turnover × 10 bps)
+            # 3. Cost — C1: one-way turnover in NAV-WEIGHT space (names AND the
+            # regime overlay's cash-sleeve resizing) × (half-spread + impact).
+            # Pre-rebalance weights: the sleeve is daily-rebalanced equal-weight
+            # inside the month (mean of daily returns), so each held name carries
+            # an equal share of the current equity fraction; cash is the rest.
+            # (Intra-month drift trades of that daily rebalancing are not costed —
+            # a simplification shared by every contestant in C3.)
             new_set = set(picks)
-            if i == 0:
-                turn = 1.0 if equity_pct > 0 else 0.0
+            eq_share_pre = (equity_value / nav) if nav > 0 else 0.0
+            w_pre = {t: eq_share_pre / len(prev_holdings) for t in prev_holdings} if prev_holdings else {}
+            w_pre["_cash"] = 1.0 - eq_share_pre
+            w_new = {t: equity_pct / len(picks) for t in picks}
+            w_new["_cash"] = cash_pct
+            turn_nav = 0.5 * sum(abs(w_new.get(k, 0.0) - w_pre.get(k, 0.0)) for k in set(w_pre) | set(w_new))
+            if i == 0:                      # legacy name-ratio kept for continuity in the log
+                turn_names = 1.0 if equity_pct > 0 else 0.0
             else:
-                # Symmetric difference / (2 × N) is one-way ratio over the equity sleeve
                 sym = len(prev_holdings ^ new_set)
-                turn = sym / (2 * max(len(new_set), 1)) if new_set else 0.0
-            cost = COST_RT * turn * equity_pct
+                turn_names = sym / (2 * max(len(new_set), 1)) if new_set else 0.0
+            cost = COST_RT * turn_nav
             nav *= (1 - cost)
             equity_value = nav * equity_pct
             cash_value   = nav * cash_pct
             daily_nav.loc[rd] = nav
+            equity_value_g = nav_g * equity_pct                  # gross twin: same allocation, no cost
+            cash_value_g   = nav_g * cash_pct
+            daily_nav_gross.loc[rd] = nav_g
+            turn_list.append(turn_nav)
 
             # Log
             holdings_log_rows.append({
                 "date": rd.date(), "tier": tier_id, "R_t": round(R_rd, 3),
                 "cash_pct": round(cash_pct, 3), "n_holdings": len(picks),
-                "turnover": round(turn, 3),
+                "turnover": round(turn_names, 3),                 # legacy: name ratio over the sleeve
+                "turnover_one_way_nav": round(turn_nav, 4),       # C1: NAV-weight one-way turnover
+                "cost_pct": round(cost * 100, 4),
                 "holdings": ",".join(picks),
             })
 
@@ -274,9 +304,15 @@ def main():
                 cash_value   *= (1 + daily_cash.get(d, 0))
                 nav = equity_value + cash_value
                 daily_nav.loc[d] = nav
+                equity_value_g *= (1 + r)                         # C1 gross twin
+                cash_value_g   *= (1 + daily_cash.get(d, 0))
+                nav_g = equity_value_g + cash_value_g
+                daily_nav_gross.loc[d] = nav_g
             prev_holdings = new_set
 
         tier_navs[tier_id] = daily_nav.dropna()
+        tier_navs_gross[tier_id] = daily_nav_gross.dropna()
+        tier_turnover[tier_id] = turn_list
         p = perf(tier_navs[tier_id])
         log(f"   CAGR={p['cagr']:.2%}  Sharpe={p['sharpe']:.2f}  MaxDD={p['max_drawdown']:.1%}  FinalNAV ${p['final_nav']:,.0f}")
 
@@ -291,22 +327,31 @@ def main():
         return (sub / sub.iloc[0]) * start_cap
     spy_nav = bh(spy_full)
     qqq_nav = bh(qqq_full)
-    # 60/40 rebalanced monthly
-    nav = INITIAL_CAP
+    # 60/40 rebalanced monthly — C1: its rebalance turnover (one-way |Δw_spy|)
+    # bears the same cost model; a gross twin is kept for the labelled pre-cost figure.
+    nav = INITIAL_CAP; nav_g = INITIAL_CAP
     s_60_40 = pd.Series(index=trading_days, dtype=float)
+    s_60_40_g = pd.Series(index=trading_days, dtype=float)
+    spu = None
     for i, rd in enumerate(rebal):
         if rd not in spy_full.index or rd not in tlt_full.index: continue
+        if spu is not None and nav > 0:
+            w_spy_pre = (spu * spy_full.loc[rd]) / nav
+            nav *= (1 - COST_RT * abs(w_spy_pre - 0.6))
         spu = (nav * 0.6) / spy_full.loc[rd]
         ttu = (nav * 0.4) / tlt_full.loc[rd]
+        spu_g = (nav_g * 0.6) / spy_full.loc[rd]
+        ttu_g = (nav_g * 0.4) / tlt_full.loc[rd]
         end_hold = rebal[i + 1] if i + 1 < len(rebal) else END
         idx = spy_full.loc[rd:end_hold].index
         for d in idx:
             if d in tlt_full.index:
                 s_60_40.loc[d] = spu * spy_full.loc[d] + ttu * tlt_full.loc[d]
+                s_60_40_g.loc[d] = spu_g * spy_full.loc[d] + ttu_g * tlt_full.loc[d]
         last = idx[-1]
         if not pd.isna(s_60_40.loc[last]):
-            nav = s_60_40.loc[last]
-    s_60_40 = s_60_40.dropna()
+            nav = s_60_40.loc[last]; nav_g = s_60_40_g.loc[last]
+    s_60_40 = s_60_40.dropna(); s_60_40_g = s_60_40_g.dropna()
     # SSO synthetic 1.5x SPY daily return
     rr = spy_full.pct_change().fillna(0)
     sso_nav_full = (1 + 1.5 * rr).cumprod()
@@ -318,7 +363,36 @@ def main():
     eq.to_csv(DATA / "backtest_equity_curves.csv")
     log(f"  saved data/backtest_equity_curves.csv ({eq.shape})")
 
+    # C1: pre-cost twin. Buy-and-hold benchmarks have no trades (gross == net);
+    # SSO is a synthetic 1.5x daily proxy with no cost applied — labelled.
+    eq_gross = pd.DataFrame({**tier_navs_gross, "spy": spy_nav, "qqq": qqq_nav, "60_40": s_60_40_g, "sso": sso_nav})
+    eq_gross = eq_gross.dropna(how="all").ffill()
+    eq_gross.index.name = "date"
+    eq_gross.to_csv(DATA / "backtest_equity_curves_gross.csv")
+    log(f"  saved data/backtest_equity_curves_gross.csv ({eq_gross.shape})")
+
+    prev_pub = None
+    try:
+        prev_pub = json.load(open(DATA / "backtest_metrics.json"))
+    except Exception:
+        pass
+
     metrics = {col: perf(eq[col]) for col in eq.columns}
+    for col in eq.columns:
+        g = perf(eq_gross[col]) if col in eq_gross.columns else {}
+        if col in ("spy", "qqq"):
+            metrics[col]["basis"] = "buy-and-hold: no trades, gross == net"
+        elif col == "sso":
+            metrics[col]["basis"] = "synthetic 1.5x SPY daily proxy: no cost applied"
+        else:
+            metrics[col]["basis"] = f"net of costs ({COST_LABEL} on NAV-weight one-way turnover at every rebalance)"
+        metrics[col]["pre_cost"] = g
+        if g and metrics[col].get("cagr") is not None:
+            metrics[col]["cost_drag_cagr_pp"] = round((g["cagr"] - metrics[col]["cagr"]) * 100, 3)
+        if col in tier_turnover and tier_turnover[col]:
+            n_years = metrics[col].get("n_years") or 1
+            metrics[col]["turnover_one_way_annual"] = round(sum(tier_turnover[col]) / n_years, 3)
+            metrics[col]["turnover_one_way_per_rebalance"] = round(float(np.mean(tier_turnover[col])), 4)
     # Info ratio vs benchmark per tier
     bench_map = {"1_cap_pres": "60_40", "2_balanced": "spy",
                  "3_aggressive": "qqq", "4_tactical": "sso"}
@@ -335,7 +409,18 @@ def main():
                 metrics[tid]["beta_to_benchmark"] = round(float(np.cov(n, b)[0,1] / b.var()), 3)
             metrics[tid]["benchmark"] = bcol
 
+    metrics["cadence"] = "on_change"                                  # declared date (order item 5)
+    metrics["as_of"] = pd.Timestamp.today().strftime("%Y-%m-%d")
     metrics["_meta"] = {
+        # C1: every headline figure above is NET of costs; pre_cost carries the gross twin.
+        "cost_model": {**COST_MODEL, "label": COST_LABEL,
+                       "turnover_definition": "one-way, NAV-weight space, names and cash-sleeve resizing, at every rebalance"},
+        "previous_publication": ({
+            "basis": "pre-C1 publication: 10 bps on name-turnover over the equity sleeve only; cash-sleeve resizing and 60/40 rebalances uncosted; no gross series",
+            "as_of": prev_pub.get("as_of"),
+            "headline": {k: {f: v.get(f) for f in ("cagr", "sharpe", "max_drawdown", "final_nav")}
+                         for k, v in prev_pub.items() if isinstance(v, dict) and "cagr" in v},
+        } if prev_pub else None),
         "start": str(rebal[0].date()),
         "end":   str(rebal[-1].date()),
         "n_rebalances": len(rebal),
