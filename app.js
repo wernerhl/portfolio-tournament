@@ -911,39 +911,40 @@ function renderRegimeCommandCenter(R){
     <span class="c-warn">${ele} elevated</span> ·
     <span class="c-neg">${cri} crisis</span></span>`;
 
-  return `<section class="rcc">
-    <div class="rcc-top">
-      <div class="rcc-card">
+  // P1.4: the command centre is returned as tier fragments; render() places them:
+  //   gauge → tier one · timeline + deployment → tier two · indicators + v4 → tier three
+  const gauge = `<div class="rcc-card gauge-card">
         <h3>CYCLE POSITION · <span class="c-3 w5" title="Decision Memo 9-Sept-2026 §5: the headline is the regime index whose value C3 measured; v4 no longer votes">regime index</span>${asOfBadge(reg.as_of)}</h3>
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl ${cc(lblColor)}">${lbl}</div>
-        <div class="gauge-rt">R<sub>full</sub> = <span class="r-num">${rDisp}</span></div>
-        ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div class="mono t1 w5 c-3 mt1">raw score <span class="c-1">${(+v4Last.raw_score).toFixed(3)}</span> <span class="c-3">(pre-calibration)</span></div>
+        <div class="gauge-rt">R<sub>full</sub> = <span class="r-num" data-tween="rfull" data-val="${R_full != null ? R_full : ""}" data-fmt="n3">${rDisp}</span></div>
+        ${renderMovedByLine()}
+        ${c3VerdictLine()}
+        <div class="verdict">${verdict}</div>
+        ${v2Foot}
+      </div>`;
+  const v4 = v4Last ? `<div class="rcc-card v4-card">
+        <h3>V4 GRADUATED PROBABILITY · <span class="c-3 w5">ranking signal, not a forecast</span>${asOfBadge(v4AsOfCC)}</h3>
+        ${v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div class="mono t1 w5 c-3 mt1">raw score <span class="c-1">${(+v4Last.raw_score).toFixed(3)}</span> <span class="c-3">(pre-calibration)</span></div>
         <div class="serif t1 it c-3 mt1">calibrated probability moves in steps; the raw score moves continuously.</div>
         ${(() => { // order 9-Sept B1.2: model-change note, shown for 30 sessions after the change, with OUT-OF-FOLD numbers (B2)
           const rows = Array.isArray(S.regimeV4) ? S.regimeV4.filter(r => r && r.date && String(r.date) > "2026-09-07") : [];
           return rows.length < 30 ? `<div class="mono t1 w5 c-warn mt1" title="model_version ${v4Last.model_version || ""} · out-of-fold = leave-one-crisis-out folds, isotonic fitted on training predictions only">model changed 2026-09-07: equal-weight replaces logistic; out-of-fold Brier 0.1989 vs 0.2145 (logistic) — base rate 0.1918: no out-of-fold skill over the base rate on Brier; in-sample 0.1835 was the isotonic fit.</div>` : ``; })()}` : ``}
         ${scoreRow}
-        ${v4Last ? (() => { // Decision Memo 9-Sept-2026 §5: standing note — v4 is a ranking signal, not a forecast
+        ${(() => { // Decision Memo 9-Sept-2026 §5: standing note — v4 is a ranking signal, not a forecast
           const c = S.v4Cal || {}; const m = (c.methods && c.methods[c.winning_method || "equal_weight"]) || {};
           const oof = m.brier_out_of_fold, base = c.base_rate_brier;
-          return `<div class="mono t1 w5 c-3 mt1 r1 x18" title="out-of-fold = 15 leave-one-crisis-out folds, isotonic fitted on training predictions only (B2); the underlying index retains ranking skill (AUC ≈ 0.64, C2). No in-sample reliability figure is shown: isotonic fitting makes it look perfect by construction.">v4 graduated probability — <strong class="c-1">ranking signal, not a forecast</strong>: out-of-fold Brier <strong class="c-1">${oof != null ? (+oof).toFixed(4) : "—"}</strong> vs base rate <strong class="c-1">${base != null ? (+base).toFixed(4) : "—"}</strong> — does not beat the base rate out of fold; use as a ranking, not a forecast. Not a headline input.</div>`; })() : ``}
-        ${c3VerdictLine()}
-        <div class="verdict">${verdict}</div>
-        ${v2Foot}
-      </div>
-      <div class="rcc-card">
+          return `<div class="mono t1 w5 c-3 mt1 r1 x18" title="out-of-fold = 15 leave-one-crisis-out folds, isotonic fitted on training predictions only (B2); the underlying index retains ranking skill (AUC ≈ 0.64, C2). No in-sample reliability figure is shown: isotonic fitting makes it look perfect by construction.">v4 graduated probability — <strong class="c-1">ranking signal, not a forecast</strong>: out-of-fold Brier <strong class="c-1">${oof != null ? (+oof).toFixed(4) : "—"}</strong> vs base rate <strong class="c-1">${base != null ? (+base).toFixed(4) : "—"}</strong> — does not beat the base rate out of fold; use as a ranking, not a forecast. Not a headline input.</div>`; })()}
+      </div>` : (scoreRow ? `<div class="rcc-card v4-card"><h3>REGIME SCORES</h3>${scoreRow}</div>` : "");
+  const indicators = `<div class="rcc-card">
         <h3 class="flx x19">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
         ${renderIndicators()}
-      </div>
-    </div>
-
-    <div class="rcc-card">
+      </div>`;
+  const deployment = `<div class="rcc-card">
       <h3>DEPLOYMENT SIGNAL PER TIER</h3>
       ${renderDeployment(R_full)}
-    </div>
-
-    <div class="rcc-card">
+    </div>`;
+  const timeline = `<div class="rcc-card">
       <h3>REGIME TIMELINE — R<sub>full</sub> with regime bands (safe → elevated → crisis)</h3>
       <div class="timeline-wrap"><canvas id="regime-timeline"></canvas></div>
       <div class="mt2 serif t1 it c-3 lh145">
@@ -953,8 +954,8 @@ function renderRegimeCommandCenter(R){
         Earlier history is the revised recompute. Real-time performance claims must use the published vintage.
         ${(() => { const rows = Array.isArray(S.regimePub) ? S.regimePub : []; const np = rows.filter(r => r && r.date && (r.R_t_published == null || r.R_t_published === "" || isNaN(+r.R_t_published))); return rows.length ? `<div class="mt1 fs-n c-3">Reliability: <strong>${np.length}</strong> no-publish session${np.length === 1 ? "" : "s"} of ${rows.length} since inception${np.length ? " — " + np.map(r => String(r.date).slice(0,10)).join(", ") + " (reasons in regime_daily_published.csv)" : ""}</div>` : ``; })()}
       </div>
-    </div>
-  </section>`;
+    </div>`;
+  return {gauge, v4, indicators, deployment, timeline};
 }
 function rankColor(pct){ return pct>=70?"var(--g)":pct>=40?"var(--y)":"var(--r)"; }
 function corrColor(c){ const a=Math.abs(c); return a>=0.7?"var(--r)":a>=0.4?"var(--y)":"var(--g)"; }
@@ -2323,6 +2324,59 @@ function renderTierDetail(tid){
   return h;
 }
 
+// ══ P1.4 hierarchy pieces ═══════════════════════════════════════════════════
+// The deflated claim (Decision Memo 9 Sept 2026 §3). Exact wording is do-not-touch.
+const DEFLATED_CLAIM = "A regime-conditional cash overlay reduced maximum drawdown by roughly half relative to buy-and-hold on point-in-time inputs over 2010 to 2026, against roughly 30 percent for the best one-line rule, at a cost of about half the benchmark's annualized return. Its return-per-volatility advantage over simple rules is positive on revised inputs and indistinguishable from zero on real-time inputs, and its drawdown advantage narrows to a few points in the 2008 crisis. The stock-selection component has no measurable skill. The graduated drawdown probability does not beat the base rate out of fold.";
+function renderClaimSentence(){
+  return `<p class="claim serif t3" data-claim="deflated">${DEFLATED_CLAIM}</p>`;
+}
+// Standing "moved by" line under the gauge (P3.5) — top three contributors with signed
+// points and the interaction residual, from the nightly delta attribution.
+function renderMovedByLine(){
+  const a = S.v4Attr;   // replaced by the R_full attribution in P3.5
+  if (!a || !a.top3) return "";
+  const movers = a.top3.map(c => `<span class="nowrap">${c.feature} <span class="${c.contribution_pp >= 0 ? "c-pos" : "c-neg"}">${c.contribution_pp >= 0 ? "+" : ""}${c.contribution_pp}pp</span></span>`).join(" · ");
+  return `<div class="moved-by mono t1 c-2 mt2">moved by (vs ${a.prev || "prior"}): ${movers} · residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp</div>`;
+}
+function renderDrawdownCard(){      // P2.1 fills the chart; the shell carries the claim sentence
+  return `<div class="rcc-card dd-card">
+    <h3>DRAWDOWN FROM RUNNING PEAK · <span class="c-3 w5">all tiers and benchmarks, one axis</span></h3>
+    ${renderClaimSentence()}
+    <div class="chart-wrap dd-wrap"><canvas id="dd-chart"></canvas></div>
+    <div class="chart-meta" id="dd-meta"></div>
+  </div>`;
+}
+function renderTreemapCard(){ return ""; }        // P2.3
+function renderRetirementPanel(){ return ""; }    // P2.2
+function renderBookPanel(){ return ""; }          // P3.2
+function renderActionLog(){ return ""; }          // P4.1
+function renderCalibrationPanel(){ return ""; }   // P4.2
+function renderCalendarCard(){
+  const ev = (S.eventCal && S.eventCal.events) || [];
+  const today = _etDateISO(new Date());
+  const next = ev.filter(e => e && e.date >= today).slice(0, 8);
+  if (!next.length) return "";
+  return `<div class="rcc-card cal-card"><h3>CALENDAR · <span class="c-3 w5">next scheduled macro events</span></h3>
+    <table class="cal-table">${next.map(e => `<tr><td class="mono t1 c-2">${e.date}</td><td class="mono t1 c-1">${e.label || e.type}</td><td class="serif t1 c-3">${e.name || ""}</td></tr>`).join("")}</table>
+  </div>`;
+}
+// P1.5: numbers tween over --tween when a re-render changes them (badges fade via CSS; nothing slides)
+function applyTweens(){
+  const ms = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tween")) || 0;
+  S._tw = S._tw || {};
+  document.querySelectorAll("[data-tween]").forEach(el => {
+    const key = el.dataset.tween, to = parseFloat(el.dataset.val), fmt = el.dataset.fmt || "n2";
+    if (!isFinite(to)) return;
+    const from = S._tw[key];
+    S._tw[key] = to;
+    if (from == null || from === to || ms <= 0) return;
+    const f = v => fmt === "n3" ? v.toFixed(3) : fmt === "p" ? fmtP(v) : fmt === "p1" ? fmtP1(v) : fmt === "nav" ? "$" + fmt(v) : v.toFixed(2);
+    const t0 = performance.now();
+    const step = now => { const k = Math.min(1, (now - t0) / ms); el.textContent = f(from + (to - from) * k); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
+
 function render(){
   const a = document.getElementById("app");
   if (!S.config) { a.innerHTML = '<div class="ld">config.json missing</div>'; return; }
@@ -2357,21 +2411,16 @@ function render(){
     </div>
   </div>`;
 
-  // ---- 0. INTRADAY SHOCK / STALENESS BANNER (renders ABOVE the regime gauge) ----
-  h += renderStatusStrip() + renderTopBanner();
-  h += renderRegistryBanner();
+  // ---- 0. INTRADAY SHOCK / STALENESS BANNER — a live alert, stays above everything ----
+  h += renderTopBanner();
 
-  // ---- 1. REGIME COMMAND CENTER ----
-  h += renderRegimeCommandCenter(R);
+  // ══ TIER ONE (P1.4): gauge with its moved-by line · the claim sentence · the drawdown chart ══
+  const rv = renderRegimeCommandCenter(R);
+  h += `<div class="tier tier-1"><h2 class="tier-title">REGIME</h2>
+    <div class="tier1-grid">${rv.gauge}${renderDrawdownCard()}</div></div>`;
 
-  // ---- 1b. REGIME & OVERLAY (vol-regime + attribution) ----
-  h += renderRegimeOverlayPanel();
-
-  // ---- 1c. THESIS (meso layer: exposure / falsification / attribution) ----
-  h += renderThesisSection();
-
-  // ---- 2. TWO-SCORE SCANNER ----
-  h += renderScanner();
+  // ══ TIER TWO: leaderboard · treemap · regime-and-overlay · the book ══
+  h += `<div class="tier tier-2"><h2 class="tier-title">TOURNAMENT &amp; BOOK</h2>`;
 
   // ---- Leader banner ----
   if (leader && tmMap[leader]) {
@@ -2479,6 +2528,21 @@ function render(){
   });
   h += `</table></div>`;
 
+  // rest of tier two: treemap (P2.3) · retirement panel (P2.2) · regime & overlay · the book (P3.2)
+  h += renderTreemapCard() + renderRetirementPanel();
+  h += `<div class="tier2-grid">${renderRegimeOverlayPanel()}<div>${rv.timeline}${rv.deployment}</div></div>`;
+  h += renderBookPanel();
+  h += `</div>`;   // close tier two
+
+  // ══ TIER THREE (reduced type and contrast): indicators · thesis register · v4 · status · records · calendar ══
+  h += `<div class="tier tier-3"><h2 class="tier-title">RECORDS &amp; SIGNALS</h2>`;
+  h += renderStatusStrip() + renderRegistryBanner();
+  h += rv.indicators;
+  h += renderThesisSection();
+  h += rv.v4;
+  h += renderScanner();
+  h += renderActionLog() + renderCalibrationPanel() + renderCalendarCard();
+
   // ---- Footer ----
   h += `<div class="ft">
     <span class="k">SCORING </span>4-factor cross-sectional model: technical (MA200 dist, RSI, 6m relative strength) + fundamental (Fwd P/E, rev growth, gross/op margins, ROE). Tier 3/4 double-weight 6m RS.<br>
@@ -2488,7 +2552,9 @@ function render(){
     <span class="k">DATA </span>Yahoo + FRED. Updated weekdays 6 pm ET (daily NAV) and 1st of month 10 am ET (rescore + reselect).
   </div>`;
 
+  h += `</div>`;   // close tier three
   a.innerHTML = h;
+  applyTweens();   // P1.5: value changes tween over --tween (200 ms; 0 under reduced motion)
 
   // ---- Bindings ----
   document.querySelectorAll(".period-btn[data-p]").forEach(b => b.addEventListener("click", () => {

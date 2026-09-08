@@ -263,7 +263,7 @@ tr.tier-row.open td{background:color-mix(in srgb,var(--text-1) 2%,transparent)}
 .rop-curve-wrap{position:relative;height:160px}
 .rop-overlay-scalar{margin-top:var(--s2);padding:var(--s2) var(--s3);background:color-mix(in srgb,var(--accent) 6%,transparent);
   border:1px solid var(--accent-dim);border-radius:6px}
-.rop-overlay-scalar .v{font:600 var(--t5) var(--m);color:var(--accent);letter-spacing:-.02em}
+.rop-overlay-scalar .v{font:600 var(--t4) var(--m);color:var(--accent);letter-spacing:-.02em}
 .rop-overlay-scalar .lbl{font:600 var(--t1) var(--m);color:var(--accent);letter-spacing:.14em}
 .rop-overlay-scalar .cap{font:italic 400 var(--t1) var(--s);color:var(--text-3);line-height:1.5;margin-top:var(--s1)}
 .rop-validation{margin-top:var(--s2);font:400 var(--t1) var(--m);color:var(--text-3);line-height:1.6}
@@ -422,7 +422,7 @@ tr.tier-row.open td{background:color-mix(in srgb,var(--text-1) 2%,transparent)}
 /* Cycle position gauge */
 .gauge-svg{display:block;margin:var(--s2) auto 0;width:100%;max-width:240px;height:auto}
 .gauge-rt{font:600 var(--t2) var(--m);text-align:center;letter-spacing:.04em;color:var(--text-2);margin-top:var(--s1)}
-.gauge-rt .r-num{font-size:var(--fs-hero);font-weight:500;color:var(--text-1);letter-spacing:-.02em}
+.gauge-rt .r-num{font-size:var(--t4);font-weight:500;color:var(--text-1);letter-spacing:-.02em}
 .gauge-lbl{font:700 var(--t2) var(--s);text-align:center;letter-spacing:.02em;margin-top:var(--s2)}
 .verdict{font:400 var(--fs-body) var(--s);color:var(--text-2);line-height:1.55;margin-top:var(--s3);
          padding-top:var(--s3);border-top:1px dashed var(--hairline-hi)}
@@ -751,3 +751,21 @@ tr.tier-row.open td{background:color-mix(in srgb,var(--text-1) 2%,transparent)}
 .c-tier-5_werner{color:var(--tier5)}
 /* ── Scale discipline: nothing inherits a browser default size ────────── */
 table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,select{font-size:var(--t1);font-family:var(--mono)}
+
+/* ── P1.4 Hierarchy: three tiers of visual weight ──────────────────────── */
+.tier{margin-bottom:var(--s4)}
+.tier-title{font:600 var(--t5) var(--serif);color:var(--text-1);letter-spacing:-.01em;line-height:1.1;margin:0 0 var(--s3);padding-bottom:var(--s1);border-bottom:var(--hair) solid var(--hairline)}
+.tier-1 .tier-title{color:var(--accent)}
+.tier1-grid{display:grid;grid-template-columns:minmax(300px,1fr) 2fr;gap:var(--s3);align-items:stretch}
+.tier1-grid .gauge-card{display:flex;flex-direction:column}
+.tier2-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s3)}
+.tier2-grid > div{display:flex;flex-direction:column;gap:var(--s3)}
+.claim{margin:0 0 var(--s3);color:var(--text-1);line-height:1.5;max-width:70ch}
+.dd-wrap{height:280px}
+.moved-by{line-height:1.6;text-align:center}
+.cal-table td{padding:var(--s1) var(--s2);border-bottom:var(--hair) solid var(--hairline)}
+/* tier three: one size down and one contrast level down, by re-binding the tokens in its subtree */
+.tier-3{--t5:22px;--t4:15px;--t3:13px;--t2:11px;--text-1:#B3AA9B;--text-2:#8A8071;--accent:#B3AA9B}
+.tier-3 .tier-title{color:var(--text-2)}
+.tier-3 .rcc-card,.tier-3 .lbtable,.tier-3 .chart-card{border-color:var(--hairline)}
+@media (max-width:820px){.tier1-grid,.tier2-grid{grid-template-columns:1fr}}
