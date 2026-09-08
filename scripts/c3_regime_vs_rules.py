@@ -39,7 +39,7 @@ RULES = ["sma10", "tsmom_12_1", "vol_target_10"]
 
 def load_inputs():
     cfg = json.load(open(REPO / "config.json"))
-    tiers = {tid: {k: float(cfg["tiers"][tid][k]) for k in ("cash_floor", "cash_slope", "cash_max")} for tid in cfg["tiers"]}
+    tiers = {tid: {k: float(cfg["tier_specs"][tid][k]) for k in ("cash_floor", "cash_slope", "cash_max")} for tid in cfg["tier_specs"]}
     sect = pd.read_parquet(SOURCE / "sector_etfs.parquet"); sect.index = pd.to_datetime(sect.index)
     spy = sect["spy"].dropna().astype(float)
     fred = pd.read_parquet(SOURCE / "fred_indicators.parquet"); fred.index = pd.to_datetime(fred.index)
