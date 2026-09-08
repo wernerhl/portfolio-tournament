@@ -273,9 +273,14 @@ def main():
 
     # ---- VOL / MACRO ----
     log("fetching vol/macro series...")
+    # SEPT AUDIT [4]: SKEW is NOT fetched independently any more — it comes
+    # through the canonical file (Cboe official SKEW_History.csv overlaid in
+    # build_canonical_close; yfinance ^SKEW only as a recorded series
+    # fallback if Cboe fails). regime_indicators therefore reads the same
+    # SKEW the complacency flag and intraday reconcile use.
     vol_tickers = {
         "vix":  "^VIX",  "vvix": "^VVIX", "vix3m": "^VIX3M", "vix1d": "^VIX1D",
-        "skew": "^SKEW", "spx":  "^GSPC", "dxy":  "DX-Y.NYB",
+        "spx":  "^GSPC", "dxy":  "DX-Y.NYB",
         "oil":  "CL=F",  "gold": "GC=F",  "tlt":  "TLT",
         "hyg":  "HYG",   "lqd":  "LQD",
     }
