@@ -1,20 +1,22 @@
 {
-  "timestamp": "2026-09-07T21:42:36",
+  "timestamp": "2026-09-08T00:08:35",
   "spx_change_pct": -0.39,
   "vix_now": 15.3,
   "vix_prior": 14.52,
   "vix_change_pct": 5.4,
   "vix3m": 17.61,
   "backwardation": false,
-  "skew": 151.6,
-  "skew_source": "canonical close (2026-09-04)",
+  "skew": null,
+  "skew_source": null,
   "credit_change_dur_adj_pct": -0.08,
   "credit_beta_note": "HYG return \u2212 0.25\u00d7TLT return (duration-matched)",
   "shock_active": false,
   "shock_reasons": [],
-  "impaired_checks": [],
-  "complacency_active": true,
-  "complacency_reason": "SKEW 152 > 140 (canonical close (2026-09-04)) and VIX 15.3 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
+  "impaired_checks": [
+    "complacency"
+  ],
+  "complacency_active": "impaired",
+  "complacency_reason": "COMPLACENCY CHECK IMPAIRED \u2014 SKEW feed unavailable",
   "prices": {
     "spx": {
       "last": 7717.8101,
@@ -68,5 +70,6 @@
       "last": 81.68,
       "prior_close": 81.705
     }
-  }
+  },
+  "reconciled_to_canonical": "2026-09-07"
 }
