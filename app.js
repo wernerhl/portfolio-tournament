@@ -900,8 +900,8 @@ function renderRegimeCommandCenter(R){
       &middot; R<sub>lead</sub> <strong class="${cc(ewColor(ew))}">${R_lead.toFixed(3)} ${ew}</strong>
       &middot; div <strong class="${cc(ewColor(divlab))}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
       <div class="mt1 serif t1 it c-3">
-        Regime label uses ±0.02 hysteresis at band edges (enter ELEVATED ≥ 0.32, exit &lt; 0.28)
-        to stop edge-flapping; R values themselves are untouched.</div>
+        Regime label uses ±0.02 hysteresis at band boundaries (enter ELEVATED ≥ 0.32, exit &lt; 0.28)
+        to stop flapping at the boundaries; R values themselves are untouched.</div>
     </div>` : "";
 
   // AUDIT FIX 3: 4-bucket count matches card colors (green / blue / amber / red)
@@ -2372,8 +2372,9 @@ function applyTweens(){
     if (from == null || from === to || ms <= 0) return;
     const f = v => fmt === "n3" ? v.toFixed(3) : fmt === "p" ? fmtP(v) : fmt === "p1" ? fmtP1(v) : fmt === "nav" ? "$" + fmt(v) : v.toFixed(2);
     const t0 = performance.now();
-    const step = now => { const k = Math.min(1, (now - t0) / ms); el.textContent = f(from + (to - from) * k); if (k < 1) requestAnimationFrame(step); };
-    requestAnimationFrame(step);
+    const tick = cb => (document.hidden ? setTimeout(() => cb(performance.now()), 16) : requestAnimationFrame(cb));   // frames stop in hidden tabs
+    const step = now => { const k = Math.min(1, (now - t0) / ms); el.textContent = f(from + (to - from) * k); if (k < 1) tick(step); };
+    tick(step);
   });
 }
 
@@ -2507,7 +2508,7 @@ function render(){
         <div class="tier-desc">${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}</div>
       </td>
       <td class="num" title="${(() => { const cr = S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.tiers && S.tournament.cost_restatement.tiers[tid]; return cr ? `pre-cost $${fmt(cr.nav_pre_cost_last)} · restated net (spread+impact model) $${fmt(cr.nav_net_restated_last)} · cumulative cost charged ${cr.cumulative_cost_flat_pct}% (flat, as published) vs ${cr.cumulative_cost_model_pct}% (model) · one-way turnover ${cr.turnover_one_way_total} over ${cr.n_rebalances} rebalances` : "net of costs"; })()}">${navVal ? "$"+fmt(navVal) : "—"}</td>
-      <td class="num ${pnlc(m.total)}">${fmtP(m.total)}${(() => {
+      <td class="num ${pnlc(m.total)}"><span data-tween="tot-${tid}" data-val="${m.total}" data-fmt="p">${fmtP(m.total)}</span>${(() => {
         if (!condMode) return "";
         const cc = condFor(tid);
         if (!cc || cc.shrunk_ann_return == null) return ` <small class="c-3">· n=0</small>`;
@@ -2516,8 +2517,8 @@ function render(){
       })()}</td>
       <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
       <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
-      <td class="num">${m.sharpe.toFixed(2)}</td>
-      <td class="num neg" title="${c2TierTitle(tid)}">${fmtP1(m.maxDD)}${c2TierSub(tid)}</td>
+      <td class="num"><span data-tween="sh-${tid}" data-val="${m.sharpe}" data-fmt="n2">${m.sharpe.toFixed(2)}</span></td>
+      <td class="num neg" title="${c2TierTitle(tid)}"><span data-tween="dd-${tid}" data-val="${m.maxDD}" data-fmt="p1">${fmtP1(m.maxDD)}</span>${c2TierSub(tid)}</td>
       <td class="num ${m.alpha!=null?pnlc(m.alpha):'neut'}">${m.alpha!=null?fmtP1(m.alpha):"—"}</td>
       <td class="num">${nPos != null ? nPos : "—"}</td>
       <td><span class="chev ${open?"open":""}">›</span></td>
