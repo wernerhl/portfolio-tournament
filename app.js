@@ -2398,7 +2398,101 @@ function renderDrawdownChart(){
   });
   const m = document.getElementById("dd-meta"); if (m) m.textContent = meta;
 }
-function renderTreemapCard(){ return ""; }        // P2.3
+// ── P2.3 Thesis treemap: squarified, plain SVG, tokens only ─────────────────
+// Rectangles sized by portfolio weight, filled from the five-step diverging scale by one-day
+// return (bounded ±3%), grouped by thesis with a label and a hairline separator; cash is a neutral
+// rectangle; provisional and partial memberships render dashed; positions below 0.5% aggregate
+// into an "other" rectangle per thesis. The caption states N_eff for the selected portfolio.
+function squarify(items, x, y, w, h){
+  const out = []; let rest = items.filter(i => i.area > 0).slice().sort((a, b) => b.area - a.area);
+  const total = rest.reduce((s, i) => s + i.area, 0); if (!total || w <= 0 || h <= 0) return out;
+  const k = (w * h) / total; rest = rest.map(i => ({...i, a: i.area * k}));
+  let rx = x, ry = y, rw = w, rh = h, row = [];
+  const worst = (r, len) => { const s = r.reduce((a, i) => a + i.a, 0); const mx = Math.max(...r.map(i => i.a)), mn = Math.min(...r.map(i => i.a)); return Math.max(len * len * mx / (s * s), s * s / (len * len * mn)); };
+  const lay = r => { const s = r.reduce((a, i) => a + i.a, 0);
+    if (rw >= rh) { const cw = s / rh; let cy = ry; r.forEach(i => { const ch = i.a / cw; out.push({...i, x: rx, y: cy, w: cw, h: ch}); cy += ch; }); rx += cw; rw -= cw; }
+    else { const ch = s / rw; let cx = rx; r.forEach(i => { const cw = i.a / ch; out.push({...i, x: cx, y: ry, w: cw, h: ch}); cx += cw; }); ry += ch; rh -= ch; } };
+  while (rest.length) { const len = Math.max(1e-6, Math.min(rw, rh)); const it = rest[0];
+    if (!row.length || worst([...row, it], len) <= worst(row, len)) { row.push(it); rest = rest.slice(1); } else { lay(row); row = []; } }
+  if (row.length) lay(row);
+  return out;
+}
+function dvClass(ret){   // five steps over [−3%, +3%], clamped
+  if (ret == null || !isFinite(ret)) return "dv0";
+  const p = Math.max(-3, Math.min(3, ret * 100));
+  return p < -1.8 ? "dv-2" : p < -0.6 ? "dv-1" : p <= 0.6 ? "dv0" : p <= 1.8 ? "dv1" : "dv2";
+}
+function treemapData(tid){
+  const h = (S.tournament && S.tournament.history) || []; if (h.length < 1) return null;
+  const last = h[h.length - 1], prev = h.length > 1 ? h[h.length - 2] : null;
+  const td = last.tiers && last.tiers[tid]; if (!td) return null;
+  const prevTier = prev && prev.tiers && prev.tiers[tid];
+  const prevPx = Object.assign({}, prevTier && prevTier.prices_snapshot ? prevTier.prices_snapshot : {},
+    ...(prevTier && prevTier.positions ? prevTier.positions.filter(p => p.price).map(p => ({[p.ticker]: p.price})) : []));
+  const nav = (td.equity || 0) + (td.cash || 0); if (!(nav > 0)) return null;
+  const reg = (S.thesisReg && S.thesisReg.theses) || {};
+  const ledger = (S.provLedger && S.provLedger.entries) || {};
+  const provNames = new Set(((S.thesis && S.thesis.tiers && S.thesis.tiers[tid]) || {}).provisional_names || []);
+  const groups = {};
+  (td.positions || []).filter(p => p.value > 0).forEach(p => {
+    const w = p.value / nav; const pp = prevPx[p.ticker]; const ret = (pp && p.price) ? p.price / pp - 1 : null;
+    let best = null, bw = 0, multi = 0;
+    Object.entries(reg).forEach(([k, th]) => { const mw = th.members && th.members[p.ticker]; if (mw) { multi++; if (mw > bw) { bw = mw; best = k; } } });
+    let provisional = false;
+    if (!best && provNames.has(p.ticker) && ledger[p.ticker] && ledger[p.ticker].proposed) {
+      const [k, mw] = Object.entries(ledger[p.ticker].proposed).sort((a, b) => b[1] - a[1])[0]; best = k; bw = mw; provisional = true;
+    }
+    const key = best || "unclassified";
+    (groups[key] = groups[key] || []).push({ticker: p.ticker, w, ret, mw: best ? bw : null, partial: !!best && bw < 0.999, multi, provisional});
+  });
+  const cashW = (td.cash || 0) / nav;
+  const neff = (S.thesis && S.thesis.tiers && S.thesis.tiers[tid] && S.thesis.tiers[tid].n_eff) || null;
+  return {groups, cashW, nav, neff, date: last.date, n: (td.positions || []).filter(p => p.value > 0).length};
+}
+function renderTreemapCard(){
+  const sel = S.tmSel || "5_werner";
+  const d = treemapData(sel);
+  const btn = (id, t) => `<button class="period-btn ${sel === id ? "on" : ""}" data-tm="${id}">${t}</button>`;
+  const selector = `<div class="periods">${btn("5_werner", "BOOK")}${TIER_ORDER.filter(t => t !== "5_werner").map(t => btn(t, (tierSpec(t) || {}).short || t)).join("")}</div>`;
+  if (!d) return `<div class="rcc-card tm-card"><div class="chart-head"><h3>THESIS TREEMAP</h3>${selector}</div><div class="ld">no positions for this selection</div></div>`;
+  const W = 1000, H = 440, LBL = 16;
+  const gitems = Object.entries(d.groups).map(([k, arr]) => ({key: k, area: arr.reduce((s, p) => s + p.w, 0)}));
+  if (d.cashW > 0) gitems.push({key: "cash", area: d.cashW});
+  const grects = squarify(gitems, 0, 0, W, H);
+  let svg = "";
+  grects.forEach(g => {
+    const label = thesisLabel(g.key);
+    svg += `<rect class="tm-group" x="${g.x.toFixed(1)}" y="${g.y.toFixed(1)}" width="${g.w.toFixed(1)}" height="${g.h.toFixed(1)}"></rect>`;
+    if (g.key === "cash") {
+      svg += `<rect class="tm-rect cash" x="${(g.x + 2).toFixed(1)}" y="${(g.y + 2).toFixed(1)}" width="${Math.max(0, g.w - 4).toFixed(1)}" height="${Math.max(0, g.h - 4).toFixed(1)}"><title>cash · ${(d.cashW * 100).toFixed(1)}% of NAV</title></rect>`;
+      if (g.w > 60 && g.h > 24) svg += `<text class="tm-t" x="${(g.x + 8).toFixed(1)}" y="${(g.y + 18).toFixed(1)}">cash ${(d.cashW * 100).toFixed(0)}%</text>`;
+      return;
+    }
+    if (g.w > 70 && g.h > LBL + 8) svg += `<text class="tm-glabel" x="${(g.x + 6).toFixed(1)}" y="${(g.y + 12).toFixed(1)}">${label.toUpperCase()} · ${(g.area * 100).toFixed(0)}%</text>`;
+    const members = d.groups[g.key] || [];
+    const big = members.filter(m => m.w >= 0.005), small = members.filter(m => m.w < 0.005);
+    const items = big.map(m => ({key: m.ticker, area: m.w, m}));
+    if (small.length) items.push({key: "other", area: small.reduce((s, m) => s + m.w, 0), other: small});
+    const inner = squarify(items, g.x + 2, g.y + (g.h > LBL + 8 ? LBL : 2), Math.max(0, g.w - 4), Math.max(0, g.h - (g.h > LBL + 8 ? LBL + 2 : 4)));
+    inner.forEach(r => {
+      const m = r.m;
+      const cls = m ? dvClass(m.ret) : "dv0";
+      const dashed = m && (m.provisional || m.partial);
+      const title = m
+        ? `${m.ticker} · weight ${(m.w * 100).toFixed(1)}% · 1-day ${m.ret != null ? ((m.ret >= 0 ? "+" : "") + (m.ret * 100).toFixed(2) + "%") : "n/a"} · thesis ${label}${m.mw != null ? " · membership " + m.mw.toFixed(2) : ""}${m.provisional ? " · PROVISIONAL" : ""}${m.partial ? " · partial" : ""}${m.multi > 1 ? " · in " + m.multi + " theses" : ""}`
+        : `other · ${r.other.length} position${r.other.length === 1 ? "" : "s"} below 0.5% · ${(r.area * 100).toFixed(2)}% combined · ${r.other.map(o => o.ticker).join(", ")}`;
+      svg += `<rect class="tm-rect ${cls}${dashed ? " prov" : ""}" x="${r.x.toFixed(1)}" y="${r.y.toFixed(1)}" width="${Math.max(0, r.w - 1).toFixed(1)}" height="${Math.max(0, r.h - 1).toFixed(1)}"><title>${title}</title></rect>`;
+      if (r.w > 44 && r.h > 26) svg += `<text class="tm-t" x="${(r.x + 5).toFixed(1)}" y="${(r.y + 15).toFixed(1)}">${m ? m.ticker : "other"}</text>`;
+      if (r.w > 60 && r.h > 40 && m) svg += `<text class="tm-s" x="${(r.x + 5).toFixed(1)}" y="${(r.y + 29).toFixed(1)}">${(m.w * 100).toFixed(1)}% · ${m.ret != null ? ((m.ret >= 0 ? "+" : "") + (m.ret * 100).toFixed(1) + "%") : "—"}</text>`;
+    });
+  });
+  const legend = ["dv-2", "dv-1", "dv0", "dv1", "dv2"].map((c, i) => `<span class="tm-lg ${c}"></span>${["≤ −1.8%", "−1.8…−0.6", "±0.6", "0.6…1.8", "≥ 1.8%"][i]}`).join(" ");
+  return `<div class="rcc-card tm-card">
+    <div class="chart-head"><h3>THESIS TREEMAP · <span class="c-3 w5">${sel === "5_werner" ? "the book" : (tierSpec(sel) || {}).short} · weight by area, one-day return by colour</span>${asOfBadge(d.date)}</h3>${selector}</div>
+    <svg class="tm-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="thesis treemap">${svg}</svg>
+    <div class="chart-meta">N<sub>eff</sub> = <strong class="c-1">${d.neff != null ? d.neff : "—"}</strong> effective bets across ${d.n} positions · grouped by thesis (largest membership) · dashed = provisional or partial membership · ${legend} · bounded ±3% daily</div>
+  </div>`;
+}
 // P2.2 — "What the overlay has shown": the deflated claim verbatim, both C3 verdicts on one line
 // with the amendment noted, the C3 drawdown-path chart, and the "second opinion today" strip
 // (regime reading beside the three rules' current states; descriptive — no rule drives sizing).
@@ -2670,6 +2764,9 @@ function render(){
   document.querySelectorAll(".period-btn[data-ddr]").forEach(b => b.addEventListener("click", () => {
     S.ddRange = b.dataset.ddr; render();
   }));
+  document.querySelectorAll(".period-btn[data-tm]").forEach(b => b.addEventListener("click", () => {
+    S.tmSel = b.dataset.tm; render();
+  }));
   document.querySelectorAll(".tier-row").forEach(r => r.addEventListener("click", (ev) => {
     if (ev.target.closest(".tk-row") || ev.target.closest(".tk-detail")) return;
     const tid = r.dataset.tid;
@@ -2835,6 +2932,7 @@ async function init(){
   try { S.backtestDD = await loadJSON("data/backtest_drawdown.json"); } catch (e) { S.backtestDD = null; }   // P2.1 companion
   try { S.comparators = await loadJSON("data/comparators.json"); } catch (e) { S.comparators = null; }     // P2.2 second opinion
   try { S.c3Paths = await loadJSON("data/c3_drawdown_paths.json"); } catch (e) { S.c3Paths = null; }       // P2.2 C3 drawdown paths
+  try { S.provLedger = await loadJSON("data/provisional_ledger.json"); } catch (e) { S.provLedger = null; } // P2.3 provisional memberships
   S.intraday   = await loadJSON("data/intraday.json");
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");

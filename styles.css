@@ -780,3 +780,14 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 .so-cell .v{font:600 var(--t2) var(--mono);margin-top:var(--s1)}
 .so-cell .s{font:400 var(--t1) var(--mono);color:var(--text-3);margin-top:var(--s1);line-height:1.5}
 @media (max-width:820px){.so-strip{grid-template-columns:1fr 1fr}}
+/* ── P2.3 Treemap (plain SVG, tokens only) ───────────────────────────── */
+.tm-svg{width:100%;height:auto;display:block;background:var(--surface);border-radius:var(--radius-2)}
+.tm-group{fill:none;stroke:var(--hairline-hi);stroke-width:2}
+.tm-rect{stroke:var(--surface);stroke-width:1;transition:opacity var(--tween)} .tm-rect:hover{opacity:.85}
+.tm-rect.prov{stroke:var(--text-2);stroke-width:1.5;stroke-dasharray:4 3}
+.tm-rect.cash{fill:var(--surface-2)}
+.dv-2{fill:var(--dv-2)} .dv-1{fill:var(--dv-1)} .dv0{fill:var(--dv0)} .dv1{fill:var(--dv1)} .dv2{fill:var(--dv2)}
+.tm-glabel{font:600 var(--t1) var(--mono);fill:var(--text-2);letter-spacing:.08em}
+.tm-t{font:600 var(--t2) var(--mono);fill:var(--text-1)} .tm-s{font:400 var(--t1) var(--mono);fill:var(--text-1);opacity:.85}
+.tm-lg{display:inline-block;width:var(--s2);height:var(--s2);border-radius:2px;margin:0 var(--s1) 0 var(--s2);vertical-align:middle}
+.tm-lg.dv-2{background:var(--dv-2)} .tm-lg.dv-1{background:var(--dv-1)} .tm-lg.dv0{background:var(--dv0)} .tm-lg.dv1{background:var(--dv1)} .tm-lg.dv2{background:var(--dv2)}
