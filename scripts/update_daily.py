@@ -79,7 +79,7 @@ def _run_guard():
 
 FORCE_REASON, NOW_ET = _run_guard()
 
-for script in scripts:
+for script in ([] if "--validate-only" in sys.argv else scripts):   # [8.2] test hook
     print(f"\n{'='*60}\nRunning {script}\n{'='*60}")
     rc = subprocess.call([sys.executable, str(HERE / script)])
     if rc != 0:
@@ -93,6 +93,9 @@ for script in scripts:
 # ─────────────────────────────────────────────────────────────────────
 def validate_outputs() -> None:
     errors: list[str] = []
+    import os as _os
+    if _os.environ.get("FORCE_VALIDATION_FAIL"):   # SEPT AUDIT [8.2] test hook
+        errors.append("forced_test_failure: FORCE_VALIDATION_FAIL set")
     tjson = DATA / "tournament.json"
     if not tjson.exists():
         errors.append("data/tournament.json missing")
@@ -303,7 +306,9 @@ def validate_outputs() -> None:
         for e in errors:
             print(f"  -  {e}")
         print("="*60)
-        raise SystemExit(1)
+        # SEPT AUDIT [8.1]: the exit carries the failing check identifiers so
+        # status.json names them, not "exit 1".
+        raise SystemExit("; ".join(errors[:4]) + (f" (+{len(errors)-4} more)" if len(errors) > 4 else ""))
     print("\nValidation passed.")
 
 
@@ -404,7 +409,15 @@ stamp_served_json()
 try:
     validate_outputs()
 except SystemExit as e:
-    _write_status(False, f"validation failed (exit {e.code})")
+    # SEPT AUDIT [8.2]: a rejected run writes NOTHING to any served file. The
+    # sub-scripts already wrote into data/ before validation ran, so restore
+    # every tracked served file to the last good commit and drop untracked
+    # run outputs (a rejected run's vintage dir, scratch). ONLY status.json,
+    # written below, records the rejection — with the check names ([8.1]).
+    import subprocess as _sp
+    _sp.run(["git", "checkout", "--", "data/"], cwd=ROOT, check=False)
+    _sp.run(["git", "clean", "-fdq", "data/"], cwd=ROOT, check=False)
+    _write_status(False, str(e.code) if isinstance(e.code, str) else "validation failed (unnamed)")
     raise
 _write_status(True, None)
 print("\nDaily update complete.")

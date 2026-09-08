@@ -1469,6 +1469,7 @@ function renderRegimeCommandCenter(R){
         Since inception 2026-05-20 this chart shows the <strong style="font-style:normal">as-published</strong>
         values — what the system printed that night — preserved in regime_daily_published.csv.
         Earlier history is the revised recompute. Real-time performance claims must use the published vintage.
+        ${(() => { const rows = Array.isArray(S.regimePub) ? S.regimePub : []; const np = rows.filter(r => r && r.date && (r.R_t_published == null || r.R_t_published === "" || isNaN(+r.R_t_published))); return rows.length ? `<div style="margin-top:4px;font-style:normal;color:var(--t3)">Reliability: <strong>${np.length}</strong> no-publish session${np.length === 1 ? "" : "s"} of ${rows.length} since inception${np.length ? " — " + np.map(r => String(r.date).slice(0,10)).join(", ") + " (reasons in regime_daily_published.csv)" : ""}</div>` : ``; })()}
       </div>
     </div>
   </section>`;
