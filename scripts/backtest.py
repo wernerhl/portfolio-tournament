@@ -117,6 +117,22 @@ def main():
     phi = pd.DataFrame(norm.cdf(z.multiply(signs, axis=1).values),
                        index=z.index, columns=z.columns)
     R_t = phi.mean(axis=1).rename("R_t")
+    # C2/C3 (order 9-Sept): an external regime/exposure series can drive the
+    # tier sizing instead of the internal 12-indicator R_t — e.g. the 24-
+    # indicator v2 index (revised or point-in-time), or a one-line rule's
+    # exposure mapped through the same cash formula. Outputs then go to
+    # BACKTEST_OUT_DIR (default data/c2/) so served files are never touched.
+    import os as _os
+    _ovr = _os.environ.get("REGIME_OVERRIDE_CSV")
+    if _ovr:
+        _col = _os.environ.get("REGIME_OVERRIDE_COL", "R_full")
+        _ext = pd.read_csv(_ovr, index_col="date", parse_dates=["date"])[_col].astype(float)
+        R_t = _ext.reindex(trading_days).ffill().rename("R_t")
+        log(f"  R_t OVERRIDE from {_ovr}:{_col} — {R_t.notna().sum()} days, range {R_t.min():.3f} → {R_t.max():.3f}")
+    OUT_DIR = Path(_os.environ.get("BACKTEST_OUT_DIR", str(DATA if not _ovr else DATA / "c2")))
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    OUT_TAG = _os.environ.get("BACKTEST_OUT_TAG", "")
+    _of = lambda stem, ext: OUT_DIR / f"{stem}{('_' + OUT_TAG) if OUT_TAG else ''}.{ext}"
     log(f"  R_t range: {R_t.min():.3f} → {R_t.max():.3f}")
 
     # EFFR daily cash return
@@ -360,7 +376,7 @@ def main():
     eq = pd.DataFrame({**tier_navs, "spy": spy_nav, "qqq": qqq_nav, "60_40": s_60_40, "sso": sso_nav})
     eq = eq.dropna(how="all").ffill()
     eq.index.name = "date"
-    eq.to_csv(DATA / "backtest_equity_curves.csv")
+    eq.to_csv(_of("backtest_equity_curves", "csv"))
     log(f"  saved data/backtest_equity_curves.csv ({eq.shape})")
 
     # C1: pre-cost twin. Buy-and-hold benchmarks have no trades (gross == net);
@@ -368,12 +384,12 @@ def main():
     eq_gross = pd.DataFrame({**tier_navs_gross, "spy": spy_nav, "qqq": qqq_nav, "60_40": s_60_40_g, "sso": sso_nav})
     eq_gross = eq_gross.dropna(how="all").ffill()
     eq_gross.index.name = "date"
-    eq_gross.to_csv(DATA / "backtest_equity_curves_gross.csv")
+    eq_gross.to_csv(_of("backtest_equity_curves_gross", "csv"))
     log(f"  saved data/backtest_equity_curves_gross.csv ({eq_gross.shape})")
 
     prev_pub = None
     try:
-        prev_pub = json.load(open(DATA / "backtest_metrics.json"))
+        prev_pub = json.load(open(DATA / "backtest_metrics.json")) if OUT_DIR == DATA else None
     except Exception:
         pass
 
@@ -431,10 +447,11 @@ def main():
             "Universe = current S&P 500 + 50 midcaps → survivorship bias.",
         ],
     }
-    with open(DATA / "backtest_metrics.json", "w") as f:
+    metrics["_meta"]["regime_override"] = _ovr or None
+    with open(_of("backtest_metrics", "json"), "w") as f:
         json.dump(metrics, f, indent=2, default=str)
 
-    pd.DataFrame(holdings_log_rows).to_csv(DATA / "backtest_holdings_log.csv", index=False)
+    pd.DataFrame(holdings_log_rows).to_csv(_of("backtest_holdings_log", "csv"), index=False)
     log(f"  saved data/backtest_metrics.json + backtest_holdings_log.csv")
     log(f"total elapsed: {time.time() - T0:.1f}s")
     log("DONE")

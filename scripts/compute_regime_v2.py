@@ -164,10 +164,18 @@ INDICATORS = [
 
 
 def load_sources() -> dict[str, pd.DataFrame]:
+    """REGIME_PIT=1 (order 9-Sept C2): the FRED inputs come from the ALFRED
+    point-in-time parquets (fred_*_pit.parquet) so every historical reading
+    uses only data available on that date. Price/vol inputs are unrevised."""
+    import os as _os
+    pit = bool(_os.environ.get("REGIME_PIT"))
     out = {}
     for stem in ["fred_indicators", "fred_derived", "vol_indicators",
                  "vol_derived", "sector_etfs", "breadth_indicators"]:
-        p = SOURCE / f"{stem}.parquet"
+        sfx = "_pit" if (pit and stem.startswith("fred")) else ""
+        p = SOURCE / f"{stem}{sfx}.parquet"
+        if sfx and not p.exists():
+            raise FileNotFoundError(f"REGIME_PIT set but {p.name} missing — run the vintage_rebuild workflow")
         if p.exists():
             df = pd.read_parquet(p)
             df.index = pd.to_datetime(df.index)
@@ -371,6 +379,17 @@ def main():
         "divergence_alert": divalert,
     })
     out_df.index.name = "date"
+    # C2: point-in-time mode writes to REGIME_OUT_DIR (default data/c2/) and
+    # touches NOTHING served — no compat shim, no published vintage, no JSON.
+    import os as _os
+    if _os.environ.get("REGIME_PIT"):
+        out_dir = Path(_os.environ.get("REGIME_OUT_DIR", str(DATA / "c2")))
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_df.to_csv(out_dir / "regime_v2_daily_pit.csv")
+        s_df.to_parquet(out_dir / "regime_v2_risk_scores_pit.parquet")
+        z_df.to_parquet(out_dir / "regime_v2_zscores_pit.parquet")
+        print(f"  PIT mode: saved {out_dir}/regime_v2_daily_pit.csv ({len(out_df)} rows) + parquets; served files untouched")
+        return
     out_df.to_csv(DATA / "regime_v2_daily.csv")
     print(f"  saved regime_v2_daily.csv ({len(out_df)} rows)")
 
