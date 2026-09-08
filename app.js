@@ -51,7 +51,8 @@ const BENCH_FOR_TIER = {"1_cap_pres":"60_40", "2_balanced":"spy", "3_aggressive"
 function tierSpec(tid){ if (tid === "5_werner") return S.config.werner_picks; return (S.config.tier_specs || {})[tid]; }
 function regimeLabel(R){ return R<0.3?"Low risk":R<0.5?"Elevated":R<0.7?"High risk":"Crisis"; }
 function regimeColor(R){ return R<0.3?"var(--g)":R<0.5?"var(--y)":R<0.7?"var(--o)":"var(--r)"; }
-function regimeHex(R){ return R<0.3?"#4ade80":R<0.5?"#facc15":R<0.7?"#fb923c":"#f87171"; }
+// P1.3: chart segment colours from the palette (orange retired: HIGH RISK is a warn/neg mix)
+function regimeHex(R){ const c = CHARTS.colors(); return R<0.3 ? c.pos : R<0.5 ? c.warn : R<0.7 ? `color-mix(in srgb, ${c.neg} 60%, ${c.warn})` : c.neg; }
 function statusHex(s){ return ({safe:"#4ade80",neutral:"#60a5fa",elevated:"#facc15",crisis:"#f87171"})[s] || "#737373"; }
 function statusLabel(s){ return ({safe:"Safe",neutral:"Neutral",elevated:"Caution",crisis:"Crisis"})[s] || s; }
 
@@ -309,44 +310,35 @@ function _doRenderIndicatorCharts(){
     const m  = (ind.stats && Number.isFinite(ind.stats.mean_1y)) ? ind.stats.mean_1y : null;
     const sd = (ind.stats && Number.isFinite(ind.stats.std_1y))  ? ind.stats.std_1y  : null;
     // Horizon lines now only need 2 points (start + end of x range)
+    const CC = CHARTS.colors();
     const horizon = (yval, color, dash, lbl) => ({
-      label: lbl,
+      label: lbl, role: "benchmark",
       data: [{x: 0, y: yval}, {x: Math.max(0, raw.length - 1), y: yval}],
-      borderColor: color, borderDash: dash, borderWidth: 0.6, pointRadius: 0, fill: false, tension: 0, showLine: true,
+      borderColor: color, borderDash: dash, pointRadius: 0, fill: false, tension: 0, showLine: true,
     });
     const datasets = [
-      {label: ind.label, data: raw,
-       borderColor: "#60a5fa", borderWidth: 1.6, pointRadius: 0, tension: 0.1, fill: false},
+      {label: ind.label, data: raw, role: "headline", borderColor: CC.info, tension: 0.1, fill: false},
     ];
     if (m != null && sd != null) {
-      datasets.push(horizon(m,        "#9ca3af", [4,4], "mean (1y)"));
-      datasets.push(horizon(m + sd,   "#facc15", [3,3], "+1σ"));
-      datasets.push(horizon(m - sd,   "#facc15", [3,3], "-1σ"));
-      datasets.push(horizon(m + 2*sd, "#f87171", [2,3], "+2σ"));
-      datasets.push(horizon(m - 2*sd, "#f87171", [2,3], "-2σ"));
+      datasets.push(horizon(m,        CC.n2,   [4,4], "mean (1y)"));
+      datasets.push(horizon(m + sd,   CC.warn, [3,3], "+1σ"));
+      datasets.push(horizon(m - sd,   CC.warn, [3,3], "-1σ"));
+      datasets.push(horizon(m + 2*sd, CC.neg,  [2,3], "+2σ"));
+      datasets.push(horizon(m - 2*sd, CC.neg,  [2,3], "-2σ"));
     }
     try {
-      S.indRawChart = new Chart(rawCtx, {
+      S.indRawChart = CHARTS.make(rawCtx, {
         type: "line",
         data: {datasets},
         options: {
-          responsive:true, maintainAspectRatio:false, animation:{duration:200},
-          interaction:{mode:"nearest",axis:"x",intersect:false},
           // No parsing:false — Chart.js 4 default parser handles {x,y} fine on a
           // linear scale, and parsing:false combined with segment/tooltip
           // callbacks reading ctx.parsed.y throws silently and kills the render.
           scales: {
             x: {type:"linear", min: 0, max: Math.max(0, raw.length - 1),
-                grid:{color:"rgba(255,255,255,0.03)"},
-                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0,
-                       stepSize: xStep(raw), callback: xTickCb(raw)}},
-            y: {grid:{color:"rgba(255,255,255,0.03)"},
-                ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+                ticks:{stepSize: xStep(raw), callback: xTickCb(raw)}},
           },
-          plugins:{legend:{display:false},
-                   tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
-                            titleFont:{family:"IBM Plex Mono",size:10},bodyFont:{family:"IBM Plex Mono",size:10},
-                            callbacks:{
+          plugins:{tooltip:{callbacks:{
                               title: items => (items[0] && raw[items[0].dataIndex] && raw[items[0].dataIndex].d) || "",
                               label: ctx => ` ${ctx.dataset.label || ind.label}: ${ctx.parsed.y}`,
                             }}},
@@ -362,39 +354,31 @@ function _doRenderIndicatorCharts(){
   if (zCtx && zs.length) {
     if (S.indZChart) { try { S.indZChart.destroy(); } catch(e){} }
     try {
-    S.indZChart = new Chart(zCtx, {
+    const CZ = CHARTS.colors();
+    S.indZChart = CHARTS.make(zCtx, {
       type: "line",
       data: {datasets: [
-        {label: "z", data: zs,
-         borderColor: "#60a5fa",
-         borderWidth: 1.6, pointRadius: 0, tension: 0.1,
+        {label: "z", data: zs, role: "headline",
+         borderColor: CZ.info, tension: 0.1,
          // Defensive: ctx.p1.parsed may be missing in some Chart.js paths.
          // Fall back to ctx.p1.raw which is always the original data point.
          segment: {borderColor: ctx => {
            const y = (ctx.p1 && ctx.p1.parsed && ctx.p1.parsed.y != null)
              ? ctx.p1.parsed.y
              : (ctx.p1 && ctx.p1.raw && ctx.p1.raw.y != null) ? ctx.p1.raw.y : 0;
-           return y > 0 ? "#f87171" : "#4ade80";
+           return y > 0 ? CZ.neg : CZ.pos;
          }},
          fill: {target: "origin",
-                above: "rgba(248,113,113,0.15)",
-                below: "rgba(74,222,128,0.10)"}},
+                above: CHARTS.alpha(CZ.neg, 0.15),
+                below: CHARTS.alpha(CZ.pos, 0.10)}},
       ]},
       options: {
-        responsive:true, maintainAspectRatio:false, animation:{duration:200},
-        interaction:{mode:"nearest",axis:"x",intersect:false},
         // (See raw chart above) — no parsing:false; Chart.js 4 handles {x,y}.
         scales: {
           x: {type:"linear", min: 0, max: Math.max(0, zs.length - 1),
-              grid:{color:"rgba(255,255,255,0.03)"},
-              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}, maxRotation:0,
-                     stepSize: xStep(zs), callback: xTickCb(zs)}},
-          y: {grid:{color:"rgba(255,255,255,0.03)"},
-              ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}},
+              ticks:{stepSize: xStep(zs), callback: xTickCb(zs)}},
         },
-        plugins: {legend: {display:false},
-                  tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
-                           callbacks:{
+        plugins: {tooltip:{callbacks:{
                              title: items => (items[0] && zs[items[0].dataIndex] && zs[items[0].dataIndex].d) || "",
                              label: ctx => ` z = ${ctx.parsed.y.toFixed(2)} (${ctx.parsed.y > 0 ? "above" : "below"} avg)`,
                            }}},
@@ -450,13 +434,12 @@ function renderRegimeTimeline(){
       return {x: r.date, y: (d in pubMap) ? pubMap[d] : +r.R_t};
     });
   if (!points.length) return;
-  S.regimeChart = new Chart(ctx, {
+  const CR = CHARTS.colors();
+  S.regimeChart = CHARTS.make(ctx, {
     type: "line",
     data: {datasets: [{
-      label: "R_t",
+      label: "R_t", role: "headline",
       data: points,
-      borderWidth: 1.2,
-      pointRadius: 0,
       tension: 0.05,
       fill: true,
       // Color each segment + fill by Y value
@@ -466,33 +449,23 @@ function renderRegimeTimeline(){
       backgroundColor: (ctx) => {
         const chart = ctx.chart;
         const {ctx: c2d, chartArea} = chart;
-        if (!chartArea) return "rgba(74,222,128,0.10)";
+        if (!chartArea) return CHARTS.alpha(CR.pos, 0.10);
         const g = c2d.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        g.addColorStop(0,    "rgba(248,113,113,0.25)");  // top  = crisis
-        g.addColorStop(0.30, "rgba(251,146,60,0.18)");
-        g.addColorStop(0.55, "rgba(250,204,21,0.12)");
-        g.addColorStop(1,    "rgba(74,222,128,0.10)");   // bottom = safe
+        g.addColorStop(0,    CHARTS.alpha(CR.neg, 0.25));   // top  = crisis
+        g.addColorStop(0.30, CHARTS.alpha(CR.neg, 0.12));
+        g.addColorStop(0.55, CHARTS.alpha(CR.warn, 0.12));
+        g.addColorStop(1,    CHARTS.alpha(CR.pos, 0.10));   // bottom = safe
         return g;
       },
     }]},
     options: {
-      responsive: true, maintainAspectRatio: false, animation: {duration: 200},
-      interaction: {mode:"nearest", axis:"x", intersect:false},
       scales: {
-        x: {type:"time", time:{unit:"year"},
-            grid:{color:"rgba(255,255,255,0.03)"},
-            ticks:{color:"#737373", font:{family:"IBM Plex Mono", size:9}, maxRotation:0}},
+        x: {type:"time", time:{unit:"year"}},
         y: {min:0, max:1,
-            grid:{color:"rgba(255,255,255,0.03)"},
-            ticks:{color:"#737373", font:{family:"IBM Plex Mono", size:9},
-                   callback:v => v===0?"safe":(v===0.5?"elevated":(v===1?"crisis":""))}},
+            ticks:{callback:v => v===0?"safe":(v===0.5?"elevated":(v===1?"crisis":""))}},
       },
       plugins: {
-        legend: {display: false},
-        tooltip: {backgroundColor:"rgba(0,0,0,0.9)",
-                  titleFont:{family:"IBM Plex Mono", size:10},
-                  bodyFont:{family:"IBM Plex Mono", size:10}, padding:8,
-                  callbacks:{ label: ctx => ` R_t = ${ctx.parsed.y.toFixed(3)}  (${regimeLabel(ctx.parsed.y)})` }},
+        tooltip: {callbacks:{ label: ctx => ` R_t = ${ctx.parsed.y.toFixed(3)}  (${regimeLabel(ctx.parsed.y)})` }},
       },
     },
   });
@@ -1114,6 +1087,7 @@ function renderChart(allSeries, period){
   const ctx = document.getElementById("race-chart");
   if (!ctx) return;
   if (S.chart) S.chart.destroy();
+  const CC = CHARTS.colors();
   const datasets = [];
   TIER_ORDER.forEach(tid => {
     const t = tierSpec(tid);
@@ -1122,11 +1096,11 @@ function renderChart(allSeries, period){
     const periodSer = applyPeriod(ser, period);
     const rebased = rebase(periodSer);
     datasets.push({
-      label: t.short,
+      label: t.short, role: tid === "4_tactical" ? "headline" : "series",
       data: rebased.map(r => ({x:r.date, y:r.nav})),
-      borderColor: t.color,
-      backgroundColor: t.color + "22",
-      borderWidth: 1.6, pointRadius: 0, tension: 0.05,
+      borderColor: CC.tier[tid],
+      backgroundColor: CHARTS.alpha(CC.tier[tid], 0.13),
+      tension: 0.05,
     });
   });
   // SPY benchmark
@@ -1134,34 +1108,22 @@ function renderChart(allSeries, period){
   if (spy.length > 0){
     const reb = rebase(spy);
     datasets.push({
-      label: "SPY",
+      label: "SPY", role: "benchmark",
       data: reb.map(r => ({x:r.date, y:r.nav})),
-      borderColor: "#6b7280", backgroundColor: "transparent",
-      borderWidth: 1.0, borderDash: [4, 3], pointRadius: 0, tension: 0.05,
+      borderColor: CC.bench.spy, backgroundColor: "transparent",
+      borderDash: [4, 3], tension: 0.05,
     });
   }
-  S.chart = new Chart(ctx, {
+  S.chart = CHARTS.make(ctx, {
     type: "line", data: {datasets},
     options: {
-      responsive: true, maintainAspectRatio: false, animation:{duration:300},
-      interaction: {mode:"nearest", axis:"x", intersect:false},
       scales: {
         x: { type:"time",
-             time:{ unit: period==="1M"||period==="3M"?"week":(period==="6M"||period==="YTD"||period==="1Y"?"month":"year") },
-             grid:{color:"rgba(255,255,255,0.04)"},
-             ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:9}}, },
-        y: { type:"logarithmic",
-             grid:{color:"rgba(255,255,255,0.04)"},
-             ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:9},
-                    callback: v => v.toFixed(2)}, },
+             time:{ unit: period==="1M"||period==="3M"?"week":(period==="6M"||period==="YTD"||period==="1Y"?"month":"year") } },
+        y: { type:"logarithmic", ticks:{callback: v => v.toFixed(2)} },
       },
       plugins: {
-        legend:{position:"bottom",
-                labels:{color:"#a3a3a3", font:{family:"Inter",size:11}, usePointStyle:true, padding:14}},
-        tooltip:{backgroundColor:"rgba(0,0,0,0.9)", titleColor:"#d4d4d4",
-                 titleFont:{family:"IBM Plex Mono",size:10}, bodyFont:{family:"IBM Plex Mono",size:10},
-                 padding:8, borderColor:"rgba(255,255,255,0.1)", borderWidth:1,
-                 callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}× (${((ctx.parsed.y-1)*100>=0?"+":"")}${((ctx.parsed.y-1)*100).toFixed(1)}%)` }},
+        tooltip:{callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}× (${((ctx.parsed.y-1)*100>=0?"+":"")}${((ctx.parsed.y-1)*100).toFixed(1)}%)` }},
       },
     },
   });
@@ -1180,52 +1142,44 @@ function renderTickerChart(tk){
 
   // Pull annotation lines from ticker_signals.json (branch on mode)
   const sig = S.signals && S.signals.signals && S.signals.signals[tk];
+  const CT = CHARTS.colors();
   const hline = (yval, color, label, dash=[4,4]) => ({
     type: "line", yMin: yval, yMax: yval,
     borderColor: color, borderWidth: 1, borderDash: dash,
     label: { content: label, display: true, position: "start",
-             font: {family: "IBM Plex Mono", size: 9},
+             font: {family: CHARTS.tok("mono"), size: CHARTS.px("t1")},
              color: color, backgroundColor: "transparent" },
   });
   const annotations = {};
   if (sig && sig.mode === "position") {
-    if (sig.position?.cost_basis)  annotations.cost  = hline(sig.position.cost_basis, "#60a5fa", `Cost $${sig.position.cost_basis.toFixed(2)}`);
-    if (sig.stops?.active_stop)    annotations.stop  = hline(sig.stops.active_stop,   "#f87171", `${sig.stops.active_stop_type === "trailing" ? "Trail" : "Stop"} $${sig.stops.active_stop.toFixed(2)}`);
-    if (sig.trim?.trigger_price)   annotations.trim  = hline(sig.trim.trigger_price,  "#facc15", `Trim ${sig.trim.trim_pct}% at $${sig.trim.trigger_price.toFixed(2)}`, [2,4]);
+    if (sig.position?.cost_basis)  annotations.cost  = hline(sig.position.cost_basis, CT.info, `Cost $${sig.position.cost_basis.toFixed(2)}`);
+    if (sig.stops?.active_stop)    annotations.stop  = hline(sig.stops.active_stop,   CT.neg, `${sig.stops.active_stop_type === "trailing" ? "Trail" : "Stop"} $${sig.stops.active_stop.toFixed(2)}`);
+    if (sig.trim?.trigger_price)   annotations.trim  = hline(sig.trim.trigger_price,  CT.warn, `Trim ${sig.trim.trim_pct}% at $${sig.trim.trigger_price.toFixed(2)}`, [2,4]);
     if (sig.hedge?.type === "covered_call" && sig.hedge.strike) {
-      annotations.cc = hline(sig.hedge.strike, "#a78bfa", `CC $${sig.hedge.strike}`, [3,3]);
+      annotations.cc = hline(sig.hedge.strike, CT.n1, `CC $${sig.hedge.strike}`, [3,3]);
     }
   } else if (sig) {
-    if (sig.entry?.primary)  annotations.entry  = hline(sig.entry.primary,  "#60a5fa", `Entry $${sig.entry.primary.toFixed(2)}`);
-    if (sig.stop?.price)     annotations.stop   = hline(sig.stop.price,     "#f87171", `Stop $${sig.stop.price.toFixed(2)}`);
-    if (sig.target?.base)    annotations.target = hline(sig.target.base,    "#4ade80", `Target $${sig.target.base.toFixed(2)}`);
+    if (sig.entry?.primary)  annotations.entry  = hline(sig.entry.primary,  CT.info, `Entry $${sig.entry.primary.toFixed(2)}`);
+    if (sig.stop?.price)     annotations.stop   = hline(sig.stop.price,     CT.neg, `Stop $${sig.stop.price.toFixed(2)}`);
+    if (sig.target?.base)    annotations.target = hline(sig.target.base,    CT.pos, `Target $${sig.target.base.toFixed(2)}`);
   }
 
-  S.tickerChart = new Chart(ctx, {
+  S.tickerChart = CHARTS.make(ctx, {
     type: "line",
     data: {
       datasets: [
-        {label:"Price",  data: chart.map(c => ({x:c.d, y:c.c})),  borderColor:"#60a5fa", borderWidth:1.4, pointRadius:0},
-        {label:"MA50",   data: chart.map(c => ({x:c.d, y:c.m50})), borderColor:"#facc15", borderWidth:0.9, borderDash:[3,2], pointRadius:0},
-        {label:"MA200",  data: chart.map(c => ({x:c.d, y:c.m200})),borderColor:"#a78bfa", borderWidth:0.9, borderDash:[3,2], pointRadius:0},
+        {label:"Price",  role:"headline",  data: chart.map(c => ({x:c.d, y:c.c})),  borderColor:CT.info},
+        {label:"MA50",   role:"benchmark", data: chart.map(c => ({x:c.d, y:c.m50})), borderColor:CT.warn, borderDash:[3,2]},
+        {label:"MA200",  role:"benchmark", data: chart.map(c => ({x:c.d, y:c.m200})),borderColor:CT.n2,   borderDash:[3,2]},
       ],
     },
     options: {
-      responsive:true, maintainAspectRatio:false, animation:{duration:200},
-      interaction:{mode:"nearest",axis:"x",intersect:false},
       scales: {
-        x: {type:"time", time:{unit: period==="3M"?"week":"month"},
-            grid:{color:"rgba(255,255,255,0.03)"},
-            ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8}}, },
-        y: {grid:{color:"rgba(255,255,255,0.03)"},
-            ticks:{color:"#737373",font:{family:"IBM Plex Mono",size:8},
-                   callback: v => "$"+v.toFixed(0)}},
+        x: {type:"time", time:{unit: period==="3M"?"week":"month"}},
+        y: {ticks:{callback: v => "$"+v.toFixed(0)}},
       },
       plugins: {
-        legend:{position:"top",align:"end",
-                labels:{color:"#a3a3a3",font:{family:"Inter",size:10},usePointStyle:true,padding:8,boxWidth:6}},
-        tooltip:{backgroundColor:"rgba(0,0,0,0.9)",
-                 callbacks:{ label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` }},
+        tooltip:{callbacks:{ label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` }},
         annotation: {annotations},
       },
     },
@@ -1569,36 +1523,29 @@ function renderRopCurveChart(){
   ].filter(p => p.y != null);
   const eventVolPoint = curve.vix1d != null ? [{x: 1, y: curve.vix1d}] : [];
   // Color the spread line by current state (semantic)
-  const lineColor = r.spread > 0.5 ? "#E0664E" : (r.spread > -1 ? "#DBA23E" : "#5FB98E");
+  const CV = CHARTS.colors();
+  const lineColor = r.spread > 0.5 ? CV.neg : (r.spread > -1 ? CV.warn : CV.pos);
   try {
-    S.ropCurveChart = new Chart(ctx, {
+    S.ropCurveChart = CHARTS.make(ctx, {
       type: "line",
       data: { datasets: [
-        { label: "term (spot ↔ 3M)", data: spreadPoints,
-          borderColor: lineColor, borderWidth: 2, tension: 0,
-          pointRadius: 6, pointBackgroundColor: lineColor, pointBorderColor: "#1C1916",
+        { label: "term (spot ↔ 3M)", role: "headline", data: spreadPoints,
+          borderColor: lineColor, tension: 0,
+          pointRadius: 6, pointBackgroundColor: lineColor, pointBorderColor: CV.surface,
           pointBorderWidth: 2, showLine: true, fill: false },
-        { label: "1-day VIX1D (event vol, off-spread)", data: eventVolPoint,
-          borderColor: "rgba(168,143,229,0.6)", borderWidth: 1, borderDash: [3,3],
-          pointRadius: 5, pointBackgroundColor: "rgba(168,143,229,0.0)",
-          pointBorderColor: "#A88FE5", pointBorderWidth: 2, showLine: false, fill: false },
+        { label: "1-day VIX1D (event vol)", role: "benchmark", data: eventVolPoint,
+          borderColor: CHARTS.alpha(CV.info, 0.6), borderDash: [3,3],
+          pointRadius: 5, pointBackgroundColor: "transparent",
+          pointBorderColor: CV.info, pointBorderWidth: 2, showLine: false, fill: false },
       ] },
       options: {
-        responsive: true, maintainAspectRatio: false, animation: {duration: 200},
+        interaction: {mode: "nearest", axis: "xy", intersect: true},
         scales: {
           x: {type: "linear", min: -0.3, max: 2.3,
-              grid: {color: "rgba(255,255,255,0.03)"},
-              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 9},
-                      callback: v => ({0: "spot (1M)", 1: "1-day", 2: "3M"})[v] || ""}},
-          y: {grid: {color: "rgba(255,255,255,0.03)"},
-              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 9}}},
+              ticks: {callback: v => ({0: "spot (1M)", 1: "1-day", 2: "3M"})[v] || ""}},
         },
         plugins: {
-          legend: {display: true, position: "bottom",
-                    labels: {color: "#837A6B", font: {family: "Pagella, Spectral, serif", size: 10, style: "italic"},
-                             usePointStyle: true, padding: 6, boxWidth: 6}},
-          tooltip: {backgroundColor: "rgba(0,0,0,0.9)",
-                    callbacks: { label: ctx => ` ${({0:"spot (1M)",1:"1-day VIX1D",2:"3M"})[ctx.parsed.x] || ""}: ${ctx.parsed.y.toFixed(2)}` }},
+          tooltip: {callbacks: { label: ctx => ` ${({0:"spot (1M)",1:"1-day VIX1D",2:"3M"})[ctx.parsed.x] || ""}: ${ctx.parsed.y.toFixed(2)}` }},
         },
       },
     });
@@ -1854,7 +1801,7 @@ function renderThesisRsChart(){
       if ((!hot || i === dates.length - 1) && spanStart !== null) {
         annotations["regime" + spanStart] = {
           type: "box", xMin: spanStart, xMax: i, yScaleID: "y",
-          backgroundColor: "rgba(219,162,62,0.08)", borderWidth: 0,
+          backgroundColor: CHARTS.alpha(CHARTS.colors().warn, 0.08), borderWidth: 0,
         };
         spanStart = null;
       }
@@ -1865,31 +1812,20 @@ function renderThesisRsChart(){
     return (i >= 0 && i < arr.length && arr[i]) ? arr[i].d.slice(0, 7) : "";
   };
   try {
-    S.thesisRsChart = new Chart(ctx, {
+    const CS = CHARTS.colors();
+    S.thesisRsChart = CHARTS.make(ctx, {
       type: "line",
       data: { datasets: [
-        { label: "ai_infra / fin_plumbing", data: s1, borderColor: "#6B9BEA",
-          borderWidth: 1.4, pointRadius: 0, tension: 0.1 },
-        { label: "ai_infra / hard_assets", data: s2, borderColor: "#C9A86A",
-          borderWidth: 1.4, pointRadius: 0, tension: 0.1 },
+        { label: "ai_infra / fin_plumbing", data: s1, borderColor: CS.info, tension: 0.1 },
+        { label: "ai_infra / hard_assets",  data: s2, borderColor: CS.accent, tension: 0.1 },
       ]},
       options: {
-        responsive: true, maintainAspectRatio: false, animation: {duration: 200},
         scales: {
           x: {type: "linear", min: 0, max: Math.max(0, s1.length - 1),
-              grid: {color: "rgba(255,255,255,0.03)"},
-              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 8},
-                      maxRotation: 0, stepSize: Math.max(1, Math.floor(s1.length/6)),
-                      callback: xTickCb(s1)}},
-          y: {grid: {color: "rgba(255,255,255,0.03)"},
-              ticks: {color: "#837A6B", font: {family: "IBM Plex Mono", size: 8}}},
+              ticks: {stepSize: Math.max(1, Math.floor(s1.length/6)), callback: xTickCb(s1)}},
         },
         plugins: {
-          legend: {position: "top", align: "end",
-                    labels: {color: "#B3AA9B", font: {family: "Pagella, Spectral, serif", size: 10, style: "italic"},
-                             usePointStyle: true, boxWidth: 6, padding: 8}},
-          tooltip: {backgroundColor: "rgba(0,0,0,0.9)",
-                    callbacks: { title: items => (items[0] && s1[items[0].dataIndex]?.d) || "",
+          tooltip: {callbacks: { title: items => (items[0] && s1[items[0].dataIndex]?.d) || "",
                                   label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(3)}` }},
           annotation: {annotations},
         },
