@@ -21,6 +21,7 @@ DATA = ROOT / "data"
 scripts = [
     "refresh_data.py",
     "compute_regime_v2.py",
+    "compute_comparators.py",      # dashboard order 9-Sept P2.2: today's state of the C3 rules (descriptive)
     "score_regime_v4_daily.py",    # AUDIT FIX 2a: v4 was never in the daily
                                    # pipeline (CI lacked scikit-learn), so
                                    # regime_v4_daily.csv froze at its last
@@ -354,6 +355,7 @@ SERVED_CADENCE = {
     "ticker_signals.json": "daily", "tournament.json": "daily",
     "v4_delta_attribution.json": "daily", "regime_conditional_scores.json": "daily",
     "intraday.json": "daily", "vol_regime.json": "daily", "vol_close_canonical.json": "daily",
+    "comparators.json": "daily",                                               # P2.2 (dashboard order 9-Sept)
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

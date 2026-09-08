@@ -2399,7 +2399,61 @@ function renderDrawdownChart(){
   const m = document.getElementById("dd-meta"); if (m) m.textContent = meta;
 }
 function renderTreemapCard(){ return ""; }        // P2.3
-function renderRetirementPanel(){ return ""; }    // P2.2
+// P2.2 — "What the overlay has shown": the deflated claim verbatim, both C3 verdicts on one line
+// with the amendment noted, the C3 drawdown-path chart, and the "second opinion today" strip
+// (regime reading beside the three rules' current states; descriptive — no rule drives sizing).
+function renderRetirementPanel(){
+  const r = S.c3; if (!r || !r.decision) return "";
+  const d2 = r.decision_v2 || {}; const ci = d2.paired_diff_return_per_vol_ci90 || [];
+  const sg = x => (x >= 0 ? "+" : "") + (+x).toFixed(3);
+  const verdictLine = `<div class="mono t1 c-2 mt2" title="v1 (c39e2aa): margin over the best rule had to exceed the half-width of the regime's own 90% interval — a bar no monthly overlay on this window could clear. v2 (amended 9-Sept-2026 after the v1 result): paired 90% interval above zero. Both verdicts stay on record.">
+    <span class="c-neg w6">v1: fail</span> on a rule with no discriminating power; <span class="c-pos w6">v2: pass</span>, paired difference [${ci.length ? sg(ci[0]) + ", " + sg(ci[1]) : "—"}] · amendment made after the v1 result, disclosed in reports/c3_registration_v2.md
+  </div>`;
+  let strip = "";
+  const cp = S.comparators;
+  if (cp && cp.rules && cp.rules.sma10 && cp.rules.tsmom_12_1 && cp.rules.vol_target_10) {
+    const rg = cp.regime || {}, sm = cp.rules.sma10, tm = cp.rules.tsmom_12_1, vt = cp.rules.vol_target_10;
+    const expCls = e => e >= 0.999 ? "c-pos" : e <= 0.001 ? "c-neg" : "c-warn";
+    const cell = (k, v, s, cls) => `<div class="so-cell"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div><div class="s">${s}</div></div>`;
+    strip = `<div class="so-strip">
+      ${cell("REGIME INDEX · READING", `${rg.state || "—"} · R<sub>full</sub> ${rg.R_full != null ? (+rg.R_full).toFixed(3) : "—"}`, `tier-4 exposure ${rg.exposure != null ? (rg.exposure * 100).toFixed(0) + "%" : "—"} · as of ${rg.as_of || cp.session_date}`, cc(ewColor(rg.state)))}
+      ${cell("10-MONTH SMA · MONTHLY", String(sm.state || "—").toUpperCase(), `P<sub>m</sub> ${sm.computed_from.P_m} vs SMA10 ${(+sm.computed_from.sma10).toFixed(2)} at ${sm.computed_from.month_end_date}${sm.evaluation && sm.evaluation.next_evaluation ? " · next " + sm.evaluation.next_evaluation : ""}`, expCls(sm.exposure))}
+      ${cell("12-1 MOMENTUM · MONTHLY", String(tm.state || "—").toUpperCase(), `12-1 return ${(tm.computed_from.ret_12_1 * 100).toFixed(1)}% (${tm.computed_from.P_m_12_date} → ${tm.computed_from.P_m_1_date})${tm.evaluation && tm.evaluation.next_evaluation ? " · next " + tm.evaluation.next_evaluation : ""}`, expCls(tm.exposure))}
+      ${cell("10% VOL TARGET · DAILY", `${(vt.exposure * 100).toFixed(0)}% exposure`, `σ<sub>60</sub> ${(vt.computed_from.sigma_ann * 100).toFixed(1)}% ann. through ${vt.computed_from.through} · min(1, 10% / σ)`, expCls(vt.exposure))}
+    </div>
+    <div class="mono t1 c-3 mt1">second opinion today · ${cp.note || "descriptive; no rule drives sizing"} · constants from ${cp.registration || "reports/c3_registration.md §B6"} · session ${cp.session_date}</div>`;
+  }
+  return `<div class="rcc-card ret-panel"><h3>WHAT THE OVERLAY HAS SHOWN · <span class="c-3 w5">pre-registered test C3, both verdicts of record</span>${asOfBadge(cp && cp.session_date)}</h3>
+    ${renderClaimSentence()}
+    ${verdictLine}
+    <div class="chart-wrap c3-wrap"><canvas id="c3-chart"></canvas></div>
+    <div class="chart-meta" id="c3-meta"></div>
+    ${strip}
+  </div>`;
+}
+function renderC3PathChart(){
+  const ctx = document.getElementById("c3-chart"); if (!ctx) return;
+  const p = S.c3Paths;
+  if (!p || !p.dates) { ctx.parentElement.innerHTML = '<div class="ld">C3 drawdown paths not published</div>'; return; }
+  if (S.c3Chart) { try { S.c3Chart.destroy(); } catch (e) {} }
+  const C = CHARTS.colors();
+  const spec = [["regime", "regime index, tier-4 sizing", C.tier["4_tactical"], "headline"],
+                ["best_rule", `best rule: ${p.best_rule_label}`, C.info, "series"],
+                ["buy_and_hold", "buy-and-hold", C.n1, "benchmark"]];
+  const datasets = spec.map(([k, label, color, role]) => ({
+    label, role, borderColor: color, backgroundColor: CHARTS.alpha(color, role === "benchmark" ? 0.05 : 0.12), fill: "origin", tension: 0,
+    borderDash: role === "benchmark" ? [3, 3] : undefined,
+    data: p.dates.map((d, i) => ({x: d, y: p.series[k][i] * 100})),
+    directLabel: `${label.split(",")[0].split(":")[0]} min ${(p.min[k] * 100).toFixed(0)}%`,
+  }));
+  S.c3Chart = CHARTS.make(ctx, {type: "line", data: {datasets}, options: {
+    layout: {padding: {right: 118}},
+    scales: {x: {type: "time", time: {unit: "year"}}, y: {max: 0, ticks: {callback: v => v.toFixed(0) + "%"}}},
+    plugins: {tooltip: {callbacks: {label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+  }});
+  const m = document.getElementById("c3-meta");
+  if (m) m.textContent = `drawdown paths from the C3 results (tier-4 overlay, ${p.window[0]} → ${p.window[1]}, net of costs, ${p.sampling}) · max drawdown: regime ${(p.min.regime * 100).toFixed(1)}% · ${p.best_rule_label} ${(p.min.best_rule * 100).toFixed(1)}% · buy-and-hold ${(p.min.buy_and_hold * 100).toFixed(1)}%`;
+}
 function renderBookPanel(){ return ""; }          // P3.2
 function renderActionLog(){ return ""; }          // P4.1
 function renderCalibrationPanel(){ return ""; }   // P4.2
@@ -2720,6 +2774,7 @@ function render(){
     renderThesisRsChart();
     renderChart(allSeries, S.period);
     renderDrawdownChart();      // P2.1 (tier one)
+    renderC3PathChart();        // P2.2 (tier two)
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
       // Scroll FIRST so the panel area is committed to layout, then render
@@ -2778,6 +2833,8 @@ async function init(){
   try { S.c2 = await loadJSON("data/c2_vintage_comparison.json"); } catch (e) { S.c2 = null; }   // memo §6 disclosure
   try { S.c3 = await loadJSON("data/c3_results.json"); } catch (e) { S.c3 = null; }             // memo §1 verdicts of record
   try { S.backtestDD = await loadJSON("data/backtest_drawdown.json"); } catch (e) { S.backtestDD = null; }   // P2.1 companion
+  try { S.comparators = await loadJSON("data/comparators.json"); } catch (e) { S.comparators = null; }     // P2.2 second opinion
+  try { S.c3Paths = await loadJSON("data/c3_drawdown_paths.json"); } catch (e) { S.c3Paths = null; }       // P2.2 C3 drawdown paths
   S.intraday   = await loadJSON("data/intraday.json");
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");

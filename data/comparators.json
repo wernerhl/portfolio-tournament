@@ -1,0 +1,184 @@
+{
+  "cadence": "daily",
+  "session_date": "2026-09-04",
+  "as_of": "2026-09-04",
+  "computed_at": "2026-09-08T15:09:55-04:00",
+  "index": "SPY (data/source/sector_etfs.parquet, dividend-adjusted)",
+  "index_through": "2026-09-04",
+  "index_last_close": 770.19,
+  "registration": "reports/c3_registration.md \u00a7B6 (constants verbatim; no re-tuning)",
+  "note": "descriptive second opinion; no rule drives sizing",
+  "regime": {
+    "rule": "24-indicator regime index R_full (data/regime_v2_daily.csv), tier-4 mapping: cash = clamp(floor + R_full x slope, floor, max), exposure = 1 - cash",
+    "state": "LOW RISK",
+    "R_full": 0.2131,
+    "cash": 0.2131,
+    "exposure": 0.7869,
+    "computed_from": {
+      "R_full": 0.2131,
+      "R_full_date": "2026-09-04",
+      "label": "LOW RISK",
+      "label_date": "2026-09-04",
+      "tier": "4_tactical",
+      "tier4_mapping": {
+        "cash_floor": 0.0,
+        "cash_slope": 1.0,
+        "cash_max": 1.0
+      }
+    },
+    "as_of": "2026-09-04",
+    "evaluation": {
+      "frequency": "daily"
+    },
+    "session_date": "2026-09-04"
+  },
+  "rules": {
+    "sma10": {
+      "rule": "Ten-month simple moving average on SPY month-end closes; monthly; invested above, cash below",
+      "state": "invested",
+      "exposure": 1.0,
+      "computed_from": {
+        "P_m": 767.05,
+        "sma10": 710.7634,
+        "month_end_date": "2026-08-31",
+        "month": "2026-08",
+        "n_month_ends": 10,
+        "month_end_closes_used": [
+          [
+            "2025-11-28",
+            677.7747
+          ],
+          [
+            "2025-12-31",
+            678.3152
+          ],
+          [
+            "2026-01-30",
+            688.3121
+          ],
+          [
+            "2026-02-27",
+            682.3637
+          ],
+          [
+            "2026-03-31",
+            648.6689
+          ],
+          [
+            "2026-04-30",
+            716.8133
+          ],
+          [
+            "2026-05-29",
+            754.5361
+          ],
+          [
+            "2026-06-30",
+            746.77
+          ],
+          [
+            "2026-07-31",
+            747.03
+          ],
+          [
+            "2026-08-31",
+            767.05
+          ]
+        ]
+      },
+      "evaluation": {
+        "frequency": "monthly",
+        "evaluated_at": "2026-08-31",
+        "next_evaluation": "2026-09-30",
+        "next_rebalance": "2026-10-01",
+        "note": "state set at the last completed month-end close; the registered rebalance applies a new reading at the first session of the following month (B4/B5)"
+      },
+      "provisional_if_evaluated_today": {
+        "label": "PROVISIONAL - latest close 2026-09-04 treated as the September 2026 month-end; not the rule's state until the month completes",
+        "P": 770.19,
+        "sma10": 720.0049,
+        "state": "invested",
+        "exposure": 1.0,
+        "through": "2026-09-04",
+        "same_as_current": false
+      },
+      "session_date": "2026-09-04"
+    },
+    "tsmom_12_1": {
+      "rule": "Time-series momentum: sign of trailing twelve-month return excluding the last month (P_{m-1} / P_{m-12} - 1 on month-end closes); monthly; invested if positive, cash otherwise",
+      "state": "invested",
+      "exposure": 1.0,
+      "computed_from": {
+        "P_m_1": 747.03,
+        "P_m_1_date": "2026-07-31",
+        "P_m_12": 637.981,
+        "P_m_12_date": "2025-08-29",
+        "ret_12_1": 0.1709,
+        "month_end_date": "2026-08-31",
+        "month": "2026-08"
+      },
+      "evaluation": {
+        "frequency": "monthly",
+        "evaluated_at": "2026-08-31",
+        "next_evaluation": "2026-09-30",
+        "next_rebalance": "2026-10-01",
+        "note": "state set at the last completed month-end close; the registered rebalance applies a new reading at the first session of the following month (B4/B5)"
+      },
+      "provisional_if_evaluated_today": {
+        "label": "PROVISIONAL - latest close 2026-09-04 treated as the September 2026 month-end; not the rule's state until the month completes",
+        "note": "the 12-1 rule skips the latest month, so the next evaluation's reading is already fixed by known month-end closes",
+        "P_m_1": 767.05,
+        "P_m_1_date": "2026-08-31",
+        "P_m_12": 660.7061,
+        "P_m_12_date": "2025-09-30",
+        "ret_12_1": 0.161,
+        "state": "invested",
+        "exposure": 1.0,
+        "same_as_current": false
+      },
+      "session_date": "2026-09-04"
+    },
+    "vol_target_10": {
+      "rule": "Volatility targeting at 10% annualized with 60-day realized volatility (sample std of daily log returns x sqrt(252)); exposure = min(1.0, 0.10 / sigma), capped at 100%",
+      "state": "scaled",
+      "exposure": 0.7914,
+      "computed_from": {
+        "sigma_ann": 0.1264,
+        "target": 0.1,
+        "cap": 1.0,
+        "window_days": 60,
+        "n_returns": 60,
+        "window_start": "2026-06-11",
+        "through": "2026-09-04"
+      },
+      "evaluation": {
+        "frequency": "daily",
+        "note": "60-session window through the last completed session; the registered C3 contestant re-sets this exposure at the monthly rebalance - see monthly_as_registered"
+      },
+      "monthly_as_registered": {
+        "set_at": "2026-09-01",
+        "signals_through": "2026-08-31",
+        "sigma_ann": 0.1395,
+        "exposure": 0.7166
+      },
+      "session_date": "2026-09-04"
+    }
+  },
+  "cross_check": {
+    "status": "ok",
+    "implementation": "scripts/c3_regime_vs_rules.py signals_at()",
+    "rebalance_session": "2026-09-01",
+    "signals_through": "2026-08-31",
+    "c3_exposures": {
+      "sma10": 1.0,
+      "tsmom_12_1": 1.0,
+      "vol_target_10": 0.7166
+    },
+    "this_script": {
+      "sma10": 1.0,
+      "tsmom_12_1": 1.0,
+      "vol_target_10": 0.7166
+    }
+  },
+  "warnings": []
+}

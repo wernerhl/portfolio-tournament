@@ -772,3 +772,11 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 .strip,.sig-badge,.sig-card,.asof,.badge,.pill,.tag,.hd-dot{animation:fadeIn var(--tween) ease-out both}
 [data-tween]{transition:color var(--tween)}
 .period-btn,.cond-toggle button,.tier-row,.chev{transition:background var(--tween),color var(--tween),border-color var(--tween),opacity var(--tween)}
+/* ── P2.2 Retirement panel: second-opinion strip ─────────────────────── */
+.c3-wrap{height:240px}
+.so-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s2);margin-top:var(--s3)}
+.so-cell{background:var(--surface-2);border:var(--hair) solid var(--hairline);border-radius:var(--radius-2);padding:var(--s2) var(--s3)}
+.so-cell .k{font:600 var(--t1) var(--mono);color:var(--text-3);letter-spacing:.12em}
+.so-cell .v{font:600 var(--t2) var(--mono);margin-top:var(--s1)}
+.so-cell .s{font:400 var(--t1) var(--mono);color:var(--text-3);margin-top:var(--s1);line-height:1.5}
+@media (max-width:820px){.so-strip{grid-template-columns:1fr 1fr}}
