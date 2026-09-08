@@ -56,7 +56,7 @@ jobs:
           rc=$?
           set -e
           cat reports/audit_last.txt
-          python scripts/audit_status.py reports/audit_last.txt --status data/status.json --restore-dir data
+          python scripts/audit_status.py reports/audit_last.txt --status data/status.json --restore-dir data --scope tournament
           exit $rc
 
       - name: Commit
