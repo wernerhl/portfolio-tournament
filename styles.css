@@ -812,3 +812,51 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 /* ── P4.2 Calibration panel ─────────────────────────────────────────── */
 .cal-wrap{height:260px}
 .act-panel table td{white-space:normal}
+/* ── P5.1 Mobile: single column below 820px; tier one always visible; tier two stacked cards;
+   tier three collapsed under disclosure controls (closed by default); type steps down one size ── */
+@media (max-width:820px){
+  :root{--t5:22px;--t4:15px;--t3:13px;--t2:11px}
+  .w{padding:var(--s3) var(--s2)}
+  .tier1-grid,.tier2-grid,.book-grid,.so-strip,.rcc-top{grid-template-columns:1fr}
+  .tier-2 .rcc-card,.tier-2 .lbtable,.tier-2 .chart-card,.tier-2 .lb{margin-bottom:var(--s3)}
+  .dd-wrap{height:220px}
+  .chart-head{flex-wrap:wrap;gap:var(--s2)}
+  .periods{flex-wrap:wrap}
+  .tier-3 > details > summary{font:600 var(--t2) var(--mono);color:var(--text-2);letter-spacing:.12em;cursor:pointer;padding:var(--s2) 0;border-bottom:var(--hair) solid var(--hairline);list-style:none}
+  .tier-3 > details > summary::-webkit-details-marker{display:none}
+  .tier-3 > details > summary::before{content:"▸ ";color:var(--text-3)}
+  .tier-3 > details[open] > summary::before{content:"▾ "}
+  .tier-3 > details > summary + *{margin-top:var(--s2)}
+  .tbl-scroll,.lbtable{overflow-x:auto}
+  table{font-size:var(--t1)} td,th{padding:var(--s1) var(--s2)}
+  .tm-svg{min-height:220px}
+  img,svg,canvas{max-width:100%}
+  body{overflow-x:hidden}
+}
+@media (min-width:821px){ .tier-3 > details > summary{display:none} .tier-3 > details{display:contents} }
+.only-mobile{display:none}
+@media (max-width:820px){.only-mobile{display:block} .only-desktop{display:none}}
+@media (max-width:820px){
+  .lb-h{flex-wrap:wrap;gap:var(--s2)} .lb-h-sub{white-space:normal;display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);align-items:center}
+  .cond-toggle{display:inline-flex;flex-wrap:wrap;gap:var(--s1)} .cond-toggle button{white-space:normal}
+  .chart-card,.rcc-card,.lbtable{min-width:0} .verdict,.moved-by,.claim{overflow-wrap:anywhere}
+}
+@media (max-width:820px){
+  .rop,.rop *,.rcc *,.tier *{min-width:0}
+  .rop-head,.chart-head,.lb-h,.ind-detail-head{flex-wrap:wrap}
+  /* panel grids collapse; label | bar | value rows keep their three columns */
+  .rop-grid,.rcc-top,.tier1-grid,.tier2-grid,.book-grid{grid-template-columns:1fr}
+  .so-strip,.x23,.x29,.score-row,.ind-grid,.stats-grid{grid-template-columns:1fr 1fr}
+  .fx-row{grid-template-columns:76px 1fr 48px} .th-exp-row{grid-template-columns:110px 1fr 40px}
+}
+@media (max-width:820px){
+  .rop-history-strip{overflow:hidden;gap:0;width:100%;max-width:100%}
+  .rop-history-strip .cell{flex:1 1 0;min-width:0;width:auto}
+}
+@media (max-width:820px){
+  /* every data table scrolls inside its own box; the page never scrolls sideways */
+  .tier table{display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+  .tier .lbtable table{display:table}
+  .tm-svg,.chart-wrap,.timeline-wrap{max-width:100%;overflow:hidden}
+  pre,code{white-space:pre-wrap;overflow-wrap:anywhere}
+}

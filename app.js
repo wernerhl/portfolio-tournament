@@ -2388,12 +2388,13 @@ function renderDrawdownChart(){
     });
     meta = `live since inception ${hist.length ? hist[0].date : "—"} · ${rows.length} sessions shown · depth below the running peak since inception · benchmarks weight 1, the regime tier (tactical) 2`;
   }
+  const narrow = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;   // P5.1: fewer ticks on mobile
   S.ddChart = CHARTS.make(ctx, {
     type: "line", data: {datasets},
     options: {
-      layout: {padding: {right: 96}},
-      scales: {x: {type: "time", time: {unit: range === "BT" ? "year" : (range === "1M" ? "day" : "month")}},
-               y: {max: 0, ticks: {callback: v => v.toFixed(0) + "%"}}},
+      layout: {padding: {right: narrow ? 70 : 96}},
+      scales: {x: {type: "time", time: {unit: range === "BT" ? "year" : (range === "1M" ? "day" : "month")}, ticks: {maxTicksLimit: narrow ? 4 : 10}},
+               y: {max: 0, ticks: {callback: v => v.toFixed(0) + "%", maxTicksLimit: narrow ? 4 : 8}}},
       plugins: {tooltip: {callbacks: {label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}},
     },
   });
@@ -2732,7 +2733,9 @@ function render(){
 
   // ══ TIER ONE (P1.4): gauge with its moved-by line · the claim sentence · the drawdown chart ══
   const rv = renderRegimeCommandCenter(R);
+  const statusStrip = renderStatusStrip();
   h += `<div class="tier tier-1"><h2 class="tier-title">REGIME</h2>
+    ${statusStrip ? `<div class="only-mobile">${statusStrip}</div>` : ""}
     <div class="tier1-grid">${rv.gauge}${renderDrawdownCard()}</div></div>`;
 
   // ══ TIER TWO: leaderboard · treemap · regime-and-overlay · the book ══
@@ -2859,13 +2862,17 @@ function render(){
   h += `</div>`;   // close tier two
 
   // ══ TIER THREE (reduced type and contrast): indicators · thesis register · v4 · status · records · calendar ══
+  // P5.1: on mobile every tier-three panel sits under a disclosure control, closed by default;
+  // on desktop the controls are open and their summaries hidden (CSS).
+  const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
+  const d3 = (title, html) => html ? `<details class="t3-panel"${isMobile ? "" : " open"}><summary>${title}</summary>${html}</details>` : "";
   h += `<div class="tier tier-3"><h2 class="tier-title">RECORDS &amp; SIGNALS</h2>`;
-  h += renderStatusStrip() + renderRegistryBanner();
-  h += rv.indicators;
-  h += renderThesisSection();
-  h += rv.v4;
-  h += renderScanner();
-  h += renderActionLog() + renderCalibrationPanel() + renderCalendarCard();
+  h += `<div class="only-desktop">${statusStrip}</div>` + renderRegistryBanner();
+  h += d3("INDICATOR READINGS", rv.indicators);
+  h += d3("THESIS REGISTER", renderThesisSection());
+  h += d3("V4 RANKING PANEL", rv.v4);
+  h += d3("SCANNER", renderScanner());
+  h += d3("ACTION LOG", renderActionLog()) + d3("V4 CALIBRATION", renderCalibrationPanel()) + d3("CALENDAR", renderCalendarCard());
 
   // ---- Footer ----
   h += `<div class="ft">
@@ -3088,3 +3095,14 @@ async function init(){
   render();
 }
 init();
+
+// P5.1: re-render when the viewport crosses the mobile breakpoint (disclosure state, chart ticks)
+(() => {
+  const mq = window.matchMedia ? window.matchMedia("(max-width: 820px)") : null;
+  if (!mq) return;
+  let was = mq.matches, timer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { if (mq.matches !== was) { was = mq.matches; if (S.config) render(); } }, 150);
+  });
+})();
