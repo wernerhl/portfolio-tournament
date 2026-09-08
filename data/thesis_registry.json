@@ -1,9 +1,9 @@
 {
-  "version": 2,
-  "frozen_at": "2026-07-29T14:32:40-03:00",
+  "version": 3,
+  "frozen_at": "2026-09-08T06:38:22-06:00",
   "proposed_at": "2026-06-11",
   "weighting": "equal_within_basket",
-  "note": "PROPOSED from the current books \u2014 Werner reviews/edits, then sets frozen_at to freeze. After freezing, classification changes happen ONLY via an explicit version bump (new version object appended to data/thesis_registry_history.json). Names may belong to multiple theses with split weights summing <= 1 per name; the residual maps to 'unclassified'.",
+  "note": "PROPOSED from the current books — Werner reviews/edits, then sets frozen_at to freeze. After freezing, classification changes happen ONLY via an explicit version bump (new version object appended to data/thesis_registry_history.json). Names may belong to multiple theses with split weights summing <= 1 per name; the residual maps to 'unclassified'.",
   "theses": {
     "ai_infra": {
       "label": "AI infrastructure",
@@ -104,12 +104,20 @@
         "BKNG": 1.0,
         "EXPE": 1.0
       }
+    },
+    "speculative_crypto": {
+      "label": "Speculative crypto (treasury-company exposure)",
+      "proxy_etf": "",
+      "members": {
+        "BMNR": 1.0
+      },
+      "notes": "Decision Memo 2026-09-09 §8: BMNR is a bet on a different variable from every other bucket and is not forced into one. No proxy ETF (no crypto ETF column in the price store); basket-vs-proxy divergence not computed."
     }
   },
-  "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review \u2014 nothing auto-merged.",
-  "approved_by": "Werner Hernani-Limarino (written instruction, 2026-07-29)",
-  "approved_at": "2026-07-29T14:32:40-03:00",
-  "supersedes": 1,
+  "approval": "v3: Decision Memo 9 Sept 2026 §8 — create a speculative_crypto thesis with BMNR at weight 1.0. Written order is the approval instrument; nothing else changed. memory_semis remains deferred (own registration after C4).",
+  "approved_by": "Werner Hernani-Limarino (Decision Memo, 2026-09-09, §8)",
+  "approved_at": "2026-09-08T06:38:22-06:00",
+  "supersedes": 2,
   "proposals_source": {
     "repo_head": "a881266f40d92aeb436a08e15d8faf7ccc617109",
     "file": "data/registry_proposals.json",
@@ -120,8 +128,29 @@
     {
       "version": 1,
       "frozen_at": "2026-07-29",
-      "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review \u2014 nothing auto-merged.",
+      "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review — nothing auto-merged.",
       "ratified": "same batch authority per written instruction 2026-07-29; v1 member map preserved at git a881266f40d92aeb436a08e15d8faf7ccc617109"
+    },
+    {
+      "version": 2,
+      "frozen_at": "2026-07-29T14:32:40-03:00",
+      "approved_by": "Werner Hernani-Limarino (written instruction, 2026-07-29)",
+      "approved_at": "2026-07-29T14:32:40-03:00",
+      "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched approval of judgment artifacts). v1 classifications of the 5 holdings become the falsification baseline. The 19 registry_proposals.json entries remain PENDING for a future v2 review — nothing auto-merged.",
+      "proposals_source": {
+        "repo_head": "a881266f40d92aeb436a08e15d8faf7ccc617109",
+        "file": "data/registry_proposals.json",
+        "entries_at_head": 16,
+        "note": "order prose said 19; file at pinned head has 16 (15 ticker + memory_semis). File governs per authority note."
+      },
+      "theses_at_v2": [
+        "ai_infra",
+        "consumer_cyclical",
+        "defensive_quality",
+        "fin_plumbing",
+        "hard_assets",
+        "ldg_ex_ai"
+      ]
     }
   ],
   "v3_queue": [
@@ -129,14 +158,16 @@
       "type": "new_thesis",
       "id": "memory_semis",
       "label": "Memory semiconductors (sub-thesis of ai_infra)",
-      "reason": "deferred by written instruction item 1.5 \u2014 changes attribution resolution; goes to v3"
-    },
-    {
-      "ticker": "BMNR",
-      "reason": "tier-5 residual \u2014 unclassified share 15.8% > 15% at v2 preview (as_of 2026-07-28). No existing thesis covers this exposure; needs a v3 thesis or explicit unclassified designation. Mechanical flag only \u2014 classification is judgment, not auto-assigned."
+      "reason": "deferred by Decision Memo 2026-09-09 §8 — changes attribution resolution; gets its own registration after C4"
     }
   ],
-  "effective": "forward from the 2026-07-29 close run; no historical recomputation (order item 1.3)",
+  "effective": "forward from the 2026-09-09 close run; no historical recomputation",
   "cadence": "on_change",
-  "as_of": "2026-07-29"
+  "as_of": "2026-09-09",
+  "resolved_in_v3": [
+    {
+      "ticker": "BMNR",
+      "resolution": "speculative_crypto @ 1.0 (Decision Memo 2026-09-09 §8)"
+    }
+  ]
 }
