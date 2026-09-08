@@ -13,6 +13,38 @@ const fmtP  = n => (typeof n === "number") ? ((n>=0?"+":"") + n.toFixed(2) + "%"
 const fmtP1 = n => (typeof n === "number") ? ((n>=0?"+":"") + n.toFixed(1) + "%") : "—";
 const pnlc  = n => (n>0 ? "pos" : (n<0 ? "neg" : "neut"));
 
+// ── P1.2: colour → token-bound class. Every value-driven colour in the markup goes through
+//    cc(); only geometry (bar widths, offsets, heat cells, treemap fills) stays inline.
+//    Unknown colours resolve to the neutral text level: the palette does not grow.
+const CC_MAP = {
+  "var(--g)":"pos","var(--pos)":"pos","#4ade80":"pos","#22c55e":"pos","#5fb98e":"pos","#16a34a":"pos",
+  "var(--r)":"neg","var(--neg)":"neg","#f87171":"neg","#ef4444":"neg","#dc2626":"neg","#e0664e":"neg","#fb923c":"neg","#e6914a":"neg","var(--o)":"neg","#fca5a5":"neg",
+  "var(--y)":"warn","var(--warn)":"warn","#facc15":"warn","#fde68a":"warn","#fbbf24":"warn","#eab308":"warn","#dba23e":"warn",
+  "var(--b)":"info","var(--info)":"info","#60a5fa":"info","#6b9bea":"info","#c084fc":"info","#a88fe5":"info","#a78bfa":"info","var(--p)":"info","#93c5fd":"info","#ddd6fe":"info","#a855f7":"info",
+  "var(--accent)":"accent","#c9a86a":"accent",
+  "var(--t1)":"1","var(--text-1)":"1","var(--t2)":"2","var(--text-2)":"2","var(--t3)":"3","var(--t4)":"3","var(--t5)":"3","var(--text-3)":"3","#737373":"3","#a3a3a3":"3","#9ca3af":"3","#5e5648":"3",
+  "var(--hairline-hi)":"hair","var(--hairline)":"hair","#2c2820":"hair","#3a352b":"hair","transparent":"none",
+  "var(--cat1)":"cat-1","var(--cat2)":"cat-2","var(--cat3)":"cat-3","var(--cat4)":"cat-4","var(--cat5)":"cat-5","var(--cat6)":"cat-6","var(--cat7)":"cat-7","var(--cat8)":"cat-8",
+};
+let TIER_HEX = null;
+function cc(color, kind){
+  const k = String(color == null ? "" : color).trim().toLowerCase();
+  if (!k) return "";
+  let key = CC_MAP[k];
+  if (!key) {
+    if (!TIER_HEX && S.config) {
+      TIER_HEX = {};
+      Object.entries(S.config.tier_specs || {}).forEach(([tid, sp]) => { if (sp && sp.color) TIER_HEX[String(sp.color).toLowerCase()] = tid; });
+      if (S.config.werner_picks && S.config.werner_picks.color) TIER_HEX[String(S.config.werner_picks.color).toLowerCase()] = "5_werner";
+    }
+    const tid = TIER_HEX && TIER_HEX[k]; if (tid) key = "tier-" + tid;
+  }
+  if (!key) key = "2";
+  if (key === "none") return kind === "bg" ? "bg-none" : "";
+  const pre = kind === "bg" ? "bg-" : kind === "bl" ? "bl-" : kind === "bd" ? "bd-" : "c-";
+  return pre + key;
+}
+
 const TIER_ORDER = ["1_cap_pres","2_balanced","3_aggressive","4_tactical","5_werner"];
 const BENCH_FOR_TIER = {"1_cap_pres":"60_40", "2_balanced":"spy", "3_aggressive":"qqq", "4_tactical":"sso", "5_werner":"spy"};
 
@@ -138,13 +170,13 @@ function renderIndCard(i){
     ? formatIndicatorValue(i.key, intradayVal, i.value_str)
     : (i.value_str || "—");
   const liveBadge = intradayVal != null
-    ? ` <span title="Intraday snapshot" style="font:600 7px var(--m);color:var(--accent);letter-spacing:.1em;vertical-align:top">·LIVE</span>`
+    ? ` <span title="Intraday snapshot" class="mono t1 w6 c-accent ls1 x1">·LIVE</span>`
     : "";
   return `<div class="ind-card ${i.status} ${open?"expanded":""}" data-ind="${i.key}">
     <div class="ind-lbl ${i.status}">${i.label}${liveBadge}</div>
     <div class="ind-val">${displayedStr}</div>
     <div class="ind-narr">${i.narrative || ""}</div>
-    <div class="ind-bar"><div class="fill" style="width:${(i.phi*100).toFixed(0)}%;background:${c}"></div></div>
+    <div class="ind-bar"><div class="fill ${cc(c,'bg')}" style="width:${(i.phi*100).toFixed(0)}%"></div></div>
   </div>`;
 }
 
@@ -175,7 +207,7 @@ function renderIndicatorDetail(){
   return `<div class="ind-detail">
     <div class="ind-detail-head">
       <div class="ind-detail-title">
-        <h3 style="color:${tierColor}">${ind.label} <small style="color:var(--t4);font-size:11px">· ${ind.display_name}</small></h3>
+        <h3 class="${cc(tierColor)}">${ind.label} <small class="c-3 t1">· ${ind.display_name}</small></h3>
         <div class="sub">TIER ${ind.tier} · WEIGHT ${ind.weight} · ${dirWord.toUpperCase()} · ${ind.source_label}</div>
         <div class="ind-detail-desc">${ind.description || ""}</div>
       </div>
@@ -207,7 +239,7 @@ function renderIndicatorDetail(){
         ${stat("Value",      c.value_str || "—")}
         ${stat("Z-score",    z)}
         ${stat("Risk score (Φ)", phi)}
-        ${stat("Status",     `<span style="color:${statusHex(c.status||'')}">${(c.status||'—').toUpperCase()}</span>`)}
+        ${stat("Status",     `<span class="${cc(statusHex(c.status||''))}">${(c.status||'—').toUpperCase()}</span>`)}
         ${stat("1Y percentile", pct + "th")}
       </div>
       <div class="id-stat-block">
@@ -389,10 +421,10 @@ function renderDeployment(R){
     else if (deployPct < 60) { status = "Cautious";  scolor = "var(--y)"; }
     else if (deployPct < 85) { status = "Standard";  scolor = "var(--b)"; }
     return `<div class="deploy-card">
-      <div class="deploy-lbl" style="color:${sp.color}">${sp.short}</div>
-      <div class="deploy-pct" style="color:${sp.color}">${deployPct.toFixed(0)}%</div>
-      <div class="deploy-status" style="color:${scolor}">${status}</div>
-      <div class="deploy-bar"><div class="fill" style="width:${deployPct}%;background:${sp.color}"></div></div>
+      <div class="deploy-lbl ${cc(sp.color)}">${sp.short}</div>
+      <div class="deploy-pct ${cc(sp.color)}">${deployPct.toFixed(0)}%</div>
+      <div class="deploy-status ${cc(scolor)}">${status}</div>
+      <div class="deploy-bar"><div class="fill ${cc(sp.color,'bg')}" style="width:${deployPct}%"></div></div>
       <div class="deploy-sub">${(cashPct*100).toFixed(0)}% cash</div>
     </div>`;
   }).join("")}</div>`;
@@ -524,11 +556,10 @@ function isStaleAsOf(dateStr){
 function asOfBadge(dateStr){
   const d = dateStr ? String(dateStr).slice(0,10) : "—";
   if (isStaleAsOf(d)) {
-    return `<span style="font:600 9px var(--m);letter-spacing:.08em;padding:2px 7px;border-radius:4px;
-      background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.4);color:var(--y);margin-left:8px">
+    return `<span class="mono t1 w6 ls08 r1 c-warn ml2 x2">
       STALE · as of ${d}</span>`;
   }
-  return `<span style="font:500 9px var(--m);letter-spacing:.06em;color:var(--t4);margin-left:8px">as of ${d}</span>`;
+  return `<span class="mono t1 w5 ls06 c-3 ml2">as of ${d}</span>`;
 }
 function _fmtSnapTime(snap){
   if (!snap) return "—";
@@ -543,26 +574,26 @@ function renderStatusStrip(){
   const st = S.status;
   if (!st) return "";
   const parts = [];
-  const strip = (bg, bd, col, txt) => `<div style="background:${bg};border:1px solid ${bd};border-radius:6px;
-      padding:6px 12px;margin-bottom:10px;font:500 11px var(--m);color:${col};line-height:1.5">${txt}</div>`;
+  // P1.2: semantic kinds (styles.css .strip-*) — the palette does not grow
+  const strip = (kind, txt) => `<div class="strip strip-${kind}">${txt}</div>`;
   const a = st.audit || {};
   if (a.critical && a.critical.length)
-    parts.push(strip("rgba(220,38,38,.10)", "rgba(220,38,38,.45)", "#f87171",
+    parts.push(strip("neg",
       `✗ audit CRITICAL — ${a.critical.join(", ")} · served artifacts are the last good board (session ${st.session_date || "?"})`));
   else if (st.failure_reason)
-    parts.push(strip("rgba(219,162,62,.10)", "rgba(219,162,62,.45)", "var(--y)",
+    parts.push(strip("warn",
       `⚠ last run rejected: ${st.failure_reason} · served artifacts are the last good board (session ${st.session_date || "?"}; last success ${String(st.last_success || "").slice(0,16)})`));
   if (a.high && a.high.length)
-    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
-      `audit: ${a.high.length} HIGH — ${a.high.join(", ")} <span style="color:var(--t5)">(logged, non-blocking · ${String(a.ran_at || "").slice(0,16)})</span>`));
+    parts.push(strip("2",
+      `audit: ${a.high.length} HIGH — ${a.high.join(", ")} <span class="c-3">(logged, non-blocking · ${String(a.ran_at || "").slice(0,16)})</span>`));
   // B3: cross-file findings are reported in both repositories' strips and block neither;
   // the other repository's CRITICALs are shown but never block this deploy.
   if (a.xfile && a.xfile.length)
-    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
-      `cross-file: ${a.xfile.join(", ")} <span style="color:var(--t5)">(reported in both repositories; blocks neither)</span>`));
+    parts.push(strip("2",
+      `cross-file: ${a.xfile.join(", ")} <span class="c-3">(reported in both repositories; blocks neither)</span>`));
   if (a.critical_other_repo && a.critical_other_repo.length)
-    parts.push(strip("var(--surface)", "var(--hairline)", "var(--t3)",
-      `other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span style="color:var(--t5)">(does not block this deploy)</span>`));
+    parts.push(strip("2",
+      `other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span class="c-3">(does not block this deploy)</span>`));
   return parts.join("");
 }
 
@@ -590,46 +621,43 @@ function renderTopBanner(){
   // 1) LIVE SHOCK — red, only when it is happening NOW
   if (shockIsLive) {
     const reasons = (id.shock_reasons || []).join(" · ");
-    return `<div style="background:rgba(220,38,38,0.15);border:1px solid #dc2626;
-       border-radius:8px;padding:14px 18px;margin-bottom:16px">
-      <div style="font:800 13px var(--m);color:#f87171;letter-spacing:.1em">
+    return `<div class="r2 mb3 x4">
+      <div class="mono t2 w8 c-neg ls1">
         ⚠ INTRADAY STRESS — ACUTE RISK IN CURRENT SESSION</div>
-      <div style="font:400 12px var(--s);color:#fca5a5;margin-top:6px;line-height:1.55">
+      <div class="serif t1 mt2 lh155 x5">
         ${reasons}. SPX <strong>${spxStr}</strong> intraday, VIX
         <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>).
         The end-of-day regime below is <strong>STALE</strong> and does not reflect this move.
         Do not deploy new capital until the close.
-        <span style="color:#fca5a570">snapshot ${snapStr} · ${Math.round(ageMin)} min ago</span></div>
+        <span class="x6">snapshot ${snapStr} · ${Math.round(ageMin)} min ago</span></div>
     </div>`;
   }
 
   // 1b) PRIOR-SESSION SHOCK — amber. Red means happening now; amber means
   // happened, market closed (or the cron hasn't caught up to a new session).
   if (id.shock_active && !shockIsLive) {
-    return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
-       border-radius:8px;padding:12px 16px;margin-bottom:16px">
-      <div style="font:700 12px var(--m);color:var(--y);letter-spacing:.08em">
+    return `<div class="r2 mb3 x7">
+      <div class="mono t1 w7 c-warn ls08">
         ◷ PRIOR SESSION WAS A SHOCK DAY</div>
-      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+      <div class="serif t1 c-warn mt1 lh155">
         SPX <strong>${spxStr}</strong>, VIX <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>)
         in the last session. Market ${marketOpen ? "is open but the intraday snapshot hasn't refreshed yet" : "is closed"};
         this banner reflects the prior session, not live conditions.
-        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+        <span class="c-warn">snapshot ${snapStr}</span></div>
     </div>`;
   }
 
   // 2) STALENESS — amber when market open and either old or moved
   const spxMoved = Math.abs(id.spx_change_pct || 0) > 1.0;
   if (marketOpen && (ageMin > 60 || spxMoved)) {
-    return `<div style="background:rgba(250,204,21,0.12);border:1px solid #facc15;
-       border-radius:8px;padding:12px 16px;margin-bottom:16px">
-      <div style="font:700 12px var(--m);color:#facc15;letter-spacing:.08em">
+    return `<div class="r2 mb3 x8">
+      <div class="mono t1 w7 c-warn ls08">
         ⚠ REGIME SNAPSHOT IS STALE</div>
-      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+      <div class="serif t1 c-warn mt1 lh155">
         Regime computed on prior close. SPX <strong>${spxStr}</strong> since,
         VIX now <strong>${id.vix_now}</strong>. The DEPLOY/CAUTIOUS call below
         does NOT reflect the current session.
-        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+        <span class="c-warn">snapshot ${snapStr}</span></div>
     </div>`;
   }
 
@@ -637,22 +665,20 @@ function renderTopBanner(){
   // JULY AUDIT FIX 2: a safety check with missing input must render
   // IMPAIRED, never silently read as calm.
   if (id.complacency_active === "impaired") {
-    return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
-       border-radius:8px;padding:10px 14px;margin-bottom:16px">
-      <div style="font:700 11px var(--m);color:var(--y);letter-spacing:.08em">
+    return `<div class="r2 mb3 x9">
+      <div class="mono t1 w7 c-warn ls08">
         ⚠ COMPLACENCY CHECK IMPAIRED</div>
-      <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
+      <div class="serif t1 c-warn mt1 lh155">
         ${id.complacency_reason}. The check did NOT evaluate — this is not an all-clear.
-        <span style="color:#fde68a99">snapshot ${snapStr}</span></div>
+        <span class="c-warn">snapshot ${snapStr}</span></div>
     </div>`;
   }
   if (id.complacency_active === true) {
-    return `<div style="background:rgba(168,85,247,0.10);border:1px solid #a855f7;
-       border-radius:8px;padding:10px 14px;margin-bottom:16px">
-      <div style="font:700 11px var(--m);color:#c084fc;letter-spacing:.08em">
+    return `<div class="r2 mb3 x10">
+      <div class="mono t1 w7 c-info ls08">
         COMPLACENCY FLAG</div>
-      <div style="font:400 11px var(--s);color:#ddd6fe;margin-top:4px;line-height:1.55">
-        ${id.complacency_reason}. <span style="color:#ddd6fe99">snapshot ${snapStr}</span></div>
+      <div class="serif t1 mt1 lh155 x11">
+        ${id.complacency_reason}. <span class="x12">snapshot ${snapStr}</span></div>
     </div>`;
   }
   return "";
@@ -671,14 +697,13 @@ function renderRegistryBanner(){
   const parts = [];
   if (unfrozen) parts.push(`registry v${td.registry_version} unapproved`);
   // A1: provisional mappings count toward coverage but are never silently permanent
-  if (prov.count > 0) parts.push(`<span style="color:var(--y);font:600 10px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px">PROVISIONAL</span> ${prov.count} agent-proposed mapping${prov.count > 1 ? "s" : ""} applied — they expire back to unclassified from ${prov.expires_earliest || "?"} unless approved into the registry`);
+  if (prov.count > 0) parts.push(`<span class="c-warn mono t1 w6 r1 x13">PROVISIONAL</span> ${prov.count} agent-proposed mapping${prov.count > 1 ? "s" : ""} applied — they expire back to unclassified from ${prov.expires_earliest || "?"} unless approved into the registry`);
   if (holes.length) parts.push(`${nNames} names unclassified across ${holes.length} tier${holes.length > 1 ? "s" : ""} (${holes.map(([tid, t]) => `${(tierSpec(tid)||{}).short || tid} ${(t.unclassified_share*100).toFixed(0)}%`).join(" · ")})`);
-  return `<div style="background:rgba(219,162,62,0.10);border:1px solid rgba(219,162,62,.5);
-     border-radius:8px;padding:11px 15px;margin-bottom:16px">
-    <div style="font:700 11px var(--m);color:var(--y);letter-spacing:.08em">
+  return `<div class="r2 mb3 x14">
+    <div class="mono t1 w7 c-warn ls08">
       ⚠ THESIS REGISTRY NEEDS ATTENTION</div>
-    <div style="font:400 11px var(--s);color:#fde68a;margin-top:4px;line-height:1.55">
-      ${parts.join(" · ")}. Review <span style="font-family:var(--m)">data/registry_proposals.json</span>
+    <div class="serif t1 c-warn mt1 lh155">
+      ${parts.join(" · ")}. Review <span class="mono">data/registry_proposals.json</span>
       and approve into the registry with a version bump — the agent never auto-merges.</div>
   </div>`;
 }
@@ -784,7 +809,7 @@ function c3VerdictLine(){
   const ci = d2 && d2.paired_diff_return_per_vol_ci90;
   const sg = x => (x >= 0 ? "+" : "") + (+x).toFixed(3);
   const yrs = r.window ? `${String(r.window[0]).slice(0,4)}–${String(r.window[1]).slice(2,4)}` : "2010–26";
-  return `<div style="font:400 10px var(--m);color:var(--t4);margin-top:4px" title="Pre-registered test C3 (reports/retirement_test_C3_regime_vs_rules.md). v1 rule: the regime's return-per-volatility margin over the best one-line rule had to exceed the half-width of the regime's own 90% bootstrap interval — a bar no monthly overlay on this window could clear (the rules' own half-widths are 0.44–0.45). v2 (registration amended 9-Sept-2026 AFTER the v1 result, disclosed in reports/c3_registration_v2.md): the paired 90% interval must lie above zero. Both verdicts stay on record.">C3 regime vs one-line rules (${yrs}, tier-4 overlay, net of costs): <span style="color:var(--r)">v1 verdict FAIL</span> (margin ${d1.margin != null ? sg(d1.margin) : "—"} vs required ${d1.half_width_regime_ci90 != null ? (+d1.half_width_regime_ci90).toFixed(3) : "—"})${d2 ? ` · <span style="color:${d2.regime_passes ? "var(--g)" : "var(--r)"}">v2 verdict ${d2.regime_passes ? "PASS" : "FAIL"}</span> (paired interval [${ci ? sg(ci[0]) + ", " + sg(ci[1]) : "—"}]; drawdown reduction ${(d2.dd_reduction_regime*100).toFixed(1)}% vs ${(d2.dd_reduction_best_rule*100).toFixed(1)}%)` : ""} · amendment made after the v1 result, disclosed.</div>`;
+  return `<div class="mono t1 c-3 mt1" title="Pre-registered test C3 (reports/retirement_test_C3_regime_vs_rules.md). v1 rule: the regime's return-per-volatility margin over the best one-line rule had to exceed the half-width of the regime's own 90% bootstrap interval — a bar no monthly overlay on this window could clear (the rules' own half-widths are 0.44–0.45). v2 (registration amended 9-Sept-2026 AFTER the v1 result, disclosed in reports/c3_registration_v2.md): the paired 90% interval must lie above zero. Both verdicts stay on record.">C3 regime vs one-line rules (${yrs}, tier-4 overlay, net of costs): <span class="c-neg">v1 verdict FAIL</span> (margin ${d1.margin != null ? sg(d1.margin) : "—"} vs required ${d1.half_width_regime_ci90 != null ? (+d1.half_width_regime_ci90).toFixed(3) : "—"})${d2 ? ` · <span class="${cc(d2.regime_passes ? "var(--g)" : "var(--r)")}">v2 verdict ${d2.regime_passes ? "PASS" : "FAIL"}</span> (paired interval [${ci ? sg(ci[0]) + ", " + sg(ci[1]) : "—"}]; drawdown reduction ${(d2.dd_reduction_regime*100).toFixed(1)}% vs ${(d2.dd_reduction_best_rule*100).toFixed(1)}%)` : ""} · amendment made after the v1 result, disclosed.</div>`;
 }
 
 function renderRegimeCommandCenter(R){
@@ -829,22 +854,22 @@ function renderRegimeCommandCenter(R){
   const inputs = headline.inputs;
   const inputLine = [
     inputs.v2_regime ? `v2 ${inputs.v2_regime}` : null,
-    inputs.v4_regime ? `v4 ${inputs.v4_regime} <span style="color:var(--t5)" title="${inputs.v4_excluded || ""}">(ranking only, not voting)</span>` : null,
-    inputs.v4_stale ? `<span style="color:var(--y)">v4: stale (as of ${inputs.v4_as_of || "?"})</span>` : null,
+    inputs.v4_regime ? `v4 ${inputs.v4_regime} <span class="c-3" title="${inputs.v4_excluded || ""}">(ranking only, not voting)</span>` : null,
+    inputs.v4_stale ? `<span class="c-warn">v4: stale (as of ${inputs.v4_as_of || "?"})</span>` : null,
     inputs.n_crisis > 0 ? `${inputs.n_crisis} crisis ch.` : null,
     inputs.complacent ? `complacent` : null,
     inputs.shock ? `intraday shock` : null,
     inputs.shock_prior_session ? `prior-session shock (not voting)` : null,
   ].filter(Boolean).join(" · ");
-  const verdict = `<strong style="color:${lblColor}">${headline.label}.</strong> ${headline.action}
-    <div style="margin-top:6px;font:400 10px var(--m);color:var(--t4)">${inputLine}</div>
+  const verdict = `<strong class="${cc(lblColor)}">${headline.label}.</strong> ${headline.action}
+    <div class="mt2 mono t1 c-3">${inputLine}</div>
     ${eventTodayBadge()}
     ${nextEventLine()}`;
 
   // ---- New score row: graduated probabilities (v4) + v2 R_full as backup ----
   const probCell = (label, p, action) => {
     if (p == null) return `<div class="score-cell">
-        <div class="k">${label}</div><div class="v" style="color:var(--t4)">—</div></div>`;
+        <div class="k">${label}</div><div class="v c-3">—</div></div>`;
     const pctText = (p * 100).toFixed(0) + "%";
     let cellColor = "var(--g)";
     if (p > 0.45) cellColor = "var(--o)";
@@ -852,15 +877,14 @@ function renderRegimeCommandCenter(R){
     if (p > 0.65) cellColor = "var(--r)";
     return `<div class="score-cell">
         <div class="k">${label}</div>
-        <div class="v" style="color:${cellColor}">${pctText}</div>
-        ${action ? `<div class="s" style="color:${cellColor}">${action}</div>` : ""}
+        <div class="v ${cc(cellColor)}">${pctText}</div>
+        ${action ? `<div class="s ${cc(cellColor)}">${action}</div>` : ""}
       </div>`;
   };
-  const scoreRow = v4Last ? `${v4StaleCC ? `<div style="margin-top:8px;text-align:center">
-      <span style="font:600 9px var(--m);letter-spacing:.08em;padding:3px 9px;border-radius:4px;
-        background:rgba(219,162,62,.12);border:1px solid rgba(219,162,62,.45);color:var(--y)">
+  const scoreRow = v4Last ? `${v4StaleCC ? `<div class="mt2 tac">
+      <span class="mono t1 w6 ls08 r1 c-warn x15">
         ⚠ v4 STALE · as of ${v4AsOfCC}</span>
-    </div>` : ""}<div class="score-row" ${v4StaleCC ? 'style="opacity:.55"' : ''}>
+    </div>` : ""}<div class="score-row ${v4StaleCC ? 'dim' : ''}">
       ${probCell("≥3% over NEXT 20D", p3_20, "")}
       ${probCell("≥5% over NEXT 40D · CAL", p5_40, v4reg)}
       ${probCell("≥10% over NEXT 60D", p10_60, "")}
@@ -870,74 +894,73 @@ function renderRegimeCommandCenter(R){
       const a = S.v4Attr;
       if (!a || !a.top3 || a.as_of !== v4AsOfCC) return "";
       const movers = a.top3.map(c => `${c.feature} ${c.contribution_pp >= 0 ? "+" : ""}${c.contribution_pp}pp`).join(" · ");
-      return `<div style="margin-top:5px;font:400 10px var(--m);color:var(--t3);text-align:center;line-height:1.5">
+      return `<div class="mt1 mono t1 c-3 tac lh15">
         Δ ${a.delta_pp >= 0 ? "+" : ""}${a.delta_pp}pp vs ${a.prev} — moved by: ${movers}
-        <span style="color:var(--t4)">(contributions approximate; residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp)</span>
+        <span class="c-3">(contributions approximate; residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp)</span>
       </div>`;
     })()}
-    <div style="margin-top:6px;font:400 9.5px var(--m);color:var(--t4);text-align:center;line-height:1.4">
+    <div class="mt2 mono t1 c-3 tac lh14">
       Multi-week drawdown probabilities (cumulative over the horizon). Does NOT protect against
       single-day gaps — see the intraday banner at the top for same-session risk.
     </div>` : (v2 ? `<div class="score-row">
       <div class="score-cell">
         <div class="k">EARLY WARNING</div>
         <div class="v">${R_lead.toFixed(3)}</div>
-        <div class="s" style="color:${ewColor(ew)}">${ew}</div>
+        <div class="s ${cc(ewColor(ew))}">${ew}</div>
       </div>
       <div class="score-cell">
         <div class="k">CURRENT REGIME</div>
         <div class="v">${R_full.toFixed(3)}</div>
-        <div class="s" style="color:${ewColor(rgm)}">${rgm}</div>
+        <div class="s ${cc(ewColor(rgm))}">${rgm}</div>
       </div>
       <div class="score-cell">
         <div class="k">DIVERGENCE</div>
         <div class="v">${divv >= 0 ? "+" : ""}${divv.toFixed(3)}</div>
-        <div class="s" style="color:${ewColor(divlab)}">${divlab}</div>
+        <div class="s ${cc(ewColor(divlab))}">${divlab}</div>
       </div>
     </div>` : "");
 
   // Compact v2 footnote: R_full / R_lead / divergence on one line
-  const v2Foot = v2 ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--bd);
-       font:400 10px var(--m);color:var(--t4);text-align:center;line-height:1.6">
-      <span style="color:var(--t3)">v2:</span>
-      R<sub>full</sub> <strong style="color:${ewColor(rgm)}">${R_full.toFixed(3)} ${rgm}</strong>
-      &middot; R<sub>lead</sub> <strong style="color:${ewColor(ew)}">${R_lead.toFixed(3)} ${ew}</strong>
-      &middot; div <strong style="color:${ewColor(divlab)}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
-      <div style="margin-top:3px;font:italic 400 10px var(--s);color:var(--t5)">
+  const v2Foot = v2 ? `<div class="mt2 pt2 mono t1 c-3 tac lh16 x16">
+      <span class="c-3">v2:</span>
+      R<sub>full</sub> <strong class="${cc(ewColor(rgm))}">${R_full.toFixed(3)} ${rgm}</strong>
+      &middot; R<sub>lead</sub> <strong class="${cc(ewColor(ew))}">${R_lead.toFixed(3)} ${ew}</strong>
+      &middot; div <strong class="${cc(ewColor(divlab))}">${divv >= 0 ? "+" : ""}${divv.toFixed(3)} ${divlab}</strong>
+      <div class="mt1 serif t1 it c-3">
         Regime label uses ±0.02 hysteresis at band edges (enter ELEVATED ≥ 0.32, exit &lt; 0.28)
         to stop edge-flapping; R values themselves are untouched.</div>
     </div>` : "";
 
   // AUDIT FIX 3: 4-bucket count matches card colors (green / blue / amber / red)
-  const tierCounts = `<span style="margin-left:auto;font:400 10px var(--m);color:var(--t3);letter-spacing:0;text-transform:none">
-    <span style="color:var(--g)">${safe} safe</span> ·
-    <span style="color:var(--b)">${neu} neutral</span> ·
-    <span style="color:var(--y)">${ele} elevated</span> ·
-    <span style="color:var(--r)">${cri} crisis</span></span>`;
+  const tierCounts = `<span class="mono t1 c-3 ls0 x17">
+    <span class="c-pos">${safe} safe</span> ·
+    <span class="c-info">${neu} neutral</span> ·
+    <span class="c-warn">${ele} elevated</span> ·
+    <span class="c-neg">${cri} crisis</span></span>`;
 
   return `<section class="rcc">
     <div class="rcc-top">
       <div class="rcc-card">
-        <h3>CYCLE POSITION · <span style="color:var(--t5);font-weight:500" title="Decision Memo 9-Sept-2026 §5: the headline is the regime index whose value C3 measured; v4 no longer votes">regime index</span>${asOfBadge(reg.as_of)}</h3>
+        <h3>CYCLE POSITION · <span class="c-3 w5" title="Decision Memo 9-Sept-2026 §5: the headline is the regime index whose value C3 measured; v4 no longer votes">regime index</span>${asOfBadge(reg.as_of)}</h3>
         ${gaugeSVG(R_full)}
-        <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
+        <div class="gauge-lbl ${cc(lblColor)}">${lbl}</div>
         <div class="gauge-rt">R<sub>full</sub> = <span class="r-num">${rDisp}</span></div>
-        ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div style="font:500 10.5px var(--m);color:var(--t3);margin-top:2px">raw score <span style="color:var(--t1)">${(+v4Last.raw_score).toFixed(3)}</span> <span style="color:var(--t5)">(pre-calibration)</span></div>
-        <div style="font:italic 400 10px var(--s);color:var(--t4);margin-top:1px">calibrated probability moves in steps; the raw score moves continuously.</div>
+        ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div class="mono t1 w5 c-3 mt1">raw score <span class="c-1">${(+v4Last.raw_score).toFixed(3)}</span> <span class="c-3">(pre-calibration)</span></div>
+        <div class="serif t1 it c-3 mt1">calibrated probability moves in steps; the raw score moves continuously.</div>
         ${(() => { // order 9-Sept B1.2: model-change note, shown for 30 sessions after the change, with OUT-OF-FOLD numbers (B2)
           const rows = Array.isArray(S.regimeV4) ? S.regimeV4.filter(r => r && r.date && String(r.date) > "2026-09-07") : [];
-          return rows.length < 30 ? `<div style="font:500 10px var(--m);color:var(--y);margin-top:3px" title="model_version ${v4Last.model_version || ""} · out-of-fold = leave-one-crisis-out folds, isotonic fitted on training predictions only">model changed 2026-09-07: equal-weight replaces logistic; out-of-fold Brier 0.1989 vs 0.2145 (logistic) — base rate 0.1918: no out-of-fold skill over the base rate on Brier; in-sample 0.1835 was the isotonic fit.</div>` : ``; })()}` : ``}
+          return rows.length < 30 ? `<div class="mono t1 w5 c-warn mt1" title="model_version ${v4Last.model_version || ""} · out-of-fold = leave-one-crisis-out folds, isotonic fitted on training predictions only">model changed 2026-09-07: equal-weight replaces logistic; out-of-fold Brier 0.1989 vs 0.2145 (logistic) — base rate 0.1918: no out-of-fold skill over the base rate on Brier; in-sample 0.1835 was the isotonic fit.</div>` : ``; })()}` : ``}
         ${scoreRow}
         ${v4Last ? (() => { // Decision Memo 9-Sept-2026 §5: standing note — v4 is a ranking signal, not a forecast
           const c = S.v4Cal || {}; const m = (c.methods && c.methods[c.winning_method || "equal_weight"]) || {};
           const oof = m.brier_out_of_fold, base = c.base_rate_brier;
-          return `<div style="font:500 10px var(--m);color:var(--t3);margin-top:5px;padding:5px 7px;border:1px dashed var(--line);border-radius:4px" title="out-of-fold = 15 leave-one-crisis-out folds, isotonic fitted on training predictions only (B2); the underlying index retains ranking skill (AUC ≈ 0.64, C2). No in-sample reliability figure is shown: isotonic fitting makes it look perfect by construction.">v4 graduated probability — <strong style="color:var(--t1)">ranking signal, not a forecast</strong>: out-of-fold Brier <strong style="color:var(--t1)">${oof != null ? (+oof).toFixed(4) : "—"}</strong> vs base rate <strong style="color:var(--t1)">${base != null ? (+base).toFixed(4) : "—"}</strong> — does not beat the base rate out of fold; use as a ranking, not a forecast. Not a headline input.</div>`; })() : ``}
+          return `<div class="mono t1 w5 c-3 mt1 r1 x18" title="out-of-fold = 15 leave-one-crisis-out folds, isotonic fitted on training predictions only (B2); the underlying index retains ranking skill (AUC ≈ 0.64, C2). No in-sample reliability figure is shown: isotonic fitting makes it look perfect by construction.">v4 graduated probability — <strong class="c-1">ranking signal, not a forecast</strong>: out-of-fold Brier <strong class="c-1">${oof != null ? (+oof).toFixed(4) : "—"}</strong> vs base rate <strong class="c-1">${base != null ? (+base).toFixed(4) : "—"}</strong> — does not beat the base rate out of fold; use as a ranking, not a forecast. Not a headline input.</div>`; })() : ``}
         ${c3VerdictLine()}
         <div class="verdict">${verdict}</div>
         ${v2Foot}
       </div>
       <div class="rcc-card">
-        <h3 style="display:flex;align-items:baseline">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
+        <h3 class="flx x19">INDICATOR READINGS — ${total} CHANNELS ${tierCounts}</h3>
         ${renderIndicators()}
       </div>
     </div>
@@ -950,12 +973,12 @@ function renderRegimeCommandCenter(R){
     <div class="rcc-card">
       <h3>REGIME TIMELINE — R<sub>full</sub> with regime bands (safe → elevated → crisis)</h3>
       <div class="timeline-wrap"><canvas id="regime-timeline"></canvas></div>
-      <div style="margin-top:6px;font:italic 400 10.5px var(--s);color:var(--t4);line-height:1.45">
+      <div class="mt2 serif t1 it c-3 lh145">
         Vintages: indicator inputs revise after the fact (several FRED series publish T+1 or weekly).
-        Since inception 2026-05-20 this chart shows the <strong style="font-style:normal">as-published</strong>
+        Since inception 2026-05-20 this chart shows the <strong class="fs-n">as-published</strong>
         values — what the system printed that night — preserved in regime_daily_published.csv.
         Earlier history is the revised recompute. Real-time performance claims must use the published vintage.
-        ${(() => { const rows = Array.isArray(S.regimePub) ? S.regimePub : []; const np = rows.filter(r => r && r.date && (r.R_t_published == null || r.R_t_published === "" || isNaN(+r.R_t_published))); return rows.length ? `<div style="margin-top:4px;font-style:normal;color:var(--t3)">Reliability: <strong>${np.length}</strong> no-publish session${np.length === 1 ? "" : "s"} of ${rows.length} since inception${np.length ? " — " + np.map(r => String(r.date).slice(0,10)).join(", ") + " (reasons in regime_daily_published.csv)" : ""}</div>` : ``; })()}
+        ${(() => { const rows = Array.isArray(S.regimePub) ? S.regimePub : []; const np = rows.filter(r => r && r.date && (r.R_t_published == null || r.R_t_published === "" || isNaN(+r.R_t_published))); return rows.length ? `<div class="mt1 fs-n c-3">Reliability: <strong>${np.length}</strong> no-publish session${np.length === 1 ? "" : "s"} of ${rows.length} since inception${np.length ? " — " + np.map(r => String(r.date).slice(0,10)).join(", ") + " (reasons in regime_daily_published.csv)" : ""}</div>` : ``; })()}
       </div>
     </div>
   </section>`;
@@ -1280,7 +1303,7 @@ function tradeContext(s){
 function twoScoreBar(value, max, color){
   const pct = Math.max(0, Math.min(100, value / max * 100));
   return `<div class="ts-bar">
-    <div class="ts-bar-fill" style="width:${pct.toFixed(0)}%;background:${color}"></div>
+    <div class="ts-bar-fill ${cc(color,'bg')}" style="width:${pct.toFixed(0)}%"></div>
   </div>`;
 }
 function renderTwoScore(tk){
@@ -1304,10 +1327,10 @@ function renderTwoScore(tk){
     <div class="ts-row">
       <div class="ts-label">Trade now</div>
       ${twoScoreBar(trade, 100, tradeColor(trade))}
-      <div class="ts-val"><span style="color:${tradeColor(trade)}">${sig}</span> · ${trade}<span class="ts-of">/100</span></div>
-      <div class="ts-sub">${note ? '<span style="color:#facc15">' + note + '</span>' : tradeContext(s)}</div>
+      <div class="ts-val"><span class="${cc(tradeColor(trade))}">${sig}</span> · ${trade}<span class="ts-of">/100</span></div>
+      <div class="ts-sub">${note ? '<span class="c-warn">' + note + '</span>' : tradeContext(s)}</div>
     </div>
-    <div class="ts-divergence" style="color:${div.color};border-left:3px solid ${div.color}">
+    <div class="ts-divergence ${cc(div.color)} ${cc(div.color,'bl')}">
       ${div.icon} ${div.text}
     </div>
   </div>`;
@@ -1377,28 +1400,24 @@ function renderRegimeOverlayPanel(){
     ? `${vixId.vix_change_pct >= 0 ? "+" : ""}${vixId.vix_change_pct}%` : null;
   const vixNow  = vixId.vix_now != null ? vixId.vix_now : (r.curve && r.curve.spot_vix);
   const twoHorizonLine = (nextTypical && r.curve && r.curve.vix1d != null) ? `
-    <div style="margin-top:8px;padding:8px 10px;background:rgba(168,143,229,0.05);
-         border-left:2px solid rgba(168,143,229,0.4);border-radius:0 4px 4px 0;
-         font:italic 400 11.5px var(--s);color:var(--t2);line-height:1.55">
-      <strong style="font-style:normal;font-family:var(--m);color:var(--t1);font-weight:600">Acute today:</strong>
-      VIX1D <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${r.curve.vix1d}</strong>,
-      VIX <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${vixNow}</strong>${vixChg ? ` (${vixChg})` : ""}
+    <div class="mt2 serif t1 it c-2 lh155 x20">
+      <strong class="fs-n mono c-1 w6">Acute today:</strong>
+      VIX1D <strong class="fs-n mono c-1">${r.curve.vix1d}</strong>,
+      VIX <strong class="fs-n mono c-1">${vixNow}</strong>${vixChg ? ` (${vixChg})` : ""}
       — front-end event vol elevated.
-      Term structure (spot−3M = <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>)
+      Term structure (spot−3M = <strong class="fs-n mono c-1">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>)
       only mildly inverted; historically reverts to
-      <strong style="font-style:normal;color:var(--t1)">${nextTypical.state}</strong>
-      <strong style="font-style:normal;font-family:var(--m);color:var(--t1)">${nextTypical.pct}%</strong> of the time.
+      <strong class="fs-n c-1">${nextTypical.state}</strong>
+      <strong class="fs-n mono c-1">${nextTypical.pct}%</strong> of the time.
     </div>` : "";
 
   // RoP-FIX B2: atypical-entry caveat
   const en = r.entry || {};
   const atypicalCaveat = en.atypical_entry ? `
-    <div style="margin-top:8px;padding:8px 10px;background:rgba(219,162,62,0.06);
-         border-left:2px solid rgba(219,162,62,0.55);border-radius:0 4px 4px 0;
-         font:italic 400 11.5px var(--s);color:var(--y);line-height:1.55">
-      <strong style="font-style:normal;font-family:var(--m);letter-spacing:.06em">⚠ ENTERED VIA A
+    <div class="mt2 serif t1 it c-warn lh155 x21">
+      <strong class="fs-n mono ls06">⚠ ENTERED VIA A
       ${en.current_entry_dspread >= 0 ? "+" : ""}${en.current_entry_dspread} SHOCK</strong>
-      (z = <strong style="font-style:normal;font-family:var(--m)">${en.entry_zscore}</strong>σ of ${r.state} entries,
+      (z = <strong class="fs-n mono">${en.entry_zscore}</strong>σ of ${r.state} entries,
       vs typical ${en.state_mean_entry >= 0 ? "+" : ""}${en.state_mean_entry}).
       The reversion stat above pools mostly gentle entries and may not apply to a shock-entered state.
     </div>` : "";
@@ -1421,8 +1440,8 @@ function renderRegimeOverlayPanel(){
         <h2>REGIME & OVERLAY${asOfBadge(r.session_date || r.as_of)}</h2>
         <div class="sub">VIX term-structure state · spike attribution · diagnostic overlay</div>
       </div>
-      <div style="font:400 11px var(--m);color:var(--t3)">
-        spread = <strong style="color:var(--t1)">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>
+      <div class="mono t1 c-3">
+        spread = <strong class="c-1">${r.spread >= 0 ? "+" : ""}${r.spread}</strong>
         (Δ ${r.delta_spread >= 0 ? "+" : ""}${r.delta_spread})
         · ${r.tradable_at ? `signal at close · tradable next open ${r.tradable_at}` : ""}
       </div>
@@ -1441,13 +1460,13 @@ function renderRegimeOverlayPanel(){
         </div>
         ${twoHorizonLine}
         ${atypicalCaveat}
-        <div style="margin-top:10px">
-          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">HISTORY · last 180 sessions</div>
+        <div class="mt2">
+          <div class="mono t1 w6 c-3 ls14">HISTORY · last 180 sessions</div>
           <div class="rop-history-strip">${stripCells}</div>
         </div>
-        <div style="margin-top:8px">
-          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">PAST TRIGGER SPIKES (most recent 8 · event-tagged if applicable)</div>
-          <div class="rop-spike-list">${spikeList || '<div style="color:var(--t4);font-style:italic">no recent trigger episodes</div>'}</div>
+        <div class="mt2">
+          <div class="mono t1 w6 c-3 ls14">PAST TRIGGER SPIKES (most recent 8 · event-tagged if applicable)</div>
+          <div class="rop-spike-list">${spikeList || '<div class="c-3 it">no recent trigger episodes</div>'}</div>
         </div>
         ${renderStatesLegend(r)}
       </div>
@@ -1460,16 +1479,16 @@ function renderRegimeOverlayPanel(){
                   r.conditioning.event_flag)}
         ${condRow("Δ2Y (bps)",
                   r.conditioning.delta_2y_bps != null
-                    ? `${r.conditioning.delta_2y_bps >= 0 ? "+" : ""}${r.conditioning.delta_2y_bps} <span style="color:var(--t4);font-weight:400">(${r.conditioning.delta_2y_source})</span>`
-                    : '<span style="color:var(--t4)">unavailable (FRED T+1)</span>',
+                    ? `${r.conditioning.delta_2y_bps >= 0 ? "+" : ""}${r.conditioning.delta_2y_bps} <span class="c-3 w4">(${r.conditioning.delta_2y_source})</span>`
+                    : '<span class="c-3">unavailable (FRED T+1)</span>',
                   r.conditioning.front_end_repriced)}
         ${condRow("Close behaviour",
                   `proxy ${r.conditioning.held_close_proxy} ${r.conditioning.held_close ? '· held' : '· faded'}`,
                   r.conditioning.held_close)}
         <div class="rop-attr">
-          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em">PRIMARY DRIVER ${r.trigger_fired ? "" : '<span style="color:var(--t5)">· no trigger</span>'}</div>
+          <div class="mono t1 w6 c-3 ls14">PRIMARY DRIVER ${r.trigger_fired ? "" : '<span class="c-3">· no trigger</span>'}</div>
           <div class="driver">${driver.replace(/_/g, " ")}</div>
-          <div class="reversion">reversion bucket: <strong style="color:var(--t1)">${reversion.toUpperCase()}</strong>
+          <div class="reversion">reversion bucket: <strong class="c-1">${reversion.toUpperCase()}</strong>
             · horizon ${r.config.reversion_N} sessions within ${r.config.reversion_X_sigma}σ</div>
           ${equityDrag ? `<div class="overlay-flag">↘ EQUITY DRAG OVERLAY · SMH ${(eqInputs.smh_1d_return*100).toFixed(1)}% · breadth Δ ${eqInputs.breadth_delta_pp >= 0 ? "+" : ""}${eqInputs.breadth_delta_pp}pp ${eqInputs.breadth_z != null ? `(z = ${eqInputs.breadth_z}σ, holds)` : ""}</div>` : ""}
         </div>
@@ -1479,27 +1498,27 @@ function renderRegimeOverlayPanel(){
       <div class="rop-block">
         <h4>TERM CURVE · OVERLAY</h4>
         <div class="rop-curve-wrap"><canvas id="rop-curve"></canvas></div>
-        <div style="font:italic 400 10.5px var(--s);color:var(--t3);margin-top:6px;line-height:1.4">
-          Headline spread = <strong style="font-style:normal;font-family:var(--m);color:var(--t2)">spot − 3M</strong>
+        <div class="serif t1 it c-3 mt2 lh14">
+          Headline spread = <strong class="fs-n mono c-2">spot − 3M</strong>
           (VIX − VIX3M). The 1-day (VIX1D) point is event-vol context — plotted as
           a separate marker, NOT part of the spread definition.
         </div>
         <div class="rop-overlay-scalar">
           <div class="lbl">OVERLAY POSITION SCALAR</div>
-          <div class="v">${ovs.value >= 0 ? "+" : ""}${ovs.value} <span style="font:600 11px var(--m);color:var(--accent);letter-spacing:.14em">${ovs.label}</span></div>
+          <div class="v">${ovs.value >= 0 ? "+" : ""}${ovs.value} <span class="mono t1 w6 c-accent ls14">${ovs.label}</span></div>
           <div class="cap">${ovs.caption || ""}</div>
         </div>
         <div class="rop-validation">
-          <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
+          <div class="mono t1 w6 c-3 ls14 mb1">
             WALK-FORWARD REVERSION · horizon ${at.horizon_sessions || "—"} sessions / ±${at.threshold_sigma || "—"}σ
             · today (${wf.today_excluded_from_metrics || "—"}) excluded
           </div>
-          <div style="display:flex;flex-direction:column;gap:2px">
-            <div>All triggers (the well-evidenced number): <strong style="color:var(--t1)">${wfTextAll}</strong></div>
-            <div>Event-day only (handful per year): <strong style="color:var(--t2);font-style:italic">${wfTextEv}</strong></div>
-            ${ev.hit_rate != null && ev.n < 30 ? `<div style="color:var(--y);font-style:italic;font-size:10.5px;margin-top:2px">⚠ ${wf.event_day_caveat || ""}</div>` : ""}
+          <div class="flx gap1 x22">
+            <div>All triggers (the well-evidenced number): <strong class="c-1">${wfTextAll}</strong></div>
+            <div>Event-day only (handful per year): <strong class="c-2 it">${wfTextEv}</strong></div>
+            ${ev.hit_rate != null && ev.n < 30 ? `<div class="c-warn it t1 mt1">⚠ ${wf.event_day_caveat || ""}</div>` : ""}
           </div>
-          <div style="margin-top:6px">No-look-ahead: <strong style="color:var(--g)">${r.validation && r.validation.no_lookahead_passed ? "PASS" : "—"}</strong></div>
+          <div class="mt2">No-look-ahead: <strong class="c-pos">${r.validation && r.validation.no_lookahead_passed ? "PASS" : "—"}</strong></div>
         </div>
       </div>
     </div>
@@ -1514,14 +1533,14 @@ function renderStatesLegend(r){
   const c  = breaks.contango_max != null ? breaks.contango_max.toFixed(1) : "−1.0";
   const f  = breaks.flattening_max != null ? "+" + breaks.flattening_max.toFixed(1) : "+0.5";
   const row = (name, band, gloss) => `
-    <div style="display:grid;grid-template-columns:96px 88px 1fr;gap:6px;padding:3px 0;border-bottom:1px dashed var(--hairline)">
-      <div style="font:600 10px var(--m);color:var(--t2);letter-spacing:.04em">${name}</div>
-      <div style="font:500 10px var(--m);color:var(--t3)">${band}</div>
-      <div style="font:italic 400 11px var(--s);color:var(--t3);line-height:1.4">${gloss}</div>
+    <div class="gap2 x23">
+      <div class="mono t1 w6 c-2 ls04">${name}</div>
+      <div class="mono t1 w5 c-3">${band}</div>
+      <div class="serif t1 it c-3 lh14">${gloss}</div>
     </div>`;
-  return `<div style="margin-top:10px">
-    <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
-      TERM-STRUCTURE STATES &nbsp;<span style="font-weight:400;color:var(--t5);letter-spacing:0">(spread = VIX − VIX3M)</span>
+  return `<div class="mt2">
+    <div class="mono t1 w6 c-3 ls14 mb1">
+      TERM-STRUCTURE STATES &nbsp;<span class="w4 c-3 ls0">(spread = VIX − VIX3M)</span>
     </div>
     ${row("deep contango",  `spread &lt; ${dc}`,
           "Front-month vol far below 3-month; steep, calm upward curve. Most favourable for roll-harvest.")}
@@ -1604,8 +1623,8 @@ function nextEventLine(){
   if (!r || !r.next_event) return "";
   const n = r.next_event.sessions_away;
   return `<div class="next-event-line">
-    Next scheduled event: <strong style="color:var(--t2)">${r.next_event.types.join("·")}</strong>
-    in <strong style="color:var(--t2)">${n}</strong> session${n === 1 ? "" : "s"}
+    Next scheduled event: <strong class="c-2">${r.next_event.types.join("·")}</strong>
+    in <strong class="c-2">${n}</strong> session${n === 1 ? "" : "s"}
     (${r.next_event.date}) · model uncertainty elevated.
   </div>`;
 }
@@ -1616,12 +1635,13 @@ function nextEventLine(){
 // exposure only; no factor regressions on live data; no rotation signal;
 // the registry/claims are frozen judgment artifacts rendered verbatim.
 // ──────────────────────────────────────────────────────────────────────
+// P1.2: thesis identity from the categorical set (palette members only; styles.css --cat1..8)
 const THESIS_COLORS = {
-  ai_infra: "#6B9BEA", fin_plumbing: "#5FB98E", hard_assets: "#C9A86A",
-  defensive_quality: "#B3AA9B", ldg_ex_ai: "#A88FE5", consumer_cyclical: "#E6914A",
-  unclassified: "#5E5648", cash: "#2C2820",
+  ai_infra: "var(--cat2)", fin_plumbing: "var(--cat3)", hard_assets: "var(--cat1)",
+  defensive_quality: "var(--cat6)", ldg_ex_ai: "var(--cat7)", consumer_cyclical: "var(--cat4)",
+  speculative_crypto: "var(--cat5)", unclassified: "var(--text-3)", cash: "var(--hairline-hi)",
 };
-function thesisColor(k){ return THESIS_COLORS[k] || "#737373"; }
+function thesisColor(k){ return THESIS_COLORS[k] || "var(--cat8)"; }
 function thesisLabel(k){
   const reg = S.thesisReg && S.thesisReg.theses;
   if (k === "unclassified") return "unclassified";
@@ -1641,20 +1661,20 @@ function renderThesisSection(){
   const tierRows = Object.entries(td.tiers || {}).map(([tid, t]) => {
     const exp = t[expKey] || {};
     const segs = Object.entries(exp).map(([k, w]) =>
-      `<div style="width:${(w*100).toFixed(1)}%;background:${thesisColor(k)}"
+      `<div class="${cc(thesisColor(k),'bg')}" style="width:${(w*100).toFixed(1)}%"
         title="${thesisLabel(k)}: ${(w*100).toFixed(1)}%"></div>`).join("");
     const ts = tierSpec(tid);
     return `<div class="th-bar-row">
-      <div class="tname" style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</div>
+      <div class="tname ${cc(ts ? ts.color : 'var(--t2)')}">${ts ? ts.short : tid}</div>
       <div class="th-stack">${segs}</div>
-      <div class="th-meta">N<sub>eff</sub> <strong style="color:var(--t1)">${t.n_eff}</strong>
+      <div class="th-meta">N<sub>eff</sub> <strong class="c-1">${t.n_eff}</strong>
         · uncl ${(t.unclassified_share*100).toFixed(0)}%${t.provisional_share ?
-        ` · <span style="color:var(--y);font:600 9px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px" title="${(t.coverage_caveat||'').replace(/"/g,'&quot;')} — ${(t.provisional_names||[]).join(', ')}">PROVISIONAL ${(t.provisional_share*100).toFixed(0)}%</span>` : ''}${t.extend_registry_prompt ?
-        ' <span style="color:var(--y)" title="Unclassified > 15% of invested — extend the registry (version bump)">⚠ EXTEND</span>' : ''}</div>
+        ` · <span class="c-warn mono t1 w6 r1 x13" title="${(t.coverage_caveat||'').replace(/"/g,'&quot;')} — ${(t.provisional_names||[]).join(', ')}">PROVISIONAL ${(t.provisional_share*100).toFixed(0)}%</span>` : ''}${t.extend_registry_prompt ?
+        ' <span class="c-warn" title="Unclassified > 15% of invested — extend the registry (version bump)">⚠ EXTEND</span>' : ''}</div>
     </div>`;
   }).join("");
   const legend = Object.keys(THESIS_COLORS).map(k =>
-    `<span><span class="sw" style="background:${thesisColor(k)}"></span>${thesisLabel(k)}</span>`).join("");
+    `<span><span class="sw ${cc(thesisColor(k),'bg')}"></span>${thesisLabel(k)}</span>`).join("");
 
   const tids = Object.keys(td.tiers || {});
   const om = td.overlap_matrix || {};
@@ -1662,7 +1682,7 @@ function renderThesisSection(){
     const a = Math.max(0, Math.min(1, v));
     return `rgba(201,168,106,${(a*0.55).toFixed(2)})`;
   };
-  const overlapTable = `<table class="th-table" style="margin-top:8px">
+  const overlapTable = `<table class="th-table mt2">
     <tr><th>OVERLAP</th>${tids.map(t => `<th>${(tierSpec(t)||{}).short || t}</th>`).join("")}</tr>
     ${tids.map(a => `<tr><td>${(tierSpec(a)||{}).short || a}</td>${tids.map(b =>
       `<td style="background:${a===b ? 'transparent' : heat(om[a]?.[b] ?? 0)}">${a===b ? "—" : ((om[a]?.[b] ?? 0)).toFixed(2)}</td>`).join("")}</tr>`).join("")}
@@ -1672,13 +1692,13 @@ function renderThesisSection(){
   const fmtPc = v => v == null ? "—" : ((v >= 0 ? "+" : "") + (v*100).toFixed(1) + "%");
   const basketRows = Object.entries(td.baskets || {}).map(([k, b]) => `
     <tr>
-      <td><span class="sw" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${thesisColor(k)};margin-right:6px"></span>${b.label}</td>
+      <td><span class="sw ib wd2 ht2 r1 ${cc(thesisColor(k),'bg')} mr2"></span>${b.label}</td>
       <td class="${b.ret_1d > 0 ? 'pos' : b.ret_1d < 0 ? 'neg' : ''}">${fmtPc(b.ret_1d)}</td>
       <td class="${b.ret_1w > 0 ? 'pos' : b.ret_1w < 0 ? 'neg' : ''}">${fmtPc(b.ret_1w)}</td>
       <td class="${b.ret_inception > 0 ? 'pos' : b.ret_inception < 0 ? 'neg' : ''}">${fmtPc(b.ret_inception)}</td>
       <td class="neg">${fmtPc(b.drawdown_from_peak)}</td>
-      <td style="color:var(--t3)">${b.proxy_etf || "—"} ${fmtPc(b.proxy_ret_1w)}${(b.provisional_members||[]).length ? ` <span style="color:var(--y);font:600 9px var(--m);border:1px solid rgba(219,162,62,.5);border-radius:3px;padding:0 4px" title="provisional members in this basket: ${b.provisional_members.join(', ')} — expire unless approved">PROVISIONAL +${b.provisional_members.length}</span>` : ''}</td>
-      <td>${b.divergence_flag ? `<span style="color:var(--y)" title="basket vs proxy diverge ${b.divergence_1w_pp}pp on the week — classification drift smell">⚠ ${b.divergence_1w_pp}pp</span>` : '<span style="color:var(--t4)">ok</span>'}</td>
+      <td class="c-3">${b.proxy_etf || "—"} ${fmtPc(b.proxy_ret_1w)}${(b.provisional_members||[]).length ? ` <span class="c-warn mono t1 w6 r1 x13" title="provisional members in this basket: ${b.provisional_members.join(', ')} — expire unless approved">PROVISIONAL +${b.provisional_members.length}</span>` : ''}</td>
+      <td>${b.divergence_flag ? `<span class="c-warn" title="basket vs proxy diverge ${b.divergence_1w_pp}pp on the week — classification drift smell">⚠ ${b.divergence_1w_pp}pp</span>` : '<span class="c-3">ok</span>'}</td>
     </tr>`).join("");
 
   // ---- B3: falsification register ----
@@ -1687,8 +1707,8 @@ function renderThesisSection(){
   const claimCards = claims.map(c => {
     const k = ks[c.thesis_id] || {};
     const status = k.met
-      ? `<span class="cl-status" style="color:var(--r)">KILL CRITERIA MET ON ${k.date}</span>`
-      : `<span class="cl-status" style="color:var(--g)">no kill criteria met</span>`;
+      ? `<span class="cl-status c-neg">KILL CRITERIA MET ON ${k.date}</span>`
+      : `<span class="cl-status c-pos">no kill criteria met</span>`;
     const log = (c.log || []).slice(-6).reverse().map(l =>
       l.type === "auto"
         ? `<div>${l.date} · ${l.event} · basket 1d ${(l.basket_ret_1d*100).toFixed(2)}%</div>`
@@ -1696,12 +1716,12 @@ function renderThesisSection(){
     ).join("");
     return `<div class="th-claim">
       <div class="cl-head">
-        <span class="cl-name" style="color:${thesisColor(c.thesis_id)}">${thesisLabel(c.thesis_id)}</span>
+        <span class="cl-name ${cc(thesisColor(c.thesis_id))}">${thesisLabel(c.thesis_id)}</span>
         ${status}
       </div>
       <div class="cl-text">${c.claim}</div>
       <div class="cl-kill"><span class="k">KILL</span>${c.kill_criteria}</div>
-      <div class="th-log">${log || '<div style="color:var(--t4);font-style:italic">no log entries</div>'}</div>
+      <div class="th-log">${log || '<div class="c-3 it">no log entries</div>'}</div>
     </div>`;
   }).join("");
 
@@ -1715,16 +1735,16 @@ function renderThesisSection(){
     const left = v >= 0 ? 50 : 50 - w;
     return `<div class="th-wf">
       <span class="lbl">${lbl}</span>
-      <div class="barwrap"><div class="bar" style="left:${left}%;width:${w}%;background:${color}"></div>
-        <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--hairline-hi)"></div></div>
+      <div class="barwrap"><div class="bar ${cc(color,'bg')}" style="left:${left}%;width:${w}%"></div>
+        <div class="wd1 x24"></div></div>
       <span class="val">${(v*100).toFixed(2)}%</span>
     </div>`;
   };
   const attrBlocks = Object.entries(attr).map(([tid, a]) => {
     const ts = tierSpec(tid); const c = a.cum || {};
-    return `<div style="margin-bottom:10px">
-      <div style="font:600 11px var(--m);color:${ts ? ts.color : 'var(--t2)'};margin-bottom:3px">
-        ${ts ? ts.short : tid} <span style="color:var(--t4);font-weight:400">· active vs SPY ${(c.active*100).toFixed(2)}% · ${a.n_days} sessions</span></div>
+    return `<div class="mb2">
+      <div class="mono t1 w6 ${cc(ts ? ts.color : 'var(--t2)')} mb1">
+        ${ts ? ts.short : tid} <span class="c-3 w4">· active vs SPY ${(c.active*100).toFixed(2)}% · ${a.n_days} sessions</span></div>
       ${wfRow("cash effect", c.cash_eff)}
       ${wfRow("thesis allocation", c.alloc_eff)}
       ${wfRow("selection", c.selection)}
@@ -1736,13 +1756,13 @@ function renderThesisSection(){
   const btRows = Object.entries(bt.tiers || {}).map(([tid, t]) => {
     const ts = tierSpec(tid); const c = t.cum || {};
     return `<tr>
-      <td style="color:${ts ? ts.color : 'var(--t2)'}">${ts ? ts.short : tid}</td>
+      <td class="${cc(ts ? ts.color : 'var(--t2)')}">${ts ? ts.short : tid}</td>
       <td>${t.n_periods}</td>
       <td class="${c.active > 0 ? 'pos' : 'neg'}">${(c.active*100).toFixed(0)}%</td>
       <td class="${c.cash_eff > 0 ? 'pos' : 'neg'}">${(c.cash_eff*100).toFixed(0)}%</td>
       <td class="${c.alloc_eff > 0 ? 'pos' : 'neg'}">${(c.alloc_eff*100).toFixed(0)}%</td>
       <td class="${c.selection > 0 ? 'pos' : 'neg'}">${(c.selection*100).toFixed(0)}%</td>
-      <td style="color:var(--t3);text-align:left">${Object.entries(t.avg_exposure || {}).slice(0,3).map(([k,v]) => `${thesisLabel(k)} ${(v*100).toFixed(0)}%`).join(" · ")}</td>
+      <td class="c-3 tal">${Object.entries(t.avg_exposure || {}).slice(0,3).map(([k,v]) => `${thesisLabel(k)} ${(v*100).toFixed(0)}%`).join(" · ")}</td>
     </tr>`;
   }).join("");
   const btCaveats = (bt.caveats || []).map(c => `<div class="th-caveat">⚠ ${c}</div>`).join("");
@@ -1765,10 +1785,10 @@ function renderThesisSection(){
         <tr><th>THESIS</th><th>1D</th><th>1W</th><th>SINCE 05-20</th><th>DD</th><th>PROXY 1W</th><th>DIV</th></tr>
         ${basketRows}
       </table>
-      <div style="margin-top:10px">
-        <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.14em;margin-bottom:4px">
+      <div class="mt2">
+        <div class="mono t1 w6 c-3 ls14 mb1">
           RELATIVE STRENGTH — ai_infra / fin_plumbing · ai_infra / hard_assets
-          <span style="font-weight:400;letter-spacing:0;color:var(--t5)">· ${td.rs_caption}</span></div>
+          <span class="w4 ls0 c-3">· ${td.rs_caption}</span></div>
         <div class="th-rs-wrap"><canvas id="thesis-rs-chart"></canvas></div>
       </div>
       <div class="th-caveat">${td.small_n_caveat}</div>
@@ -1791,7 +1811,7 @@ function renderThesisSection(){
     <div class="th-block">
       <h4>B5 · BACKTEST ATTRIBUTION — full walk-forward, ${(bt.tiers && Object.values(bt.tiers)[0] || {}).n_periods || "—"} monthly periods</h4>
       <table class="th-table">
-        <tr><th>TIER</th><th>PERIODS</th><th>CUM ACTIVE</th><th>CASH</th><th>ALLOCATION</th><th>SELECTION</th><th style="text-align:left">AVG TOP EXPOSURES</th></tr>
+        <tr><th>TIER</th><th>PERIODS</th><th>CUM ACTIVE</th><th>CASH</th><th>ALLOCATION</th><th>SELECTION</th><th class="tal">AVG TOP EXPOSURES</th></tr>
         ${btRows}
       </table>
       ${btCaveats}
@@ -1800,7 +1820,7 @@ function renderThesisSection(){
   return `<section class="thesis">
     <div class="thesis-head">
       <div>
-        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.session_date || td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span style="font:500 9px var(--m);color:var(--t4);margin-left:8px">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
+        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.session_date || td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span class="mono t1 w5 c-3 ml2">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
         <div class="sub">the meso level: cross-sectional structure of the bets — risk accounting, not a return forecaster</div>
       </div>
       <span class="th-toggle">
@@ -1950,17 +1970,17 @@ function renderScanner(){
       <td class="tk">${r.tk}</td>
       <td class="bar-cell">
         <div class="minibar-wrap">
-          <div class="minibar"><div class="minibar-fill" style="width:${qPct.toFixed(0)}%;background:${qColorFor(r.quality)}"></div></div>
+          <div class="minibar"><div class="minibar-fill ${cc(qColorFor(r.quality),'bg')}" style="width:${qPct.toFixed(0)}%"></div></div>
         </div>
       </td>
-      <td class="val">${r.quality.toFixed(1)}<small style="color:var(--t4)">/50</small>${r.rank===1 ? ' <span style="color:#fbbf24">#1</span>' : r.rank<=10 ? ` <span style="color:var(--t4)">#${r.rank}</span>` : ''}</td>
+      <td class="val">${r.quality.toFixed(1)}<small class="c-3">/50</small>${r.rank===1 ? ' <span class="x25">#1</span>' : r.rank<=10 ? ` <span class="c-3">#${r.rank}</span>` : ''}</td>
       <td class="bar-cell">
         <div class="minibar-wrap">
-          <div class="minibar"><div class="minibar-fill" style="width:${tPct.toFixed(0)}%;background:${tradeColorFor(r.trade)}"></div></div>
+          <div class="minibar"><div class="minibar-fill ${cc(tradeColorFor(r.trade),'bg')}" style="width:${tPct.toFixed(0)}%"></div></div>
         </div>
       </td>
-      <td class="val"><span style="color:${tradeColorFor(r.trade)}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}</td>
-      <td class="flag" style="color:${r.divColor}">${r.divIcon} ${r.divCls}</td>
+      <td class="val"><span class="${cc(tradeColorFor(r.trade))}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}</td>
+      <td class="flag ${cc(r.divColor)}">${r.divIcon} ${r.divCls}</td>
     </tr>`;
   }
 
@@ -1990,13 +2010,14 @@ function renderScanner(){
 
 // -------- Signal box (entry/stop/target/size/why/risks) --------
 const SIG_COLORS = {
-  "STRONG BUY": {bg:"rgba(22,163,74,0.14)",  border:"rgba(22,163,74,0.40)", text:"#4ade80", icon:"▲▲"},
-  "BUY":        {bg:"rgba(22,163,74,0.08)",  border:"rgba(22,163,74,0.25)", text:"#4ade80", icon:"▲"},
-  "WATCH":      {bg:"rgba(96,165,250,0.08)", border:"rgba(96,165,250,0.25)", text:"#60a5fa", icon:"◉"},
-  "WAIT":       {bg:"rgba(250,204,21,0.10)", border:"rgba(250,204,21,0.30)", text:"#facc15", icon:"⏸"},
-  "HOLD":       {bg:"rgba(115,115,115,0.08)",border:"rgba(115,115,115,0.25)", text:"#a3a3a3", icon:"—"},
-  "TRIM":       {bg:"rgba(250,204,21,0.10)", border:"rgba(250,204,21,0.35)", text:"#facc15", icon:"✂"},
-  "SELL":       {bg:"rgba(220,38,38,0.10)",  border:"rgba(220,38,38,0.30)",  text:"#f87171", icon:"▼"},
+  // P1.2: semantic classes (styles.css .sig-*) instead of per-signal rgba/hex; the palette does not grow
+  "STRONG BUY": {cls:"sig-pos sig-strong", text:"var(--pos)",  icon:"▲▲"},
+  "BUY":        {cls:"sig-pos",            text:"var(--pos)",  icon:"▲"},
+  "WATCH":      {cls:"sig-info",           text:"var(--info)", icon:"◉"},
+  "WAIT":       {cls:"sig-warn",           text:"var(--warn)", icon:"⏸"},
+  "HOLD":       {cls:"sig-2",              text:"var(--text-2)", icon:"—"},
+  "TRIM":       {cls:"sig-warn",           text:"var(--warn)", icon:"✂"},
+  "SELL":       {cls:"sig-neg",            text:"var(--neg)",  icon:"▼"},
 };
 function rrColor(rr){ return rr >= 2.0 ? "#4ade80" : rr >= 1.5 ? "#facc15" : "#f87171"; }
 function fmtMoney(v){ if (v == null || !Number.isFinite(v)) return "—"; return "$" + v.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}); }
@@ -2017,59 +2038,58 @@ function renderEntryBox(sig){
 
   const cell = (label, value, sub) => `
     <div>
-      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em;margin-bottom:3px">${label}</div>
-      ${value}${sub ? `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:2px">${sub}</div>` : ""}
+      <div class="mono t1 w6 c-3 ls16 mb1">${label}</div>
+      ${value}${sub ? `<div class="mono t1 c-3 mt1">${sub}</div>` : ""}
     </div>`;
 
   const condList = obj => Object.entries(obj || {}).map(([k, v]) =>
-    `<div style="display:inline-block;margin-right:14px">
-       <span style="color:${v?'#4ade80':'#f87171'};font-weight:700">${v?'✓':'✗'}</span>
-       <span style="color:var(--t3)">${k.replace(/_/g,' ')}</span>
+    `<div class="ib mr3">
+       <span class="${cc(v?'#4ade80':'#f87171')} w7">${v?'✓':'✗'}</span>
+       <span class="c-3">${k.replace(/_/g,' ')}</span>
      </div>`).join("");
 
-  return `<div style="background:${sc.bg};border:1px solid ${sc.border};border-radius:8px;padding:14px 16px;margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:14px;flex-wrap:wrap">
+  return `<div class="sig-card ${sc.cls} r2 mb3 x26">
+    <div class="flx mb3 gap3 x27">
       <div>
-        <span style="font:800 11px var(--m);letter-spacing:.15em;color:${sc.text};background:${sc.bg};
-                     padding:4px 10px;border-radius:4px;border:1px solid ${sc.border}">${sc.icon} ${sig.signal}</span>
-        <span style="font:500 10px var(--m);color:var(--t4);margin-left:10px">${sig.category} · strength ${sig.signal_strength}/100</span>
+        <span class="sig-badge mono t1 w8 ls15 ${sc.cls} r1 x28">${sc.icon} ${sig.signal}</span>
+        <span class="mono t1 w5 c-3 ml2">${sig.category} · strength ${sig.signal_strength}/100</span>
       </div>
-      <div style="font:500 10px var(--m);color:var(--t3)">
-        R/R <strong style="color:${rrc}">${rr}:1</strong>
-        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${rrc};margin-left:4px;vertical-align:middle"></span>
+      <div class="mono t1 w5 c-3">
+        R/R <strong class="${cc(rrc)}">${rr}:1</strong>
+        <span class="ib wd2 ht2 r-round ${cc(rrc,'bg')} ml1 va-m"></span>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+    <div class="gap2 mb3 x29">
       ${cell("ENTRY",
-        `<div style="font:700 16px var(--m);color:#60a5fa">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
+        `<div class="mono t3 w7 c-info">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
         `${sig.entry?.basis || ""}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)}`)}
       ${cell("STOP",
-        `<div style="font:700 16px var(--m);color:#f87171">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
+        `<div class="mono t3 w7 c-neg">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
         sig.stop?.category_rule || "")}
       ${cell("TARGET",
-        `<div style="font:700 16px var(--m);color:#4ade80">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
+        `<div class="mono t3 w7 c-pos">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
         `Cons: $${(sig.target?.conservative ?? 0).toFixed(2)}<br>Aggr: $${(sig.target?.aggressive ?? 0).toFixed(2)}`)}
       ${cell("SIZE",
-        `<div style="font:700 16px var(--m);color:var(--t1)">${fmtMoney(sig.size?.dollars)}</div>`,
+        `<div class="mono t3 w7 c-1">${fmtMoney(sig.size?.dollars)}</div>`,
         `${sig.size?.shares ?? 0} shares · ${sig.size?.pct_portfolio ?? 0}%<br>Max loss: ${fmtMoney(sig.size?.max_loss)}`)}
     </div>
 
-    <div style="margin-bottom:8px">
-      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">WHY</span>
-      <p style="font:400 var(--fs-body) var(--s);color:var(--t2);line-height:1.6;margin-top:3px">${sig.why || ""}</p>
+    <div class="mb2">
+      <span class="mono t1 w6 c-3 ls16">WHY</span>
+      <p class="c-2 lh16 mt1 x30">${sig.why || ""}</p>
     </div>
     <div>
-      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">RISKS</span>
-      <p style="font:italic 400 14px var(--s);color:var(--t3);line-height:1.55;margin-top:3px">${sig.risks || ""}</p>
+      <span class="mono t1 w6 c-3 ls16">RISKS</span>
+      <p class="serif t2 it c-3 lh155 mt1">${sig.risks || ""}</p>
     </div>
 
-    <details style="margin-top:8px">
-      <summary style="font:500 10px var(--m);color:var(--t4);cursor:pointer;letter-spacing:.05em">Signal conditions</summary>
-      <div style="margin-top:6px;font:400 10px var(--m);line-height:1.9">
-        <div><span style="color:var(--t4);font-weight:700">BUY:</span> ${condList(sig.conditions?.buy)}</div>
-        <div><span style="color:var(--t4);font-weight:700">STRONG:</span> ${condList(sig.conditions?.strong_buy)}</div>
-        <div><span style="color:var(--t4);font-weight:700">SELL:</span> ${condList(sig.conditions?.sell)}</div>
+    <details class="mt2">
+      <summary class="mono t1 w5 c-3 ptr ls05">Signal conditions</summary>
+      <div class="mt2 mono t1 lh19">
+        <div><span class="c-3 w7">BUY:</span> ${condList(sig.conditions?.buy)}</div>
+        <div><span class="c-3 w7">STRONG:</span> ${condList(sig.conditions?.strong_buy)}</div>
+        <div><span class="c-3 w7">SELL:</span> ${condList(sig.conditions?.sell)}</div>
       </div>
     </details>
   </div>`;
@@ -2086,43 +2106,41 @@ function renderPositionBox(sig){
   const thesisRows = (sig.thesis || []).map(t => {
     const color = t.status === "green" ? "#4ade80" : t.status === "yellow" ? "#facc15" : "#f87171";
     const icon  = t.status === "green" ? "✓"      : t.status === "yellow" ? "⚠"      : "✗";
-    return `<div style="font:400 12px var(--s);color:${color};line-height:1.7">${icon} ${t.text}</div>`;
+    return `<div class="serif t1 ${cc(color)} lh17">${icon} ${t.text}</div>`;
   }).join("");
 
   // Hedge callout
   const hedgeHtml = sig.hedge ? `
-    <div style="margin-top:12px;padding:10px 14px;background:rgba(96,165,250,0.07);
-                border:1px solid rgba(96,165,250,0.22);border-radius:6px">
-      <div style="font:600 9px var(--m);color:#60a5fa;letter-spacing:.12em;margin-bottom:4px">ACTION</div>
-      <div style="font:400 12px var(--s);color:#93c5fd;line-height:1.55">${sig.hedge.text}</div>
+    <div class="mt3 r2 x31">
+      <div class="mono t1 w6 c-info ls12 mb1">ACTION</div>
+      <div class="serif t1 lh155 x32">${sig.hedge.text}</div>
     </div>` : "";
 
   // Trim status line
   const trimHtml = sig.trim ? `
-    <div style="font:400 11px var(--m);color:var(--t4);margin-top:8px">
-      Next trim: <strong style="color:var(--t2)">${sig.trim.trim_pct}%</strong> at ${sig.trim.at_gain}
+    <div class="mono t1 c-3 mt2">
+      Next trim: <strong class="c-2">${sig.trim.trim_pct}%</strong> at ${sig.trim.at_gain}
       ($${sig.trim.trigger_price} · ${sig.trim.distance >= 0 ? "+" : ""}${sig.trim.distance}% from here)
     </div>` : `
-    <div style="font:400 11px var(--m);color:var(--t4);margin-top:8px">No upcoming trim trigger</div>`;
+    <div class="mono t1 c-3 mt2">No upcoming trim trigger</div>`;
 
   const cell = (label, big, sub, color="var(--t1)") => `
     <div>
-      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em;margin-bottom:3px">${label}</div>
-      <div style="font:700 16px var(--m);color:${color}">${big}</div>
-      ${sub ? `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:2px">${sub}</div>` : ""}
+      <div class="mono t1 w6 c-3 ls16 mb1">${label}</div>
+      <div class="mono t3 w7 ${cc(color)}">${big}</div>
+      ${sub ? `<div class="mono t1 c-3 mt1">${sub}</div>` : ""}
     </div>`;
 
-  return `<div style="background:${sc.bg};border:1px solid ${sc.border};border-radius:8px;padding:14px 16px;margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:14px;flex-wrap:wrap">
+  return `<div class="sig-card ${sc.cls} r2 mb3 x26">
+    <div class="flx mb3 gap3 x27">
       <div>
-        <span style="font:800 11px var(--m);letter-spacing:.15em;color:${sc.text};background:${sc.bg};
-                     padding:4px 10px;border-radius:4px;border:1px solid ${sc.border}">${sc.icon} ${sig.signal}</span>
-        <span style="font:500 10px var(--m);color:var(--t4);margin-left:10px">${sig.category} · ${p.weight_pct}% of portfolio</span>
+        <span class="sig-badge mono t1 w8 ls15 ${sc.cls} r1 x28">${sc.icon} ${sig.signal}</span>
+        <span class="mono t1 w5 c-3 ml2">${sig.category} · ${p.weight_pct}% of portfolio</span>
       </div>
-      <div style="font:500 10px var(--m);color:var(--t4)">POSITION MODE</div>
+      <div class="mono t1 w5 c-3">POSITION MODE</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px">
+    <div class="gap2 mb2 x29">
       ${cell("COST",    "$" + p.cost_basis.toFixed(2),    `${p.shares} shares`, "var(--t2)")}
       ${cell("CURRENT", "$" + p.current_price.toFixed(2), fmtMoney(p.position_value), "var(--t1)")}
       ${cell("GAIN",    (p.gain_pct >= 0 ? "+" : "") + p.gain_pct.toFixed(1) + "%",
@@ -2135,22 +2153,22 @@ function renderPositionBox(sig){
     ${trimHtml}
     ${hedgeHtml}
 
-    <div style="margin-top:14px">
-      <div style="font:600 9px var(--m);color:var(--t4);letter-spacing:.12em;margin-bottom:6px">THESIS CHECK</div>
+    <div class="mt3">
+      <div class="mono t1 w6 c-3 ls12 mb2">THESIS CHECK</div>
       ${thesisRows}
     </div>
 
-    <div style="margin-top:12px">
-      <span style="font:600 8px var(--m);color:var(--t4);letter-spacing:.16em">POSITION MANAGEMENT</span>
-      <p style="font:400 var(--fs-body) var(--s);color:var(--t2);line-height:1.6;margin-top:3px">${sig.why || ""}</p>
+    <div class="mt3">
+      <span class="mono t1 w6 c-3 ls16">POSITION MANAGEMENT</span>
+      <p class="c-2 lh16 mt1 x30">${sig.why || ""}</p>
     </div>
 
-    <details style="margin-top:8px">
-      <summary style="font:500 10px var(--m);color:var(--t4);cursor:pointer;letter-spacing:.05em">Stop details</summary>
-      <div style="margin-top:6px;font:400 11px var(--m);color:var(--t3);line-height:1.7">
+    <details class="mt2">
+      <summary class="mono t1 w5 c-3 ptr ls05">Stop details</summary>
+      <div class="mt2 mono t1 c-3 lh17">
         Trailing stop: $${s.trail_stop.toFixed(2)} (-${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak, bracket ${s.trail_bracket}) ·
         Hard stop: $${s.hard_stop.toFixed(2)} (-${s.hard_stop_pct}% from cost) ·
-        Active = higher of the two = <strong style="color:#f87171">$${s.active_stop.toFixed(2)}</strong>
+        Active = higher of the two = <strong class="c-neg">$${s.active_stop.toFixed(2)}</strong>
       </div>
     </details>
   </div>`;
@@ -2158,7 +2176,7 @@ function renderPositionBox(sig){
 
 function renderTickerDetail(tk){
   const data = S.tickers && S.tickers[tk];
-  if (!data) return `<div class="tk-detail"><div style="color:var(--t4)">No data for ${tk}</div></div>`;
+  if (!data) return `<div class="tk-detail"><div class="c-3">No data for ${tk}</div></div>`;
   const T = data.tech || {}, F = data.fund || {}, SC = data.score, C = data.corr || {};
 
   // Score bar component
@@ -2166,23 +2184,23 @@ function renderTickerDetail(tk){
     const v = (pct != null) ? pct : 50;
     return `<div class="sb">
       <div class="sb-lbl">${label}</div>
-      <div class="sb-bar"><div class="fill" style="width:${v}%;background:${rankColor(v)}"></div></div>
+      <div class="sb-bar"><div class="fill ${cc(rankColor(v),'bg')}" style="width:${v}%"></div></div>
       <div class="sb-val">${v.toFixed(0)}</div>
     </div>`;
   };
   // Fundamental card
   const fundCard = (label, val, unit="") => {
-    if (val == null) return `<div class="fund-card"><div class="k">${label}</div><div class="v" style="color:var(--t4)">—</div></div>`;
+    if (val == null) return `<div class="fund-card"><div class="k">${label}</div><div class="v c-3">—</div></div>`;
     return `<div class="fund-card"><div class="k">${label}</div><div class="v">${val}${unit}</div></div>`;
   };
 
   return `<div class="tk-detail">
     <div class="tk-head">
       <div class="tk-title">
-        <h3>${tk} <small style="font-size:11px;color:var(--t4)">${data.name || ""}</small></h3>
+        <h3>${tk} <small class="t1 c-3">${data.name || ""}</small></h3>
         <div class="sub">${data.sector || ""}${data.industry ? " · " + data.industry : ""}</div>
         <div class="tk-tiers">IN: ${(data.in_tiers || []).map(t => {
-          const ts = tierSpec(t); return `<span style="color:${ts ? ts.color : "var(--t3)"}">${ts ? ts.short : t}</span>`;
+          const ts = tierSpec(t); return `<span class="${cc(ts ? ts.color : "var(--t3)")}">${ts ? ts.short : t}</span>`;
         }).join(" · ") || "—"}</div>
       </div>
       <button class="tk-close" data-close-tk="1">CLOSE ✕</button>
@@ -2194,9 +2212,9 @@ function renderTickerDetail(tk){
 
     <div class="tk-grid">
       <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em">PRICE — MA50 — MA200</div>
-          <div style="display:flex;gap:2px">
+        <div class="flx mb2 x33">
+          <div class="mono t1 w6 c-3 ls18">PRICE — MA50 — MA200</div>
+          <div class="flx gap1">
             ${["3M","6M","1Y"].map(p => `<button class="period-btn ${S.tickerChartPeriod===p?"on":""}" data-tkp="${p}">${p}</button>`).join("")}
           </div>
         </div>
@@ -2210,7 +2228,7 @@ function renderTickerDetail(tk){
       </div>
       <div class="tk-stats">
         <div class="stat"><div class="k">PRICE</div><div class="v">$${fmt2(T.price)}</div></div>
-        <div class="stat"><div class="k">RSI(14)</div><div class="v" style="color:${T.rsi>70?"var(--r)":T.rsi<30?"var(--g)":"var(--t1)"}">${T.rsi != null ? T.rsi.toFixed(1) : "—"}</div></div>
+        <div class="stat"><div class="k">RSI(14)</div><div class="v ${cc(T.rsi>70?"var(--r)":T.rsi<30?"var(--g)":"var(--t1)")}">${T.rsi != null ? T.rsi.toFixed(1) : "—"}</div></div>
         <div class="stat"><div class="k">vs MA50</div><div class="v ${pnlc(T.ma50_dist)}">${fmtP1(T.ma50_dist)}</div></div>
         <div class="stat"><div class="k">vs MA200</div><div class="v ${pnlc(T.ma200_dist)}">${fmtP1(T.ma200_dist)}</div></div>
         <div class="stat"><div class="k">52W RANGE</div><div class="v">${T.range_52w_pct != null ? T.range_52w_pct.toFixed(0) + "%" : "—"}<small> of high</small></div></div>
@@ -2222,7 +2240,7 @@ function renderTickerDetail(tk){
 
     <div class="tk-grid2">
       <div>
-        <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:6px">FUNDAMENTALS (snapshot)</div>
+        <div class="mono t1 w6 c-3 ls18 mb2">FUNDAMENTALS (snapshot)</div>
         <div class="fund-grid">
           ${fundCard("FWD P/E",   F.fwd_pe)}
           ${fundCard("TRAIL P/E", F.trail_pe)}
@@ -2239,13 +2257,13 @@ function renderTickerDetail(tk){
         </div>
       </div>
       <div>
-        <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:6px">
+        <div class="mono t1 w6 c-3 ls18 mb2">
           SCORE BREAKDOWN ${SC ? `· rank #${SC.rank} (${SC.percentile.toFixed(0)}th pct)` : ""}
         </div>
-        ${SC ? `<div style="display:flex;justify-content:space-between;font:600 10px var(--m);color:var(--t2);margin-bottom:8px">
+        ${SC ? `<div class="flx mono t1 w6 c-2 mb2 x34">
           <span>TECH ${SC.technical.toFixed(1)}/25</span>
           <span>FUND ${SC.fundamental.toFixed(1)}/25</span>
-          <span style="color:var(--t1);font-weight:700">COMPOSITE ${SC.composite.toFixed(1)}/50</span>
+          <span class="c-1 w7">COMPOSITE ${SC.composite.toFixed(1)}/50</span>
         </div>` : ""}
         <div class="score-bars">
           ${SC && SC.components ? Object.entries({
@@ -2263,14 +2281,14 @@ function renderTickerDetail(tk){
     </div>
 
     <div>
-      <div style="font:600 8px var(--m);color:var(--t4);letter-spacing:.18em;margin-bottom:6px">
+      <div class="mono t1 w6 c-3 ls18 mb2">
         TOP-10 60-DAY CORRELATIONS (red >0.7, yellow 0.4-0.7, green <0.4)
       </div>
       <div class="corr-row">
         ${Object.entries(C).slice(0, 10).map(([sym, v]) => `
           <div class="corr-card">
             <div class="tk">${sym}</div>
-            <div class="v" style="color:${corrColor(v)}">${v.toFixed(2)}</div>
+            <div class="v ${cc(corrColor(v))}">${v.toFixed(2)}</div>
           </div>`).join("") || "<div style='color:var(--t4)'>No correlation data</div>"}
       </div>
     </div>
@@ -2311,11 +2329,11 @@ function renderTierDetail(tid){
     <div>
       <div class="td-block">
         <div class="td-label">CASH ALLOCATION</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline">
-          <div class="td-val">${actualCash.toFixed(0)}<small style="font-size:11px;color:var(--t4)">% actual</small></div>
-          <div style="font:400 10px var(--m);color:var(--t3)">target ${targetCash.toFixed(0)}%</div>
+        <div class="flx x35">
+          <div class="td-val">${actualCash.toFixed(0)}<small class="t1 c-3">% actual</small></div>
+          <div class="mono t1 c-3">target ${targetCash.toFixed(0)}%</div>
         </div>
-        <div class="gauge" style="margin-top:6px">
+        <div class="gauge mt2">
           <div class="eq" style="width:${100-actualCash}%"></div>
           <div class="csh" style="width:${actualCash}%"></div>
         </div>
@@ -2326,9 +2344,9 @@ function renderTierDetail(tid){
     <div>
       <div class="td-block">
         <div class="td-label">DESCRIPTION</div>
-        <div style="font:400 11px var(--s);color:var(--t2);line-height:1.5">${t.description}</div>
-        <div class="td-sub" style="margin-top:8px">
-          benchmark: <strong style="color:var(--t2)">${t.benchmark}</strong> ·
+        <div class="serif t1 c-2 lh15">${t.description}</div>
+        <div class="td-sub mt2">
+          benchmark: <strong class="c-2">${t.benchmark}</strong> ·
           ${tid !== "5_werner" && t.n_holdings ? `target N=${t.n_holdings} · ` : ""}
           cash formula: <code>${t.cash_formula || `min(${t.cash_max}, ${t.cash_floor} + R · ${t.cash_slope})`}</code>
         </div>
@@ -2345,9 +2363,9 @@ function renderTierDetail(tid){
     const sector = S.tickers && S.tickers[p.ticker] ? S.tickers[p.ticker].sector : "";
     const dim = (p.shares === 0 || p.value == null && tid==="5_werner");
     const open = (S.expandedTicker === p.ticker);
-    h += `<tr class="tk-row ${open?"open":""}" data-tk="${p.ticker}"${dim ? ' style="opacity:.55"' : ''}>
-      <td><strong style="color:var(--t1)">${p.ticker}</strong></td>
-      <td style="color:var(--t3);font-size:10px">${sector || "—"}</td>
+    h += `<tr class="tk-row ${open?"open":""}" data-tk="${p.ticker}"${dim ? ' class="dim"' : ''}>
+      <td><strong class="c-1">${p.ticker}</strong></td>
+      <td class="c-3 t1">${sector || "—"}</td>
       <td class="num">${p.price != null ? "$"+fmt2(p.price) : "—"}</td>
       <td class="num">${p.value != null ? "$"+fmt(p.value) : "—"}</td>
       ${tid==="5_werner" ? `
@@ -2357,13 +2375,13 @@ function renderTierDetail(tid){
       <td><span class="chev ${open?"open":""}">›</span></td>
     </tr>`;
     if (open) {
-      h += `<tr><td colspan="${tid==="5_werner"?8:6}" style="padding:0;background:rgba(0,0,0,.25)">${renderTickerDetail(p.ticker)}</td></tr>`;
+      h += `<tr><td colspan="${tid==="5_werner"?8:6}" class="p0 x36">${renderTickerDetail(p.ticker)}</td></tr>`;
     }
   });
   h += `</table>`;
   if (S.holdings && S.holdings.turnover && S.holdings.turnover[tid] != null && tid !== "5_werner") {
-    h += `<div style="font:400 9.5px var(--m);color:var(--t4);margin-top:8px;text-align:right">
-      monthly turnover (last rebalance): <strong style="color:var(--t2)">${(S.holdings.turnover[tid]*100).toFixed(0)}%</strong>
+    h += `<div class="mono t1 c-3 mt2 tar">
+      monthly turnover (last rebalance): <strong class="c-2">${(S.holdings.turnover[tid]*100).toFixed(0)}%</strong>
     </div>`;
   }
   return h;
@@ -2397,8 +2415,8 @@ function render(){
   // ---- Slim header ----
   let h = `<div class="hd2">
     <div>
-      <span class="hd-dot"></span><h1 style="display:inline">PORTFOLIO TOURNAMENT</h1>
-      <span style="font:400 9px var(--m);color:var(--t5);margin-left:6px">v2.0</span>
+      <span class="hd-dot"></span><h1 class="inl">PORTFOLIO TOURNAMENT</h1>
+      <span class="mono t1 c-3 ml2">v2.0</span>
       <div class="hd2-sub">${updated} · 4 algo tiers + Werner · monthly rescore + regime overlay</div>
     </div>
   </div>`;
@@ -2425,7 +2443,7 @@ function render(){
     h += `<div class="lb">
       <div class="lb-crown">♛</div>
       <div>
-        <div class="lb-name" style="color:${lt.color}">${lt.name} leads</div>
+        <div class="lb-name ${cc(lt.color)}">${lt.name} leads</div>
         <div class="lb-stat">over ${S.period === "ALL" ? "full sample" : S.period}: <strong>${fmtP(m.total)}</strong> · Sharpe ${m.sharpe.toFixed(2)} · max DD ${fmtP1(m.maxDD)}</div>
       </div>
     </div>`;
@@ -2470,7 +2488,7 @@ function render(){
   const sc = S.condScores || {};
   const sn = (sc.state_day_counts || {})[currentState] || 0;
   const condCap = condMode
-    ? `<div class="cond-caption">CONDITIONAL on <strong style="color:var(--accent)">${currentState || "—"}</strong>: scores are James-Stein shrunk toward unconditional. Bucket n = ${sn} days. ${sc.caption || ""}</div>`
+    ? `<div class="cond-caption">CONDITIONAL on <strong class="c-accent">${currentState || "—"}</strong>: scores are James-Stein shrunk toward unconditional. Bucket n = ${sn} days. ${sc.caption || ""}</div>`
     : "";
 
   h += `<div class="lbtable">
@@ -2480,7 +2498,7 @@ function render(){
     <table>
       <tr>
         <th>#</th><th>TIER</th>
-        <th class="num" title="net of transaction costs; hover a NAV for the pre-cost figure and the restated net (C1)">NAV <small style="color:var(--t4);font-weight:500">net</small></th>
+        <th class="num" title="net of transaction costs; hover a NAV for the pre-cost figure and the restated net (C1)">NAV <small class="c-3 w5">net</small></th>
         <th class="num">TOTAL</th>
         <th class="num">1M</th>
         <th class="num">1W</th>
@@ -2499,7 +2517,7 @@ function render(){
     h += `<tr class="tier-row ${open?"open":""}" data-tid="${tid}">
       <td class="rank ${i===0?"first":""}">${i+1}</td>
       <td>
-        <span class="tier-dot" style="background:${t.color}"></span>
+        <span class="tier-dot ${cc(t.color,'bg')}"></span>
         <span class="tier-name">${t.short}</span>
         <div class="tier-desc">${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}</div>
       </td>
@@ -2507,9 +2525,9 @@ function render(){
       <td class="num ${pnlc(m.total)}">${fmtP(m.total)}${(() => {
         if (!condMode) return "";
         const cc = condFor(tid);
-        if (!cc || cc.shrunk_ann_return == null) return ` <small style="color:var(--t4)">· n=0</small>`;
+        if (!cc || cc.shrunk_ann_return == null) return ` <small class="c-3">· n=0</small>`;
         const s = cc.shrunk_ann_return;
-        return ` <small style="color:var(--accent);font-weight:500"> · ${currentState[0].toUpperCase()}: ${(s*100).toFixed(1)}%</small><small style="color:var(--t4)"> · n=${cc.n} · w=${cc.shrinkage_weight}</small>`;
+        return ` <small class="c-accent w5"> · ${currentState[0].toUpperCase()}: ${(s*100).toFixed(1)}%</small><small class="c-3"> · n=${cc.n} · w=${cc.shrinkage_weight}</small>`;
       })()}</td>
       <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
       <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
@@ -2520,7 +2538,7 @@ function render(){
       <td><span class="chev ${open?"open":""}">›</span></td>
     </tr>`;
     if (open) {
-      h += `<tr><td colspan="11" style="padding:0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
+      h += `<tr><td colspan="11" class="p0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
     }
   });
   h += `</table></div>`;
@@ -2672,12 +2690,12 @@ function c2DisclosureHtml(){
   const c = S.c2; const t4 = c && c.drawdown_reduction && c.drawdown_reduction["4_tactical"];
   if (!t4 || !t4.rev || !t4.pit) return "";
   const rv = t4.rev.dd_reduction_vs_spy * 100, pt = t4.pit.dd_reduction_vs_spy * 100;
-  return ` · <span style="color:var(--y)" title="C2 (reports/retirement_test_C2_input_vintages.md): the regime-index history uses revised FRED inputs. Rebuilt on ALFRED point-in-time inputs, the 24-indicator overlay's drawdown reduction vs SPY through the same engine is ${pt.toFixed(1)}% against ${rv.toFixed(1)}% on revised inputs (tier 4). Revisions account for roughly a third of the apparent reduction, release lag for almost none. Served tier sizing uses the internal vol-based index (no FRED inputs). Hover a MAX DD cell for the per-tier pair.">backtest history on revised inputs · point-in-time drawdown reduction ${pt.toFixed(0)}% vs ${rv.toFixed(0)}% revised (C2)</span>`;
+  return ` · <span class="c-warn" title="C2 (reports/retirement_test_C2_input_vintages.md): the regime-index history uses revised FRED inputs. Rebuilt on ALFRED point-in-time inputs, the 24-indicator overlay's drawdown reduction vs SPY through the same engine is ${pt.toFixed(1)}% against ${rv.toFixed(1)}% on revised inputs (tier 4). Revisions account for roughly a third of the apparent reduction, release lag for almost none. Served tier sizing uses the internal vol-based index (no FRED inputs). Hover a MAX DD cell for the per-tier pair.">backtest history on revised inputs · point-in-time drawdown reduction ${pt.toFixed(0)}% vs ${rv.toFixed(0)}% revised (C2)</span>`;
 }
 function c2TierSub(tid){
   const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
   if (!c || !c.rev || !c.pit) return "";
-  return `<div style="font:500 9px var(--m);color:var(--t5)" title="C2 drawdown reduction vs SPY: point-in-time vs revised inputs (24-indicator overlay, same engine)">DD red. PIT ${(c.pit.dd_reduction_vs_spy*100).toFixed(0)}% · rev ${(c.rev.dd_reduction_vs_spy*100).toFixed(0)}%</div>`;
+  return `<div class="mono t1 w5 c-3" title="C2 drawdown reduction vs SPY: point-in-time vs revised inputs (24-indicator overlay, same engine)">DD red. PIT ${(c.pit.dd_reduction_vs_spy*100).toFixed(0)}% · rev ${(c.rev.dd_reduction_vs_spy*100).toFixed(0)}%</div>`;
 }
 function c2TierTitle(tid){
   const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
