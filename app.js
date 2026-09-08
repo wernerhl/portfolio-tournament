@@ -2610,8 +2610,62 @@ function renderBookPanel(){
     </div>
   </div>`;
 }
-function renderActionLog(){ return ""; }          // P4.1
-function renderCalibrationPanel(){ return ""; }   // P4.2
+// ── P4.1 Action log (tier three): last 30 entries of data/actions.jsonl, newest first, each linked
+//    to the session's published vintage row ──
+function renderActionLog(){
+  const acts = (S.actions || []).slice(-30).reverse();
+  const pub = {}; (S.regimePub || []).forEach(r => { if (r && r.date) pub[String(r.date).slice(0, 10)] = r; });
+  const fmtW = w => Object.entries(w || {}).map(([k, v]) => `${k} ${v}`).join(", ");
+  const rows = acts.map(a => {
+    const v = pub[a.session_date]; const rt = v && v.R_t_published != null && v.R_t_published !== "" ? (+v.R_t_published).toFixed(4) : "not published";
+    return `<tr>
+      <td><a class="c-info" href="data/regime_daily_published.csv" title="published vintage row ${a.session_date}: R_t ${rt}${v && v.no_publish_reason ? " · " + v.no_publish_reason : ""}">${a.session_date}</a></td>
+      <td>${(tierSpec(a.tier) || {}).short || a.tier}</td>
+      <td class="c-1">${(a.action || []).join(", ")}</td>
+      <td class="c-3">${(a.entries || []).length ? "+" + a.entries.join(" ") : ""}${(a.exits || []).length ? " −" + a.exits.join(" ") : ""}</td>
+      <td class="c-2" title="before: ${fmtW(a.weights_before)} · after: ${fmtW(a.weights_after)}">cash ${a.target_cash_pct_before}% → ${a.target_cash_pct_after}%</td>
+      <td>${a.regime || "—"} · ${a.R_full != null ? a.R_full : "—"}</td>
+      <td class="c-3 mono t1" title="sha256 of the input snapshot (prices, holdings, R_t)">${String(a.input_snapshot_sha256 || "").slice(0, 12)}</td>
+    </tr>`; }).join("");
+  return `<div class="rcc-card act-panel"><h3>ACTION LOG · <span class="c-3 w5">append-only · newest first · last 30 of ${(S.actions || []).length}</span></h3>
+    ${rows ? `<div class="tbl-scroll"><table><tr><th>SESSION</th><th>TIER</th><th>ACTION</th><th>NAMES</th><th>SIZING</th><th>REGIME · R<sub>full</sub></th><th>INPUT HASH</th></tr>${rows}</table></div>`
+           : `<div class="mono t1 c-3">no actions logged yet — the log begins with the first change after deploy (no retroactive entries); written by compute_nav.py when a tier's positions or sizing change</div>`}
+  </div>`;
+}
+// ── P4.2 Calibration panel (tier three, beside the ranking panel): in-sample and out-of-fold
+//    reliability curves on one axis with the diagonal; base-rate Brier marked; OOF Brier beside ──
+function brierToRate(b){ const d = 1 - 4 * b; return d >= 0 ? (1 - Math.sqrt(d)) / 2 : null; }   // Brier of a constant forecast p̄ is p̄(1−p̄)
+function renderCalibrationPanel(){
+  const c = S.v4Cal; if (!c || !c.methods) return "";
+  const win = c.winning_method || "equal_weight"; const m = c.methods[win] || {};
+  const base = brierToRate(c.base_rate_brier);
+  return `<div class="rcc-card cal-panel"><h3>V4 CALIBRATION · <span class="c-3 w5">reliability of ${win.replace("_", " ")}: in-sample vs out-of-fold, one axis</span>${asOfBadge(c.as_of)}</h3>
+    <div class="chart-wrap cal-wrap"><canvas id="cal-chart"></canvas></div>
+    <div class="chart-meta">base-rate Brier <strong class="c-1">${c.base_rate_brier}</strong>${base != null ? ` (event rate ${(base * 100).toFixed(1)}%)` : ""} · out-of-fold Brier, production model <strong class="c-1">${m.brier_out_of_fold}</strong> · in-sample ${m.brier_in_sample} (the isotonic fit, not evidence) · ${c.fold_definition && c.fold_definition.n_folds ? c.fold_definition.n_folds + " leave-one-crisis-out folds · " : ""}does not beat the base rate out of fold; use as a ranking, not a forecast.</div>
+  </div>`;
+}
+function renderCalibrationChart(){
+  const ctx = document.getElementById("cal-chart"); if (!ctx) return;
+  const c = S.v4Cal; if (!c) return; const win = c.winning_method || "equal_weight";
+  const ins = ((c.in_sample_reliability_bins || {})[win]) || c.reliability_bins || [];
+  const oof = ((c.out_of_fold_reliability_bins || {})[win]) || [];
+  if (S.calChart) { try { S.calChart.destroy(); } catch (e) {} }
+  const C = CHARTS.colors(); const base = brierToRate(c.base_rate_brier);
+  const pts = arr => arr.map(b => ({x: b.predicted_mean, y: b.observed_freq, n: b.n}));
+  const datasets = [
+    {label: "diagonal", role: "benchmark", borderColor: C.n2, borderDash: [3, 3], data: [{x: 0, y: 0}, {x: 1, y: 1}], directLabel: "perfect"},
+    {label: "in-sample (isotonic fit)", role: "series", borderColor: C.n1, data: pts(ins), pointRadius: 3, directLabel: "in-sample"},
+    {label: "out-of-fold", role: "headline", borderColor: C.info, data: pts(oof), pointRadius: 3, directLabel: "out-of-fold"},
+  ];
+  if (base != null) datasets.push({label: `base rate ${(base * 100).toFixed(1)}%`, role: "benchmark", borderColor: C.warn, borderDash: [2, 3], data: [{x: 0, y: base}, {x: 1, y: base}], directLabel: `base rate (Brier ${c.base_rate_brier})`});
+  S.calChart = CHARTS.make(ctx, {type: "line", data: {datasets}, options: {
+    layout: {padding: {right: 150}},
+    interaction: {mode: "nearest", axis: "xy", intersect: true},
+    scales: {x: {type: "linear", min: 0, max: 1, ticks: {callback: v => (v * 100).toFixed(0) + "%"}, title: {display: true, text: "predicted probability", color: C.n2, font: {family: CHARTS.tok("mono"), size: CHARTS.px("t1")}}},
+             y: {min: 0, max: 1, ticks: {callback: v => (v * 100).toFixed(0) + "%"}, title: {display: true, text: "observed frequency", color: C.n2, font: {family: CHARTS.tok("mono"), size: CHARTS.px("t1")}}}},
+    plugins: {tooltip: {callbacks: {label: ctx => ` ${ctx.dataset.label}: predicted ${(ctx.parsed.x * 100).toFixed(1)}% → observed ${(ctx.parsed.y * 100).toFixed(1)}%${ctx.raw && ctx.raw.n ? " (n " + ctx.raw.n + ")" : ""}`}}},
+  }});
+}
 function renderCalendarCard(){
   const ev = (S.eventCal && S.eventCal.events) || [];
   const today = _etDateISO(new Date());
@@ -2941,6 +2995,7 @@ function render(){
     renderChart(allSeries, S.period);
     renderDrawdownChart();      // P2.1 (tier one)
     renderC3PathChart();        // P2.2 (tier two)
+    renderCalibrationChart();   // P4.2 (tier three)
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
       // Scroll FIRST so the panel area is committed to layout, then render
@@ -3004,6 +3059,10 @@ async function init(){
   try { S.provLedger = await loadJSON("data/provisional_ledger.json"); } catch (e) { S.provLedger = null; } // P2.3 provisional memberships
   try { S.factors = await loadJSON("data/factor_exposure.json"); } catch (e) { S.factors = null; }         // P3.3 style-factor exposure
   try { S.holdingsFile = await loadJSON("data/holdings.json"); } catch (e) { S.holdingsFile = null; }      // P3.1 the only holdings source
+  try {                                                                                                     // P4.1 action log (jsonl)
+    const r = await fetch("data/actions.jsonl?" + Date.now());
+    S.actions = r.ok ? (await r.text()).split("\n").filter(l => l.trim()).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean) : [];
+  } catch (e) { S.actions = []; }
   S.intraday   = await loadJSON("data/intraday.json");
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");

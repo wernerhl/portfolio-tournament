@@ -255,6 +255,42 @@ def annotate_drawdowns(history: list, as_of: str) -> dict:
     }
 
 
+def log_actions(history: list, entry: dict, inputs_hash: str) -> int:
+    """Dashboard order 9-Sept-2026 P4.1: append-only data/actions.jsonl, one line per tier whose
+    positions or sizing changed between the previous published row and this one — session date,
+    tier, action type(s) (rebalance, sizing change, entry, exit), before/after weights, the regime
+    state and R_full at the time, and a hash of the input snapshot. No retroactive entries: the log
+    begins with the first change after deploy. A same-session recompute is not an action."""
+    if not history: return 0
+    prev = history[-1]
+    if prev.get("date") == entry["date"]: return 0
+    n = 0
+    with open(DATA / "actions.jsonl", "a") as f:
+        for tid, cur in (entry.get("tiers") or {}).items():
+            old = (prev.get("tiers") or {}).get(tid)
+            if not old: continue
+            w_old = {p["ticker"]: p.get("weight") for p in (old.get("positions") or []) if p.get("value")}
+            w_new = {p["ticker"]: p.get("weight") for p in (cur.get("positions") or []) if p.get("value")}
+            added = sorted(set(w_new) - set(w_old)); removed = sorted(set(w_old) - set(w_new))
+            sizing = float(cur.get("target_cash_pct") or 0) - float(old.get("target_cash_pct") or 0)
+            reweighted = (not added and not removed and w_new and
+                          any(abs((w_new.get(t) or 0) - (w_old.get(t) or 0)) > 0.75 for t in w_new))   # beyond price drift
+            types = []
+            if added: types.append("entry")
+            if removed: types.append("exit")
+            if abs(sizing) >= 0.5: types.append("sizing change")
+            if reweighted: types.append("rebalance")
+            if not types: continue
+            rec = {"session_date": entry["date"], "tier": tid, "action": types, "entries": added, "exits": removed,
+                   "target_cash_pct_before": old.get("target_cash_pct"), "target_cash_pct_after": cur.get("target_cash_pct"),
+                   "weights_before": {**w_old, "_cash": old.get("actual_cash_pct")},
+                   "weights_after": {**w_new, "_cash": cur.get("actual_cash_pct")},
+                   "regime": entry.get("regime"), "R_full": entry.get("R_t"),
+                   "input_snapshot_sha256": inputs_hash, "logged_at": datetime.now().isoformat(timespec="seconds")}
+            f.write(json.dumps(rec, default=str) + "\n"); n += 1
+    return n
+
+
 def write_backtest_drawdown(as_of: str) -> None:
     """P2.1 companion: drawdown series of the served backtest equity curves, as JSON with a declared
     cadence (the backtest is monthly/on-change; a dated CSV would read as stale to the referee)."""
@@ -524,6 +560,12 @@ def main():
         "tiers": tier_outputs,
         "benchmarks": bench_normalized,
     }
+    # P4.1: action log (append-only; compares this row with the previous published row)
+    import hashlib
+    _snap = json.dumps({"date": today, "R_t": round(R_t, 4), "prices": prices, "tier_holdings": tier_holdings,
+                        "werner": werner_holdings}, sort_keys=True, default=str).encode()
+    n_actions = log_actions(history, entry, hashlib.sha256(_snap).hexdigest())
+    if n_actions: print(f"  action log: {n_actions} entr{'y' if n_actions == 1 else 'ies'} appended to actions.jsonl")
     # Replace today's entry if duplicate
     if history and history[-1].get("date") == today:
         history[-1] = entry
