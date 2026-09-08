@@ -52,6 +52,84 @@ def basket_members(registry: dict) -> dict[str, list[str]]:
     return {tid: list(th["members"].keys()) for tid, th in registry["theses"].items()}
 
 
+# ── Provisional classification (order 9-Sept, A1) ────────────────────────
+# Agent-proposed NAME mappings apply immediately, tagged PROVISIONAL on every
+# panel that uses them, count toward coverage with a one-line caveat, and
+# EXPIRE back to unclassified PROVISIONAL_DAYS after first proposal unless
+# approved (i.e. present in the frozen registry). A persistent ledger carries
+# first-proposed dates across the nightly proposal regeneration, so nothing
+# provisional is ever silently permanent — and an expired name is NOT
+# re-provisionalised automatically (a human clears or approves it).
+# Structural proposals (new theses) are never applied mechanically.
+PROVISIONAL_DAYS = 30
+LEDGER_PATH = DATA / "provisional_ledger.json"
+
+
+def load_provisional(registry: dict, as_of: str) -> tuple[dict, dict, dict]:
+    """Returns (provisional_weights: ticker → {thesis: w}, active_entries, ledger)."""
+    from datetime import date as _date, timedelta as _td
+    ledger = {"entries": {}}
+    if LEDGER_PATH.exists():
+        try:
+            ledger = json.load(open(LEDGER_PATH))
+        except Exception:
+            ledger = {"entries": {}}
+    ledger.setdefault("entries", {})
+    ledger["policy"] = {
+        "expiry_days": PROVISIONAL_DAYS,
+        "rule": ("agent-proposed name mappings apply immediately (PROVISIONAL); they count toward "
+                 "coverage with a caveat and expire back to unclassified after expiry_days unless "
+                 "approved into thesis_registry.json (human, with provenance). Expired names are not "
+                 "re-provisionalised automatically."),
+        "structural_proposals": "never applied mechanically (new theses / sub-theses need a registry version)",
+    }
+    registry_names: set[str] = set()
+    for th in registry["theses"].values():
+        registry_names |= set(th["members"])
+    valid_theses = set(registry["theses"])
+
+    try:
+        props = json.load(open(DATA / "registry_proposals.json")).get("proposals", [])
+    except Exception:
+        props = []
+    for p in props:
+        tk = p.get("ticker")
+        if not tk or not p.get("proposed"):
+            continue                                   # structural / empty → not applied
+        mapping = {t: float(w) for t, w in p["proposed"].items() if t in valid_theses}
+        if not mapping:
+            continue
+        e = ledger["entries"].get(tk)
+        if e is None:
+            ledger["entries"][tk] = {
+                "proposed": mapping, "rationale": p.get("rationale"), "source": p.get("source"),
+                "first_proposed": as_of,
+                "expires": (_date.fromisoformat(as_of) + _td(days=PROVISIONAL_DAYS)).isoformat(),
+                "status": "provisional",
+            }
+        elif e.get("status") == "provisional":
+            e["proposed"] = mapping                    # follow the latest text; keep the clock
+
+    prov: dict[str, dict[str, float]] = {}
+    for tk, e in ledger["entries"].items():
+        if tk in registry_names:
+            if e.get("status") != "approved":
+                e["status"] = "approved"; e["resolved"] = as_of
+            continue
+        if e.get("status") == "provisional" and as_of >= e["expires"]:
+            e["status"] = "expired"; e["resolved"] = as_of
+        if e.get("status") == "provisional":
+            tot = sum(e["proposed"].values())
+            prov[tk] = ({t: w / tot for t, w in e["proposed"].items()} if tot > 1.0
+                        else dict(e["proposed"]))
+    ledger["cadence"] = "on_change"          # declared date (order item 5)
+    ledger["as_of"] = as_of
+    with open(LEDGER_PATH, "w") as f:
+        json.dump(ledger, f, indent=2)
+    active = {tk: e for tk, e in ledger["entries"].items() if e.get("status") == "provisional"}
+    return prov, active, ledger
+
+
 def equal_weight_basket_returns(prices: pd.DataFrame, members: list[str]) -> pd.Series:
     cols = [m for m in members if m in prices.columns]
     if not cols:
@@ -125,6 +203,25 @@ def main():
     as_of = history[-1]["date"]
     n_sessions = len(history)
 
+    # ── Provisional layer (order 9-Sept, A1): applied on top of the frozen
+    # registry — never overrides a registry mapping; tagged everywhere it lands.
+    nw_registry = nw
+    prov_weights, prov_active, prov_ledger = load_provisional(registry, as_of)
+    nw = dict(nw_registry)
+    for tk, mp in prov_weights.items():
+        if tk not in nw:
+            nw[tk] = mp
+    members = {tid: list(mem) for tid, mem in members.items()}
+    provisional_members: dict[str, list[str]] = {tid: [] for tid in members}
+    for tk, mp in prov_weights.items():
+        if tk in nw_registry:
+            continue
+        for tid in mp:
+            if tk not in members[tid]:
+                members[tid].append(tk); provisional_members[tid].append(tk)
+    print(f"  provisional: {len(prov_weights)} name mapping(s) applied "
+          f"(expire {PROVISIONAL_DAYS}d after first proposal unless approved)")
+
     # ── Basket return series (equal-weight within basket) ─────────────
     basket_ret: dict[str, pd.Series] = {}
     basket_n_priced: dict[str, int] = {}
@@ -162,6 +259,7 @@ def main():
             "label": label,
             "proxy_etf": registry["theses"][tid].get("proxy_etf"),
             "n_members_priced": basket_n_priced[tid],
+            "provisional_members": provisional_members.get(tid, []),   # A1: tagged on the panel
             "ret_1d": round(float(r.dropna().iloc[-1]), 5) if len(r.dropna()) else None,
             "ret_1w": round(b1w, 5) if b1w is not None else None,
             "ret_inception": round(period_ret(r, INCEPTION), 5) if period_ret(r, INCEPTION) is not None else None,
@@ -200,7 +298,10 @@ def main():
         equity = float(td.get("equity") or 0)
         cash = float(td.get("cash") or 0)
         inv, total, uncl_names = exposure_for_positions(td.get("positions", []), equity, cash, nw)
+        inv_r, _, uncl_names_r = exposure_for_positions(td.get("positions", []), equity, cash, nw_registry)
         uncl_share = inv.get(UNCLASSIFIED, 0.0)
+        prov_share = max(0.0, inv_r.get(UNCLASSIFIED, 0.0) - uncl_share)      # A1: covered provisionally
+        prov_names = sorted(set(uncl_names_r) - set(uncl_names))
         tiers_out[tid] = {
             "date": last["date"],
             "invested_share": round(equity / (equity + cash), 4) if (equity + cash) > 0 else 0,
@@ -211,6 +312,14 @@ def main():
             "unclassified_share": round(uncl_share, 4),
             "unclassified_names": uncl_names,
             "extend_registry_prompt": bool(uncl_share > UNCLASSIFIED_PROMPT),
+            # A1: provisional coverage, tagged; the caveat renders wherever it counts
+            "provisional_share": round(prov_share, 4),
+            "provisional_names": prov_names,
+            "unclassified_share_registry_only": round(inv_r.get(UNCLASSIFIED, 0.0), 4),
+            "unclassified_names_registry": uncl_names_r,
+            "coverage_caveat": (f"{len(prov_names)} PROVISIONAL mapping(s) count toward coverage "
+                                f"({prov_share*100:.0f}% of invested); they expire back to unclassified "
+                                f"{PROVISIONAL_DAYS} days after first proposal unless approved") if prov_names else None,
         }
 
     # Overlap matrix on invested exposure vectors
@@ -319,6 +428,17 @@ def main():
         "updated": datetime.now().isoformat(),
         "as_of": as_of,
         "registry_version": registry["version"],
+        "provisional": {                                        # order 9-Sept, A1
+            "count": len(prov_active),
+            "names": {tk: {"theses": e["proposed"], "first_proposed": e["first_proposed"],
+                           "expires": e["expires"], "source": e.get("source")}
+                      for tk, e in prov_active.items()},
+            "expires_earliest": min((e["expires"] for e in prov_active.values()), default=None),
+            "policy": prov_ledger.get("policy"),
+            "caveat": (f"{len(prov_active)} PROVISIONAL name mapping(s) applied; they count toward "
+                       f"coverage and expire back to unclassified {PROVISIONAL_DAYS} days after first "
+                       f"proposal unless approved into the registry") if prov_active else None,
+        },
         "registry_frozen": frozen,
         "registry_frozen_at": registry.get("frozen_at"),
         "sessions_since_inception": n_sessions,
@@ -377,7 +497,9 @@ def main():
         fund = pd.read_parquet(SOURCE / "fundamentals_snapshot.parquet")
     except Exception:
         fund = pd.DataFrame()
-    all_uncl = sorted({nm for t in tiers_out.values() for nm in t["unclassified_names"]})
+    # A1: proposals are generated from REGISTRY-only classification so provisional
+    # names keep appearing (with their clock) until approved or expired.
+    all_uncl = sorted({nm for t in tiers_out.values() for nm in t["unclassified_names_registry"]})
     # Holdings-change detection (FIX 1d): proposals regenerate nightly; note
     # whether any tier's holdings changed vs the prior session.
     holdings_changed = []
@@ -412,8 +534,23 @@ def main():
                        "both resolutions."),
         "status": "pending",
     })
+    # A1: mark applied proposals PROVISIONAL with their clock; expired / structural recorded
+    for p in proposals:
+        tk = p.get("ticker")
+        if not tk:
+            p["provisional_note"] = ("structural proposal (new thesis) — never applied mechanically: "
+                                     "member MU is already in ai_infra, so applying it would breach the "
+                                     "Σweights ≤ 1 invariant without a thesis hierarchy; approval only")
+            continue
+        e = (prov_ledger.get("entries") or {}).get(tk)
+        if e and e.get("status") == "provisional":
+            p.update({"status": "provisional", "first_proposed": e["first_proposed"], "expires": e["expires"]})
+        elif e and e.get("status") == "expired":
+            p.update({"status": "expired", "expired_on": e.get("resolved"),
+                      "note": "expired unapproved — not re-provisionalised automatically; approve or clear the ledger entry"})
     prop_payload = {
         "generated_at": datetime.now().isoformat(),
+        "provisional_policy": prov_ledger.get("policy"),
         "as_of": as_of,
         "registry_version_current": registry["version"],
         "registry_frozen": frozen,
