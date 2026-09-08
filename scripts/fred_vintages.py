@@ -76,6 +76,8 @@ def fetch_all_releases(fred, sid: str, start: str, end: str, _depth: int = 0) ->
             return rel
     except ValueError as err:
         msg = str(err)
+        if "does not exist in ALFRED" in msg:          # window entirely before the first vintage
+            return pd.DataFrame(columns=["date", "realtime_start", "value"])
         if "vintage dates" not in msg and "exceeds the maximum" not in msg:
             raise
         if (e - s).days <= 3:
@@ -110,8 +112,9 @@ def publication_lag_days(rel: pd.DataFrame) -> int:
     r["date"] = pd.to_datetime(r["date"]); r["realtime_start"] = pd.to_datetime(r["realtime_start"])
     first = r.groupby("date")["realtime_start"].min()
     v0 = first.min()
-    first = first[(first >= v0) & (first <= v0 + pd.Timedelta(days=730))]
-    first = first[first.index >= v0 - pd.Timedelta(days=400)]   # exclude the back-filled history in the first vintage
+    # only observations whose first appearance is STRICTLY after the first
+    # vintage are informative — the first vintage carries the back-filled history
+    first = first[(first > v0) & (first <= v0 + pd.Timedelta(days=730))]
     lag = (first - first.index.to_series()).dt.days
     return int(max(lag.median(), 0)) if len(lag) else 0
 
@@ -151,7 +154,12 @@ def main() -> int:
     for name, sid in PIT_SERIES.items():
         t0 = time.time()
         try:
-            rel = fetch_all_releases(fred, sid, VINTAGE_START, today.strftime("%Y-%m-%d"))
+            try:                                   # seed the window at the series' first vintage
+                vd = pd.to_datetime(pd.Series(fred.get_series_vintage_dates(sid)))
+                start = max(vd.min(), pd.Timestamp(VINTAGE_START)).strftime("%Y-%m-%d")
+            except Exception:
+                start = VINTAGE_START
+            rel = fetch_all_releases(fred, sid, start, today.strftime("%Y-%m-%d"))
         except Exception as e:
             print(f"  {name} ({sid}): FAILED — {str(e)[:160]}", file=sys.stderr)
             meta["series"][name] = {"id": sid, "status": "failed", "error": str(e)[:160]}
