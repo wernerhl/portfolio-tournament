@@ -144,17 +144,13 @@ def validate_outputs() -> None:
     # intraday.json had a staleness watch.
     from datetime import datetime, timedelta, timezone
 
-    def last_trading_session():
-        now = datetime.now(timezone.utc)
-        d = now.date()
-        # Before ~21:30 UTC a weekday's close data can't exist yet.
-        if not (d.weekday() < 5 and now.hour >= 21 and (now.hour > 21 or now.minute >= 30)):
-            d = d - timedelta(days=1)
-        while d.weekday() >= 5:
-            d = d - timedelta(days=1)
-        return d.strftime("%Y-%m-%d")
-
-    session = last_trading_session()
+    # The freshness reference is the SESSION the run guard decided to publish
+    # (PUBLISH_SESSION, holiday-aware, close+15 min), never a private weekday-
+    # only clock. The Labor Day 2026-09-07 run (pre-remediation code) labelled
+    # every artifact 2026-09-04 correctly and was then rejected here against
+    # "last session 2026-09-07" — a NYSE holiday the old helper did not know.
+    from trading_calendar import last_completed_session as _last_completed_session
+    session = _os.environ.get("PUBLISH_SESSION") or _last_completed_session()
 
     def check_fresh(label, last_date_str):
         if last_date_str is None:
