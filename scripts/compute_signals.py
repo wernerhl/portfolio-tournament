@@ -660,7 +660,9 @@ def main():
     print(f"  regime: R_full={regime['R_full']:.3f} ({regime['regime']})")
 
     cfg = json.load(open(REPO / "config.json"))
-    holdings = cfg.get("werner_picks", {}).get("holdings", {})
+    # P3.1 (dashboard order 9-Sept): data/holdings.json is the only holdings source
+    _hj = json.load(open(DATA / "holdings.json"))
+    holdings = {h["ticker"]: {"shares": h.get("shares", 0), "cost": h.get("cost_basis")} for h in _hj.get("holdings", [])}
     pv = estimate_portfolio_value()
     print(f"  portfolio value: ${pv:,.0f}")
     print(f"  Werner holdings: {[k for k, h in holdings.items() if float(h.get('shares', 0) or 0) > 0]}")

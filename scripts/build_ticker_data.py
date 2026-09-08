@@ -47,7 +47,10 @@ def main():
         for t in tickers:
             all_tickers.add(t)
             in_tiers_map.setdefault(t, []).append(tid)
-    for t in cfg["werner_picks"]["holdings"]:
+    # P3.1 (dashboard order 9-Sept): data/holdings.json is the only holdings source
+    _hj = json.load(open(REPO / "data" / "holdings.json"))
+    for h in _hj.get("holdings", []):
+        t = h["ticker"]
         all_tickers.add(t)
         in_tiers_map.setdefault(t, []).append("5_werner")
 

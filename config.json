@@ -1,31 +1,19 @@
 {
   "last_updated": "2026-05-20",
   "_note": "v2: this file holds ONLY Tier 5 (Werner's manual picks) + system settings. Algorithmic tier holdings 1-4 are in data/tier_holdings.json (regenerated monthly by select_tiers.py).",
-
   "werner_picks": {
     "name": "Werner's Picks",
     "short": "WERNER",
     "color": "#a78bfa",
     "description": "Discretionary portfolio. Structural judgment, not algorithm.",
     "cash_floor": 0.15,
-    "cash_slope": 0.70,
+    "cash_slope": 0.7,
     "cash_max": 0.85,
     "cash_formula": "min(0.85, 0.15 + R * 0.70)",
     "benchmark": "SPY",
     "hedging": "moderate",
-    "holdings": {
-      "GOOG":  {"shares": 50,  "cost": 326.81},
-      "NVDA":  {"shares": 100, "cost": 86.68},
-      "AVGO":  {"shares": 50,  "cost": 326.75},
-      "TSM":   {"shares": 25,  "cost": 380.00},
-      "ETN":   {"shares": 15,  "cost": 410.00},
-      "VRT":   {"shares": 20,  "cost": 400.00},
-      "CEG":   {"shares": 15,  "cost": 275.00},
-      "MSFT":  {"shares": 50,  "cost": 500.40}
-    },
-    "cash": 87820
+    "holdings_source": "data/holdings.json — the only holdings source from 2026-09-09 (dashboard order P3.1); ticker, shares, cost basis, acquisition date, cash"
   },
-
   "system_settings": {
     "inception_capital_per_tier": 100000,
     "transaction_cost_bps": 10,
@@ -34,15 +22,21 @@
       "half_spread_bps": 3,
       "impact_bps": 7,
       "one_way_bps": 10,
-      "applies_to": ["backtest tiers", "tournament live tiers", "60/40 benchmark rebalances"],
-      "not_applied": ["SPY/QQQ buy-and-hold (no trades)", "SSO synthetic 1.5x (proxy, no cost — labelled)"]
+      "applies_to": [
+        "backtest tiers",
+        "tournament live tiers",
+        "60/40 benchmark rebalances"
+      ],
+      "not_applied": [
+        "SPY/QQQ buy-and-hold (no trades)",
+        "SSO synthetic 1.5x (proxy, no cost — labelled)"
+      ]
     },
     "phase1_data_dir": "data/source",
     "backtest_start": "2010-01-04",
-    "backtest_end":   "2026-05-21",
+    "backtest_end": "2026-05-21",
     "min_price_history_days": 252
   },
-
   "tier_specs": {
     "1_cap_pres": {
       "name": "Capital Preservation",
@@ -55,11 +49,21 @@
       "cash_max": 1.0,
       "benchmark": "60_40",
       "universe_filter": {
-        "sectors": ["Consumer Defensive", "Healthcare", "Utilities", "Financial Services", "Industrials"],
-        "min_gross_margin": 0.30,
+        "sectors": [
+          "Consumer Defensive",
+          "Healthcare",
+          "Utilities",
+          "Financial Services",
+          "Industrials"
+        ],
+        "min_gross_margin": 0.3,
         "require_positive_fcf": true
       },
-      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 1},
+      "factor_weights": {
+        "ma200": 1,
+        "rsi": 1,
+        "rs6m": 1
+      },
       "hedging": "full"
     },
     "2_balanced": {
@@ -69,11 +73,15 @@
       "description": "Full universe, equal-weight 3 technical factors + fundamentals. Moderate hedging.",
       "n_holdings": 20,
       "cash_floor": 0.15,
-      "cash_slope": 0.70,
+      "cash_slope": 0.7,
       "cash_max": 0.85,
       "benchmark": "SPY",
       "universe_filter": null,
-      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 1},
+      "factor_weights": {
+        "ma200": 1,
+        "rsi": 1,
+        "rs6m": 1
+      },
       "hedging": "moderate"
     },
     "3_aggressive": {
@@ -82,12 +90,16 @@
       "color": "#BA7517",
       "description": "Full universe, double weight on 6-month relative strength. Light hedging.",
       "n_holdings": 15,
-      "cash_floor": 0.10,
-      "cash_slope": 0.40,
-      "cash_max": 0.50,
+      "cash_floor": 0.1,
+      "cash_slope": 0.4,
+      "cash_max": 0.5,
       "benchmark": "QQQ",
       "universe_filter": null,
-      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 2},
+      "factor_weights": {
+        "ma200": 1,
+        "rsi": 1,
+        "rs6m": 2
+      },
       "hedging": "light"
     },
     "4_tactical": {
@@ -101,7 +113,11 @@
       "cash_max": 1.0,
       "benchmark": "SSO",
       "universe_filter": null,
-      "factor_weights": {"ma200": 1, "rsi": 1, "rs6m": 2},
+      "factor_weights": {
+        "ma200": 1,
+        "rsi": 1,
+        "rs6m": 2
+      },
       "hedging": "none_until_crisis"
     }
   }

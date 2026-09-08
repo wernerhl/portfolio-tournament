@@ -3,7 +3,7 @@ Compute today's NAV for all 5 tiers + 4 benchmarks.
 
 Tiers 1-4 (algorithmic): hold the picks from data/tier_holdings.json (regenerated monthly).
                          Equal-weight on the equity sleeve; cash sleeve sized by R_t.
-Tier 5 (Werner manual):  hold the positions in config.json.werner_picks.holdings, plus cash.
+Tier 5 (Werner manual):  hold the positions in data/holdings.json (the only holdings source), plus cash.
 Benchmarks: SPY, QQQ, 60/40 SPY/TLT, SSO (synthetic 1.5×). All $100K notional, compounded.
 
 Output: data/tournament.json  (frontend consumes this)
@@ -318,7 +318,16 @@ def main():
 
     # Algorithmic tier holdings
     tier_holdings = load_json(DATA / "tier_holdings.json")["tiers"]
-    werner_holdings = werner_spec["holdings"]
+    # P3.1 (dashboard order 9-Sept): data/holdings.json is the ONLY holdings source — the screener
+    # reads the same file cross-repository. config.json werner_picks keeps the tier's identity and
+    # sizing formula only. A missing file is a hard stop, never a silent empty book.
+    _hp = DATA / "holdings.json"
+    if not _hp.exists():
+        raise SystemExit("holdings_source_missing: data/holdings.json is the only holdings source (P3.1)")
+    _hj = load_json(_hp)
+    werner_holdings = {h["ticker"]: {"shares": h.get("shares", 0), "cost": h.get("cost_basis")} for h in _hj.get("holdings", [])}
+    werner_cash_cfg = float(_hj.get("cash", 0))
+    print(f"  holdings source: data/holdings.json (as_of {_hj.get('as_of')}, {len(werner_holdings)} names, cash {werner_cash_cfg:,.0f})")
     werner_tickers  = [t for t, h in werner_holdings.items() if (h.get("shares") or 0) > 0]
 
     all_tickers = set()
@@ -475,7 +484,7 @@ def main():
     if prev_werner and "cash" in prev_werner:
         cash_w = float(prev_werner["cash"]) * (1 + effr_daily)
     else:
-        cash_w = float(werner_spec.get("cash", 0))
+        cash_w = werner_cash_cfg   # P3.1: from data/holdings.json
     total_w = equity_w + cash_w
     w_cp = cash_pct_from_formula(R_t, werner_spec)
     for p in werner_positions:

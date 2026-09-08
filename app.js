@@ -2750,7 +2750,7 @@ function render(){
     <span class="k">SCORING </span>4-factor cross-sectional model: technical (MA200 dist, RSI, 6m relative strength) + fundamental (Fwd P/E, rev growth, gross/op margins, ROE). Tier 3/4 double-weight 6m RS.<br>
     <span class="k">SELECTION </span>Monthly. Each tier picks top-N from its filtered universe — Tier 1 restricted to defensive sectors with GM>30% and FCF>0; Tiers 2-4 use the full universe.<br>
     <span class="k">REGIME </span>R<sub>t</sub> from 12 risk indicators z-scored over 252 days, mapped via Φ, equal-weight mean. Sizes cash sleeve per tier formula.<br>
-    <span class="k">TIER 5 (WERNER) </span>Manual picks from config.json. Not backtested (no discretionary history). Updated when Werner trades.<br>
+    <span class="k">TIER 5 (WERNER) </span>Positions from data/holdings.json — the only holdings source, read by the screener too. Not backtested (no discretionary history). Updated when Werner trades.<br>
     <span class="k">DATA </span>Yahoo + FRED. Updated weekdays 6 pm ET (daily NAV) and 1st of month 10 am ET (rescore + reselect).
   </div>`;
 
