@@ -229,6 +229,48 @@ def cost_restatement(history: list, cost_rt: float, cost_label: str) -> dict:
             "tiers": out}
 
 
+def annotate_drawdowns(history: list, as_of: str) -> dict:
+    """Order 9-Sept-2026 (dashboard) P2.1: depth below the running peak per session, for every
+    tier and every benchmark, written into each history row as `drawdown` alongside `nav`
+    (a display quantity derived from the as-published NAVs; NAVs are untouched). Returns the
+    summary block stored at tournament["drawdown"] (current depths + peak dates)."""
+    peaks_t, peaks_b, peak_date_t, peak_date_b = {}, {}, {}, {}
+    for row in history:
+        for tid, td in (row.get("tiers") or {}).items():
+            nav = td.get("nav")
+            if nav is None: continue
+            if nav >= peaks_t.get(tid, -1): peaks_t[tid] = nav; peak_date_t[tid] = row.get("date")
+            td["drawdown"] = round(nav / peaks_t[tid] - 1.0, 5) if peaks_t[tid] > 0 else 0.0
+        for b, bv in (row.get("benchmarks") or {}).items():
+            nav = bv.get("nav") if isinstance(bv, dict) else None
+            if nav is None: continue
+            if nav >= peaks_b.get(b, -1): peaks_b[b] = nav; peak_date_b[b] = row.get("date")
+            bv["drawdown"] = round(nav / peaks_b[b] - 1.0, 5) if peaks_b[b] > 0 else 0.0
+    last = history[-1] if history else {}
+    return {
+        "cadence": "daily", "as_of": as_of,
+        "definition": "nav / running max(nav) - 1 per session since inception; stored per row alongside nav",
+        "tiers": {tid: {"depth": td.get("drawdown"), "peak_date": peak_date_t.get(tid)} for tid, td in (last.get("tiers") or {}).items()},
+        "benchmarks": {b: {"depth": bv.get("drawdown"), "peak_date": peak_date_b.get(b)} for b, bv in (last.get("benchmarks") or {}).items() if isinstance(bv, dict)},
+    }
+
+
+def write_backtest_drawdown(as_of: str) -> None:
+    """P2.1 companion: drawdown series of the served backtest equity curves, as JSON with a declared
+    cadence (the backtest is monthly/on-change; a dated CSV would read as stale to the referee)."""
+    src = DATA / "backtest_equity_curves.csv"
+    if not src.exists(): return
+    import pandas as pd
+    eq = pd.read_csv(src, index_col=0)
+    dd = (eq / eq.cummax() - 1.0).round(5)
+    out = {"cadence": "on_change", "as_of": as_of, "source": "data/backtest_equity_curves.csv",
+           "definition": "nav / running max(nav) - 1 per session over the backtest window",
+           "window": [str(dd.index[0]), str(dd.index[-1])], "dates": [str(d) for d in dd.index],
+           "series": {c: [None if pd.isna(v) else float(v) for v in dd[c]] for c in dd.columns}}
+    with open(DATA / "backtest_drawdown.json", "w") as f:
+        json.dump(out, f, separators=(",", ":"))
+
+
 def main():
     from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
     require_trading_day("compute_nav")
@@ -480,6 +522,8 @@ def main():
         history.append(entry)
     tournament["history"] = history
     tournament["cost_restatement"] = cost_restatement(history, COST_RT, COST_LABEL)   # C1, additive
+    tournament["drawdown"] = annotate_drawdowns(history, today)                        # P2.1, additive (per-row drawdown alongside nav)
+    write_backtest_drawdown(today)                                                    # P2.1 companion for the backtest curves
     tournament["last_updated"] = datetime.now().isoformat()
 
     with open(tournament_file, "w") as f:

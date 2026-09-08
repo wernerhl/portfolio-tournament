@@ -358,6 +358,7 @@ SERVED_CADENCE = {
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",
     "thesis_backtest.json": "on_change", "backtest_metrics.json": "on_change",
+    "backtest_drawdown.json": "on_change",                                     # P2.1 companion (dashboard order 9-Sept)
     "v4_calibration.json": "on_change", "v4_scoring_params.json": "on_change",
     "v4_model_results.json": "on_change", "event_calendar.json": "weekly",
     "benchmark_inception.json": "static", "regime_comparison.json": "static",

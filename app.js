@@ -2338,13 +2338,65 @@ function renderMovedByLine(){
   const movers = a.top3.map(c => `<span class="nowrap">${c.feature} <span class="${c.contribution_pp >= 0 ? "c-pos" : "c-neg"}">${c.contribution_pp >= 0 ? "+" : ""}${c.contribution_pp}pp</span></span>`).join(" · ");
   return `<div class="moved-by mono t1 c-2 mt2">moved by (vs ${a.prev || "prior"}): ${movers} · residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp</div>`;
 }
-function renderDrawdownCard(){      // P2.1 fills the chart; the shell carries the claim sentence
+function renderDrawdownCard(){      // P2.1: underwater chart, tier one
+  const r = S.ddRange || "ALL";
+  const btn = (p, t) => `<button class="period-btn ${r === p ? "on" : ""}" data-ddr="${p}">${t}</button>`;
   return `<div class="rcc-card dd-card">
-    <h3>DRAWDOWN FROM RUNNING PEAK · <span class="c-3 w5">all tiers and benchmarks, one axis</span></h3>
+    <div class="chart-head"><h3>DRAWDOWN FROM RUNNING PEAK · <span class="c-3 w5">all tiers and benchmarks, one axis</span></h3>
+      <div class="periods">${btn("1M","1M")}${btn("3M","3M")}${btn("ALL","SINCE INCEPTION")}${btn("BT","BACKTEST")}</div></div>
     ${renderClaimSentence()}
     <div class="chart-wrap dd-wrap"><canvas id="dd-chart"></canvas></div>
     <div class="chart-meta" id="dd-meta"></div>
   </div>`;
+}
+const DD_LABEL = {"1_cap_pres":"CAP PRES","2_balanced":"BALANCED","3_aggressive":"AGGRESSIVE","4_tactical":"TACTICAL","5_werner":"WERNER",
+                  spy:"SPY", qqq:"QQQ", "60_40":"60/40", sso:"SSO", tlt:"TLT"};
+function renderDrawdownChart(){
+  const ctx = document.getElementById("dd-chart"); if (!ctx) return;
+  if (S.ddChart) { try { S.ddChart.destroy(); } catch (e) {} }
+  const C = CHARTS.colors(); const range = S.ddRange || "ALL";
+  const datasets = []; let meta = "";
+  const mk = (k, pts, lastDepth) => {
+    const isBench = !TIER_ORDER.includes(k);
+    const color = isBench ? (C.bench[k] || C.n2) : C.tier[k];
+    return {label: DD_LABEL[k] || k, data: pts, role: k === "4_tactical" ? "headline" : (isBench ? "benchmark" : "series"),
+            borderColor: color, backgroundColor: CHARTS.alpha(color, isBench ? 0.05 : 0.12), fill: "origin", tension: 0,
+            borderDash: isBench ? [3, 3] : undefined, directLabel: `${DD_LABEL[k] || k} ${lastDepth != null ? (lastDepth * 100).toFixed(1) + "%" : ""}`};
+  };
+  if (range === "BT") {
+    const bt = S.backtestDD;
+    if (!bt || !bt.dates) { ctx.parentElement.innerHTML = '<div class="ld">backtest drawdown companion not published yet</div>'; return; }
+    const step = Math.max(1, Math.floor(bt.dates.length / 900));
+    Object.entries(bt.series).forEach(([k, arr]) => {
+      const pts = []; for (let i = 0; i < arr.length; i += step) if (arr[i] != null) pts.push({x: bt.dates[i], y: arr[i] * 100});
+      if (pts.length) datasets.push(mk(k, pts, arr[arr.length - 1]));
+    });
+    meta = `backtest ${bt.window[0]} → ${bt.window[1]} · plotted every ${step === 1 ? "session" : step + " sessions"} · benchmarks weight 1, the regime tier (tactical) 2 · direct labels carry the current depth`;
+  } else {
+    const hist = (S.tournament && S.tournament.history) || [];
+    const rows = range === "1M" ? hist.slice(-22) : range === "3M" ? hist.slice(-64) : hist;
+    const t0 = rows.length ? rows[rows.length - 1].tiers[TIER_ORDER[0]] : null;
+    if (!t0 || t0.drawdown == null) { ctx.parentElement.innerHTML = '<div class="ld">drawdown series not yet published (written by compute_nav.py at the next nightly)</div>'; return; }
+    TIER_ORDER.forEach(tid => {
+      const pts = rows.filter(r => r.tiers && r.tiers[tid] && r.tiers[tid].drawdown != null).map(r => ({x: r.date, y: r.tiers[tid].drawdown * 100}));
+      if (pts.length) datasets.push(mk(tid, pts, rows[rows.length - 1].tiers[tid] && rows[rows.length - 1].tiers[tid].drawdown));
+    });
+    ["spy", "qqq", "60_40", "sso", "tlt"].forEach(b => {
+      const pts = rows.filter(r => r.benchmarks && r.benchmarks[b] && r.benchmarks[b].drawdown != null).map(r => ({x: r.date, y: r.benchmarks[b].drawdown * 100}));
+      if (pts.length) datasets.push(mk(b, pts, rows[rows.length - 1].benchmarks[b].drawdown));
+    });
+    meta = `live since inception ${hist.length ? hist[0].date : "—"} · ${rows.length} sessions shown · depth below the running peak since inception · benchmarks weight 1, the regime tier (tactical) 2`;
+  }
+  S.ddChart = CHARTS.make(ctx, {
+    type: "line", data: {datasets},
+    options: {
+      layout: {padding: {right: 96}},
+      scales: {x: {type: "time", time: {unit: range === "BT" ? "year" : (range === "1M" ? "day" : "month")}},
+               y: {max: 0, ticks: {callback: v => v.toFixed(0) + "%"}}},
+      plugins: {tooltip: {callbacks: {label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}},
+    },
+  });
+  const m = document.getElementById("dd-meta"); if (m) m.textContent = meta;
 }
 function renderTreemapCard(){ return ""; }        // P2.3
 function renderRetirementPanel(){ return ""; }    // P2.2
@@ -2561,6 +2613,9 @@ function render(){
   document.querySelectorAll(".period-btn[data-p]").forEach(b => b.addEventListener("click", () => {
     S.period = b.dataset.p; render();
   }));
+  document.querySelectorAll(".period-btn[data-ddr]").forEach(b => b.addEventListener("click", () => {
+    S.ddRange = b.dataset.ddr; render();
+  }));
   document.querySelectorAll(".tier-row").forEach(r => r.addEventListener("click", (ev) => {
     if (ev.target.closest(".tk-row") || ev.target.closest(".tk-detail")) return;
     const tid = r.dataset.tid;
@@ -2664,6 +2719,7 @@ function render(){
     renderRopCurveChart();
     renderThesisRsChart();
     renderChart(allSeries, S.period);
+    renderDrawdownChart();      // P2.1 (tier one)
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
       // Scroll FIRST so the panel area is committed to layout, then render
@@ -2721,6 +2777,7 @@ async function init(){
   S.v4Cal      = await loadJSON("data/v4_calibration.json");
   try { S.c2 = await loadJSON("data/c2_vintage_comparison.json"); } catch (e) { S.c2 = null; }   // memo §6 disclosure
   try { S.c3 = await loadJSON("data/c3_results.json"); } catch (e) { S.c3 = null; }             // memo §1 verdicts of record
+  try { S.backtestDD = await loadJSON("data/backtest_drawdown.json"); } catch (e) { S.backtestDD = null; }   // P2.1 companion
   S.intraday   = await loadJSON("data/intraday.json");
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");
