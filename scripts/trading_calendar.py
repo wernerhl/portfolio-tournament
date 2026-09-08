@@ -106,9 +106,29 @@ def served_meta(cadence: str = "daily", session_date: str | None = None,
     return meta
 
 
+def last_completed_session(now: datetime | None = None) -> str:
+    """Most recent COMPLETED NYSE session as of `now`, in ET: today if it is a
+    trading day and the clock is past 16:15 ET (close + 15 min), otherwise the
+    previous trading day. Reconciliation memo 8-Sept, decision 3: publishing
+    keys on THIS session, never on the wall-clock calendar date — a cron
+    throttled past 00:00 UTC publishes Friday's session instead of refusing."""
+    from zoneinfo import ZoneInfo
+    et = now.astimezone(ZoneInfo("America/New_York")) if (now is not None and now.tzinfo) else now_et()
+    d = et.date()
+    if not (is_trading_day(d) and (et.hour, et.minute) >= (16, 15)):
+        d = date.fromisoformat(prev_trading_day(d))
+    return d.isoformat()
+
+
 def last_trading_session(now: datetime | None = None) -> str:
-    """Most recent COMPLETED session as of `now` (UTC). Before ~21:30 UTC a
-    weekday's close doesn't exist yet."""
+    """Most recent COMPLETED session as of `now`. Delegates to
+    last_completed_session (ET, close + 15 min) so every caller — the daily
+    job's guard, validation, served_meta — agrees on the session."""
+    return last_completed_session(now)
+
+
+def _last_trading_session_legacy(now: datetime | None = None) -> str:
+    """Pre-memo UTC heuristic (~21:30 UTC); kept only for reference."""
     import os
     if now is None and os.environ.get("NOW_ET_OVERRIDE"):
         now = now_et().astimezone(timezone.utc)

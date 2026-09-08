@@ -59,7 +59,7 @@ def _run_guard():
     ap.add_argument("--force-publish", metavar="REASON", default=None,
                     help="run despite the session guard; reason recorded in status.json")
     args, _ = ap.parse_known_args()
-    from trading_calendar import is_trading_day, now_et as _now_et
+    from trading_calendar import is_trading_day, now_et as _now_et, last_completed_session
     now_et = _now_et()          # honors NOW_ET_OVERRIDE for the [2.3] verification
     trading = is_trading_day(now_et.date())
     # SEPT AUDIT [2.3]: a non-trading day is not a failure. Exit 0 with the
@@ -69,12 +69,18 @@ def _run_guard():
     if not trading and args.force_publish is None:
         print(f"[update_daily] market closed, nothing to do ({now_et:%Y-%m-%d})", flush=True)
         sys.exit(0)
-    after_close = (now_et.hour, now_et.minute) >= (16, 15)
-    if trading and not after_close and args.force_publish is None:
-        print(f"[5] RUN GUARD: {now_et:%H:%M} ET is pre-close on a trading session and no "
-              "--force-publish REASON was given — refusing to run the publish pipeline. "
-              "Nothing was written.")
-        sys.exit(78)
+    # Reconciliation memo 8-Sept, decision 3 (mechanics): the guard keys on the
+    # SESSION being published, not on the wall-clock date. A run may publish
+    # session S when S is the most recent completed trading session and the
+    # clock is past S's close + 15 min — regardless of the calendar day. The
+    # old pre-close refusal compared against the wall-clock date: a cron
+    # throttled past 00:00 UTC (02:02 ET 2026-08-28) saw "Aug 28 pre-close",
+    # exited 78, and Aug 27's session was never published. The data layer
+    # computes as of S (drop_partial_today; session-labelled rows).
+    import os as _os
+    S = last_completed_session(now_et)
+    _os.environ["PUBLISH_SESSION"] = S
+    print(f"[5] RUN GUARD: publishing session {S}  (clock {now_et:%Y-%m-%d %H:%M} ET)", flush=True)
     return args.force_publish, now_et
 
 FORCE_REASON, NOW_ET = _run_guard()
