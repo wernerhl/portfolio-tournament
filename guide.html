@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to Read This — Portfolio Tournament</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>♛</text></svg>">
+<link rel="preload" href="fonts/texgyrepagella-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* guide.html — layout only. Every size below is a token from styles.css
+     (spacing --s1..--s4, type --t1..--t5, hairline --hair, radius --radius-*);
+     every colour is a palette token. Type sizes are set through the utility
+     classes (.t1..t5) in the markup, never here. */
+  .guide{max-width:70ch;margin:0 auto;padding:var(--s3) var(--s3) var(--s4);line-height:1.6}
+  .g-hd{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;
+        gap:var(--s2) var(--s3);margin-bottom:var(--s4);padding-bottom:var(--s2);
+        border-bottom:var(--hair) solid var(--hairline)}
+  .g-back{color:var(--accent);text-decoration:none;white-space:nowrap}
+  .g-back:hover{color:var(--text-1)}
+  .guide p{margin:var(--s3) 0}
+  .guide a{color:var(--accent);text-decoration:none;border-bottom:var(--hair) solid var(--hairline-hi)}
+  .guide a:hover{border-bottom-color:var(--accent)}
+  .guide .g-kicker{margin:0 0 var(--s2)}
+  .guide .g-h1{line-height:1.15;letter-spacing:-.01em;margin:0 0 var(--s3)}
+  .guide .g-lede{line-height:1.4;margin:0 0 var(--s3)}
+  .g-sec{margin-top:var(--s4)}
+  .g-sec > .tier-title{margin-bottom:var(--s2)}
+  .guide .g-sub{margin:0 0 var(--s3)}
+  .g-card{background:var(--surface);border:var(--hair) solid var(--hairline);border-radius:var(--radius-2);padding:var(--s3)}
+  .g-note{margin:var(--s4) 0;color:var(--text-2);border-left:3px solid var(--accent)}
+  .g-note.warn{border-left-color:var(--warn)}
+  .g-note.stop{border-left-color:var(--neg)}
+  .g-note strong{color:var(--text-1)}
+  .guide .g-note p{margin:var(--s2) 0}
+  .guide .g-note p:first-child{margin-top:0}
+  .guide .g-note p:last-child{margin-bottom:0}
+  .guide .g-nt{margin:0 0 var(--s2)}
+  .g-toc{margin:var(--s4) 0}
+  .g-toc a{color:var(--text-2);border-bottom:0}
+  .g-toc a:hover{color:var(--accent)}
+  .g-rows{margin:var(--s3) 0}
+  .g-rt{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s2) var(--s3);
+        padding:var(--s2) 0;border-bottom:var(--hair) solid var(--hairline)}
+  .g-rt:last-child{border-bottom:0}
+  .g-badge{font:600 var(--t1) var(--mono);letter-spacing:.06em;padding:var(--s1) var(--s2);
+           border-radius:var(--radius-1);white-space:nowrap}
+  .g-rt .txt{flex:1 1 24ch;color:var(--text-2)}
+  .g-rt .txt b{color:var(--text-1);font-weight:700}
+  .g-dd{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin:var(--s3) 0}
+  .g-col.good{border-top:2px solid var(--pos)}
+  .g-col.bad{border-top:2px solid var(--neg)}
+  .g-col ul{margin:0;padding-left:var(--s3)}
+  .g-col li{margin:var(--s2) 0;color:var(--text-2);line-height:1.5}
+  .guide .g-term{margin:var(--s3) 0 var(--s1)}
+  .guide .g-def{margin:0}
+  .guide hr{border:0;border-top:var(--hair) solid var(--hairline);margin:var(--s4) 0}
+  @media (max-width:820px){
+    .g-dd{grid-template-columns:1fr}
+    .guide{padding:var(--s3) var(--s3) var(--s4)}
+  }
+</style>
+</head>
+<body>
+<div class="guide">
+
+  <header class="g-hd">
+    <div>
+      <div class="serif t4 w7 c-1">How to Read This</div>
+      <div class="serif t1 it c-3 mt1">Portfolio Tournament · a plain-language guide</div>
+    </div>
+    <a class="g-back mono t1 w5 ls08" href="index.html">← dashboard</a>
+  </header>
+
+  <main>
+
+  <p class="g-kicker mono t1 w6 caps c-accent">A Plain-Language Guide</p>
+  <h1 class="g-h1 serif t5 w7 c-1">What you’re looking at, and how to read it</h1>
+  <p class="g-lede serif t4 c-2">This is a personal research dashboard. It does two things: it tracks how risky market conditions are right now, and it runs an ongoing experiment comparing a handful of investing strategies. It’s a tool for <em>thinking</em> about markets — not a tool that tells you what to buy.</p>
+
+  <div class="g-note g-card stop">
+    <p class="g-nt mono t1 w6 caps c-neg">Read this first</p>
+    <p><strong>This is not financial advice, and the “BUY” labels are not recommendations for you to buy anything.</strong> They’re the output of an automated rulebook, shown so you can see what the rules say.</p>
+    <p>The competing strategies (“tiers”) are an <strong>experiment</strong>, not a track record to copy. They’ve been running for only a few months of real time.</p>
+    <p>And the system <strong>can’t anticipate sudden moves.</strong> It reads conditions that have already settled into prices, so a calm overnight reading can be followed by a down day it never saw coming. These happen regularly, and most are small. It’s a thermometer for the current climate — not a crystal ball for tomorrow. Treat everything here as a way to understand markets, not as a signal to move your own money.</p>
+  </div>
+
+  <nav class="g-toc g-card mono t2 c-2 lh19" aria-label="Contents">
+    <div><span class="c-accent mr2">1</span><a href="#gauge">The risk gauge — “how nervous is the market?”</a></div>
+    <div><span class="c-accent mr2">2</span><a href="#signals">The signal panel — the evidence behind the gauge</a></div>
+    <div><span class="c-accent mr2">3</span><a href="#tournament">The tournament — five strategies, one race</a></div>
+    <div><span class="c-accent mr2">4</span><a href="#stocks">The stock view — what a “BUY” actually means</a></div>
+    <div><span class="c-accent mr2">5</span><a href="#use">How to use it (and how not to)</a></div>
+    <div><span class="c-accent mr2">6</span><a href="#limits">What it honestly can’t do</a></div>
+    <div><span class="c-accent mr2">7</span><a href="#shown">What it has shown</a></div>
+    <div><span class="c-accent mr2">8</span><a href="#glossary">Plain-language glossary</a></div>
+  </nav>
+
+  <div class="g-rows">
+    <p class="g-sub mono t1 caps c-3">The page, top to bottom · three sections, each quieter than the last</p>
+    <div class="g-rt"><span class="g-badge sig-badge sig-2">REGIME</span><span class="txt">The risk gauge, the project’s one-paragraph claim about what it has and hasn’t shown, and a chart of how far each portfolio sits below its own peak.</span></div>
+    <div class="g-rt"><span class="g-badge sig-badge sig-2">TOURNAMENT &amp; BOOK</span><span class="txt">The race chart and leaderboard, a treemap of what each tier holds, the panel that tests the pull-back rule, and the author’s actual book of positions.</span></div>
+    <div class="g-rt"><span class="g-badge sig-badge sig-2">RECORDS &amp; SIGNALS</span><span class="txt">The 23 indicator cards, the thesis register, the v4 ranking panel, the pipeline status strip, the stock scanner, the action log, the calibration chart and the events calendar — set in smaller, quieter type on purpose.</span></div>
+  </div>
+
+  <section class="g-sec" id="gauge">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">1</span>The risk gauge</h2>
+    <p class="g-sub mono t1 caps c-3">Top of the page, under Regime · the dial that reads “safe” to “danger”</p>
+    <p>The big dial is the single most important thing on the page. It’s a summary of how stressed market conditions look right now, on a scale from calm to dangerous. Think of it like a weather reading: it doesn’t tell you it <em>will</em> storm, only how the sky looks at the moment.</p>
+    <p>Beside the dial sit two companions: the project’s standing claim — one paragraph, in its own words, on what the pull-back has and hasn’t shown — and a chart of how far each portfolio currently sits below its own peak.</p>
+    <p>The needle position and the headline word tell you the current state:</p>
+
+    <div class="g-rows">
+      <div class="g-rt"><span class="g-badge sig-badge sig-pos">DEPLOY</span><span class="txt"><b>Calm.</b> Conditions look benign. The strategies run at full size.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-warn">ELEVATED / CAUTIOUS</span><span class="txt"><b>Mixed.</b> Some warning signs are flashing. The strategies pull back a little.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-neg">HIGH RISK / CRISIS</span><span class="txt"><b>Stressed.</b> Many warning signs at once. The strategies move toward cash and protection.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-neg">INTRADAY STRESS</span><span class="txt"><b>Something is happening right now.</b> A red banner appears across the top when the market is moving sharply <em>today</em>, faster than the daily reading can keep up with.</span></div>
+    </div>
+
+    <div class="g-note g-card warn">
+      <p class="g-nt mono t1 w6 caps c-warn">The one thing to remember</p>
+      <p>The main reading is calculated once a day, overnight, from the previous day’s closing prices (the fast fear gauges also refresh during the day). So a green dial in the morning reflects <strong>last night</strong>, not this minute. If a red “intraday stress” banner is showing, trust the banner over the dial — the dial is stale by then.</p>
+    </div>
+  </section>
+
+  <section class="g-sec" id="signals">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">2</span>The signal panel</h2>
+    <p class="g-sub mono t1 caps c-3">Lower down, under Records &amp; Signals · the grid of small cards — “23 channels”</p>
+    <p>The dial is a summary; this grid is the evidence behind it. Each small card is one signal pulled from financial markets or the economy — things like the fear index (VIX), the gap between safe and risky borrowing costs, or whether manufacturers are ordering more. Together they form the score on the dial.</p>
+    <p>The cards are grouped by what they tell you about <em>when</em>:</p>
+    <div class="g-rows">
+      <div class="g-rt"><span class="g-badge sig-badge sig-info">FORWARD-LOOKING</span><span class="txt">What markets <b>expect</b> is coming. These get the most weight.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-info">CONTEMPORANEOUS</span><span class="txt">What’s happening <b>right now</b>.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-info">CONFIRMING</span><span class="txt">What has <b>already happened</b> — useful as confirmation, not warning.</span></div>
+    </div>
+    <p>To read a single card: the big number is the current value, the colour tells you whether it’s calm (<span class="mono t2 c-pos">green</span>), worth watching (<span class="mono t2 c-warn">amber</span>), or alarming (<span class="mono t2 c-neg">red</span>), and the little bar shows how extreme it is versus its own recent history. Tapping a card opens its full history.</p>
+    <p class="c-2">No single card matters on its own — any one of them can flash for ordinary reasons. The dial only moves when <em>several</em> line up. Don’t react to one red card.</p>
+    <p>The same section keeps the project’s records, deliberately set in smaller, quieter type: a thesis register (the stated reason for each holding, and what would prove it wrong); the v4 panel, a probability-style score that ranks days by risk but does not forecast; a status strip that appears only when the nightly pipeline had a problem; the stock scanner described in section 4; an append-only log of every change the tiers have made; a calibration chart that checks whether past probabilities meant what they said; and a calendar of upcoming economic events.</p>
+  </section>
+
+  <section class="g-sec" id="tournament">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">3</span>The tournament</h2>
+    <p class="g-sub mono t1 caps c-3">Second on the page, under Tournament &amp; Book · the race chart, the leaderboard and the book</p>
+    <p>This is the experiment at the heart of the dashboard. Five portfolios (“tiers”) compete. Four start with the same notional money and are run by automated rules of increasing aggressiveness; the fifth is the author’s own real holdings. The race chart shows how each has grown or shrunk over time, and the leaderboard ranks them by <strong>percentage return</strong> — so they’re compared fairly even though the real one started with a different amount.</p>
+    <div class="g-rows">
+      <div class="g-rt"><span class="g-badge sig-badge sig-2"><span class="sw bg-tier-1_cap_pres"></span>Capital Preservation</span><span class="txt">The most conservative. Holds the most cash.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-2"><span class="sw bg-tier-2_balanced"></span>Balanced Growth</span><span class="txt">A middle path.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-2"><span class="sw bg-tier-3_aggressive"></span>Aggressive Growth</span><span class="txt">Leans into growth.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-2"><span class="sw bg-tier-4_tactical"></span>Tactical</span><span class="txt">The most active automated strategy.</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-2"><span class="sw bg-tier-5_werner"></span>Werner’s Picks</span><span class="txt">The author’s actual portfolio, for comparison.</span></div>
+    </div>
+    <p>Beneath the leaderboard sit three more panels: a treemap of what each tier holds (the area is the weight, the colour is the day’s move); a panel titled “What the overlay has shown”, which carries the project’s standing claim and the pre-registered test behind it; and the book — the author’s actual positions with cost, current price and profit or loss.</p>
+    <div class="g-note g-card">
+      <p class="g-nt mono t1 w6 caps c-accent">What this race is really testing</p>
+      <p>The point isn’t “which strategy is best — copy it.” The point is to study one specific question: <strong>does pulling back when the risk gauge is high actually protect you?</strong> A tier that’s “winning” today has only been running a few months, and its long-term backtest is flattered by known measurement biases. <strong>Don’t read the leaderboard as a recommendation.</strong> Read it as an experiment in progress.</p>
+    </div>
+  </section>
+
+  <section class="g-sec" id="stocks">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">4</span>The stock view</h2>
+    <p class="g-sub mono t1 caps c-3">The scanner, under Records &amp; Signals · when you open an individual company</p>
+    <p>Opening a company from the scanner shows a “signal box” with a label like <span class="mono t2">BUY</span> or <span class="mono t2">HOLD</span>, plus an entry price, a stop-loss, and a target. Two separate scores sit at the top, and keeping them separate is the whole idea:</p>
+    <div class="g-rows">
+      <div class="g-rt"><span class="g-badge sig-badge sig-pos">Business quality</span><span class="txt">How good the <b>company</b> looks on the numbers (out of 50).</span></div>
+      <div class="g-rt"><span class="g-badge sig-badge sig-warn">Trade now</span><span class="txt">Whether <b>right now</b> is a good moment to buy it — which can be very different.</span></div>
+    </div>
+    <p>A great company can be a poor thing to buy today if its price has already run up. That gap between the two scores is the useful part — a single blended “score” would hide it.</p>
+    <div class="g-note g-card stop">
+      <p class="g-nt mono t1 w6 caps c-neg">The honest caveat</p>
+      <p>These signals are an automated rulebook’s opinion, shown for study. Tested over many years, the stock-picking half of this system has shown <strong>no measurable skill</strong> — it did no better than simply holding a broad market fund. Whatever value the project has lies in the risk gauge’s pull-back, which has cut the depth of losses at a cost in return — not in the individual stock calls. So: interesting to look at, <strong>not something to trade your savings on.</strong></p>
+    </div>
+  </section>
+
+  <section class="g-sec" id="use">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">5</span>How to use it</h2>
+    <p class="g-sub mono t1 caps c-3">The constructive part</p>
+    <div class="g-dd">
+      <div class="g-col g-card good">
+        <h3 class="mono t1 w6 caps c-pos mb2">Good uses</h3>
+        <ul>
+          <li>Watch what “market risk” looks like, and how it shifts week to week.</li>
+          <li>See how a strategy that pulls back in stress behaves versus one that doesn’t.</li>
+          <li>Learn how the pieces of a quantitative system fit together.</li>
+          <li>Use the term “elevated” or “crisis” as a prompt to slow down and think.</li>
+        </ul>
+      </div>
+      <div class="g-col g-card bad">
+        <h3 class="mono t1 w6 caps c-neg mb2">Don’t do this</h3>
+        <ul>
+          <li>Don’t buy or sell your own holdings because a label says so.</li>
+          <li>Don’t assume a tier’s recent returns will continue.</li>
+          <li>Don’t treat a green dial as “safe to invest today” — it’s last night’s reading.</li>
+          <li>Don’t act on one flashing card, or on any single number in isolation.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="g-sec" id="limits">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">6</span>What it honestly can’t do</h2>
+    <p class="g-sub mono t1 caps c-3">The limits, stated plainly</p>
+    <p><strong>It can’t anticipate sudden moves.</strong> It reads conditions that have already formed in prices. A move that arrives during the trading day — a piece of news, an ordinary sell-off — can blindside it. These happen regularly and are usually small, but the system won’t have seen them coming.</p>
+    <p><strong>Its stock picks have no measurable skill.</strong> Over a long history, the individual BUY/SELL calls did no better than a plain index fund. The value, if any, is in the overall risk reading — and even that is a matter of shallower falls, not higher returns.</p>
+    <p><strong>It’s young.</strong> The live competition has only a few months of history. The longer backtests behind it are affected by well-known measurement biases that flatter the results.</p>
+    <p><strong>It updates slowly.</strong> The full reading refreshes once a day; only the fast fear gauges update during market hours. Between updates, what you see is a snapshot, not a live feed.</p>
+  </section>
+
+  <section class="g-sec" id="shown">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">7</span>What it has shown</h2>
+    <p class="g-sub mono t1 caps c-3">The result, stated just as plainly</p>
+    <p>Not nothing — but less than the labels might suggest. Tested from 2010 to 2026 on the information that was actually available at the time, pulling back to cash when the gauge ran high roughly halved the deepest fall a buy-and-hold investor would have sat through. The best simple rule — one that trims exposure whenever the market turns choppy — cut that fall by about 30 percent. The protection had a price: the pulled-back portfolio earned about half of what the market returned over the period. It has shown no reliable advantage in returns, and on return for the risk taken it is not clearly better than the simple rules. The stock-picking half — the individual BUY and SELL calls — has no measurable skill. So what it has shown is a smoother ride for a smaller return, and nothing more.</p>
+  </section>
+
+  <hr>
+
+  <section class="g-sec" id="glossary">
+    <h2 class="tier-title"><span class="mono t4 w5 c-accent mr2">8</span>Glossary</h2>
+    <p class="g-sub mono t1 caps c-3">The jargon, in plain words</p>
+    <div>
+      <p class="g-term mono t2 w6 c-accent">Regime</p>
+      <p class="g-def c-2">The overall “mood” of the market — calm, nervous, or stressed. The dial is reading the current regime.</p>
+      <p class="g-term mono t2 w6 c-accent">VIX</p>
+      <p class="g-def c-2">The market’s “fear index.” It rises when investors expect bigger swings. A jump in the VIX means nerves are up.</p>
+      <p class="g-term mono t2 w6 c-accent">Term structure</p>
+      <p class="g-def c-2">Whether markets expect more fear soon or later. When near-term fear jumps above longer-term fear, it’s a sign of acute, immediate stress.</p>
+      <p class="g-term mono t2 w6 c-accent">Drawdown</p>
+      <p class="g-def c-2">How far something has fallen from its recent peak. A “−10% drawdown” means it’s down a tenth from its high.</p>
+      <p class="g-term mono t2 w6 c-accent">Overlay</p>
+      <p class="g-def c-2">The rule that moves a portfolio toward cash when the risk gauge is high, laid over the top of whatever the portfolio holds. “What the overlay has shown” is the test of that rule.</p>
+      <p class="g-term mono t2 w6 c-accent">Point-in-time</p>
+      <p class="g-def c-2">Using only the numbers that had actually been published at the time, not the revised versions that arrived later. Several economic series get revised after the fact, and testing on the revised numbers flatters the results.</p>
+      <p class="g-term mono t2 w6 c-accent">Tier</p>
+      <p class="g-def c-2">One of the five competing portfolios in the tournament.</p>
+      <p class="g-term mono t2 w6 c-accent">Stop-loss</p>
+      <p class="g-def c-2">A pre-set price at which a rulebook would sell to limit a loss. A planned exit, not a prediction.</p>
+      <p class="g-term mono t2 w6 c-accent">RSI</p>
+      <p class="g-def c-2">A gauge of whether a stock has risen or fallen unusually fast lately — “overbought” or “oversold.”</p>
+      <p class="g-term mono t2 w6 c-accent">MA200</p>
+      <p class="g-def c-2">The average price over the last 200 days. A common rough line between an up-trend and a down-trend.</p>
+      <p class="g-term mono t2 w6 c-accent">Cash allocation</p>
+      <p class="g-def c-2">How much of a portfolio is sitting in cash rather than invested. It rises when the risk gauge is high.</p>
+    </div>
+  </section>
+
+  <p class="mono t1 c-3 lh17">This dashboard is a personal research project, shared for curiosity and discussion. It is not investment advice, not a recommendation, and not a solicitation to buy or sell anything. Markets are risky; the figures here can be wrong, stale, or incomplete. Make your own decisions, and consult a qualified professional before investing.</p>
+
+  </main>
+</div>
+</body>
+</html>

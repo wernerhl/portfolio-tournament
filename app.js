@@ -2724,6 +2724,7 @@ function render(){
     <div>
       <span class="hd-dot"></span><h1 class="inl">PORTFOLIO TOURNAMENT</h1>
       <span class="mono t1 c-3 ml2">v2.0</span>
+      <a class="mono t1 c-info ml2" href="guide.html" title="How to read this — the guide page">how to read this →</a>
       <div class="hd2-sub">${updated} · 4 algo tiers + Werner · monthly rescore + regime overlay</div>
     </div>
   </div>`;
