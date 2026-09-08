@@ -169,10 +169,11 @@ def load_sources() -> dict[str, pd.DataFrame]:
     uses only data available on that date. Price/vol inputs are unrevised."""
     import os as _os
     pit = bool(_os.environ.get("REGIME_PIT"))
+    pit_sfx = _os.environ.get("REGIME_PIT_SUFFIX", "_pit")   # C2 decomposition variants: _lag, _pitfill, _pit
     out = {}
     for stem in ["fred_indicators", "fred_derived", "vol_indicators",
                  "vol_derived", "sector_etfs", "breadth_indicators"]:
-        sfx = "_pit" if (pit and stem.startswith("fred")) else ""
+        sfx = pit_sfx if (pit and stem.startswith("fred")) else ""
         p = SOURCE / f"{stem}{sfx}.parquet"
         if sfx and not p.exists():
             raise FileNotFoundError(f"REGIME_PIT set but {p.name} missing — run the vintage_rebuild workflow")
@@ -385,10 +386,11 @@ def main():
     if _os.environ.get("REGIME_PIT"):
         out_dir = Path(_os.environ.get("REGIME_OUT_DIR", str(DATA / "c2")))
         out_dir.mkdir(parents=True, exist_ok=True)
-        out_df.to_csv(out_dir / "regime_v2_daily_pit.csv")
-        s_df.to_parquet(out_dir / "regime_v2_risk_scores_pit.parquet")
-        z_df.to_parquet(out_dir / "regime_v2_zscores_pit.parquet")
-        print(f"  PIT mode: saved {out_dir}/regime_v2_daily_pit.csv ({len(out_df)} rows) + parquets; served files untouched")
+        sfx = _os.environ.get("REGIME_PIT_SUFFIX", "_pit")
+        out_df.to_csv(out_dir / f"regime_v2_daily{sfx}.csv")
+        s_df.to_parquet(out_dir / f"regime_v2_risk_scores{sfx}.parquet")
+        z_df.to_parquet(out_dir / f"regime_v2_zscores{sfx}.parquet")
+        print(f"  PIT mode: saved {out_dir}/regime_v2_daily{sfx}.csv ({len(out_df)} rows) + parquets; served files untouched")
         return
     out_df.to_csv(DATA / "regime_v2_daily.csv")
     print(f"  saved regime_v2_daily.csv ({len(out_df)} rows)")

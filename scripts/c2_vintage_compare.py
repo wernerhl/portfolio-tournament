@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """c2_vintage_compare.py — revised vs point-in-time inputs for the regime index (order 9-Sept, C2).
 
-Inputs (produced upstream):
-  data/regime_v2_daily.csv              revised inputs (served series)
-  data/c2/regime_v2_daily_pit.csv       REGIME_PIT=1 rebuild on ALFRED vintages
-  data/c2/backtest_metrics_rev.json     backtest driven by revised R_full
-  data/c2/backtest_metrics_pit.json     backtest driven by point-in-time R_full
-Outputs:
-  data/c2_vintage_comparison.json (cadence on_change) + a markdown table on stdout.
+Variants of the 24-indicator v2 index, all through the same engine and tier sizing:
+  rev      as-published (revised) FRED inputs — data/regime_v2_daily.csv
+  lag      revised values shifted by each series' measured publication lag
+           (release lag only; no revisions; every series treated as existing)
+  pitfill  true ALFRED vintages after a series' first vintage, lag-only before
+           (release lag + revisions; every series treated as existing)
+  pit      strict point-in-time: as pitfill, but a series is unavailable before
+           it existed as published data (NFCI/ANFCI 2011, KCFSI 2010, STLFSI4 2022)
+Successive differences isolate: rev→lag release lag, lag→pitfill revisions,
+pitfill→pit series existence.
+
+Inputs: data/c2/regime_v2_daily_<v>.csv and data/c2/backtest_metrics_<v>.json.
+Output: data/c2_vintage_comparison.json (cadence on_change) + markdown tables on stdout.
 """
 from __future__ import annotations
 import json, sys
@@ -21,83 +27,110 @@ DATA = REPO / "data"; SOURCE = DATA / "source"; C2 = DATA / "c2"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validate_regime_v2 import build_target, auc_of, detect_dd_episodes, lead_time  # noqa: E402
 
+VARIANTS = ["rev", "lag", "pitfill", "pit"]
+TIERS = ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical")
+
 
 def main() -> int:
-    rev = pd.read_csv(DATA / "regime_v2_daily.csv", index_col="date", parse_dates=["date"])
-    pit = pd.read_csv(C2 / "regime_v2_daily_pit.csv", index_col="date", parse_dates=["date"])
+    reg = {"rev": pd.read_csv(DATA / "regime_v2_daily.csv", index_col="date", parse_dates=["date"])}
+    for v in VARIANTS[1:]:
+        p = C2 / f"regime_v2_daily_{v}.csv"
+        if p.exists():
+            reg[v] = pd.read_csv(p, index_col="date", parse_dates=["date"])
+    variants = [v for v in VARIANTS if v in reg]
     vol = pd.read_parquet(SOURCE / "vol_indicators.parquet"); vol.index = pd.to_datetime(vol.index)
     spx = vol["spx"].dropna()
-    common = rev.index.intersection(pit.index)
-    rev, pit = rev.loc[common], pit.loc[common]
+    common = reg["rev"].index
+    for v in variants:
+        common = common.intersection(reg[v].index)
+    reg = {v: reg[v].loc[common] for v in variants}
 
     target = build_target(spx, lookahead_days=60, dd_threshold=-0.10)
-    auc = {}
-    for lbl, df in (("revised", rev), ("point_in_time", pit)):
-        auc[lbl] = {"R_full": round(auc_of(df["R_full"].astype(float), target, lbl), 4),
-                    "R_lead": round(auc_of(df["R_lead"].astype(float), target, lbl), 4)}
+    auc = {v: {"R_full": round(auc_of(reg[v]["R_full"].astype(float), target, v), 4),
+               "R_lead": round(auc_of(reg[v]["R_lead"].astype(float), target, v), 4)} for v in variants}
 
     episodes = detect_dd_episodes(spx, threshold=-0.10)
     leads = []
     for _, ep in episodes.iterrows():
         pk = ep["peak_date"]
         row = {"peak": str(pk.date()), "trough": str(ep["trough_date"].date()), "drawdown_pct": ep["drawdown_pct"]}
-        for lbl, df in (("rev", rev), ("pit", pit)):
-            row[f"lead_full_0p50_{lbl}"] = lead_time(df["R_full"].astype(float), 0.50, pk)
-            row[f"lead_full_0p70_{lbl}"] = lead_time(df["R_full"].astype(float), 0.70, pk)
-            row[f"lead_lead_0p55_{lbl}"] = lead_time(df["R_lead"].astype(float), 0.55, pk)
+        for v in variants:
+            row[f"lead_full_0p50_{v}"] = lead_time(reg[v]["R_full"].astype(float), 0.50, pk)
+            row[f"lead_full_0p70_{v}"] = lead_time(reg[v]["R_full"].astype(float), 0.70, pk)
+            row[f"lead_lead_0p55_{v}"] = lead_time(reg[v]["R_lead"].astype(float), 0.55, pk)
         leads.append(row)
 
-    d = (pit["R_full"].astype(float) - rev["R_full"].astype(float)).dropna()
-    cov = pd.DataFrame({"rev": rev["n_full_indicators"], "pit": pit["n_full_indicators"]}).groupby(common.year).mean().round(1)
-    series_stats = {
-        "corr_R_full": round(float(pit["R_full"].astype(float).corr(rev["R_full"].astype(float))), 4),
-        "mean_abs_diff_R_full": round(float(d.abs().mean()), 4),
-        "share_days_abs_diff_gt_0p05": round(float((d.abs() > 0.05).mean()), 4),
-        "share_days_abs_diff_gt_0p10": round(float((d.abs() > 0.10).mean()), 4),
-        "n_full_indicators_mean_by_year": {str(y): {"revised": float(r["rev"]), "point_in_time": float(r["pit"])} for y, r in cov.iterrows()},
-    }
+    series_stats = {}
+    for v in variants[1:]:
+        d = (reg[v]["R_full"].astype(float) - reg["rev"]["R_full"].astype(float)).dropna()
+        series_stats[v] = {
+            "corr_R_full_vs_rev": round(float(reg[v]["R_full"].astype(float).corr(reg["rev"]["R_full"].astype(float))), 4),
+            "mean_abs_diff_R_full": round(float(d.abs().mean()), 4),
+            "share_days_abs_diff_gt_0p05": round(float((d.abs() > 0.05).mean()), 4),
+            "share_days_abs_diff_gt_0p10": round(float((d.abs() > 0.10).mean()), 4),
+        }
+    cov = pd.DataFrame({v: reg[v]["n_full_indicators"] for v in variants}).groupby(common.year).mean().round(1)
+    coverage = {str(y): {v: float(r[v]) for v in variants} for y, r in cov.iterrows()}
 
+    metrics = {}
+    for v in variants:
+        p = C2 / f"backtest_metrics_{v}.json"
+        if p.exists():
+            metrics[v] = json.load(open(p))
     dd = {}
+    if "rev" in metrics:
+        spy_dd = metrics["rev"]["spy"]["max_drawdown"]
+        for tid in TIERS:
+            dd[tid] = {"spy_max_dd": spy_dd}
+            for v, m in metrics.items():
+                a = m[tid]
+                dd[tid][v] = {"max_dd": a["max_drawdown"], "dd_reduction_vs_spy": round(1 - a["max_drawdown"] / spy_dd, 4),
+                              "cagr_net": a["cagr"], "sharpe_net": a["sharpe"],
+                              "turnover_one_way_annual": a.get("turnover_one_way_annual")}
+    served = {}
     try:
-        mr = json.load(open(C2 / "backtest_metrics_rev.json")); mp = json.load(open(C2 / "backtest_metrics_pit.json"))
-        spy_dd = mr["spy"]["max_drawdown"]
-        for tid in ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical"):
-            a, b = mr[tid], mp[tid]
-            dd[tid] = {
-                "max_dd_revised": a["max_drawdown"], "max_dd_pit": b["max_drawdown"], "spy_max_dd": spy_dd,
-                "dd_reduction_vs_spy_revised": round(1 - a["max_drawdown"] / spy_dd, 4),
-                "dd_reduction_vs_spy_pit": round(1 - b["max_drawdown"] / spy_dd, 4),
-                "cagr_net_revised": a["cagr"], "cagr_net_pit": b["cagr"],
-                "sharpe_net_revised": a["sharpe"], "sharpe_net_pit": b["sharpe"],
-                "turnover_one_way_annual_revised": a.get("turnover_one_way_annual"),
-                "turnover_one_way_annual_pit": b.get("turnover_one_way_annual"),
-            }
-    except FileNotFoundError as e:
-        dd = {"error": f"backtest override outputs missing: {e}"}
+        sm = json.load(open(DATA / "backtest_metrics.json"))
+        served = {tid: {"max_dd": sm[tid]["max_drawdown"], "dd_reduction_vs_spy": round(1 - sm[tid]["max_drawdown"] / sm["spy"]["max_drawdown"], 4),
+                        "cagr_net": sm[tid]["cagr"], "sharpe_net": sm[tid]["sharpe"]} for tid in TIERS}
+        served["_note"] = "served leaderboard backtest: internal 12-indicator vol-based R_t (no FRED inputs, unrevised) — unaffected by vintages"
+    except Exception:
+        pass
 
     meta = json.load(open(SOURCE / "fred_vintage_meta.json")) if (SOURCE / "fred_vintage_meta.json").exists() else {}
     out = {"cadence": "on_change", "as_of": datetime.now().strftime("%Y-%m-%d"),
-           "window": [str(common.min().date()), str(common.max().date())],
-           "auc_vs_10pct_dd_60d": auc, "lead_times": leads, "series": series_stats,
-           "drawdown_reduction": dd, "vintage_meta": meta.get("series", {}), "method": meta.get("method")}
+           "variants": variants, "window": [str(common.min().date()), str(common.max().date())],
+           "auc_vs_10pct_dd_60d": auc, "lead_times": leads, "series_vs_revised": series_stats,
+           "coverage_n_full_by_year": coverage, "drawdown_reduction": dd, "served_backtest_reference": served,
+           "vintage_meta": meta.get("series", {}), "method": meta.get("method")}
     json.dump(out, open(DATA / "c2_vintage_comparison.json", "w"), indent=2, default=str)
 
-    print("| metric | revised | point-in-time |\n|---|---|---|")
-    print(f"| AUC R_full | {auc['revised']['R_full']} | {auc['point_in_time']['R_full']} |")
-    print(f"| AUC R_lead | {auc['revised']['R_lead']} | {auc['point_in_time']['R_lead']} |")
-    print(f"| corr(R_full) | {series_stats['corr_R_full']} | · |")
-    print(f"| mean abs ΔR_full | {series_stats['mean_abs_diff_R_full']} | · |")
-    print(f"| days abs Δ > 0.05 / > 0.10 | {series_stats['share_days_abs_diff_gt_0p05']*100:.1f}% / {series_stats['share_days_abs_diff_gt_0p10']*100:.1f}% | · |")
-    print("\n| episode peak | DD | lead R_full≥0.50 rev / pit | lead R_full≥0.70 rev / pit | lead R_lead≥0.55 rev / pit |\n|---|---|---|---|---|")
-    for r in leads:
-        print(f"| {r['peak']} | {r['drawdown_pct']:.1f}% | {r['lead_full_0p50_rev']} / {r['lead_full_0p50_pit']} | {r['lead_full_0p70_rev']} / {r['lead_full_0p70_pit']} | {r['lead_lead_0p55_rev']} / {r['lead_lead_0p55_pit']} |")
-    if "error" not in dd:
-        print("\n| tier | max DD rev / pit | DD reduction vs SPY rev / pit | CAGR net rev / pit | Sharpe rev / pit |\n|---|---|---|---|---|")
-        for tid, v in dd.items():
-            print(f"| {tid} | {v['max_dd_revised']*100:.1f}% / {v['max_dd_pit']*100:.1f}% | {v['dd_reduction_vs_spy_revised']*100:.1f}% / {v['dd_reduction_vs_spy_pit']*100:.1f}% | {v['cagr_net_revised']*100:.2f}% / {v['cagr_net_pit']*100:.2f}% | {v['sharpe_net_revised']:.2f} / {v['sharpe_net_pit']:.2f} |")
-    print("\ncoverage (mean n_full_indicators by year, revised vs PIT):")
-    for y, v in series_stats["n_full_indicators_mean_by_year"].items():
-        print(f"  {y}: {v['revised']} vs {v['point_in_time']}")
+    hdr = " | ".join(variants)
+    print(f"| metric | {hdr} |\n|---|{'---|' * len(variants)}")
+    print(f"| AUC R_full | {' | '.join(str(auc[v]['R_full']) for v in variants)} |")
+    print(f"| AUC R_lead | {' | '.join(str(auc[v]['R_lead']) for v in variants)} |")
+    print(f"| corr(R_full) vs rev | · | {' | '.join(str(series_stats[v]['corr_R_full_vs_rev']) for v in variants[1:])} |")
+    print(f"| mean abs ΔR_full vs rev | · | {' | '.join(str(series_stats[v]['mean_abs_diff_R_full']) for v in variants[1:])} |")
+    gt05 = " | ".join("%.1f%%" % (series_stats[v]["share_days_abs_diff_gt_0p05"] * 100) for v in variants[1:])
+    gt10 = " | ".join("%.1f%%" % (series_stats[v]["share_days_abs_diff_gt_0p10"] * 100) for v in variants[1:])
+    print(f"| days abs Δ > 0.05 | · | {gt05} |")
+    print(f"| days abs Δ > 0.10 | · | {gt10} |")
+    for thr, key in (("R_full ≥ 0.50", "lead_full_0p50"), ("R_full ≥ 0.70", "lead_full_0p70"), ("R_lead ≥ 0.55", "lead_lead_0p55")):
+        print(f"\nLead (trading days before peak) — {thr}\n| episode peak | DD | {hdr} |\n|---|---|{'---|' * len(variants)}")
+        for r in leads:
+            print(f"| {r['peak']} | {r['drawdown_pct']:.1f}% | {' | '.join(str(r[f'{key}_{v}']) for v in variants)} |")
+    if dd:
+        print(f"\nMax drawdown / DD reduction vs SPY / CAGR net / Sharpe net\n| tier | {hdr} |\n|---|{'---|' * len(variants)}")
+        for tid in TIERS:
+            cells = []
+            for v in variants:
+                if v in dd[tid]:
+                    a = dd[tid][v]; cells.append(f"{a['max_dd']*100:.1f}% / {a['dd_reduction_vs_spy']*100:.1f}% / {a['cagr_net']*100:.2f}% / {a['sharpe_net']:.2f}")
+                else:
+                    cells.append("·")
+            print(f"| {tid} | {' | '.join(cells)} |")
+    print(f"\nCoverage (mean n_full_indicators by year)\n| year | {hdr} |\n|---|{'---|' * len(variants)}")
+    for y, r in coverage.items():
+        print(f"| {y} | {' | '.join(str(r[v]) for v in variants)} |")
     return 0
 
 
