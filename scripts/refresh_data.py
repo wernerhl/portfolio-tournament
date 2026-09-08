@@ -74,6 +74,147 @@ def download_close(tickers, start, end=None) -> pd.DataFrame:
     return pd.DataFrame(out)
 
 
+# ── SEPT AUDIT [1]: Cboe official-close history, per-index schema ────────
+# The July build used cdn.cboe.com/api/global/delayed_quotes/charts/historical/
+# {sym}.json with "_"-prefixed symbols; it returned nothing for 4 of 5
+# indices. The us_indices/daily_prices/{SYM}_History.csv files serve all
+# five — but their schemas DIFFER per index: VIX/VIX3M/VIX1D carry
+# OPEN,HIGH,LOW,CLOSE; VVIX and SKEW carry a single value column named after
+# the index. One parser, per-file column selection; never assume one pattern
+# fits all. Full history is served, which also lets vol_indicators be
+# overlaid with official closes (backfill source for SEPT AUDIT [3]).
+CBOE_HISTORY_URL = "https://cdn.cboe.com/api/global/us_indices/daily_prices/{sym}_History.csv"
+CBOE_SYMBOLS = {"vix": "VIX", "vix3m": "VIX3M", "vvix": "VVIX", "vix1d": "VIX1D", "skew": "SKEW"}
+YF_SYMBOLS   = {"vix": "^VIX", "vix3m": "^VIX3M", "vvix": "^VVIX", "vix1d": "^VIX1D", "skew": "^SKEW"}
+CANONICAL_REQUIRED = ("vix", "vix3m", "skew")   # write-time assertion set
+CANONICAL_OPTIONAL = ("vvix", "vix1d")           # may be null, WITH a reason
+CANONICAL_REFUSED = False                        # set by main(); drives the exit code
+
+
+def cboe_history(sym: str) -> pd.Series:
+    """Full daily official-close history for one Cboe index (see schema note above)."""
+    import io, urllib.request as _url
+    req = _url.Request(CBOE_HISTORY_URL.format(sym=sym), headers={"User-Agent": "Mozilla/5.0"})
+    with _url.urlopen(req, timeout=20) as r:
+        txt = r.read().decode()
+    df = pd.read_csv(io.StringIO(txt))
+    df.columns = [c.strip().upper() for c in df.columns]
+    col = "CLOSE" if "CLOSE" in df.columns else sym.upper()
+    if col not in df.columns:
+        raise ValueError(f"{sym}_History.csv: no CLOSE or {sym} column (cols={list(df.columns)})")
+    s = pd.Series(pd.to_numeric(df[col], errors="coerce").values,
+                  index=pd.to_datetime(df["DATE"]), name=sym).dropna()
+    return s[~s.index.duplicated(keep="last")].sort_index()
+
+
+def build_canonical_close(vol_df: pd.DataFrame, canon_date: str | None = None) -> bool:
+    """Write data/vol_close_canonical.json for the last completed session and
+    OVERLAY Cboe official history onto vol_df in place (then re-save the
+    parquet). Provider chain per field, recorded:
+        1. Cboe official close (History CSV)         → "cboe"
+        2. yfinance daily bar already in vol_df       → "yfinance"
+        3. direct yfinance pull for that session      → "yfinance_direct"
+        4. nothing                                    → "unavailable" + reason
+    Write-time assertion (SEPT AUDIT [1.3]): on a trading day vix, vix3m and
+    skew must be non-null or the write is REFUSED and the previous record
+    retained (returns False; the orchestrator's validation names the
+    assertion in status.json). vvix/vix1d may be null but carry a reason."""
+    import json as _json
+    from trading_calendar import last_trading_session, is_trading_day
+    canon_date = canon_date or last_trading_session()
+    ts = pd.Timestamp(canon_date)
+
+    series, sources = {}, {}
+    for name, sym in CBOE_SYMBOLS.items():
+        try:
+            series[name] = cboe_history(sym)
+            sources[name] = {"provider": "cboe",
+                             "from": str(series[name].index.min().date()),
+                             "to": str(series[name].index.max().date()),
+                             "n": int(len(series[name]))}
+        except Exception as e:
+            sources[name] = {"provider": "unavailable", "error": f"{type(e).__name__}: {e}"}
+            log(f"  cboe {sym}: {type(e).__name__}: {e}")
+        # Series fallback: a field with NO usable column at all (Cboe failed and
+        # no yfinance column present) gets a direct yfinance history, recorded.
+        if name not in series and (name not in vol_df.columns or vol_df[name].dropna().empty):
+            try:
+                d = yf.download(YF_SYMBOLS[name], start="2005-01-01", progress=False, auto_adjust=True)
+                c = d["Close"]; c = c.iloc[:, 0] if isinstance(c, pd.DataFrame) else c
+                c.index = pd.to_datetime(c.index)
+                vol_df[name] = c.reindex(vol_df.index)
+                sources[name]["series_fallback"] = "yfinance_history"
+            except Exception as e:
+                sources[name]["series_fallback"] = f"failed: {type(e).__name__}"
+
+    # Overlay: every date Cboe serves becomes the value of record.
+    for name, s in series.items():
+        if name not in vol_df.columns:
+            vol_df[name] = np.nan
+        idx = s.index.intersection(vol_df.index)
+        vol_df.loc[idx, name] = s.loc[idx].values
+        extra = s.index.difference(vol_df.index)
+        extra = extra[(extra >= vol_df.index.min()) & (extra <= ts)]
+        for d in extra:
+            vol_df.loc[d, name] = float(s.loc[d])
+    vol_df.sort_index(inplace=True)
+
+    def _yf_direct(name):
+        try:
+            d = yf.download(YF_SYMBOLS[name],
+                            start=(ts - pd.Timedelta(days=7)).strftime("%Y-%m-%d"),
+                            end=(ts + pd.Timedelta(days=1)).strftime("%Y-%m-%d"),
+                            progress=False, auto_adjust=True)
+            if d is None or len(d) == 0:
+                return None
+            c = d["Close"]; c = c.iloc[:, 0] if isinstance(c, pd.DataFrame) else c
+            c.index = pd.to_datetime(c.index)
+            return round(float(c.loc[ts]), 4) if ts in c.index else None
+        except Exception:
+            return None
+
+    canonical = {"date": canon_date, "session_date": canon_date,
+                 "fetched_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                 "provider_chain": "Cboe official close (us_indices/daily_prices/*_History.csv) → yfinance daily bar",
+                 "providers": {}, "null_reasons": {}}
+    for name in CBOE_SYMBOLS:
+        v, prov = None, "unavailable"
+        if name in series and ts in series[name].index:
+            v, prov = round(float(series[name].loc[ts]), 4), "cboe"
+        elif name in vol_df.columns and ts in vol_df.index and pd.notna(vol_df.loc[ts, name]):
+            v, prov = round(float(vol_df.loc[ts, name]), 4), "yfinance"
+        else:
+            v = _yf_direct(name)
+            prov = "yfinance_direct" if v is not None else "unavailable"
+        canonical[name] = v
+        canonical["providers"][name] = prov
+        if v is None:
+            canonical["null_reasons"][name] = (f"no Cboe row for {canon_date} "
+                                               f"(cboe series: {sources.get(name, {}).get('provider')}) "
+                                               f"and no yfinance bar")
+    canonical["spread_spot_3m"] = (round(canonical["vix"] - canonical["vix3m"], 4)
+                                   if canonical["vix"] is not None and canonical["vix3m"] is not None
+                                   else None)
+    canonical["series_sources"] = sources
+    canonical["source"] = ("CANONICAL close for the vol complex — the single close of "
+                           "record. intraday.json is a live snapshot; post-close it "
+                           "reconciles to this file.")
+
+    missing = [f for f in CANONICAL_REQUIRED if canonical[f] is None]
+    if is_trading_day(canon_date) and missing:
+        msg = (f"ASSERTION canonical_vol_close_required_nonnull: {missing} null for "
+               f"session {canon_date} — write refused, previous record retained")
+        log("  " + msg); print(msg, file=sys.stderr, flush=True)
+        vol_df.to_parquet(SOURCE / "vol_indicators.parquet")   # overlay still valid
+        return False
+    with open(SOURCE.parent / "vol_close_canonical.json", "w") as f:
+        _json.dump(canonical, f, indent=2)
+    vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
+    log(f"  saved vol_close_canonical.json ({canon_date}: " +
+        ", ".join(f"{k} {canonical[k]} [{canonical['providers'][k]}]" for k in CBOE_SYMBOLS) + ")")
+    return True
+
+
 def main():
     # ---- PRICES (universe from existing prices_daily) ----
     log("loading existing universe...")
@@ -145,73 +286,20 @@ def main():
     vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
     log(f"  saved vol_indicators.parquet ({vol_df.shape})")
 
-    # ── CANONICAL vol-complex close (JULY AUDIT FIX 3) ─────────────────
+    # ── CANONICAL vol-complex close (JULY AUDIT FIX 3 · SEPT AUDIT [1]) ──
     # ONE fetcher writes data/vol_close_canonical.json once after each close;
     # intraday.json (post-close reconcile) and vol_regime.json READ from it,
-    # and CI asserts equality ≤ 0.01. Provider chain, PINNED and documented:
-    #   1. Cboe official close (cdn.cboe.com delayed-quotes historical JSON) —
-    #      the index owner; our June audit found yfinance disagreeing with
-    #      Cboe's own site by ~0.10 on VIX prior close.
-    #   2. Fallback: yfinance daily bar (what vol_indicators.parquet holds).
-    # The provider actually used is recorded per field.
+    # and CI asserts equality ≤ 0.01. See build_canonical_close() for the
+    # pinned per-field provider chain, the Cboe history overlay onto the
+    # parquet, and the write-time assertion (a refusal retains the previous
+    # record; the orchestrator's validation names the assertion in
+    # status.json and this process exits non-zero).
+    global CANONICAL_REFUSED
     try:
-        import json as _json
-        import urllib.request as _url
-        last_idx = vol_df["vix"].dropna().index[-1]
-        canon_date = str(pd.Timestamp(last_idx).date())
-
-        def _yf(col):
-            if col not in vol_df.columns: return None
-            s = vol_df[col].dropna()
-            return round(float(s.loc[last_idx]), 4) if last_idx in s.index else None
-
-        def _cboe_close(symbol):
-            """Official Cboe close for canon_date via the public CDN."""
-            try:
-                u = f"https://cdn.cboe.com/api/global/delayed_quotes/charts/historical/{symbol}.json"
-                req = _url.Request(u, headers={"User-Agent": "Mozilla/5.0"})
-                with _url.urlopen(req, timeout=10) as r:
-                    j = _json.loads(r.read().decode())
-                for row in reversed(j.get("data", [])):
-                    # rows: [date, open, high, low, close] (date "YYYY-MM-DD")
-                    if str(row[0])[:10] == canon_date:
-                        return round(float(row[4]), 4)
-            except Exception:
-                return None
-            return None
-
-        fields = {"vix": "_VIX", "vix3m": "_VIX3M", "vvix": "_VVIX",
-                  "vix1d": "_VIX1D", "skew": "_SKEW"}
-        canonical = {"date": canon_date,
-                      "fetched_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
-                      "provider_chain": "Cboe official close (cdn.cboe.com) → yfinance daily bar",
-                      "providers": {}}
-        for name, cboe_sym in fields.items():
-            v = _cboe_close(cboe_sym)
-            if v is not None:
-                canonical[name] = v
-                canonical["providers"][name] = "cboe"
-            else:
-                canonical[name] = _yf(name)
-                canonical["providers"][name] = "yfinance" if canonical[name] is not None else "unavailable"
-        canonical["spread_spot_3m"] = (round(canonical["vix"] - canonical["vix3m"], 4)
-                                        if canonical.get("vix") is not None and canonical.get("vix3m") is not None else None)
-        canonical["source"] = ("CANONICAL close for the vol complex — the single close of "
-                                "record. intraday.json is a live snapshot; post-close it "
-                                "reconciles to this file.")
-        with open(SOURCE.parent / "vol_close_canonical.json", "w") as f:
-            _json.dump(canonical, f, indent=2)
-        # If Cboe's official close differs from the yfinance bar, align the
-        # parquet row so every downstream z-score uses the close of record.
-        for name in fields:
-            cv = canonical.get(name)
-            if cv is not None and name in vol_df.columns and canonical["providers"][name] == "cboe":
-                vol_df.loc[last_idx, name] = cv
-        vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
-        log(f"  saved vol_close_canonical.json ({canon_date}: vix {canonical['vix']} "
-            f"[{canonical['providers']['vix']}], vix3m {canonical['vix3m']}, skew {canonical['skew']})")
+        CANONICAL_REFUSED = not build_canonical_close(vol_df)
     except Exception as e:
-        log(f"  warn vol_close_canonical: {e}")
+        log(f"  warn vol_close_canonical: {type(e).__name__}: {e}")
+        CANONICAL_REFUSED = True
 
     # vol_derived
     log("computing vol_derived...")
@@ -356,4 +444,13 @@ def main():
 
 
 if __name__ == "__main__":
+    if "--canonical-only" in sys.argv:
+        # SEPT AUDIT [1]: regenerate the canonical close + Cboe overlay from
+        # the existing parquet without a full refresh (no FRED key needed).
+        # Optional --date=YYYY-MM-DD targets a specific completed session.
+        _v = pd.read_parquet(SOURCE / "vol_indicators.parquet")
+        _v.index = pd.to_datetime(_v.index)
+        _date = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--date=")), None)
+        sys.exit(0 if build_canonical_close(_v, _date) else 1)
     main()
+    sys.exit(1 if CANONICAL_REFUSED else 0)

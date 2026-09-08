@@ -167,6 +167,23 @@ def validate_outputs() -> None:
         vr = json.load(open(DATA / "vol_regime.json"))
         check_fresh("vol_regime.json", vr.get("as_of"))
 
+        # SEPT AUDIT [1.3]: the canonical vol close must be the last session's
+        # and carry the required fields. refresh_data refuses the write when
+        # they're null (previous record retained); this names the assertion
+        # in status.json so the failure is legible, not "exit 1".
+        cj = json.load(open(DATA / "vol_close_canonical.json"))
+        if cj.get("date") != session:
+            errors.append(f"canonical_vol_close_stale: canonical date {cj.get('date')} "
+                          f"!= last session {session}")
+        _miss = [f for f in ("vix", "vix3m", "skew") if cj.get(f) is None]
+        if _miss:
+            errors.append(f"canonical_vol_close_required_nonnull: {_miss} null for "
+                          f"session {cj.get('date')}")
+        for f in ("vvix", "vix1d"):
+            if cj.get(f) is None and not (cj.get("null_reasons") or {}).get(f):
+                errors.append(f"canonical_vol_close_optional_needs_reason: {f} null "
+                              f"without a recorded reason")
+
         # ── THESIS layer validations ──────────────────────────────────
         td_p = DATA / "thesis_daily.json"
         if td_p.exists():
