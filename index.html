@@ -1444,6 +1444,8 @@ function renderRegimeCommandCenter(R){
         ${gaugeSVG(R_full)}
         <div class="gauge-lbl" style="color:${lblColor}">${lbl}</div>
         <div class="gauge-rt">${v4Last ? `P(≥5% / 40d) = <span class="r-num">${(p5_40*100).toFixed(0)}%</span>${asOfBadge(v4AsOfCC)}` : `R<sub>full</sub> = <span class="r-num">${rDisp}</span>`}</div>
+        ${v4Last && v4Last.raw_score != null && !isNaN(v4Last.raw_score) ? `<div style="font:500 10.5px var(--m);color:var(--t3);margin-top:2px">raw score <span style="color:var(--t1)">${(+v4Last.raw_score).toFixed(3)}</span> <span style="color:var(--t5)">(pre-calibration)</span></div>
+        <div style="font:italic 400 10px var(--s);color:var(--t4);margin-top:1px">calibrated probability moves in steps; the raw score moves continuously.</div>` : ``}
         ${scoreRow}
         <div class="verdict">${verdict}</div>
         ${v2Foot}

@@ -82,12 +82,30 @@ def main():
         new_rows[out_col] = iso_predict(means, knots)
     block = pd.DataFrame(new_rows, index=[d.strftime("%Y-%m-%d") for d in recompute_dates])
     block["graduated_regime"] = [graduated_regime(p, th) for p in block["p_5_40_calibrated"]]
+    # SEPT AUDIT [7]: the raw (pre-calibration) score — the isotonic input,
+    # i.e. the equal-weight mean of the risk scores — persisted alongside the
+    # stepped calibrated probability so the dashboard can show both.
+    block["raw_score"] = means
     block.index.name = "date"
 
     n_appended = len([d for d in block.index if d not in existing.index])
-    # Align columns to existing CSV (model-winner cols left NaN on rescored rows)
-    combined = pd.concat([kept, block.reindex(columns=kept.columns if len(kept) else block.columns)])
+    # SEPT AUDIT [1.4]/[7]: the model-winner columns (p_7_60_logistic_pc and
+    # the p_15_* elastic_net / logistic_pc) are produced ONLY by the monthly
+    # regime_v4_ml run. This trailing-window rescore used to blank them on
+    # the last 5 rows every night, so they were ALWAYS empty for the latest
+    # sessions — silently, and unrelated to any feed. Preserve the monthly
+    # values instead; rows the monthly never covered stay NaN (honest), and
+    # v4_delta_attribution.json records model_cols_scored_at (their vintage).
+    all_cols = list(dict.fromkeys(list(existing.columns) + list(block.columns)))
+    block = block.reindex(columns=all_cols)
+    for c in all_cols:
+        if c not in new_rows and c not in ("graduated_regime", "raw_score") and c in existing.columns:
+            block[c] = existing[c].reindex(block.index)
+    combined = pd.concat([kept.reindex(columns=all_cols), block])
     combined.index.name = "date"
+    # Backfill raw_score for every historical row: the equal-weight mean is
+    # model-state independent and the risk parquet holds the full history.
+    combined["raw_score"] = row_mean.reindex(pd.to_datetime(combined.index)).values
     combined.to_csv(csv_p)
 
     # ── JULY AUDIT FIX 4a: delta attribution for the production probability ──
@@ -115,9 +133,25 @@ def main():
             contribs.sort(key=lambda c: -abs(c["contribution_pp"]))
             explained = sum(c["contribution_pp"] for c in contribs)
             residual = round((p_t - p_y) * 100 - explained, 2)
+            # SEPT AUDIT [1.4]/[7]: vintage of the monthly model-winner columns
+            model_cols = [c for c in combined.columns
+                          if c.endswith(("_logistic_pc", "_elastic_net"))]
+            _mc_last = None
+            for c in model_cols:
+                nn = combined[c].dropna()
+                if len(nn):
+                    _mc_last = max(_mc_last or "", str(nn.index.max()))
             attr = {
                 "as_of": d_t.strftime("%Y-%m-%d"),
+                "session_date": d_t.strftime("%Y-%m-%d"),
+                "cadence": "daily",
                 "prev":  d_y.strftime("%Y-%m-%d"),
+                "raw_score_today": round(float(x_t.mean()), 4),
+                "raw_score_prev":  round(float(x_y.mean()), 4),
+                "model_cols_scored_at": _mc_last,
+                "model_cols_note": ("p_*_logistic_pc / p_*_elastic_net are produced only by the "
+                                    "monthly regime_v4_ml run; the nightly rescore preserves "
+                                    "them (it used to blank the last 5 rows) — they advance monthly"),
                 "p_today": round(p_t, 4), "p_prev": round(p_y, 4),
                 "delta_pp": round((p_t - p_y) * 100, 2),
                 "top3": contribs[:3],
