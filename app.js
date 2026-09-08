@@ -2549,6 +2549,20 @@ function renderC3PathChart(){
   const m = document.getElementById("c3-meta");
   if (m) m.textContent = `drawdown paths from the C3 results (tier-4 overlay, ${p.window[0]} → ${p.window[1]}, net of costs, ${p.sampling}) · max drawdown: regime ${(p.min.regime * 100).toFixed(1)}% · ${p.best_rule_label} ${(p.min.best_rule * 100).toFixed(1)}% · buy-and-hold ${(p.min.buy_and_hold * 100).toFixed(1)}%`;
 }
+// ── P3.3 Style-factor exposure strip (per-name 252-session regression, weight-averaged) ──
+function renderFactorStrip(key){
+  const f = S.factors; const p = f && f.portfolios && f.portfolios[key];
+  if (!p || !p.exposure) return `<div class="fx-strip"><div class="fx-head mono t1 c-3">FACTOR EXPOSURE</div><div class="mono t1 c-3">${f ? "no exposure for this portfolio" : "factor_exposure.json not published"}</div></div>`;
+  const rows = [["market", "MARKET"], ["size", "SIZE"], ["value", "VALUE"], ["momentum", "MOMENTUM"]];
+  const maxAbs = Math.max(1, ...rows.map(([k]) => Math.abs(p.exposure[k] || 0)));
+  const sg = v => (v >= 0 ? "+" : "") + v.toFixed(2);
+  return `<div class="fx-strip" title="${(f.method || "").replace(/"/g, "'")}">
+    <div class="fx-head mono t1 c-3">FACTOR EXPOSURE · <span class="c-3">${f.label || "estimated, 252-session regression"}</span></div>
+    ${rows.map(([k, l]) => { const v = p.exposure[k] || 0; const w = Math.abs(v) / maxAbs * 50;
+      return `<div class="fx-row"><span class="fx-k mono t1 c-2">${l}</span><span class="fx-bar"><span class="fx-zero"></span><span class="fx-fill ${v >= 0 ? "bg-info" : "bg-warn"}" style="left:${(v >= 0 ? 50 : 50 - w).toFixed(1)}%;width:${w.toFixed(1)}%"></span></span><span class="fx-v mono t1 c-1">${sg(v)}</span></div>`; }).join("")}
+    <div class="mono t1 c-3 mt1">proxies: SPY · IWM−SPY · IWD−IWF · MTUM−SPY · weight-averaged betas over ${(p.covered_weight * 100).toFixed(0)}% of equity, ${p.n_names} names${p.excluded && p.excluded.length ? " · excluded " + p.excluded.join(", ") : ""} · session ${f.session_date}</div>
+  </div>`;
+}
 function renderBookPanel(){ return ""; }          // P3.2
 function renderActionLog(){ return ""; }          // P4.1
 function renderCalibrationPanel(){ return ""; }   // P4.2
@@ -2934,6 +2948,8 @@ async function init(){
   try { S.comparators = await loadJSON("data/comparators.json"); } catch (e) { S.comparators = null; }     // P2.2 second opinion
   try { S.c3Paths = await loadJSON("data/c3_drawdown_paths.json"); } catch (e) { S.c3Paths = null; }       // P2.2 C3 drawdown paths
   try { S.provLedger = await loadJSON("data/provisional_ledger.json"); } catch (e) { S.provLedger = null; } // P2.3 provisional memberships
+  try { S.factors = await loadJSON("data/factor_exposure.json"); } catch (e) { S.factors = null; }         // P3.3 style-factor exposure
+  try { S.holdingsFile = await loadJSON("data/holdings.json"); } catch (e) { S.holdingsFile = null; }      // P3.1 the only holdings source
   S.intraday   = await loadJSON("data/intraday.json");
   S.volRegime  = await loadJSON("data/vol_regime.json");
   S.condScores = await loadJSON("data/regime_conditional_scores.json");

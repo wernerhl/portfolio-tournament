@@ -9,7 +9,7 @@ Updates in place in data/source/:
   fred_indicators.parquet   — refreshes the 22 FRED series
   vol_indicators.parquet    — refreshes 12 vol/macro Yahoo series
   vol_derived.parquet       — recomputed from vol_indicators
-  sector_etfs.parquet       — refreshes 17 sector/style ETFs
+  sector_etfs.parquet       — refreshes 22 sector/style ETFs (incl. IWD/IWF/MTUM factor proxies)
 
 Usage:
   export FRED_API_KEY=...
@@ -342,7 +342,8 @@ def main():
     # ---- SECTOR ETFs ----
     log("fetching sector ETFs...")
     sector_tickers = ["XLB","XLC","XLE","XLF","XLI","XLK","XLP","XLRE","XLU","XLV","XLY","IGV","GLD",
-                      "SPY","QQQ","DIA","IWM","SMH","SOXX"]
+                      "SPY","QQQ","DIA","IWM","SMH","SOXX",
+                      "IWD","IWF","MTUM"]   # order 3.3 style-factor proxies (value IWD−IWF, momentum MTUM−SPY)
     sect_data = {}
     for tk in sector_tickers:
         try:

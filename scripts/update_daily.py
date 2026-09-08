@@ -30,6 +30,7 @@ scripts = [
                                    # bit-compatible isotonic via saved knots;
                                    # full regime_v4_ml.py recalibrates monthly.
     "compute_nav.py",
+    "compute_factor_exposure.py",  # dashboard order 9-Sept P3.3: per-name 252-session factor betas → book + tiers
     "build_ticker_data.py",
     "build_indicator_series.py",
     "compute_signals.py",
@@ -356,6 +357,7 @@ SERVED_CADENCE = {
     "v4_delta_attribution.json": "daily", "regime_conditional_scores.json": "daily",
     "intraday.json": "daily", "vol_regime.json": "daily", "vol_close_canonical.json": "daily",
     "comparators.json": "daily",                                               # P2.2 (dashboard order 9-Sept)
+    "factor_exposure.json": "daily",                                           # P3.3 (dashboard order 9-Sept)
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

@@ -791,3 +791,11 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 .tm-t{font:600 var(--t2) var(--mono);fill:var(--text-1)} .tm-s{font:400 var(--t1) var(--mono);fill:var(--text-1);opacity:.85}
 .tm-lg{display:inline-block;width:var(--s2);height:var(--s2);border-radius:2px;margin:0 var(--s1) 0 var(--s2);vertical-align:middle}
 .tm-lg.dv-2{background:var(--dv-2)} .tm-lg.dv-1{background:var(--dv-1)} .tm-lg.dv0{background:var(--dv0)} .tm-lg.dv1{background:var(--dv1)} .tm-lg.dv2{background:var(--dv2)}
+/* ── P3.3 Factor strip ───────────────────────────────────────────────── */
+.fx-strip{display:flex;flex-direction:column;gap:var(--s1)}
+.fx-head{letter-spacing:.12em;margin-bottom:var(--s1)}
+.fx-row{display:grid;grid-template-columns:76px 1fr 48px;gap:var(--s2);align-items:center}
+.fx-bar{position:relative;height:var(--s2);background:var(--surface-2);border-radius:var(--radius-1);overflow:hidden}
+.fx-zero{position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--hairline-hi)}
+.fx-fill{position:absolute;top:0;height:100%;border-radius:var(--radius-1);transition:width var(--tween),left var(--tween)}
+.fx-v{text-align:right}

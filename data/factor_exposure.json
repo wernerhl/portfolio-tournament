@@ -1,0 +1,1283 @@
+{
+  "cadence": "daily",
+  "session_date": "2026-09-04",
+  "as_of": "2026-09-04",
+  "computed_at": "2026-09-08T15:10:11-04:00",
+  "method": "per-name OLS, 252 sessions, daily simple returns; factors: market SPY, size IWM\u2212SPY, value IWD\u2212IWF, momentum MTUM\u2212SPY; portfolio exposure = weight-averaged beta (equity weights, names with betas only)",
+  "label": "estimated, 252-session regression",
+  "window_sessions": 252,
+  "min_obs": 120,
+  "proxies": {
+    "market": "SPY",
+    "size": "IWM \u2212 SPY",
+    "value": "IWD \u2212 IWF",
+    "momentum": "MTUM \u2212 SPY"
+  },
+  "proxy_source": "data/source/sector_etfs.parquet (yfinance adjusted close: spy, iwm, iwd, iwf, mtum)",
+  "note": "Per-name regressions only; no portfolio-level regression on live tournament history (too few sessions). Sector is not in the thesis registry (no sector field there); it is taken per name from the first of ticker_indicators.json, fundamentals_snapshot.parquet, scored_universe.csv that has one (sector_source), null if none. A name with 120 \u2264 n_obs < 252 is 'partial_history' (regressed on what exists); n_obs < 120 is 'insufficient_history' (no betas, excluded from portfolio averages).",
+  "universe": [
+    "AFL",
+    "AMP",
+    "AON",
+    "APP",
+    "ARM",
+    "AVGO",
+    "AXP",
+    "BKNG",
+    "BX",
+    "CEG",
+    "CRDO",
+    "ETN",
+    "EXPE",
+    "FISV",
+    "FSLR",
+    "GOOG",
+    "GOOGL",
+    "IDXX",
+    "ISRG",
+    "KLAC",
+    "LLY",
+    "LVS",
+    "META",
+    "MPWR",
+    "MS",
+    "MSFT",
+    "MU",
+    "NTAP",
+    "NVDA",
+    "NXPI",
+    "POWL",
+    "PYPL",
+    "RCL",
+    "RL",
+    "SNA",
+    "SNDK",
+    "TPR",
+    "TROW",
+    "TSM",
+    "TXN",
+    "UAL",
+    "VRT",
+    "VST"
+  ],
+  "status_counts": {
+    "ok": 42,
+    "partial_history": 1,
+    "insufficient_history": 0
+  },
+  "names": {
+    "AFL": {
+      "ticker": "AFL",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.2511,
+        "size": -0.08,
+        "value": 0.4879,
+        "momentum": -0.1997
+      },
+      "intercept": -0.0,
+      "intercept_bps_daily": -0.0755,
+      "r2": 0.2007,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "AMP": {
+      "ticker": "AMP",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.2426,
+        "size": 0.2112,
+        "value": 0.4666,
+        "momentum": -0.3415
+      },
+      "intercept": -0.0006,
+      "intercept_bps_daily": -6.4933,
+      "r2": 0.3074,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-09-15",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "AON": {
+      "ticker": "AON",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.3425,
+        "size": 0.0954,
+        "value": 0.3414,
+        "momentum": -0.7078
+      },
+      "intercept": -0.0007,
+      "intercept_bps_daily": -7.104,
+      "r2": 0.2577,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "APP": {
+      "ticker": "APP",
+      "sector": "Communication Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.9628,
+        "size": 0.9995,
+        "value": -1.9632,
+        "momentum": -0.3094
+      },
+      "intercept": -0.0003,
+      "intercept_bps_daily": -3.309,
+      "r2": 0.2245,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2021-04-15",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "ARM": {
+      "ticker": "ARM",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.9762,
+        "size": 0.638,
+        "value": -0.7617,
+        "momentum": 1.3066
+      },
+      "intercept": 0.002,
+      "intercept_bps_daily": 20.3917,
+      "r2": 0.426,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2023-09-14",
+      "in_portfolios": [
+        "3_aggressive"
+      ]
+    },
+    "AVGO": {
+      "ticker": "AVGO",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.1591,
+        "size": -0.0749,
+        "value": -0.9762,
+        "momentum": 0.7288
+      },
+      "intercept": 0.0006,
+      "intercept_bps_daily": 6.389,
+      "r2": 0.4776,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2009-08-06",
+      "in_portfolios": [
+        "book",
+        "2_balanced",
+        "3_aggressive",
+        "4_tactical",
+        "5_werner"
+      ]
+    },
+    "AXP": {
+      "ticker": "AXP",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.1736,
+        "size": 0.5398,
+        "value": 0.1742,
+        "momentum": -0.3778
+      },
+      "intercept": -0.0009,
+      "intercept_bps_daily": -9.0111,
+      "r2": 0.3297,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "BKNG": {
+      "ticker": "BKNG",
+      "sector": "Consumer Cyclical",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.3731,
+        "size": 0.0017,
+        "value": 0.1497,
+        "momentum": -0.8147
+      },
+      "intercept": -0.0012,
+      "intercept_bps_daily": -11.8906,
+      "r2": 0.2337,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced",
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "BX": {
+      "ticker": "BX",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.58,
+        "size": 0.7778,
+        "value": 0.2285,
+        "momentum": -0.4786
+      },
+      "intercept": -0.0019,
+      "intercept_bps_daily": -18.8908,
+      "r2": 0.3313,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2007-06-22",
+      "in_portfolios": [
+        "3_aggressive"
+      ]
+    },
+    "CEG": {
+      "ticker": "CEG",
+      "sector": "Utilities",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.7905,
+        "size": 0.5309,
+        "value": -0.2649,
+        "momentum": 0.5064
+      },
+      "intercept": -0.0004,
+      "intercept_bps_daily": -3.7584,
+      "r2": 0.188,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2022-01-19",
+      "in_portfolios": [
+        "book",
+        "5_werner"
+      ]
+    },
+    "CRDO": {
+      "ticker": "CRDO",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.6296,
+        "size": 1.3487,
+        "value": -2.2537,
+        "momentum": 1.8275
+      },
+      "intercept": 0.0028,
+      "intercept_bps_daily": 28.2493,
+      "r2": 0.4211,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2022-01-27",
+      "in_portfolios": [
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "ETN": {
+      "ticker": "ETN",
+      "sector": "Industrials",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.2774,
+        "size": 0.1432,
+        "value": 0.2305,
+        "momentum": 1.017
+      },
+      "intercept": -0.0004,
+      "intercept_bps_daily": -4.4098,
+      "r2": 0.5459,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "book",
+        "5_werner"
+      ]
+    },
+    "EXPE": {
+      "ticker": "EXPE",
+      "sector": "Consumer Cyclical",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.4401,
+        "size": 0.4086,
+        "value": 0.0121,
+        "momentum": -0.8949
+      },
+      "intercept": 0.0008,
+      "intercept_bps_daily": 8.2093,
+      "r2": 0.1593,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-07-21",
+      "in_portfolios": [
+        "3_aggressive"
+      ]
+    },
+    "FISV": {
+      "ticker": "FISV",
+      "sector": null,
+      "sector_source": null,
+      "n_obs": 250,
+      "window_sessions": 252,
+      "status": "partial_history",
+      "betas": {
+        "market": 1.2552,
+        "size": 0.5596,
+        "value": 0.2427,
+        "momentum": -1.053
+      },
+      "intercept": -0.004,
+      "intercept_bps_daily": -39.6978,
+      "r2": 0.1275,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "missing_sessions": 2,
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "FSLR": {
+      "ticker": "FSLR",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.643,
+        "size": 0.3472,
+        "value": 0.2832,
+        "momentum": 0.3736
+      },
+      "intercept": -0.001,
+      "intercept_bps_daily": -10.0098,
+      "r2": 0.2096,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2006-11-17",
+      "in_portfolios": [
+        "2_balanced",
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "GOOG": {
+      "ticker": "GOOG",
+      "sector": "Communication Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.5757,
+        "size": -0.2892,
+        "value": -0.0422,
+        "momentum": -0.3532
+      },
+      "intercept": 0.0007,
+      "intercept_bps_daily": 6.5393,
+      "r2": 0.3612,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "book",
+        "2_balanced",
+        "3_aggressive",
+        "5_werner"
+      ]
+    },
+    "GOOGL": {
+      "ticker": "GOOGL",
+      "sector": "Communication Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.6106,
+        "size": -0.3034,
+        "value": -0.0406,
+        "momentum": -0.3703
+      },
+      "intercept": 0.0007,
+      "intercept_bps_daily": 6.8403,
+      "r2": 0.3654,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "IDXX": {
+      "ticker": "IDXX",
+      "sector": "Healthcare",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.4276,
+        "size": 0.257,
+        "value": 0.3812,
+        "momentum": -0.6187
+      },
+      "intercept": -0.0017,
+      "intercept_bps_daily": -17.1096,
+      "r2": 0.2827,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "ISRG": {
+      "ticker": "ISRG",
+      "sector": "Healthcare",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.5038,
+        "size": -0.0868,
+        "value": 0.2677,
+        "momentum": -0.6988
+      },
+      "intercept": -0.0017,
+      "intercept_bps_daily": -16.7005,
+      "r2": 0.2315,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "KLAC": {
+      "ticker": "KLAC",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.9316,
+        "size": 0.8252,
+        "value": -1.0462,
+        "momentum": 1.4547
+      },
+      "intercept": -0.0007,
+      "intercept_bps_daily": -7.0971,
+      "r2": 0.1722,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "LLY": {
+      "ticker": "LLY",
+      "sector": "Healthcare",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.7524,
+        "size": 0.2328,
+        "value": 0.3444,
+        "momentum": -0.4966
+      },
+      "intercept": 0.0013,
+      "intercept_bps_daily": 13.0587,
+      "r2": 0.0986,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres",
+        "2_balanced",
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "LVS": {
+      "ticker": "LVS",
+      "sector": "Consumer Cyclical",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.7405,
+        "size": 0.3299,
+        "value": -0.0058,
+        "momentum": -0.3512
+      },
+      "intercept": -0.0011,
+      "intercept_bps_daily": -10.931,
+      "r2": 0.0822,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "META": {
+      "ticker": "META",
+      "sector": "Communication Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.5278,
+        "size": -0.2202,
+        "value": -0.2793,
+        "momentum": -0.4364
+      },
+      "intercept": -0.0013,
+      "intercept_bps_daily": -12.6721,
+      "r2": 0.2639,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2012-05-18",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "MPWR": {
+      "ticker": "MPWR",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.7687,
+        "size": 0.4631,
+        "value": 0.1966,
+        "momentum": 1.3013
+      },
+      "intercept": 0.0001,
+      "intercept_bps_daily": 1.0993,
+      "r2": 0.547,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "MS": {
+      "ticker": "MS",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.2966,
+        "size": 0.3699,
+        "value": 0.0738,
+        "momentum": 0.1107
+      },
+      "intercept": 0.0005,
+      "intercept_bps_daily": 5.4319,
+      "r2": 0.4336,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "3_aggressive"
+      ]
+    },
+    "MSFT": {
+      "ticker": "MSFT",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.8237,
+        "size": -0.1406,
+        "value": -0.9249,
+        "momentum": -0.6687
+      },
+      "intercept": 0.0003,
+      "intercept_bps_daily": 3.1974,
+      "r2": 0.3765,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "book",
+        "5_werner"
+      ]
+    },
+    "MU": {
+      "ticker": "MU",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.8827,
+        "size": -0.0942,
+        "value": 0.1561,
+        "momentum": 2.7826
+      },
+      "intercept": 0.0074,
+      "intercept_bps_daily": 74.0849,
+      "r2": 0.6035,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "NTAP": {
+      "ticker": "NTAP",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.2687,
+        "size": 0.0454,
+        "value": 0.0074,
+        "momentum": 0.0267
+      },
+      "intercept": 0.0012,
+      "intercept_bps_daily": 12.0031,
+      "r2": 0.1466,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "NVDA": {
+      "ticker": "NVDA",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.173,
+        "size": -0.0674,
+        "value": -1.1883,
+        "momentum": 0.1109
+      },
+      "intercept": 0.0013,
+      "intercept_bps_daily": 12.7962,
+      "r2": 0.591,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "book",
+        "2_balanced",
+        "3_aggressive",
+        "5_werner"
+      ]
+    },
+    "NXPI": {
+      "ticker": "NXPI",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.6177,
+        "size": 0.2858,
+        "value": 0.5699,
+        "momentum": 0.7705
+      },
+      "intercept": -0.0013,
+      "intercept_bps_daily": -13.0122,
+      "r2": 0.3143,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2010-08-06",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "POWL": {
+      "ticker": "POWL",
+      "sector": "Industrials",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.5542,
+        "size": 0.9317,
+        "value": 0.1303,
+        "momentum": 1.3252
+      },
+      "intercept": 0.0017,
+      "intercept_bps_daily": 17.1267,
+      "r2": 0.4095,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "PYPL": {
+      "ticker": "PYPL",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.3862,
+        "size": 0.4495,
+        "value": -0.3105,
+        "momentum": -0.9757
+      },
+      "intercept": -0.0012,
+      "intercept_bps_daily": -11.527,
+      "r2": 0.2292,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2015-07-06",
+      "in_portfolios": [
+        "1_cap_pres",
+        "2_balanced"
+      ]
+    },
+    "RCL": {
+      "ticker": "RCL",
+      "sector": "Consumer Cyclical",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.9483,
+        "size": 0.6235,
+        "value": 0.6903,
+        "momentum": -0.0879
+      },
+      "intercept": -0.0028,
+      "intercept_bps_daily": -27.6168,
+      "r2": 0.2749,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "RL": {
+      "ticker": "RL",
+      "sector": "Consumer Cyclical",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.5321,
+        "size": 0.5216,
+        "value": 0.5233,
+        "momentum": -0.0932
+      },
+      "intercept": -0.0009,
+      "intercept_bps_daily": -9.4822,
+      "r2": 0.31,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "SNA": {
+      "ticker": "SNA",
+      "sector": "Industrials",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.9361,
+        "size": 0.281,
+        "value": 0.6497,
+        "momentum": -0.035
+      },
+      "intercept": -0.0004,
+      "intercept_bps_daily": -4.2313,
+      "r2": 0.3961,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "SNDK": {
+      "ticker": "SNDK",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 2.0904,
+        "size": 0.7997,
+        "value": -0.2845,
+        "momentum": 3.2319
+      },
+      "intercept": 0.0134,
+      "intercept_bps_daily": 134.2447,
+      "r2": 0.4593,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2025-02-13",
+      "in_portfolios": [
+        "3_aggressive",
+        "4_tactical"
+      ]
+    },
+    "TPR": {
+      "ticker": "TPR",
+      "sector": "Consumer Cyclical",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.4779,
+        "size": 0.608,
+        "value": 0.6697,
+        "momentum": -0.078
+      },
+      "intercept": -0.0007,
+      "intercept_bps_daily": -7.0187,
+      "r2": 0.2297,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced"
+      ]
+    },
+    "TROW": {
+      "ticker": "TROW",
+      "sector": "Financial Services",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.0053,
+        "size": 0.5756,
+        "value": 0.132,
+        "momentum": -0.2645
+      },
+      "intercept": -0.0007,
+      "intercept_bps_daily": -6.9798,
+      "r2": 0.3299,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "TSM": {
+      "ticker": "TSM",
+      "sector": null,
+      "sector_source": null,
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.3268,
+        "size": 0.3437,
+        "value": -0.6306,
+        "momentum": 0.7125
+      },
+      "intercept": 0.0019,
+      "intercept_bps_daily": 18.5237,
+      "r2": 0.6251,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2024-08-07",
+      "in_portfolios": [
+        "book",
+        "5_werner"
+      ]
+    },
+    "TXN": {
+      "ticker": "TXN",
+      "sector": "Technology",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.4576,
+        "size": -0.0667,
+        "value": 0.909,
+        "momentum": 0.9437
+      },
+      "intercept": -0.0002,
+      "intercept_bps_daily": -1.9759,
+      "r2": 0.3681,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2005-01-03",
+      "in_portfolios": [
+        "2_balanced",
+        "3_aggressive"
+      ]
+    },
+    "UAL": {
+      "ticker": "UAL",
+      "sector": "Industrials",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.9178,
+        "size": 1.4334,
+        "value": 0.1071,
+        "momentum": -0.0472
+      },
+      "intercept": -0.0012,
+      "intercept_bps_daily": -12.0634,
+      "r2": 0.4288,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2006-02-06",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    },
+    "VRT": {
+      "ticker": "VRT",
+      "sector": "Industrials",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 1.6907,
+        "size": 0.2392,
+        "value": -0.2456,
+        "momentum": 1.5021
+      },
+      "intercept": 0.0024,
+      "intercept_bps_daily": 24.3017,
+      "r2": 0.4502,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2018-08-02",
+      "in_portfolios": [
+        "book",
+        "5_werner"
+      ]
+    },
+    "VST": {
+      "ticker": "VST",
+      "sector": "Utilities",
+      "sector_source": "ticker_indicators.json",
+      "n_obs": 252,
+      "window_sessions": 252,
+      "status": "ok",
+      "betas": {
+        "market": 0.8085,
+        "size": 0.6108,
+        "value": -0.2337,
+        "momentum": 0.7334
+      },
+      "intercept": -0.0013,
+      "intercept_bps_daily": -12.6753,
+      "r2": 0.2408,
+      "window_start": "2025-09-05",
+      "window_end": "2026-09-04",
+      "history_start": "2016-10-05",
+      "in_portfolios": [
+        "1_cap_pres"
+      ]
+    }
+  },
+  "portfolios": {
+    "book": {
+      "exposure": {
+        "market": 1.1845,
+        "size": -0.027,
+        "value": -0.6982,
+        "momentum": 0.1603
+      },
+      "covered_weight": 1.0,
+      "excluded": [],
+      "n_names": 8,
+      "n_covered": 8,
+      "equity_value": 109661.75,
+      "weights": {
+        "MSFT": 0.2278,
+        "NVDA": 0.2101,
+        "AVGO": 0.1632,
+        "GOOG": 0.1529,
+        "TSM": 0.0978,
+        "ETN": 0.0562,
+        "VRT": 0.0512,
+        "CEG": 0.0409
+      },
+      "source": "data/holdings.json",
+      "priced_at": {
+        "AVGO": "2026-09-04",
+        "CEG": "2026-09-04",
+        "ETN": "2026-09-04",
+        "GOOG": "2026-09-04",
+        "MSFT": "2026-09-04",
+        "NVDA": "2026-09-04",
+        "TSM": "2026-09-04",
+        "VRT": "2026-09-04"
+      },
+      "unpriced": []
+    },
+    "1_cap_pres": {
+      "exposure": {
+        "market": 1.0993,
+        "size": 0.4184,
+        "value": 0.2246,
+        "momentum": -0.1824
+      },
+      "covered_weight": 1.0,
+      "excluded": [],
+      "n_names": 12,
+      "n_covered": 12,
+      "equity_value": 60161.56,
+      "weights": {
+        "VST": 0.0882,
+        "UAL": 0.0868,
+        "POWL": 0.0859,
+        "PYPL": 0.0856,
+        "AMP": 0.0843,
+        "AFL": 0.0824,
+        "TROW": 0.0822,
+        "SNA": 0.082,
+        "ISRG": 0.081,
+        "LLY": 0.0808,
+        "AON": 0.0808,
+        "IDXX": 0.0801
+      },
+      "source": "tournament.json:history[-1] (2026-09-04)"
+    },
+    "2_balanced": {
+      "exposure": {
+        "market": 1.3523,
+        "size": 0.2899,
+        "value": -0.0619,
+        "momentum": -0.0037
+      },
+      "covered_weight": 1.0,
+      "excluded": [],
+      "n_names": 20,
+      "n_covered": 20,
+      "equity_value": 74428.61,
+      "weights": {
+        "KLAC": 0.0533,
+        "META": 0.0523,
+        "NVDA": 0.0519,
+        "PYPL": 0.0514,
+        "RL": 0.0505,
+        "APP": 0.0504,
+        "FISV": 0.0503,
+        "NXPI": 0.0502,
+        "FSLR": 0.0502,
+        "TXN": 0.05,
+        "LVS": 0.0496,
+        "GOOGL": 0.0495,
+        "GOOG": 0.0495,
+        "AXP": 0.0493,
+        "TPR": 0.049,
+        "MPWR": 0.0489,
+        "RCL": 0.0489,
+        "LLY": 0.0486,
+        "BKNG": 0.0484,
+        "AVGO": 0.0475
+      },
+      "source": "tournament.json:history[-1] (2026-09-04)"
+    },
+    "3_aggressive": {
+      "exposure": {
+        "market": 1.4402,
+        "size": 0.2821,
+        "value": -0.2005,
+        "momentum": 0.5857
+      },
+      "covered_weight": 1.0,
+      "excluded": [],
+      "n_names": 15,
+      "n_covered": 15,
+      "equity_value": 88601.88,
+      "weights": {
+        "SNDK": 0.0745,
+        "MU": 0.0716,
+        "ARM": 0.0706,
+        "NVDA": 0.0697,
+        "MS": 0.0679,
+        "FSLR": 0.0674,
+        "TXN": 0.0671,
+        "NTAP": 0.0667,
+        "GOOG": 0.0664,
+        "BX": 0.0655,
+        "LLY": 0.0652,
+        "BKNG": 0.065,
+        "EXPE": 0.0644,
+        "AVGO": 0.0637,
+        "CRDO": 0.0543
+      },
+      "source": "tournament.json:history[-1] (2026-09-04)"
+    },
+    "4_tactical": {
+      "exposure": {
+        "market": 1.3858,
+        "size": 0.3085,
+        "value": -0.2703,
+        "momentum": 0.9982
+      },
+      "covered_weight": 1.0,
+      "excluded": [],
+      "n_names": 8,
+      "n_covered": 8,
+      "equity_value": 87442.62,
+      "weights": {
+        "SNDK": 0.141,
+        "MU": 0.1356,
+        "FSLR": 0.1275,
+        "NTAP": 0.1262,
+        "LLY": 0.1234,
+        "BKNG": 0.123,
+        "AVGO": 0.1206,
+        "CRDO": 0.1028
+      },
+      "source": "tournament.json:history[-1] (2026-09-04)"
+    },
+    "5_werner": {
+      "exposure": {
+        "market": 1.1845,
+        "size": -0.027,
+        "value": -0.6982,
+        "momentum": 0.1603
+      },
+      "covered_weight": 1.0,
+      "excluded": [],
+      "n_names": 8,
+      "n_covered": 8,
+      "equity_value": 109662.0,
+      "weights": {
+        "MSFT": 0.2278,
+        "NVDA": 0.2101,
+        "AVGO": 0.1632,
+        "GOOG": 0.1529,
+        "TSM": 0.0978,
+        "ETN": 0.0562,
+        "VRT": 0.0512,
+        "CEG": 0.0409
+      },
+      "source": "tournament.json:history[-1] (2026-09-04)"
+    }
+  },
+  "checks": {
+    "spy_self_regression": {
+      "betas": {
+        "market": 1.0,
+        "size": 0.0,
+        "value": 0.0,
+        "momentum": 0.0
+      },
+      "intercept": 0.0,
+      "r2": 1.0,
+      "n_obs": 252,
+      "pass": true
+    },
+    "nvda_market_beta_gt_1": true
+  }
+}
