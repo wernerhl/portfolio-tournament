@@ -135,6 +135,12 @@ def fetch(tickers: list[str], retry_pass: bool = False) -> tuple[dict, list[str]
 
 
 def main() -> int:
+    # SEPT AUDIT [2]: canonical fundamentals are served data — non-trading
+    # ET day -> "market closed, nothing to do", exit 0.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from trading_calendar import require_trading_day
+    require_trading_day("build_canonical")
+
     uni_file = CANON / "universe.txt"
     if not uni_file.exists():
         print("ERROR: data/canonical/universe.txt missing")

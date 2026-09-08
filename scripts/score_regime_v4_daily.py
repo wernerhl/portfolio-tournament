@@ -40,6 +40,8 @@ def iso_predict(x: np.ndarray, knots: dict) -> np.ndarray:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("score_regime_v4_daily")
     params_p = DATA / "v4_scoring_params.json"
     csv_p    = DATA / "regime_v4_daily.csv"
     if not params_p.exists():

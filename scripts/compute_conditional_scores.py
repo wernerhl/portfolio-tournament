@@ -61,6 +61,8 @@ def james_stein_shrink(bucket_mean: float, bucket_var: float, bucket_n: int,
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_conditional_scores")
     print("Loading backtest equity curves + vol regime...")
     bt = pd.read_csv(DATA / "backtest_equity_curves.csv", parse_dates=["date"]).set_index("date")
     vol = pd.read_parquet(SOURCE / "vol_indicators.parquet")

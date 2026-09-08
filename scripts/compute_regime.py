@@ -258,6 +258,8 @@ def _clean(o):
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_regime")
     print("Fetching indicator data...")
     prices = fetch_yahoo(lookback_days=400)
     print(f"  Yahoo: {prices.shape[1]} series, {prices.shape[0]} rows")

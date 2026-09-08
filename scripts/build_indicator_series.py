@@ -128,6 +128,8 @@ def _clean(o):
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("build_indicator_series")
     print("Loading sources + computed scores...")
     sources = crv2.load_sources()
     series_dict = crv2.load_series_dict(sources)

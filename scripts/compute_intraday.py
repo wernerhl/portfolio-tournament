@@ -187,10 +187,19 @@ def assess_intraday(px: dict) -> dict:
 
 
 def main():
+    # SEPT AUDIT [2.1]: the intraday bot writes intraday.json. Non-trading
+    # ET day -> "market closed, nothing to do", exit 0, nothing written
+    # (Labor Day 2026-09-07 produced a session:None snapshot).
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from trading_calendar import require_trading_day
+    session_et = require_trading_day("compute_intraday")
+
     print("Fetching intraday snapshot...")
     px = fetch_intraday()
     print(f"  got {len(px)}/{len(TICKERS)} channels")
     state = assess_intraday(px)
+    state["session_date"] = session_et          # SEPT AUDIT [5]: declared date
+    state["cadence"] = "intraday"
 
     # ── Post-close reconcile to the canonical close (JULY AUDIT FIX 3b) ──
     # After the close, intraday's last 1-minute tick and the canonical daily

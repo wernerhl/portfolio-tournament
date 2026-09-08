@@ -27,6 +27,8 @@ def rsi14(close: pd.Series) -> pd.Series:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("score_universe")
     print("Loading source parquet files...")
     prices = pd.read_parquet(SOURCE / "prices_daily.parquet")
     if "SPY_volume" in prices.columns:

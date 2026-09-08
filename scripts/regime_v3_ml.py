@@ -284,6 +284,8 @@ def build_v3_r_t(X: pd.DataFrame, y: pd.Series, winner: str,
 # Main
 # ====================================================================
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("regime_v3_ml")
     print("Loading inputs...")
     risk, spx, episodes_raw = load_inputs()
     episodes = dedupe_episodes(episodes_raw)

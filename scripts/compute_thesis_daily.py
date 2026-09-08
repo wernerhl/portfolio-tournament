@@ -100,6 +100,8 @@ def overlap(a: dict, b: dict) -> float:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_thesis_daily")
     registry = load_registry()
     frozen = registry.get("frozen_at") is not None
     nw = name_thesis_weights(registry)

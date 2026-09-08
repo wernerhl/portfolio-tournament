@@ -37,6 +37,8 @@ UNCLASSIFIED = "unclassified"
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_thesis_backtest")
     registry = json.load(open(DATA / "thesis_registry.json"))
     nw: dict[str, dict[str, float]] = {}
     for tid, th in registry["theses"].items():

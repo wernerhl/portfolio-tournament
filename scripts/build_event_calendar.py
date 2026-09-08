@@ -82,6 +82,8 @@ def nth_weekday(y: int, m: int, weekday: int, n: int) -> date:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("build_event_calendar")
     events = []
 
     # CPI — official 2024-2026; 2027 pattern estimate (≈2nd Wednesday)

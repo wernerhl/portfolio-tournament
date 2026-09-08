@@ -45,6 +45,8 @@ def select_for_tier(scored: pd.DataFrame, spec: dict) -> list[str]:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("select_tiers")
     with open(REPO / "config.json") as f:
         cfg = json.load(f)
     tier_specs = cfg["tier_specs"]

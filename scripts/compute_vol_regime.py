@@ -308,6 +308,8 @@ def assert_no_lookahead(daily: pd.DataFrame) -> None:
 # Main
 # ────────────────────────────────────────────────────────────────────────
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_vol_regime")
     print("Loading sources...")
     vol = pd.read_parquet(SOURCE / "vol_indicators.parquet")
     fred = pd.read_parquet(SOURCE / "fred_indicators.parquet") if (SOURCE / "fred_indicators.parquet").exists() else None

@@ -147,6 +147,14 @@ def build_canonical_close(vol_df: pd.DataFrame, canon_date: str | None = None) -
             except Exception as e:
                 sources[name]["series_fallback"] = f"failed: {type(e).__name__}"
 
+    # SEPT AUDIT [2]: a provider's phantom holiday bar (yfinance emitted a
+    # "2026-09-07" ^VIX row on Labor Day) must never persist in the parquet.
+    phantom = [d for d in vol_df.index if not is_trading_day(d)]
+    if phantom:
+        log(f"  dropping {len(phantom)} non-session rows from vol_indicators: "
+            f"{[str(d.date()) for d in phantom[-3:]]}")
+        vol_df.drop(index=phantom, inplace=True)
+
     # Overlay: every date Cboe serves becomes the value of record.
     for name, s in series.items():
         if name not in vol_df.columns:
@@ -444,6 +452,10 @@ def main():
 
 
 if __name__ == "__main__":
+    # SEPT AUDIT [2.1]: this fetcher writes served + source data. Non-trading
+    # ET day -> "market closed, nothing to do", exit 0, nothing written.
+    from trading_calendar import require_trading_day
+    require_trading_day("refresh_data")
     if "--canonical-only" in sys.argv:
         # SEPT AUDIT [1]: regenerate the canonical close + Cboe overlay from
         # the existing parquet without a full refresh (no FRED key needed).

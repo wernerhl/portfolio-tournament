@@ -58,6 +58,8 @@ def perf(nav: pd.Series) -> dict:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("backtest")
     log("loading source data...")
     prices = pd.read_parquet(SOURCE / "prices_daily.parquet")
     if "SPY_volume" in prices.columns:

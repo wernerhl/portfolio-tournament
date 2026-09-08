@@ -338,6 +338,8 @@ def _clean(o):
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_regime_v2")
     print("Loading source parquets...")
     sources = load_sources()
     print(f"  loaded {len(sources)} source files: {list(sources)}")

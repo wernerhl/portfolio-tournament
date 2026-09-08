@@ -124,6 +124,8 @@ def lead_time(R_t: pd.Series, threshold: float, peak_date: pd.Timestamp, max_loo
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("validate_regime_v2")
     print("Loading v2 regime + source data...")
     v2 = pd.read_csv(DATA / "regime_v2_daily.csv", index_col="date", parse_dates=["date"])
     risk = pd.read_parquet(DATA / "regime_v2_risk_scores.parquet")

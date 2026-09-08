@@ -59,12 +59,16 @@ def _run_guard():
     ap.add_argument("--force-publish", metavar="REASON", default=None,
                     help="run despite the session guard; reason recorded in status.json")
     args, _ = ap.parse_known_args()
-    now_et = datetime.now(ZoneInfo("America/New_York"))
-    try:
-        from trading_calendar import is_trading_day
-        trading = is_trading_day(now_et.date())
-    except Exception:
-        trading = now_et.weekday() < 5
+    from trading_calendar import is_trading_day, now_et as _now_et
+    now_et = _now_et()          # honors NOW_ET_OVERRIDE for the [2.3] verification
+    trading = is_trading_day(now_et.date())
+    # SEPT AUDIT [2.3]: a non-trading day is not a failure. Exit 0 with the
+    # standard line BEFORE any sub-script runs — nothing written, no
+    # failure notification. (Labor Day 2026-09-07 ran the full pipeline,
+    # got rejected by validation, and paged as a failure.)
+    if not trading and args.force_publish is None:
+        print(f"[update_daily] market closed, nothing to do ({now_et:%Y-%m-%d})", flush=True)
+        sys.exit(0)
     after_close = (now_et.hour, now_et.minute) >= (16, 15)
     if trading and not after_close and args.force_publish is None:
         print(f"[5] RUN GUARD: {now_et:%H:%M} ET is pre-close on a trading session and no "

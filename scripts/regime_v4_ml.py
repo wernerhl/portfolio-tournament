@@ -272,6 +272,8 @@ def graduated_regime(p_5_40: float) -> str:
 # Main
 # ====================================================================
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("regime_v4_ml")
     print("Loading inputs...")
     risk = pd.read_parquet(DATA / "regime_v2_risk_scores.parquet")
     risk.index = pd.to_datetime(risk.index)

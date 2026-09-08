@@ -175,6 +175,8 @@ def backfill_benchmark_navs(tournament_path: Path = None) -> int:
 
 
 def main():
+    from trading_calendar import require_trading_day  # SEPT AUDIT [2.4]
+    require_trading_day("compute_nav")
     cfg = load_json(REPO / "config.json")
     tier_specs   = cfg["tier_specs"]
     werner_spec  = cfg["werner_picks"]

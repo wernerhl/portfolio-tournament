@@ -63,9 +63,55 @@ def prev_trading_day(d) -> str:
     return cur.isoformat()
 
 
+def now_et(now: datetime | None = None) -> datetime:
+    """Current time in America/New_York. Test override: env NOW_ET_OVERRIDE
+    ('YYYY-MM-DD' or 'YYYY-MM-DDTHH:MM') — lets SEPT AUDIT [2.3] verify the
+    non-trading-day gate without waiting for a holiday."""
+    import os
+    from zoneinfo import ZoneInfo
+    ov = os.environ.get("NOW_ET_OVERRIDE")
+    if ov:
+        try:
+            return datetime.fromisoformat(ov).replace(tzinfo=ZoneInfo("America/New_York"))
+        except ValueError:
+            pass
+    return (now or datetime.now(timezone.utc)).astimezone(ZoneInfo("America/New_York"))
+
+
+def require_trading_day(job: str) -> str:
+    """SEPT AUDIT [2]: the gate for EVERY job that writes data/. On a
+    non-trading ET day it prints the standard line and exits 0 — writing
+    nothing. Returns the ET date when trading. `--allow-non-trading` on argv
+    bypasses it for manual analysis runs (never passed in CI)."""
+    import sys
+    d = now_et().strftime("%Y-%m-%d")
+    if not is_trading_day(d) and "--allow-non-trading" not in sys.argv:
+        print(f"[{job}] market closed, nothing to do ({d})", flush=True)
+        sys.exit(0)
+    return d
+
+
+def served_meta(cadence: str = "daily", session_date: str | None = None,
+                as_of: str | None = None) -> dict:
+    """SEPT AUDIT [5]: declared dates for served JSON. Daily files carry
+    session_date (the completed session the data represents); static /
+    on_change / weekly files carry cadence + as_of so a stale-badge check can
+    tell them apart from stale daily files."""
+    et = now_et()
+    meta = {"cadence": cadence, "computed_at": et.isoformat(timespec="seconds")}
+    if cadence == "daily":
+        meta["session_date"] = session_date or last_trading_session()
+    else:
+        meta["as_of"] = as_of or et.strftime("%Y-%m-%d")
+    return meta
+
+
 def last_trading_session(now: datetime | None = None) -> str:
     """Most recent COMPLETED session as of `now` (UTC). Before ~21:30 UTC a
     weekday's close doesn't exist yet."""
+    import os
+    if now is None and os.environ.get("NOW_ET_OVERRIDE"):
+        now = now_et().astimezone(timezone.utc)
     now = now or datetime.now(timezone.utc)
     d = now.date()
     complete_today = (now.hour > 21 or (now.hour == 21 and now.minute >= 30))
