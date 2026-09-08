@@ -211,6 +211,12 @@ def main(troot, sroot, today=None):
             last_nn=max((to_date(r['date']) for r in v4 if str(r.get(c,'')).strip()!='' and to_date(r['date'])), default=None)
             if te and (last_nn is None or last_nn<te):
                 add('HIGH','v4:monthly_columns',f'{c} populated through {last_nn} but monthly model train_end is {te}')
+    # order 9-Sept B2.3: calibration evidence must be out-of-fold with a stated fold definition
+    calp=os.path.join(troot,'v4_calibration.json')
+    if os.path.exists(calp):
+        cj=json.load(open(calp))
+        if cj.get('evaluation')!='out_of_fold' or not cj.get('fold_definition'):
+            add('MEDIUM','v4:calibration_evaluation','v4_calibration.json lacks evaluation: out_of_fold with a fold definition (in-sample reliability is not calibration evidence)')
     # ---------- vol_regime validation integrity ----------
     vr=T('vol_regime.json'); val=vr.get('validation',{})
     ex=val.get('today_excluded') or val.get('excluded_today')

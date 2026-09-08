@@ -39,5 +39,537 @@
     }
   ],
   "cadence": "on_change",
-  "as_of": "2026-09-07"
+  "as_of": "2026-09-07",
+  "evaluation": "out_of_fold",
+  "fold_definition": {
+    "type": "leave-one-crisis-out, extended to full coverage: each SPX drawdown episode [peak, recovery] is a fold; each calm stretch between episodes is a fold; every day is held out exactly once",
+    "n_folds": 15,
+    "folds": [
+      {
+        "fold": 0,
+        "type": "calm",
+        "from": "2005-03-30",
+        "to": "2007-10-09",
+        "n": 637
+      },
+      {
+        "fold": 1,
+        "type": "crisis",
+        "from": "2007-10-09",
+        "to": "2013-03-05",
+        "n": 1360
+      },
+      {
+        "fold": 2,
+        "type": "calm",
+        "from": "2013-03-06",
+        "to": "2015-05-21",
+        "n": 557
+      },
+      {
+        "fold": 3,
+        "type": "crisis",
+        "from": "2015-05-21",
+        "to": "2016-04-18",
+        "n": 229
+      },
+      {
+        "fold": 4,
+        "type": "calm",
+        "from": "2016-04-19",
+        "to": "2018-01-26",
+        "n": 447
+      },
+      {
+        "fold": 5,
+        "type": "crisis",
+        "from": "2018-01-26",
+        "to": "2018-07-18",
+        "n": 120
+      },
+      {
+        "fold": 6,
+        "type": "calm",
+        "from": "2018-07-19",
+        "to": "2018-09-20",
+        "n": 44
+      },
+      {
+        "fold": 7,
+        "type": "crisis",
+        "from": "2018-09-20",
+        "to": "2019-04-03",
+        "n": 134
+      },
+      {
+        "fold": 8,
+        "type": "calm",
+        "from": "2019-04-04",
+        "to": "2020-02-19",
+        "n": 220
+      },
+      {
+        "fold": 9,
+        "type": "crisis",
+        "from": "2020-02-19",
+        "to": "2020-08-05",
+        "n": 118
+      },
+      {
+        "fold": 10,
+        "type": "calm",
+        "from": "2020-08-06",
+        "to": "2022-01-03",
+        "n": 355
+      },
+      {
+        "fold": 11,
+        "type": "crisis",
+        "from": "2022-01-03",
+        "to": "2023-12-13",
+        "n": 490
+      },
+      {
+        "fold": 12,
+        "type": "calm",
+        "from": "2023-12-14",
+        "to": "2025-02-19",
+        "n": 294
+      },
+      {
+        "fold": 13,
+        "type": "crisis",
+        "from": "2025-02-19",
+        "to": "2025-06-10",
+        "n": 78
+      },
+      {
+        "fold": 14,
+        "type": "calm",
+        "from": "2025-06-11",
+        "to": "2026-09-03",
+        "n": 310
+      }
+    ],
+    "purge": "40+20 sessions either side of the held-out fold (forward labels overlap the boundary)",
+    "calibrator": "isotonic fitted on TRAINING predictions per fold, applied to the held-out fold",
+    "source": "data/source/spx_drawdown_episodes.csv (deduped as regime_v3_ml)"
+  },
+  "base_rate_brier": 0.1918,
+  "methods": {
+    "equal_weight": {
+      "brier_out_of_fold": 0.1989,
+      "brier_in_sample": 0.1835,
+      "n_oof": 5393
+    },
+    "logistic_pc": {
+      "brier_out_of_fold": 0.2145,
+      "brier_in_sample": 0.1695,
+      "n_oof": 5393
+    },
+    "elastic_net": {
+      "brier_out_of_fold": 0.2494,
+      "brier_in_sample": 0.1622,
+      "n_oof": 5393
+    }
+  },
+  "out_of_fold_reliability_bins": {
+    "equal_weight": [
+      {
+        "bin": 0,
+        "lo": 0.0,
+        "hi": 0.1,
+        "predicted_mean": 0.0603,
+        "observed_freq": 0.2657,
+        "n": 271
+      },
+      {
+        "bin": 1,
+        "lo": 0.1,
+        "hi": 0.2,
+        "predicted_mean": 0.1566,
+        "observed_freq": 0.162,
+        "n": 1179
+      },
+      {
+        "bin": 2,
+        "lo": 0.2,
+        "hi": 0.3,
+        "predicted_mean": 0.2521,
+        "observed_freq": 0.3178,
+        "n": 2804
+      },
+      {
+        "bin": 3,
+        "lo": 0.3,
+        "hi": 0.4,
+        "predicted_mean": 0.3373,
+        "observed_freq": 0.2346,
+        "n": 699
+      },
+      {
+        "bin": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "predicted_mean": 0.4313,
+        "observed_freq": 0.2,
+        "n": 350
+      },
+      {
+        "bin": 5,
+        "lo": 0.5,
+        "hi": 0.6,
+        "predicted_mean": 0.5142,
+        "observed_freq": 0.0778,
+        "n": 90
+      }
+    ],
+    "logistic_pc": [
+      {
+        "bin": 0,
+        "lo": 0.0,
+        "hi": 0.1,
+        "predicted_mean": 0.0281,
+        "observed_freq": 0.2112,
+        "n": 251
+      },
+      {
+        "bin": 1,
+        "lo": 0.1,
+        "hi": 0.2,
+        "predicted_mean": 0.1639,
+        "observed_freq": 0.3196,
+        "n": 2650
+      },
+      {
+        "bin": 2,
+        "lo": 0.2,
+        "hi": 0.3,
+        "predicted_mean": 0.2313,
+        "observed_freq": 0.1631,
+        "n": 1067
+      },
+      {
+        "bin": 3,
+        "lo": 0.3,
+        "hi": 0.4,
+        "predicted_mean": 0.35,
+        "observed_freq": 0.2142,
+        "n": 579
+      },
+      {
+        "bin": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "predicted_mean": 0.4595,
+        "observed_freq": 0.1909,
+        "n": 707
+      },
+      {
+        "bin": 5,
+        "lo": 0.5,
+        "hi": 0.6,
+        "predicted_mean": 0.5201,
+        "observed_freq": 0.5,
+        "n": 106
+      },
+      {
+        "bin": 6,
+        "lo": 0.6,
+        "hi": 0.7,
+        "predicted_mean": 0.6611,
+        "observed_freq": 0.1429,
+        "n": 14
+      },
+      {
+        "bin": 7,
+        "lo": 0.7,
+        "hi": 0.8,
+        "predicted_mean": 0.7585,
+        "observed_freq": 0.3889,
+        "n": 18
+      },
+      {
+        "bin": 9,
+        "lo": 0.9,
+        "hi": 1.0,
+        "predicted_mean": 1.0,
+        "observed_freq": 0.0,
+        "n": 1
+      }
+    ],
+    "elastic_net": [
+      {
+        "bin": 0,
+        "lo": 0.0,
+        "hi": 0.1,
+        "predicted_mean": 0.0575,
+        "observed_freq": 0.3166,
+        "n": 1197
+      },
+      {
+        "bin": 1,
+        "lo": 0.1,
+        "hi": 0.2,
+        "predicted_mean": 0.1402,
+        "observed_freq": 0.2954,
+        "n": 1828
+      },
+      {
+        "bin": 2,
+        "lo": 0.2,
+        "hi": 0.3,
+        "predicted_mean": 0.2514,
+        "observed_freq": 0.2016,
+        "n": 749
+      },
+      {
+        "bin": 3,
+        "lo": 0.3,
+        "hi": 0.4,
+        "predicted_mean": 0.3518,
+        "observed_freq": 0.1855,
+        "n": 415
+      },
+      {
+        "bin": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "predicted_mean": 0.4627,
+        "observed_freq": 0.2758,
+        "n": 689
+      },
+      {
+        "bin": 5,
+        "lo": 0.5,
+        "hi": 0.6,
+        "predicted_mean": 0.5611,
+        "observed_freq": 0.1673,
+        "n": 281
+      },
+      {
+        "bin": 6,
+        "lo": 0.6,
+        "hi": 0.7,
+        "predicted_mean": 0.6478,
+        "observed_freq": 0.0446,
+        "n": 112
+      },
+      {
+        "bin": 7,
+        "lo": 0.7,
+        "hi": 0.8,
+        "predicted_mean": 0.752,
+        "observed_freq": 0.0233,
+        "n": 43
+      },
+      {
+        "bin": 8,
+        "lo": 0.8,
+        "hi": 0.9,
+        "predicted_mean": 0.8139,
+        "observed_freq": 0.0435,
+        "n": 23
+      },
+      {
+        "bin": 9,
+        "lo": 0.9,
+        "hi": 1.0,
+        "predicted_mean": 0.99,
+        "observed_freq": 0.0714,
+        "n": 56
+      }
+    ]
+  },
+  "in_sample_reliability_bins": {
+    "equal_weight": [
+      {
+        "bin": 1,
+        "lo": 0.1,
+        "hi": 0.2,
+        "predicted_mean": 0.1451,
+        "observed_freq": 0.1451,
+        "n": 1385
+      },
+      {
+        "bin": 2,
+        "lo": 0.2,
+        "hi": 0.3,
+        "predicted_mean": 0.2499,
+        "observed_freq": 0.2499,
+        "n": 2389
+      },
+      {
+        "bin": 3,
+        "lo": 0.3,
+        "hi": 0.4,
+        "predicted_mean": 0.3137,
+        "observed_freq": 0.3137,
+        "n": 781
+      },
+      {
+        "bin": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "predicted_mean": 0.42,
+        "observed_freq": 0.42,
+        "n": 838
+      }
+    ],
+    "logistic_pc": [
+      {
+        "bin": 0,
+        "lo": 0.0,
+        "hi": 0.1,
+        "predicted_mean": 0.0137,
+        "observed_freq": 0.0137,
+        "n": 73
+      },
+      {
+        "bin": 1,
+        "lo": 0.1,
+        "hi": 0.2,
+        "predicted_mean": 0.1645,
+        "observed_freq": 0.1645,
+        "n": 3161
+      },
+      {
+        "bin": 2,
+        "lo": 0.2,
+        "hi": 0.3,
+        "predicted_mean": 0.2495,
+        "observed_freq": 0.2495,
+        "n": 469
+      },
+      {
+        "bin": 3,
+        "lo": 0.3,
+        "hi": 0.4,
+        "predicted_mean": 0.3133,
+        "observed_freq": 0.3133,
+        "n": 249
+      },
+      {
+        "bin": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "predicted_mean": 0.431,
+        "observed_freq": 0.431,
+        "n": 1269
+      },
+      {
+        "bin": 5,
+        "lo": 0.5,
+        "hi": 0.6,
+        "predicted_mean": 0.5932,
+        "observed_freq": 0.5932,
+        "n": 59
+      },
+      {
+        "bin": 7,
+        "lo": 0.7,
+        "hi": 0.8,
+        "predicted_mean": 0.75,
+        "observed_freq": 0.75,
+        "n": 4
+      },
+      {
+        "bin": 8,
+        "lo": 0.8,
+        "hi": 0.9,
+        "predicted_mean": 0.8133,
+        "observed_freq": 0.8133,
+        "n": 75
+      },
+      {
+        "bin": 9,
+        "lo": 0.9,
+        "hi": 1.0,
+        "predicted_mean": 0.9706,
+        "observed_freq": 0.9706,
+        "n": 34
+      }
+    ],
+    "elastic_net": [
+      {
+        "bin": 0,
+        "lo": 0.0,
+        "hi": 0.1,
+        "predicted_mean": 0.0999,
+        "observed_freq": 0.0999,
+        "n": 761
+      },
+      {
+        "bin": 1,
+        "lo": 0.1,
+        "hi": 0.2,
+        "predicted_mean": 0.1281,
+        "observed_freq": 0.1281,
+        "n": 1639
+      },
+      {
+        "bin": 2,
+        "lo": 0.2,
+        "hi": 0.3,
+        "predicted_mean": 0.234,
+        "observed_freq": 0.234,
+        "n": 1329
+      },
+      {
+        "bin": 3,
+        "lo": 0.3,
+        "hi": 0.4,
+        "predicted_mean": 0.3615,
+        "observed_freq": 0.3615,
+        "n": 769
+      },
+      {
+        "bin": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "predicted_mean": 0.4253,
+        "observed_freq": 0.4253,
+        "n": 87
+      },
+      {
+        "bin": 5,
+        "lo": 0.5,
+        "hi": 0.6,
+        "predicted_mean": 0.5647,
+        "observed_freq": 0.5647,
+        "n": 696
+      },
+      {
+        "bin": 6,
+        "lo": 0.6,
+        "hi": 0.7,
+        "predicted_mean": 0.6522,
+        "observed_freq": 0.6522,
+        "n": 23
+      },
+      {
+        "bin": 8,
+        "lo": 0.8,
+        "hi": 0.9,
+        "predicted_mean": 0.8205,
+        "observed_freq": 0.8205,
+        "n": 78
+      },
+      {
+        "bin": 9,
+        "lo": 0.9,
+        "hi": 1.0,
+        "predicted_mean": 1.0,
+        "observed_freq": 1.0,
+        "n": 11
+      }
+    ]
+  },
+  "decision": {
+    "out_of_fold_winner": "equal_weight",
+    "production_winner_in_file": "equal_weight",
+    "switch_stands": true,
+    "rule": "the production method must win on out-of-fold Brier; in-sample reliability is not evidence",
+    "evaluated_at": "2026-09-07T23:55:33-06:00"
+  }
 }
