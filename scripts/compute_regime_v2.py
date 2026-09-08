@@ -285,6 +285,36 @@ def compute_composites(risk: pd.DataFrame):
     return r_lead, r_full, divergence, n_lead.astype(int), n_full.astype(int)
 
 
+def rfull_attribution(risk: pd.DataFrame, labels: dict) -> dict | None:
+    """Dashboard order 9-Sept-2026 P3.5: the standing 'moved by' line. ΔR_full between the last
+    two sessions attributed to indicators: contribution_i = w_i · Δphi_i / Σw(available today),
+    in R_full points (×100); the interaction residual is what the denominator (coverage) change
+    leaves unexplained. Display computation; R_full itself is untouched."""
+    if risk is None or len(risk.index) < 2: return None
+    tier_map = {key: tier for key, tier, *_ in INDICATORS}
+    cols = [c for c in risk.columns if c in tier_map]
+    w = pd.Series({c: TIER_WEIGHTS[tier_map[c]] for c in cols})
+    last, prev = risk[cols].iloc[-1], risk[cols].iloc[-2]
+    den_last = float((last.notna().astype(float) * w).sum()); den_prev = float((prev.notna().astype(float) * w).sum())
+    if den_last <= 0 or den_prev <= 0: return None
+    r_last = float((last.fillna(0) * w).sum() / den_last); r_prev = float((prev.fillna(0) * w).sum() / den_prev)
+    contrib = {}
+    for c in cols:
+        if pd.notna(last[c]) and pd.notna(prev[c]):
+            contrib[c] = float(w[c] * (last[c] - prev[c]) / den_last)
+    delta = r_last - r_prev
+    residual = delta - sum(contrib.values())
+    top = sorted(contrib.items(), key=lambda kv: -abs(kv[1]))[:3]
+    return {
+        "prev": risk.index[-2].strftime("%Y-%m-%d"), "as_of": risk.index[-1].strftime("%Y-%m-%d"),
+        "delta_pts": round(delta * 100, 2), "R_full_prev": round(r_prev, 4), "R_full": round(r_last, 4),
+        "top3": [{"key": k, "label": labels.get(k, k), "delta_phi": round(float(last[k] - prev[k]), 4), "contribution_pts": round(v * 100, 2)} for k, v in top],
+        "residual_pts": round(residual * 100, 2),
+        "n_available": int(last.notna().sum()), "n_available_prev": int(prev.notna().sum()),
+        "method": "contribution_i = w_i·Δphi_i / Σw(available today), in R_full points ×100; residual = ΔR_full − Σ contributions (coverage/denominator interaction)",
+    }
+
+
 def classify(r_full, r_lead, divergence):
     # JULY AUDIT FIX 4b — label HYSTERESIS on the regime label only.
     # R crossed the 0.30 edge 3 times in 4 sessions (0.2983→0.3003→0.3008),
@@ -573,6 +603,8 @@ def main():
         "n_crisis":     n_cri,
         "verdict":      verdict,
         "indicators":   indicator_payload,
+        # P3.5 (dashboard order 9-Sept): standing "moved by" line — additive display computation
+        "attribution":  rfull_attribution(s_df, {ip["key"]: ip["label"] for ip in indicator_payload if "key" in ip}),
     }
     with open(DATA / "regime_indicators.json", "w") as f:
         json.dump(_clean(payload), f, indent=2, default=str, allow_nan=False)

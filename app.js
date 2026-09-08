@@ -2333,10 +2333,11 @@ function renderClaimSentence(){
 // Standing "moved by" line under the gauge (P3.5) — top three contributors with signed
 // points and the interaction residual, from the nightly delta attribution.
 function renderMovedByLine(){
-  const a = S.v4Attr;   // replaced by the R_full attribution in P3.5
+  const a = S.regime && S.regime.attribution;   // P3.5: R_full delta attribution, written nightly by compute_regime_v2.py
   if (!a || !a.top3) return "";
-  const movers = a.top3.map(c => `<span class="nowrap">${c.feature} <span class="${c.contribution_pp >= 0 ? "c-pos" : "c-neg"}">${c.contribution_pp >= 0 ? "+" : ""}${c.contribution_pp}pp</span></span>`).join(" · ");
-  return `<div class="moved-by mono t1 c-2 mt2">moved by (vs ${a.prev || "prior"}): ${movers} · residual ${a.residual_pp >= 0 ? "+" : ""}${a.residual_pp}pp</div>`;
+  const sg = v => (v >= 0 ? "+" : "") + (+v).toFixed(2);
+  const movers = a.top3.map(c => `<span class="nowrap" title="${c.label}: Δphi ${sg(c.delta_phi)} → ${sg(c.contribution_pts)} R_full points">${c.key} <span class="${c.contribution_pts >= 0 ? "c-neg" : "c-pos"}">${sg(c.contribution_pts)}</span></span>`).join(" · ");
+  return `<div class="moved-by mono t1 c-2 mt2" title="${a.method || ""}">R<sub>full</sub> ${sg(a.delta_pts)} pts vs ${a.prev} — moved by: ${movers} · interaction residual ${sg(a.residual_pts)}</div>`;
 }
 function renderDrawdownCard(){      // P2.1: underwater chart, tier one
   const r = S.ddRange || "ALL";

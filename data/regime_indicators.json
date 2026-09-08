@@ -344,5 +344,36 @@
     }
   ],
   "cadence": "daily",
-  "session_date": "2026-09-04"
+  "session_date": "2026-09-04",
+  "attribution": {
+    "prev": "2026-09-03",
+    "as_of": "2026-09-04",
+    "delta_pts": -0.06,
+    "R_full_prev": 0.2137,
+    "R_full": 0.2131,
+    "top3": [
+      {
+        "key": "skew",
+        "label": "SKEW",
+        "delta_phi": -0.0371,
+        "contribution_pts": -0.21
+      },
+      {
+        "key": "spx_ret_60d",
+        "label": "SPX 60d",
+        "delta_phi": -0.1177,
+        "contribution_pts": -0.17
+      },
+      {
+        "key": "dxy",
+        "label": "DXY",
+        "delta_phi": 0.0549,
+        "contribution_pts": 0.16
+      }
+    ],
+    "residual_pts": -0.0,
+    "n_available": 23,
+    "n_available_prev": 23,
+    "method": "contribution_i = w_i\u00b7\u0394phi_i / \u03a3w(available today), in R_full points \u00d7100; residual = \u0394R_full \u2212 \u03a3 contributions (coverage/denominator interaction)"
+  }
 }
