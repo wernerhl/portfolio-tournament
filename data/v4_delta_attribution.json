@@ -1,51 +1,71 @@
 {
-  "as_of": "2026-09-09",
-  "session_date": "2026-09-09",
+  "as_of": "2026-09-10",
+  "session_date": "2026-09-10",
   "cadence": "daily",
-  "prev": "2026-09-08",
-  "raw_score_today": 0.2851,
-  "raw_score_prev": 0.2656,
+  "prev": "2026-09-09",
+  "raw_score_today": 0.3351,
+  "raw_score_prev": 0.2815,
   "model_cols_scored_at": "2026-09-04",
   "model_cols_note": "p_*_logistic_pc / p_*_elastic_net are produced only by the monthly regime_v4_ml run; the nightly rescore preserves them (it used to blank the last 5 rows) \u2014 they advance monthly",
-  "p_today": 0.1336,
+  "p_today": 0.1915,
   "p_prev": 0.1336,
-  "delta_pp": 0.0,
+  "delta_pp": 5.79,
   "top3": [
     {
-      "feature": "nfci",
-      "delta_feature": 0.0015,
-      "contribution_pp": 0.0
+      "feature": "breakeven_5y",
+      "delta_feature": 0.1459,
+      "contribution_pp": 3.76
     },
     {
-      "feature": "anfci",
-      "delta_feature": 0.0001,
-      "contribution_pp": 0.0
+      "feature": "vix_term",
+      "delta_feature": 0.1767,
+      "contribution_pp": 3.76
     },
     {
-      "feature": "yield_3m10y",
-      "delta_feature": 0.0011,
-      "contribution_pp": 0.0
+      "feature": "vix",
+      "delta_feature": 0.1574,
+      "contribution_pp": 3.76
     }
   ],
   "all": [
     {
+      "feature": "breakeven_5y",
+      "delta_feature": 0.1459,
+      "contribution_pp": 3.76
+    },
+    {
+      "feature": "vix_term",
+      "delta_feature": 0.1767,
+      "contribution_pp": 3.76
+    },
+    {
+      "feature": "vix",
+      "delta_feature": 0.1574,
+      "contribution_pp": 3.76
+    },
+    {
+      "feature": "vvix",
+      "delta_feature": 0.2801,
+      "contribution_pp": 3.76
+    },
+    {
+      "feature": "spx_ret_60d",
+      "delta_feature": 0.1333,
+      "contribution_pp": 3.76
+    },
+    {
       "feature": "nfci",
       "delta_feature": 0.0015,
       "contribution_pp": 0.0
     },
     {
       "feature": "anfci",
-      "delta_feature": 0.0001,
+      "delta_feature": 0.0004,
       "contribution_pp": 0.0
     },
     {
       "feature": "yield_3m10y",
       "delta_feature": 0.0011,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "breakeven_5y",
-      "delta_feature": 0.03,
       "contribution_pp": 0.0
     },
     {
@@ -54,23 +74,8 @@
       "contribution_pp": 0.0
     },
     {
-      "feature": "vix_term",
-      "delta_feature": 0.0902,
-      "contribution_pp": 0.0
-    },
-    {
       "feature": "skew",
-      "delta_feature": 0.0,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "vix",
-      "delta_feature": 0.0733,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "vvix",
-      "delta_feature": 0.1563,
+      "delta_feature": -0.0006,
       "contribution_pp": 0.0
     },
     {
@@ -105,22 +110,22 @@
     },
     {
       "feature": "gold_spx",
-      "delta_feature": 0.0387,
+      "delta_feature": -0.02,
       "contribution_pp": 0.0
     },
     {
       "feature": "tlt_spx",
-      "delta_feature": 0.0004,
+      "delta_feature": -0.0053,
       "contribution_pp": 0.0
     },
     {
       "feature": "def_cyc",
-      "delta_feature": -0.014,
+      "delta_feature": 0.0203,
       "contribution_pp": 0.0
     },
     {
       "feature": "dxy",
-      "delta_feature": -0.0283,
+      "delta_feature": 0.1105,
       "contribution_pp": 0.0
     },
     {
@@ -129,21 +134,16 @@
       "contribution_pp": 0.0
     },
     {
-      "feature": "spx_ret_60d",
-      "delta_feature": -0.0648,
-      "contribution_pp": 0.0
-    },
-    {
       "feature": "spx_drawdown",
-      "delta_feature": 0.1103,
+      "delta_feature": 0.1162,
       "contribution_pp": 0.0
     },
     {
       "feature": "oil_60d_vel",
-      "delta_feature": 0.0462,
+      "delta_feature": 0.1093,
       "contribution_pp": 0.0
     }
   ],
-  "residual_pp": 0.0,
+  "residual_pp": -13.01,
   "method": "finite difference through the isotonic curve, one feature at a time; contributions approximate (isotonic is piecewise-constant) \u2014 residual reported, not hidden"
 }
