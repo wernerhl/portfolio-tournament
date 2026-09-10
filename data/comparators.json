@@ -1,24 +1,24 @@
 {
   "cadence": "daily",
-  "session_date": "2026-09-08",
-  "as_of": "2026-09-08",
-  "computed_at": "2026-09-08T19:59:28-04:00",
+  "session_date": "2026-09-09",
+  "as_of": "2026-09-09",
+  "computed_at": "2026-09-09T20:04:11-04:00",
   "index": "SPY (data/source/sector_etfs.parquet, dividend-adjusted)",
-  "index_through": "2026-09-08",
-  "index_last_close": 765.96,
+  "index_through": "2026-09-09",
+  "index_last_close": 762.4,
   "registration": "reports/c3_registration.md \u00a7B6 (constants verbatim; no re-tuning)",
   "note": "descriptive second opinion; no rule drives sizing",
   "regime": {
     "rule": "24-indicator regime index R_full (data/regime_v2_daily.csv), tier-4 mapping: cash = clamp(floor + R_full x slope, floor, max), exposure = 1 - cash",
     "state": "LOW RISK",
-    "R_full": 0.2233,
-    "cash": 0.2233,
-    "exposure": 0.7767,
+    "R_full": 0.2555,
+    "cash": 0.2555,
+    "exposure": 0.7445,
     "computed_from": {
-      "R_full": 0.2233,
-      "R_full_date": "2026-09-08",
+      "R_full": 0.2555,
+      "R_full_date": "2026-09-09",
       "label": "LOW RISK",
-      "label_date": "2026-09-08",
+      "label_date": "2026-09-09",
       "tier": "4_tactical",
       "tier4_mapping": {
         "cash_floor": 0.0,
@@ -26,11 +26,11 @@
         "cash_max": 1.0
       }
     },
-    "as_of": "2026-09-08",
+    "as_of": "2026-09-09",
     "evaluation": {
       "frequency": "daily"
     },
-    "session_date": "2026-09-08"
+    "session_date": "2026-09-09"
   },
   "rules": {
     "sma10": {
@@ -94,15 +94,15 @@
         "note": "state set at the last completed month-end close; the registered rebalance applies a new reading at the first session of the following month (B4/B5)"
       },
       "provisional_if_evaluated_today": {
-        "label": "PROVISIONAL - latest close 2026-09-08 treated as the September 2026 month-end; not the rule's state until the month completes",
-        "P": 765.96,
-        "sma10": 719.5819,
+        "label": "PROVISIONAL - latest close 2026-09-09 treated as the September 2026 month-end; not the rule's state until the month completes",
+        "P": 762.4,
+        "sma10": 719.2259,
         "state": "invested",
         "exposure": 1.0,
-        "through": "2026-09-08",
+        "through": "2026-09-09",
         "same_as_current": false
       },
-      "session_date": "2026-09-08"
+      "session_date": "2026-09-09"
     },
     "tsmom_12_1": {
       "rule": "Time-series momentum: sign of trailing twelve-month return excluding the last month (P_{m-1} / P_{m-12} - 1 on month-end closes); monthly; invested if positive, cash otherwise",
@@ -125,7 +125,7 @@
         "note": "state set at the last completed month-end close; the registered rebalance applies a new reading at the first session of the following month (B4/B5)"
       },
       "provisional_if_evaluated_today": {
-        "label": "PROVISIONAL - latest close 2026-09-08 treated as the September 2026 month-end; not the rule's state until the month completes",
+        "label": "PROVISIONAL - latest close 2026-09-09 treated as the September 2026 month-end; not the rule's state until the month completes",
         "note": "the 12-1 rule skips the latest month, so the next evaluation's reading is already fixed by known month-end closes",
         "P_m_1": 767.05,
         "P_m_1_date": "2026-08-31",
@@ -136,20 +136,20 @@
         "exposure": 1.0,
         "same_as_current": false
       },
-      "session_date": "2026-09-08"
+      "session_date": "2026-09-09"
     },
     "vol_target_10": {
       "rule": "Volatility targeting at 10% annualized with 60-day realized volatility (sample std of daily log returns x sqrt(252)); exposure = min(1.0, 0.10 / sigma), capped at 100%",
       "state": "scaled",
-      "exposure": 0.8152,
+      "exposure": 0.8147,
       "computed_from": {
         "sigma_ann": 0.1227,
         "target": 0.1,
         "cap": 1.0,
         "window_days": 60,
         "n_returns": 60,
-        "window_start": "2026-06-12",
-        "through": "2026-09-08"
+        "window_start": "2026-06-15",
+        "through": "2026-09-09"
       },
       "evaluation": {
         "frequency": "daily",
@@ -161,7 +161,7 @@
         "sigma_ann": 0.1395,
         "exposure": 0.7166
       },
-      "session_date": "2026-09-08"
+      "session_date": "2026-09-09"
     }
   },
   "cross_check": {

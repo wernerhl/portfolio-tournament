@@ -1,9 +1,9 @@
 {
-  "updated": "2026-09-08T23:59:40.480665",
-  "as_of": "2026-09-08",
-  "session_date": "2026-09-08",
+  "updated": "2026-09-10T00:04:25.783148",
+  "as_of": "2026-09-09",
+  "session_date": "2026-09-09",
   "cadence": "daily",
-  "tradable_at": "2026-09-09",
+  "tradable_at": "2026-09-10",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -219,6 +219,12 @@
       "d": "2026-09-08",
       "state": "contango",
       "spread": -2.67,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-09",
+      "state": "contango",
+      "spread": -2.41,
       "source": "yfinance"
     }
   ],
@@ -240,11 +246,11 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 1,
-  "spread": -2.67,
-  "delta_spread": 0.41,
-  "sigma_threshold": 0.39,
-  "trigger_fired": true,
+  "state_age": 2,
+  "spread": -2.41,
+  "delta_spread": 0.26,
+  "sigma_threshold": 0.391,
+  "trigger_fired": false,
   "entry": {
     "current_entry_dspread": 0.41,
     "state_mean_entry": -0.092,
@@ -278,8 +284,8 @@
         "deep_contango": 213,
         "backwardation": 12
       },
-      "entry_dspread_mean": -0.09175000164725566,
-      "entry_dspread_sigma": 0.8469849574727787,
+      "entry_dspread_mean": -0.0917500022541393,
+      "entry_dspread_sigma": 0.8469849571124445,
       "entry_dspread_n": 440
     },
     "flattening": {
@@ -311,14 +317,14 @@
     }
   },
   "curve": {
-    "spot_vix": 15.72,
-    "vix1d": 10.43,
-    "vix3m": 18.39,
-    "spread_spot_3m": -2.67,
+    "spot_vix": 16.46,
+    "vix1d": 11.45,
+    "vix3m": 18.87,
+    "spread_spot_3m": -2.41,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-09-09",
+    "date": "2026-09-10",
     "types": [
       "TREASURY"
     ],
@@ -332,35 +338,35 @@
     "event_types": [
       "TREASURY"
     ],
-    "delta_2y_bps": 3.0,
+    "delta_2y_bps": 3.2,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.7,
-    "held_close": false
+    "held_close_proxy": 1.0,
+    "held_close": true
   },
   "attribution": {
-    "primary_driver": "event_bump",
-    "primary_reversion": "high",
+    "primary_driver": "no_trigger",
+    "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": 0.012,
-      "breadth_delta_pp": -4.51,
+      "smh_1d_return": 0.001,
+      "breadth_delta_pp": -4.89,
       "breadth_holds": false,
-      "breadth_delta_sigma_1y_pp": 3.898,
-      "breadth_z": -1.16,
+      "breadth_delta_sigma_1y_pp": 3.909,
+      "breadth_z": -1.25,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
   "overlay_scalar": {
-    "value": 0.3,
+    "value": 0.7,
     "label": "DIAGNOSTIC",
     "caption": "Regime-sized overlay scalar. Gated as DIAGNOSTIC until backtest shows regime-conditional sizing beats static sizing on risk-adjusted return. Do not execute on this value."
   },
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-09-08",
+      "today_excluded_from_metrics": "2026-09-09",
       "all_triggers_reversion": {
         "n": 793,
         "n_reverted": 679,
@@ -394,11 +400,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-09-08",
-      "state": "deep_contango",
-      "spread": -3.18
-    },
     {
       "d": "2025-09-09",
       "state": "deep_contango",
@@ -1653,6 +1654,11 @@
       "d": "2026-09-08",
       "state": "contango",
       "spread": -2.67
+    },
+    {
+      "d": "2026-09-09",
+      "state": "contango",
+      "spread": -2.41
     }
   ],
   "past_spikes": [
