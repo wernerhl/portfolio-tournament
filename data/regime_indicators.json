@@ -1,24 +1,24 @@
 {
-  "updated": "2026-09-10T23:56:10.505765",
-  "as_of": "2026-09-10",
-  "R_lead": 0.2947,
-  "R_lead_displayed": 0.2947,
-  "R_full": 0.3022,
-  "divergence": -0.0075,
+  "updated": "2026-09-12T00:04:27.264488",
+  "as_of": "2026-09-11",
+  "R_lead": 0.2258,
+  "R_lead_displayed": 0.2758,
+  "R_full": 0.2438,
+  "divergence": -0.0179,
   "regime": "LOW RISK",
   "early_warning": "CLEAR",
   "divergence_alert": "CONSISTENT",
   "n_lead_indicators": 14,
   "n_full_indicators": 23,
-  "complacency_flag": false,
-  "complacency_reason": null,
-  "R_t": 0.3022,
+  "complacency_flag": true,
+  "complacency_reason": "SKEW 147 > 140 and VIX 15.8 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
+  "R_t": 0.2438,
   "n_indicators": 23,
-  "n_safe": 14,
+  "n_safe": 17,
   "n_neutral": 3,
-  "n_elevated": 5,
-  "n_crisis": 1,
-  "verdict": "14 safe \u00b7 3 neutral \u00b7 5 elevated \u00b7 1 crisis of 23 channels. R_full 0.30.",
+  "n_elevated": 3,
+  "n_crisis": 0,
+  "verdict": "COMPLACENCY FLAG \u2014 SKEW 147 > 140 and VIX 15.8 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent. 17 safe \u00b7 3 neutral \u00b7 3 elevated \u00b7 0 crisis of 23 channels. R_full 0.24.",
   "indicators": [
     {
       "key": "nfci",
@@ -27,12 +27,12 @@
       "weight": 2.0,
       "value": -0.564,
       "value_str": "-0.56",
-      "z": -1.5859957250248389,
-      "phi": 0.056370139658931506,
+      "z": -1.5730468965411804,
+      "phi": 0.05785397984009454,
       "status": "safe",
       "narrative": "Financial conditions easy",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "anfci",
@@ -41,40 +41,40 @@
       "weight": 2.0,
       "value": -0.588,
       "value_str": "-0.59",
-      "z": -0.8045725601784274,
-      "phi": 0.21053319096092132,
+      "z": -0.8033003289664161,
+      "phi": 0.21090058393061933,
       "status": "safe",
       "narrative": "No financial stress",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "yield_3m10y",
       "label": "3m-10y",
       "tier": "A",
       "weight": 2.0,
-      "value": 0.8799999999999999,
-      "value_str": "+0.88",
-      "z": -1.407646247951089,
-      "phi": 0.07961792284879382,
+      "value": 0.9500000000000002,
+      "value_str": "+0.95",
+      "z": -1.6628419932662868,
+      "phi": 0.0481720341250323,
       "status": "safe",
       "narrative": "Curve normal",
       "direction": "lower",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "breakeven_5y",
       "label": "BE 5Y",
       "tier": "A",
       "weight": 2.0,
-      "value": 2.46,
-      "value_str": "2.46",
-      "z": 0.3899360525346735,
-      "phi": 0.6517080830929118,
-      "status": "elevated",
-      "narrative": "Inflation expectations rising",
+      "value": 2.4,
+      "value_str": "2.40",
+      "z": -0.06120698468545339,
+      "phi": 0.4755971835949181,
+      "status": "neutral",
+      "narrative": "Inflation drifting up",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "baa_aaa",
@@ -83,68 +83,68 @@
       "weight": 2.0,
       "value": 43.00000000000006,
       "value_str": "43.00",
-      "z": -1.6290627232845432,
-      "phi": 0.05164987073221679,
+      "z": -1.614001946672778,
+      "phi": 0.053263502020887844,
       "status": "safe",
       "narrative": "Quality spread normal",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "vix_term",
       "label": "VIX term",
       "tier": "A",
       "weight": 2.0,
-      "value": -1.8899998474121098,
-      "value_str": "-1.9",
-      "z": 0.4536027770166793,
-      "phi": 0.6749426228094091,
-      "status": "elevated",
-      "narrative": "Term backwardation",
+      "value": -2.759999847412111,
+      "value_str": "-2.8",
+      "z": -0.32189291051501795,
+      "phi": 0.373766912089917,
+      "status": "safe",
+      "narrative": "Term contango",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "skew",
       "label": "SKEW",
       "tier": "A",
       "weight": 2.0,
-      "value": 149.25,
-      "value_str": "149",
-      "z": -0.8034315425499738,
-      "phi": 0.21086267489625016,
+      "value": 147.02,
+      "value_str": "147",
+      "z": -0.40122112434769514,
+      "phi": 0.3441286646774754,
       "status": "safe",
       "narrative": "Tail risk priced",
       "direction": "lower",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "vix",
       "label": "VIX",
       "tier": "A",
       "weight": 2.0,
-      "value": 17.84000015258789,
-      "value_str": "17.84",
-      "z": -0.0852075605230637,
-      "phi": 0.46604819000758696,
-      "status": "neutral",
-      "narrative": "Hedging neutral",
+      "value": 15.84000015258789,
+      "value_str": "15.84",
+      "z": -0.6931039604726281,
+      "phi": 0.24412215620632027,
+      "status": "safe",
+      "narrative": "Calm hedging demand",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "vvix",
       "label": "VVIX",
       "tier": "A",
       "weight": 2.0,
-      "value": 102.66,
-      "value_str": "102.7",
-      "z": 0.24631307898977947,
-      "phi": 0.597280056893093,
-      "status": "neutral",
-      "narrative": "Tail protection moderate",
+      "value": 91.28,
+      "value_str": "91.3",
+      "z": -0.7612849458830331,
+      "phi": 0.22324344513115008,
+      "status": "safe",
+      "narrative": "Tail protection cheap",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "mfg_new_orders",
@@ -153,12 +153,12 @@
       "weight": 2.0,
       "value": 85716.0,
       "value_str": "$85,716M",
-      "z": -1.3124274905171704,
-      "phi": 0.09468796820796815,
+      "z": -1.30169518047081,
+      "phi": 0.09651030389217236,
       "status": "safe",
       "narrative": "New orders trending up",
       "direction": "lower",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "kcfsi",
@@ -167,12 +167,12 @@
       "weight": 2.0,
       "value": -0.8414035068,
       "value_str": "-0.84",
-      "z": -1.0884756869996974,
-      "phi": 0.13819258207218832,
+      "z": -1.0882231015512076,
+      "phi": 0.1382483143162032,
       "status": "safe",
       "narrative": "KC stress below average",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "stlfsi",
@@ -181,12 +181,12 @@
       "weight": 2.0,
       "value": -0.7884,
       "value_str": "-0.79",
-      "z": -1.077349421398651,
-      "phi": 0.140662095506367,
+      "z": -1.0687914394084974,
+      "phi": 0.14258182880281756,
       "status": "safe",
       "narrative": "St. Louis FSI calm",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "loan_tightening",
@@ -195,12 +195,12 @@
       "weight": 2.0,
       "value": 0.0,
       "value_str": "+0.0%",
-      "z": -1.839238661955432,
-      "phi": 0.032940045216460434,
+      "z": -1.8210320277618033,
+      "phi": 0.03430099424119354,
       "status": "safe",
       "narrative": "Banks easing credit",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "consumer_expect",
@@ -209,40 +209,40 @@
       "weight": 2.0,
       "value": 4.2,
       "value_str": "4.2",
-      "z": 0.5846198002891956,
-      "phi": 0.7205983045147651,
+      "z": 0.5789107057886188,
+      "phi": 0.7186752869640556,
       "status": "elevated",
       "narrative": "Consumers cautious",
       "direction": "lower",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "hy_oas",
       "label": "HY OAS",
       "tier": "B",
       "weight": 1.0,
-      "value": 2.71,
+      "value": 2.7,
       "value_str": "3bp",
-      "z": -0.9049999537540165,
-      "phi": 0.18273270584590334,
+      "z": -0.9591528006190467,
+      "phi": 0.16874088709094714,
       "status": "safe",
       "narrative": "Credit spreads tight",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "gold_spx",
       "label": "Gold/SPX",
       "tier": "B",
       "weight": 1.0,
-      "value": 0.574034773532619,
+      "value": 0.5733330910094988,
       "value_str": "0.57",
-      "z": -0.7956002678059562,
-      "phi": 0.21313220544383532,
+      "z": -0.8081642213165718,
+      "phi": 0.20949802568996606,
       "status": "safe",
       "narrative": "No safe-haven bid",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "tlt_spx",
@@ -251,12 +251,12 @@
       "weight": 1.0,
       "value": 0.010640567554179041,
       "value_str": "0.011",
-      "z": -1.7633265588796243,
-      "phi": 0.0389227141975888,
+      "z": -1.746553455632198,
+      "phi": 0.04035741343752205,
       "status": "safe",
       "narrative": "No flight to quality",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "def_cyc",
@@ -265,26 +265,26 @@
       "weight": 1.0,
       "value": 0.4226731161809836,
       "value_str": "0.42",
-      "z": -1.1666595482057822,
-      "phi": 0.12167394250009395,
+      "z": -1.1575488937791751,
+      "phi": 0.12352408768340845,
       "status": "safe",
       "narrative": "Cyclical leadership",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "dxy",
       "label": "DXY",
       "tier": "B",
       "weight": 1.0,
-      "value": 99.09100341796875,
+      "value": 99.09500122070312,
       "value_str": "99.1",
-      "z": 0.034214038341227146,
-      "phi": 0.5136467639410628,
+      "z": 0.03321984150939395,
+      "phi": 0.5132503621912744,
       "status": "neutral",
       "narrative": "Dollar neutral",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "realized_vol",
@@ -293,12 +293,12 @@
       "weight": 0.5,
       "value": 8.30430747482788,
       "value_str": "8.3%",
-      "z": -0.9821491953087522,
-      "phi": 0.16301317615542565,
+      "z": -0.9779194076635523,
+      "phi": 0.16405709276564112,
       "status": "safe",
       "narrative": "Below-average volatility",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "spx_ret_60d",
@@ -307,73 +307,73 @@
       "weight": 0.5,
       "value": 1.2148409354797218,
       "value_str": "+1.2%",
-      "z": 0.7082141061884205,
-      "phi": 0.7605938462487474,
+      "z": 0.7020248084465721,
+      "phi": 0.7586681538908165,
       "status": "elevated",
       "narrative": "Momentum negative",
       "direction": "lower",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "spx_drawdown",
       "label": "SPX DD",
       "tier": "C",
       "weight": 0.5,
-      "value": -2.657908688599764,
-      "value_str": "-2.7%",
-      "z": 0.7440158504806308,
-      "phi": 0.7715665570336527,
-      "status": "elevated",
-      "narrative": "In drawdown",
+      "value": -1.8208800067516795,
+      "value_str": "-1.8%",
+      "z": 0.22770808059546277,
+      "phi": 0.5900634049732965,
+      "status": "neutral",
+      "narrative": "Mild pullback",
       "direction": "lower",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     },
     {
       "key": "oil_60d_vel",
       "label": "Oil 60d",
       "tier": "C",
       "weight": 0.5,
-      "value": 36.12271373385663,
-      "value_str": "+36.1%",
-      "z": 0.9032987905213234,
-      "phi": 0.81681633085846,
-      "status": "crisis",
-      "narrative": "Oil shock",
+      "value": 33.785907830737,
+      "value_str": "+33.8%",
+      "z": 0.8202745929080909,
+      "phi": 0.7939702065646921,
+      "status": "elevated",
+      "narrative": "Oil rallying",
       "direction": "higher",
-      "as_of": "2026-09-10"
+      "as_of": "2026-09-11"
     }
   ],
   "attribution": {
-    "prev": "2026-09-09",
-    "as_of": "2026-09-10",
-    "delta_pts": 5.2,
-    "R_full_prev": 0.2502,
-    "R_full": 0.3022,
+    "prev": "2026-09-10",
+    "as_of": "2026-09-11",
+    "delta_pts": -6.37,
+    "R_full_prev": 0.3075,
+    "R_full": 0.2438,
     "top3": [
       {
         "key": "vvix",
         "label": "VVIX",
-        "delta_phi": 0.2801,
-        "contribution_pts": 1.6
+        "delta_phi": -0.374,
+        "contribution_pts": -2.14
       },
       {
         "key": "vix_term",
         "label": "VIX term",
-        "delta_phi": 0.1767,
-        "contribution_pts": 1.01
+        "delta_phi": -0.3012,
+        "contribution_pts": -1.72
       },
       {
         "key": "vix",
         "label": "VIX",
-        "delta_phi": 0.1574,
-        "contribution_pts": 0.9
+        "delta_phi": -0.2219,
+        "contribution_pts": -1.27
       }
     ],
-    "residual_pts": -0.0,
+    "residual_pts": 0.0,
     "n_available": 23,
     "n_available_prev": 23,
     "method": "contribution_i = w_i\u00b7\u0394phi_i / \u03a3w(available today), in R_full points \u00d7100; residual = \u0394R_full \u2212 \u03a3 contributions (coverage/denominator interaction)"
   },
   "cadence": "daily",
-  "session_date": "2026-09-10"
+  "session_date": "2026-09-11"
 }

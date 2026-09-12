@@ -1,8 +1,8 @@
 {
   "cadence": "daily",
-  "session_date": "2026-09-10",
+  "session_date": "2026-09-11",
   "as_of": "2026-09-10",
-  "computed_at": "2026-09-10T19:56:11-04:00",
+  "computed_at": "2026-09-11T20:04:27-04:00",
   "index": "SPY (data/source/sector_etfs.parquet, dividend-adjusted)",
   "index_through": "2026-09-10",
   "index_last_close": 757.83,
@@ -11,14 +11,14 @@
   "regime": {
     "rule": "24-indicator regime index R_full (data/regime_v2_daily.csv), tier-4 mapping: cash = clamp(floor + R_full x slope, floor, max), exposure = 1 - cash",
     "state": "LOW RISK",
-    "R_full": 0.3022,
-    "cash": 0.3022,
-    "exposure": 0.6978,
+    "R_full": 0.2438,
+    "cash": 0.2438,
+    "exposure": 0.7562,
     "computed_from": {
-      "R_full": 0.3022,
-      "R_full_date": "2026-09-10",
+      "R_full": 0.2438,
+      "R_full_date": "2026-09-11",
       "label": "LOW RISK",
-      "label_date": "2026-09-10",
+      "label_date": "2026-09-11",
       "tier": "4_tactical",
       "tier4_mapping": {
         "cash_floor": 0.0,
@@ -26,11 +26,11 @@
         "cash_max": 1.0
       }
     },
-    "as_of": "2026-09-10",
+    "as_of": "2026-09-11",
     "evaluation": {
       "frequency": "daily"
     },
-    "session_date": "2026-09-10"
+    "session_date": "2026-09-11"
   },
   "rules": {
     "sma10": {
@@ -102,7 +102,7 @@
         "through": "2026-09-10",
         "same_as_current": false
       },
-      "session_date": "2026-09-10"
+      "session_date": "2026-09-11"
     },
     "tsmom_12_1": {
       "rule": "Time-series momentum: sign of trailing twelve-month return excluding the last month (P_{m-1} / P_{m-12} - 1 on month-end closes); monthly; invested if positive, cash otherwise",
@@ -136,7 +136,7 @@
         "exposure": 1.0,
         "same_as_current": false
       },
-      "session_date": "2026-09-10"
+      "session_date": "2026-09-11"
     },
     "vol_target_10": {
       "rule": "Volatility targeting at 10% annualized with 60-day realized volatility (sample std of daily log returns x sqrt(252)); exposure = min(1.0, 0.10 / sigma), capped at 100%",
@@ -161,7 +161,7 @@
         "sigma_ann": 0.1395,
         "exposure": 0.7166
       },
-      "session_date": "2026-09-10"
+      "session_date": "2026-09-11"
     }
   },
   "cross_check": {
@@ -180,5 +180,7 @@
       "vol_target_10": 0.7166
     }
   },
-  "warnings": []
+  "warnings": [
+    "index history ends 2026-09-10, before session 2026-09-11; rule states computed through 2026-09-10"
+  ]
 }
