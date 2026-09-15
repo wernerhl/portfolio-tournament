@@ -1,9 +1,9 @@
 {
-  "updated": "2026-09-12T00:04:40.799680",
-  "as_of": "2026-09-11",
-  "session_date": "2026-09-11",
+  "updated": "2026-09-15T00:27:21.353534",
+  "as_of": "2026-09-14",
+  "session_date": "2026-09-14",
   "cadence": "daily",
-  "tradable_at": "2026-09-14",
+  "tradable_at": "2026-09-15",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -237,6 +237,12 @@
       "d": "2026-09-11",
       "state": "contango",
       "spread": -2.76,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-14",
+      "state": "contango",
+      "spread": -2.18,
       "source": "yfinance"
     }
   ],
@@ -258,11 +264,11 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 4,
-  "spread": -2.76,
-  "delta_spread": -0.87,
-  "sigma_threshold": 0.448,
-  "trigger_fired": false,
+  "state_age": 5,
+  "spread": -2.18,
+  "delta_spread": 0.58,
+  "sigma_threshold": 0.457,
+  "trigger_fired": true,
   "entry": {
     "current_entry_dspread": 0.41,
     "state_mean_entry": -0.092,
@@ -329,10 +335,10 @@
     }
   },
   "curve": {
-    "spot_vix": 15.84,
-    "vix1d": 12.98,
-    "vix3m": 18.6,
-    "spread_spot_3m": -2.76,
+    "spot_vix": 17.1,
+    "vix1d": 12.02,
+    "vix3m": 19.28,
+    "spread_spot_3m": -2.18,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
@@ -340,33 +346,29 @@
     "types": [
       "FOMC"
     ],
-    "sessions_away": 3
+    "sessions_away": 2
   },
-  "event_today": [
-    "CPI"
-  ],
+  "event_today": [],
   "conditioning": {
-    "event_flag": true,
-    "event_types": [
-      "CPI"
-    ],
-    "delta_2y_bps": 3.6,
+    "event_flag": false,
+    "event_types": [],
+    "delta_2y_bps": 2.0,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.43,
-    "held_close": false
+    "held_close_proxy": 0.79,
+    "held_close": true
   },
   "attribution": {
-    "primary_driver": "no_trigger",
-    "primary_reversion": "n/a",
+    "primary_driver": "unclassified_persistent",
+    "primary_reversion": "med",
     "equity_drag": false,
     "equity_drag_inputs": {
       "smh_1d_return": null,
-      "breadth_delta_pp": -32.89,
+      "breadth_delta_pp": null,
       "breadth_holds": false,
       "breadth_delta_sigma_1y_pp": 4.425,
-      "breadth_z": -7.43,
+      "breadth_z": null,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -378,7 +380,7 @@
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-09-11",
+      "today_excluded_from_metrics": "2026-09-14",
       "all_triggers_reversion": {
         "n": 793,
         "n_reverted": 679,
@@ -412,11 +414,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-09-11",
-      "state": "deep_contango",
-      "spread": -3.32
-    },
     {
       "d": "2025-09-12",
       "state": "deep_contango",
@@ -1671,15 +1668,14 @@
       "d": "2026-09-11",
       "state": "contango",
       "spread": -2.76
+    },
+    {
+      "d": "2026-09-14",
+      "state": "contango",
+      "spread": -2.18
     }
   ],
   "past_spikes": [
-    {
-      "d": "2026-03-06",
-      "delta_spread": 2.04,
-      "state": "backwardation",
-      "event": "NFP"
-    },
     {
       "d": "2026-03-12",
       "delta_spread": 1.08,
@@ -1793,6 +1789,12 @@
       "delta_spread": 0.52,
       "state": "contango",
       "event": "TREASURY"
+    },
+    {
+      "d": "2026-09-14",
+      "delta_spread": 0.58,
+      "state": "contango",
+      "event": null
     }
   ]
 }
