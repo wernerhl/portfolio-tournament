@@ -150,7 +150,7 @@ def regime_multiplier(R_full: float) -> float:
 # strength 100 even when price is +3% above the buy zone.
 def trade_now_strength(setup_strength: int, price: float | None,
                         entry: float | None, signal: str) -> int:
-    if signal in ("BUY", "STRONG BUY") and entry and price and entry > 0:
+    if signal.startswith("ENTRY CONDITIONS") and not signal.startswith("ENTRY CONDITIONS 2") and not signal.startswith("ENTRY CONDITIONS 1") and not signal.startswith("ENTRY CONDITIONS 0") and entry and price and entry > 0:
         if price <= entry:
             prox = 1.0
         else:
@@ -162,9 +162,9 @@ def trade_now_strength(setup_strength: int, price: float | None,
 
 
 def trade_now_note(price: float | None, entry: float | None, signal: str) -> str | None:
-    if signal in ("BUY", "STRONG BUY") and entry and price and price > entry:
+    if signal.startswith("ENTRY CONDITIONS") and not signal.startswith(("ENTRY CONDITIONS 2", "ENTRY CONDITIONS 1", "ENTRY CONDITIONS 0")) and entry and price and price > entry:
         pct = (price - entry) / entry * 100
-        return f"price ${price:.0f} is {pct:.0f}% above entry ${entry:.0f} — wait for pullback"
+        return f"price ${price:.0f} is {pct:.0f}% above the rulebook entry zone ${entry:.0f}"
     return None
 
 
@@ -446,7 +446,7 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
         pullback_pct = round((pullback / current - 1) * 100, 1)
         entry_primary = round(float(pullback), 2)
         entry_secondary = round(entry_primary * 0.95, 2)
-        entry_basis = f"WAIT — pullback to ${entry_primary} ({pullback_basis}, {pullback_pct:+.1f}%)"
+        entry_basis = f"rulebook entry zone ${entry_primary} ({pullback_basis}, {pullback_pct:+.1f}% from here)"
         stop_price = round(entry_primary * (1 - stop_pct), 2)
         risk_per_share = max(0.0, entry_primary - stop_price)
         # Targets framed around CURRENT price, not the fantasy entry
@@ -454,9 +454,9 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
         target_base         = round(current * 1.05, 2)
         target_aggressive   = round(hi52 * 1.10, 2)
         if rsi > 70:
-            forced_signal = ("WAIT — OVERBOUGHT", 20)
+            forced_signal = (f"EXTENDED · RSI {rsi:.0f}", 20)
         else:
-            forced_signal = ("WATCH — EXTENDED", 35)
+            forced_signal = (f"EXTENDED · {ma200_dist:.0f}% ABOVE MA200", 35)
     elif ma200 and current <= ma200 * 1.02:
         # At/below MA200 — ideal entry
         entry_primary = round(current * 0.99, 2)
@@ -503,6 +503,7 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
     max_loss    = round(target_shares * risk_per_share, 2)
 
     # ---- Signal ----
+    setup_grade = "extended"
     if forced_signal is not None:
         signal, strength = forced_signal
         # Conditions still computed for the dropdown
@@ -544,23 +545,27 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
             "far_above_ma200":         ma200_dist > 40,
         }
         n_buy, n_strong, n_sell = sum(buy_cond.values()), sum(strong_cond.values()), sum(sell_cond.values())
+        # Descriptive setup readings (order 16-Sept, acceptance 8): the rulebook's condition
+        # counts are stated; no verb. The strength scale is unchanged (a ranking of setups).
         if n_sell >= 2:
-            signal, strength = "SELL", min(100, n_sell * 35)
+            signal, strength = f"CAUTION FLAGS {n_sell}/3", min(100, n_sell * 35)
         elif n_buy >= 4 and n_strong >= 3:
-            signal, strength = "STRONG BUY", min(100, 70 + n_strong * 10)
+            signal, strength = f"ENTRY CONDITIONS {n_buy}/5 · STRONG {n_strong}/4", min(100, 70 + n_strong * 10)
         elif n_buy >= 3:
-            signal, strength = "BUY", min(100, 40 + n_buy * 12)
+            signal, strength = f"ENTRY CONDITIONS {n_buy}/5", min(100, 40 + n_buy * 12)
         elif n_buy >= 2:
-            signal, strength = "WATCH", 30 + n_buy * 10
+            signal, strength = f"ENTRY CONDITIONS {n_buy}/5", 30 + n_buy * 10
         else:
-            signal, strength = "HOLD", 50
-        if R_full >= 0.70 and signal in ("BUY", "STRONG BUY"):
-            signal, strength = "HOLD — REGIME CRISIS", 20
+            signal, strength = f"ENTRY CONDITIONS {n_buy}/5", 50
+        if R_full >= 0.70 and n_buy >= 3:
+            signal, strength = f"REGIME ≥ 0.70 · ENTRY CONDITIONS {n_buy}/5", 20
+        setup_grade = ("strong" if (n_buy >= 4 and n_strong >= 3) else "conditions_met" if n_buy >= 3
+                       else "partial" if n_buy >= 2 else "few")
 
     # ---- WHY ----
     why = [f"Ranked #{rank} in universe ({composite:.1f}/50)"]
     if extended:
-        why.append(f"{ma200_dist:.0f}% above 200-DMA — extended; wait for pullback to ${entry_primary}")
+        why.append(f"{ma200_dist:.0f}% above 200-DMA — extended; the rulebook's entry zone is ${entry_primary}")
     else:
         if   rsi < 30: why.append(f"deeply oversold (RSI {rsi:.0f})")
         elif rsi < 40: why.append(f"oversold (RSI {rsi:.0f})")
@@ -600,6 +605,8 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
         "ticker":          ticker,
         "mode":            "entry",
         "signal":          signal,
+        "setup_grade":     setup_grade,
+        "reading":         "descriptive setup reading: rulebook condition counts and levels; not a recommendation",
         "signal_strength": int(strength),
         "trade_now_strength": tn_strength,
         "trade_now_note":  tn_note,

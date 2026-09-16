@@ -600,8 +600,8 @@ function renderTopBanner(){
       <div class="serif t1 mt2 lh155 x5">
         ${reasons}. SPX <strong>${spxStr}</strong> intraday, VIX
         <strong>${id.vix_now}</strong> (<strong>${vixStr}</strong>).
-        The end-of-day regime below is <strong>STALE</strong> and does not reflect this move.
-        Do not deploy new capital until the close.
+        The end-of-day regime below is <strong>STALE</strong> and does not reflect this move;
+        it re-reads at the close.
         <span class="x6">snapshot ${snapStr} · ${Math.round(ageMin)} min ago</span></div>
     </div>`;
   }
@@ -1219,29 +1219,29 @@ function divergenceState(quality, qPct, trade, sig){
     return {cls:"hold", color:"#737373", icon:"○", text:"Within the rulebook's levels."};
   }
   if (S.startsWith("SELL"))            return {cls:"exit",   color:"#f87171", icon:"▼",
-                                                text:"Exit signal — stop or thesis triggered."};
+                                                text:"Caution flags of the rulebook (observation)."};
   if (S.startsWith("TRIM"))            return {cls:"trim",   color:"#facc15", icon:"✂",
-                                                text:"Trim signal — profit-take threshold crossed."};
+                                                text:"Past a trim level of the schedule (observation)."};
   if (S.includes("HEDGE"))             return {cls:"hedge",  color:"#a78bfa", icon:"🛡",
-                                                text:"Hedge signal — extended position, sell covered calls."};
+                                                text:"Hedge condition of the rulebook met (observation)."};
   if (S.includes("MONITOR"))           return {cls:"monitor",color:"#94a3b8", icon:"—",
-                                                text:"Monitor — multiple yellow flags but no exit."};
+                                                text:"Several yellow flags (observation)."};
   if (S.startsWith("HOLD"))            return {cls:"hold",   color:"#737373", icon:"—",
-                                                text:"Hold — no action."};
+                                                text:"Few entry conditions met."};
   if (S.startsWith("WAIT") || S.startsWith("WATCH"))
                                        return {cls:"wait",   color:"#facc15", icon:"⏸",
-                                                text:"Wait for entry — not at the price the model wants."};
+                                                text:"Extended above the rulebook's entry zone."};
   // BUY / STRONG BUY → 4-quadrant divergence
   const hiQ = quality >= 38;
   const hiT = trade >= 70;
   if ( hiQ &&  hiT) return {cls:"clean", color:"#4ade80", icon:"★",
-                            text:"Clean buy — top-tier business at a good entry."};
+                            text:"High quality score and the entry conditions met (descriptive; expectancy not validated)."};
   if ( hiQ && !hiT) return {cls:"watch", color:"#facc15", icon:"⚠",
-                            text:"Quality name, but NOT a good entry now — pullback watch-list."};
+                            text:"High quality score; entry conditions not met at this price."};
   if (!hiQ &&  hiT) return {cls:"momo",  color:"#60a5fa", icon:"↗",
-                            text:"Decent entry on a middling business — momentum trade, lower conviction."};
+                            text:"Entry conditions met on a middling quality score."};
   return                    {cls:"avoid", color:"#737373", icon:"·",
-                            text:"Neither quality nor timing — pass."};
+                            text:"Neither the quality score nor the entry conditions."};
 }
 function tradeContext(s){
   // One short phrase that summarises the trade-now reading using existing data.
@@ -1301,7 +1301,7 @@ function renderTwoScore(tk){
       <div class="ts-sub">${qPct.toFixed(0)}th pct${rank === 1 ? " · #1 in universe" : rank ? " · rank #" + rank : ""}</div>
     </div>
     <div class="ts-row">
-      <div class="ts-label">Trade now</div>
+      <div class="ts-label">Setup reading</div>
       ${twoScoreBar(trade, 100, tradeColor(trade))}
       <div class="ts-val"><span class="${cc(tradeColor(trade))}">${sig}</span> · ${trade}<span class="ts-of">/100</span></div>
       <div class="ts-sub">${note ? '<span class="c-warn">' + note + '</span>' : tradeContext(s)}</div>
@@ -1910,9 +1910,9 @@ function renderScanner(){
 
   const filterChips = [
     {k:"all",       lbl:`All (${rows0.length})`},
-    {k:"clean",     lbl:`★ Clean buys (${rows0.filter(r=>r.divCls==="clean").length})`},
-    {k:"watch",     lbl:`⚠ Pullback watch (${rows0.filter(r=>r.divCls==="watch").length})`},
-    {k:"exit",      lbl:`▼ Exit signals (${rows0.filter(r=>r.divCls==="exit"||r.divCls==="trim").length})`},
+    {k:"clean",     lbl:`★ Conditions met (${rows0.filter(r=>r.divCls==="clean").length})`},
+    {k:"watch",     lbl:`⚠ Quality, not at the zone (${rows0.filter(r=>r.divCls==="watch").length})`},
+    {k:"exit",      lbl:`▽ Below a rulebook level (${rows0.filter(r=>r.divCls==="exit"||r.divCls==="trim").length})`},
     {k:"quality",   lbl:`Top quality (${rows0.filter(r=>r.quality>=38).length})`},
     {k:"positions", lbl:`Owned (${rows0.filter(r=>r.mode==="position").length})`},
   ];
@@ -1944,7 +1944,7 @@ function renderScanner(){
   return `<section class="scanner">
     <div class="scanner-head">
       <div>
-        <h2>SCANNER — BUSINESS QUALITY × TRADE NOW${asOfBadge(S.signals && S.signals.updated)}</h2>
+        <h2>SCANNER — BUSINESS QUALITY × SETUP READING${asOfBadge(S.signals && S.signals.updated)}</h2>
         <div class="sc-sub">${rows.length} of ${rows0.length} names · top of list = best divergence quadrant</div>
       </div>
       <div class="filter-row">
@@ -1956,7 +1956,7 @@ function renderScanner(){
         <th class="${sortCls("tk")}"      data-scsort="tk">TICKER</th>
         <th class="${sortCls("quality")}" data-scsort="quality">BUSINESS QUALITY</th>
         <th class="num"></th>
-        <th class="${sortCls("trade")}"   data-scsort="trade">TRADE NOW</th>
+        <th class="${sortCls("trade")}"   data-scsort="trade">SETUP READING</th>
         <th class="num"></th>
         <th class="${sortCls("quad")}"    data-scsort="quad">FLAG</th>
       </tr></thead>
@@ -1987,9 +1987,13 @@ function renderSignalBox(tk){
   return renderEntryBox(sig);
 }
 
+const GRADE_COLORS = {   // descriptive setup grades (16-Sept, acceptance 8): colour by condition count, no verb
+  strong: SIG_COLORS["STRONG BUY"], conditions_met: SIG_COLORS["BUY"], partial: SIG_COLORS["WATCH"],
+  few: SIG_COLORS["HOLD"], extended: SIG_COLORS["WAIT"],
+};
 function renderEntryBox(sig){
   const baseSig = sigVerb(sig.signal);
-  const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
+  const sc = (sig.setup_grade && (baseSig === "CAUTION" ? SIG_COLORS["SELL"] : GRADE_COLORS[sig.setup_grade])) || SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
   const rr = sig.target?.reward_risk ?? 0;
   const rrc = rrColor(rr);
 
@@ -2009,7 +2013,7 @@ function renderEntryBox(sig){
     <div class="flx mb3 gap3 x27">
       <div>
         <span class="sig-badge mono t1 w8 ls15 ${sc.cls} r1 x28">${sc.icon} ${sig.signal}</span>
-        <span class="mono t1 w5 c-3 ml2">${sig.category} · strength ${sig.signal_strength}/100</span>
+        <span class="mono t1 w5 c-3 ml2">${sig.category} · setup rank ${sig.signal_strength}/100 · descriptive</span>
       </div>
       <div class="mono t1 w5 c-3">
         R/R <strong class="${cc(rrc)}">${rr}:1</strong>
@@ -2018,18 +2022,18 @@ function renderEntryBox(sig){
     </div>
 
     <div class="gap2 mb3 x29">
-      ${cell("ENTRY",
+      ${cell("RULEBOOK ENTRY ZONE",
         `<div class="mono t3 w7 c-info">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
         `${sig.entry?.basis || ""}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)}`)}
       ${cell("STOP",
         `<div class="mono t3 w7 c-neg">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
         sig.stop?.category_rule || "")}
-      ${cell("TARGET",
+      ${cell("RULEBOOK TARGET LEVELS",
         `<div class="mono t3 w7 c-pos">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
         `Cons: $${(sig.target?.conservative ?? 0).toFixed(2)}<br>Aggr: $${(sig.target?.aggressive ?? 0).toFixed(2)}`)}
-      ${cell("SIZE",
+      ${cell("RULEBOOK SIZE FORMULA",
         `<div class="mono t3 w7 c-1">${fmtMoney(sig.size?.dollars)}</div>`,
-        `${sig.size?.shares ?? 0} shares · ${sig.size?.pct_portfolio ?? 0}%<br>Max loss: ${fmtMoney(sig.size?.max_loss)}`)}
+        `${sig.size?.shares ?? 0} shares · ${sig.size?.pct_portfolio ?? 0}% (1% risk budget, 5% cap)<br>loss at the stop: ${fmtMoney(sig.size?.max_loss)}`)}
     </div>
 
     <div class="mb2">
@@ -2546,7 +2550,7 @@ function renderPostureCard(){
     const gap = (r.book_share != null && actual != null) ? actual - r.book_share : null;
     return `<tr title="${(r.label || "").replace(/"/g, "'")}"><td class="c-2">${r.rule}${sub}</td><td class="num">${p1(r.index_share)}</td><td class="num c-1 w6">${p1(r.book_share)}</td><td class="num">${p1(actual)}${gap != null ? ` <span class="${gap > 0 ? "c-warn" : "c-3"} t1">(${gap >= 0 ? "+" : ""}${(gap * 100).toFixed(0)} pp)</span>` : ""}</td></tr>`;
   }).join("");
-  return `<div class="rcc-card posture-card"><h3>POSTURE VERSUS EVERY RULE · <span class="c-3 w5">at the book's beta · equity-sleeve β ${bp.beta_equity_sleeve} (${bp.beta_with_cash} with cash)</span>${asOfBadge(cp.session_date)}</h3>
+  return `<div class="rcc-card posture-card"><h3>POSTURE VERSUS EVERY RULE · <span class="c-3 w5">at the book's beta · equity-sleeve β ${(+bp.beta_equity_sleeve).toFixed(2)} (${bp.beta_with_cash != null ? (+bp.beta_with_cash).toFixed(2) : "—"} with cash)</span>${asOfBadge(cp.session_date)}</h3>
     <div class="tbl-scroll"><table class="posture-table"><tr><th>RULE</th><th class="num" title="the equity share the rule implies for a beta-one index">INDEX (β = 1)</th><th class="num" title="index share ÷ equity-sleeve beta, capped at 100 percent">TRANSLATED TO A BOOK OF YOUR BETA</th><th class="num">ACTUAL EQUITY SHARE</th></tr>${rows}</table></div>
     <div class="chart-meta">${bp.translation} · volatility targeting on the book uses the book's own realised volatility, not the index's · regime schedule at R<sub>full</sub> ${cp.regime && cp.regime.R_full} · <strong class="c-2">${bp.note || "descriptive; no rule drives this book"}</strong> · session ${cp.session_date}</div>
   </div>`;

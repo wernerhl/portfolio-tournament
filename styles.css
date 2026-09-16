@@ -756,8 +756,8 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 .tier-1 .tier-title{color:var(--accent)}
 .tier1-grid{display:grid;grid-template-columns:minmax(300px,1fr) 2fr;gap:var(--s3);align-items:stretch}
 .tier1-grid .gauge-card{display:flex;flex-direction:column}
-.tier2-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s3)}
-.tier2-grid > div{display:flex;flex-direction:column;gap:var(--s3)}
+.tier2-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s3);margin-top:var(--s3)}
+.tier2-grid > div{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
 .claim{margin:0 0 var(--s3);color:var(--text-1);line-height:1.5;max-width:70ch}
 .dd-wrap{height:280px}
 .moved-by{line-height:1.6;text-align:center}
@@ -862,8 +862,9 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 }
 
 /* ── order 16-Sept Phase 1: book analytics, posture, sleeves, stress, position observations ── */
-.dd-body{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:var(--s3);align-items:start}
-.stress-panel{border-left:var(--hair) solid var(--hairline);padding-left:var(--s3)}
+.dd-body{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--s3);align-items:start}
+.dd-body > div{min-width:0}
+.stress-panel{border-left:var(--hair) solid var(--hairline);padding-left:var(--s3);min-width:0;overflow-x:auto}
 .stress-table{width:100%;border-collapse:collapse;font:400 var(--t1) var(--mono)}
 .stress-table th{font:600 var(--t1) var(--mono);color:var(--text-3);letter-spacing:.12em;text-align:left;padding:var(--s1) var(--s2);border-bottom:var(--hair) solid var(--hairline)}
 .stress-table th.num,.stress-table td.num{text-align:right;font-variant-numeric:tabular-nums}
