@@ -250,6 +250,37 @@ def main(troot, sroot, today=None):
             add('CRITICAL','identity:attribution',f'{k}: null component(s) {nulls} — identity cannot be verified'); continue
         if abs(c.get('active',0)-(c.get('cash_eff',0)+c.get('alloc_eff',0)+c.get('selection',0)))>1e-4:
             add('CRITICAL','identity:attribution',f'{k}: components do not sum to active')
+    # ---------- the book (order 16-Sept 2.3) ----------
+    # holdings.json is the only holdings source; the ingestion job (2.1) writes it from the brokerage
+    # export and records the export's own positions and cash in holdings_export.json. Three checks:
+    #   holdings older than 20 sessions            → HIGH   (a book nobody has re-exported)
+    #   served ⊄ export or export ⊄ served         → CRITICAL (the served book is not the account)
+    #   cash off the export by more than 1 percent → HIGH
+    # Until an export is on record the set and cash checks report INFO, never a finding.
+    hp_=os.path.join(troot,'holdings.json')
+    if os.path.exists(hp_):
+        hj=json.load(open(hp_)); hd=to_date(hj.get('as_of') or '')
+        if not hd: add('HIGH','book:holdings_date','holdings.json: no as_of date')
+        else:
+            hage=len(trading_days(hd,ls))-1 if hd<=ls else 0
+            if hage>20: add('HIGH','book:holdings_age',f'holdings.json as_of {hd} is {hage} sessions old (>20): re-export the account')
+        served={str(h.get('ticker','')).upper() for h in hj.get('holdings',[]) if (h.get('shares') or 0)>0}
+        ep_=os.path.join(troot,'holdings_export.json')
+        if os.path.exists(ep_):
+            ex=json.load(open(ep_))
+            exp={str(h.get('ticker','')).upper() for h in ex.get('positions',[]) if (h.get('shares') or 0)>0}
+            miss_served=sorted(exp-served); miss_export=sorted(served-exp)
+            if miss_served: add('CRITICAL','book:export_mismatch',f'export holdings absent from holdings.json: {miss_served}')
+            if miss_export: add('CRITICAL','book:export_mismatch',f'served holdings absent from the latest export: {miss_export}')
+            ec=ex.get('cash'); sc_=hj.get('cash')
+            if ec is not None and sc_ is not None and float(ec)>0 and abs(float(sc_)/float(ec)-1)>0.01:
+                add('HIGH','book:cash_mismatch',f'holdings.json cash {sc_} differs from the export cash {ec} by {abs(float(sc_)/float(ec)-1)*100:.1f}% (>1%)')
+            if hj.get('input_sha256') and ex.get('input_sha256') and hj['input_sha256']!=ex['input_sha256']:
+                add('HIGH','book:export_hash',f'holdings.json input_sha256 {str(hj["input_sha256"])[:12]} != export record {str(ex["input_sha256"])[:12]}')
+        else:
+            add('INFO','book:export',f'no brokerage export on record (holdings_export.json absent); holdings.json source: {hj.get("source")}')
+    else:
+        add('CRITICAL','book:holdings_missing','data/holdings.json absent — the only holdings source')
     # visibility review dates (screener)
     vp=os.path.join(sroot,'visibility_registry.json')
     if os.path.exists(vp):

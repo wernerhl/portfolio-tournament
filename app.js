@@ -567,6 +567,11 @@ function renderStatusStrip(){
   if (a.critical_other_repo && a.critical_other_repo.length)
     parts.push(strip("2",
       `other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span class="c-3">(does not block this deploy)</span>`));
+  // 16-Sept 2.3: the holdings date, always shown
+  const hf = S.holdingsFile;
+  if (hf && hf.as_of)
+    parts.push(strip("2",
+      `book: holdings.json as of <strong class="c-1">${hf.as_of}</strong> · ${hf.source || "source not stated"}${hf.input_sha256 ? ` · export ${String(hf.input_sha256).slice(0, 12)}` : ""}${hf.exported_at ? ` · exported ${String(hf.exported_at).slice(0, 16)}` : ""}`));
   return parts.join("");
 }
 
