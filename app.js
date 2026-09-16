@@ -2339,6 +2339,16 @@ function renderMovedByLine(){
   const movers = a.top3.map(c => `<span class="nowrap" title="${c.label}: Δphi ${sg(c.delta_phi)} → ${sg(c.contribution_pts)} R_full points">${c.key} <span class="${c.contribution_pts >= 0 ? "c-neg" : "c-pos"}">${sg(c.contribution_pts)}</span></span>`).join(" · ");
   return `<div class="moved-by mono t1 c-2 mt2" title="${a.method || ""}">R<sub>full</sub> ${sg(a.delta_pts)} pts vs ${a.prev} — moved by: ${movers} · interaction residual ${sg(a.residual_pts)}</div>`;
 }
+// ── 16-Sept 1.5: stress scenarios beside the drawdown chart (fixed scenarios, 126-session betas) ──
+function renderStressPanel(){
+  const b = S.book; if (!b || !b.stress) return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS</div><div class="mono t1 c-3">book.json not published</div></div>`;
+  const money = v => "$" + fmt(Math.round(Math.abs(v)));
+  const rows = b.stress.map(sc => `<tr title="${(sc.method || "").replace(/"/g, "'")}"><td class="c-2">${sc.label}</td><td class="num c-neg">−${money(sc.loss)}</td><td class="num c-neg w6">${(sc.share_nav * 100).toFixed(1)}%</td></tr>`).join("");
+  return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS · <span class="c-3">fixed · dollars and share of NAV ${money(b.nav)}</span></div>
+    <table class="stress-table"><tr><th>SCENARIO</th><th class="num">LOSS</th><th class="num">OF NAV</th></tr>${rows}</table>
+    <div class="mono t1 c-3 mt1">index shocks through each holding's ${b.definitions ? b.definitions.window_sessions : 126}-session beta to the shocked index; thesis shocks from registry exposures · ${b.stress_note || "descriptive"}</div>
+  </div>`;
+}
 function renderDrawdownCard(){      // P2.1: underwater chart, tier one
   const r = S.ddRange || "ALL";
   const btn = (p, t) => `<button class="period-btn ${r === p ? "on" : ""}" data-ddr="${p}">${t}</button>`;
@@ -2346,8 +2356,8 @@ function renderDrawdownCard(){      // P2.1: underwater chart, tier one
     <div class="chart-head"><h3>DRAWDOWN FROM RUNNING PEAK · <span class="c-3 w5">all tiers and benchmarks, one axis</span></h3>
       <div class="periods">${btn("1M","1M")}${btn("3M","3M")}${btn("ALL","SINCE INCEPTION")}${btn("BT","BACKTEST")}</div></div>
     ${renderClaimSentence()}
-    <div class="chart-wrap dd-wrap"><canvas id="dd-chart"></canvas></div>
-    <div class="chart-meta" id="dd-meta"></div>
+    <div class="dd-body"><div><div class="chart-wrap dd-wrap"><canvas id="dd-chart"></canvas></div>
+    <div class="chart-meta" id="dd-meta"></div></div>${renderStressPanel()}</div>
   </div>`;
 }
 const DD_LABEL = {"1_cap_pres":"CAP PRES","2_balanced":"BALANCED","3_aggressive":"AGGRESSIVE","4_tactical":"TACTICAL","5_werner":"WERNER",
