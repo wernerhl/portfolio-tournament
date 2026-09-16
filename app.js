@@ -2722,6 +2722,19 @@ function renderCalibrationChart(){
     plugins: {tooltip: {callbacks: {label: ctx => ` ${ctx.dataset.label}: predicted ${(ctx.parsed.x * 100).toFixed(1)}% → observed ${(ctx.parsed.y * 100).toFixed(1)}%${ctx.raw && ctx.raw.n ? " (n " + ctx.raw.n + ")" : ""}`}}},
   }});
 }
+// ── 16-Sept 1.6: diversification sleeves — correlation to the equity book, ascending ──
+function renderSleevesPanel(){
+  const b = S.book; if (!b || !b.sleeves) return "";
+  const rows = b.sleeves.map(s_ => {
+    const c = s_.corr; const w = c == null ? 0 : Math.abs(c) * 50;
+    const bar = c == null ? `<span class="c-3 t1">${s_.note || "n/a"}</span>` : `<span class="sleeve-bar"><span class="sleeve-zero"></span><span class="sleeve-fill ${c >= 0 ? "bg-warn" : "bg-pos"}" style="left:${(c >= 0 ? 50 : 50 - w).toFixed(1)}%;width:${w.toFixed(1)}%"></span></span>`;
+    return `<tr><td class="mono t2 c-1 w6">${s_.ticker}</td><td class="c-2">${s_.label}${s_.kind === "screen_name" ? ` <span class="c-3 t1">· screen name · composite ${s_.screen_composite} (F ${s_.fundamental} · V ${s_.visibility})</span>` : ""}</td><td class="c-3 t1">${s_.kind === "etf" ? "sector / asset ETF" : "quality-passing screen name · " + (s_.group || "")}</td><td class="sleeve-cell">${bar}</td><td class="num c-1">${c == null ? "—" : (c >= 0 ? "+" : "") + c.toFixed(2)}</td><td class="num c-3">${s_.n_obs}</td></tr>`;
+  }).join("");
+  return `<div class="rcc-card sleeves-panel"><h3>DIVERSIFICATION SLEEVES · <span class="c-3 w5">correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions, ascending</span>${asOfBadge(b.session_date)}</h3>
+    <div class="tbl-scroll"><table class="sleeves-table"><tr><th>SLEEVE</th><th>NAME</th><th>KIND</th><th>CORRELATION TO THE BOOK</th><th class="num">ρ</th><th class="num">n</th></tr>${rows}</table></div>
+    <div class="chart-meta">${b.sleeves_note || ""} · screen names pass the quality bar (fundamental ≥ ${b.quality_bar ? b.quality_bar.fundamental : 18}, visibility ≥ ${b.quality_bar ? b.quality_bar.visibility : 15}) and carry a registry thesis; held names excluded · book series: constant current equity weights</div>
+  </div>`;
+}
 function renderCalendarCard(){
   const ev = (S.eventCal && S.eventCal.events) || [];
   const today = _etDateISO(new Date());
@@ -2914,7 +2927,7 @@ function render(){
   // rest of tier two: treemap (P2.3) · retirement panel (P2.2) · regime & overlay · the book (P3.2)
   h += renderTreemapCard() + renderRetirementPanel();
   h += `<div class="tier2-grid">${renderRegimeOverlayPanel()}<div>${rv.timeline}${rv.deployment}</div></div>`;
-  h += renderBookPanel() + renderPostureCard();
+  h += renderBookPanel() + renderPostureCard() + renderSleevesPanel();
   h += `</div>`;   // close tier two
 
   // ══ TIER THREE (reduced type and contrast): indicators · thesis register · v4 · status · records · calendar ══
