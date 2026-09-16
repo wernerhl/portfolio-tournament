@@ -29,7 +29,9 @@ def main() -> int:
     # Order 9-Sept, B3: each repository's deploy is blocked only by CRITICAL
     # findings whose label belongs to that repository. Cross-file findings
     # (xfile:*) are reported in both status strips and block neither.
-    scope = args[args.index("--scope") + 1] if "--scope" in args else "tournament"
+    # Order 16-Sept 6.4: one repository, one deploy — every CRITICAL blocks (--scope all, the default).
+    # The per-repository scopes remain only for a manual run against a split tree.
+    scope = args[args.index("--scope") + 1] if "--scope" in args else "all"
 
     def scope_of(check: str) -> str:
         if check.startswith("xfile:"):
@@ -44,8 +46,8 @@ def main() -> int:
         if m:
             findings.append((m.group(1), m.group(2), m.group(3)))
     crit_all = sorted({c for s, c, _ in findings if s == "CRITICAL"})
-    crit = sorted({c for c in crit_all if scope_of(c) == scope})            # blocking here
-    crit_other = sorted({c for c in crit_all if scope_of(c) not in (scope, "xfile")})
+    crit = sorted(crit_all) if scope == "all" else sorted({c for c in crit_all if scope_of(c) == scope})   # blocking here
+    crit_other = [] if scope == "all" else sorted({c for c in crit_all if scope_of(c) not in (scope, "xfile")})
     high = sorted({c for s, c, _ in findings if s == "HIGH"})
     xfile = sorted({f"{s}:{c}" for s, c, _ in findings if scope_of(c) == "xfile" and s in ("CRITICAL", "HIGH")})
     block = {

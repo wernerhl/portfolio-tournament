@@ -1,0 +1,149 @@
+name: Nightly
+
+# Order 16-Sept-2026, item 6.4 — ONE workflow, ONE referee, ONE deploy.
+# scripts/update_daily.py runs, in order: the canonical closes, the regime and
+# volatility layers, both scoring views (tournament and screen), signals, book
+# analytics, comparators, thesis and attribution; then the referee sweeps
+# data/ AND data/screen/; then the publish step. The intraday bot
+# (intraday.yml, market_open.yml) is unchanged. Replaces daily_update.yml and
+# the screener repository's rescore.yml.
+#
+# Two schedules: the close run at 22:00 UTC, and a late retry at 01:30 UTC
+# that proceeds ONLY when the close run was rejected for a missing close bar
+# (ASSERTION bar_session_mismatch / PRICE_STORE_SESSION — the provider had no
+# bar for the session at ~20:00 ET on 09-09, 09-11, 09-14 and 09-15). A
+# retry of a published session is skipped; the published vintage is
+# append-only in any case.
+
+on:
+  schedule:
+    - cron: '0 22 * * 1-5'
+    - cron: '30 1 * * 2-6'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  issues: write   # signal_alerts.py opens/closes labelled issues with the job token
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install yfinance fredapi pandas numpy scipy pyarrow
+
+      - name: Decide (the late schedule retries only a rejected close run)
+        id: decide
+        run: |
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os
+          from datetime import datetime, timezone
+          late = datetime.now(timezone.utc).hour < 12          # the 01:30 UTC schedule (and a late manual run)
+          st = {}
+          try: st = json.load(open("data/status.json"))
+          except Exception: pass
+          fr = str(st.get("failure_reason") or "")
+          rejected_for_bars = ("bar_session_mismatch" in fr) or ("PRICE_STORE_SESSION" in fr) or ("BAR_SESSION_MISMATCH" in fr)
+          run = (not late) or rejected_for_bars or os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+          print(f"run={'true' if run else 'false'}")
+          print(f"reason={'close run' if not late else ('retry after bar rejection' if rejected_for_bars else 'no retry needed (last run published)')}")
+          EOF
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+
+      - name: Run the nightly pipeline
+        id: pipeline
+        if: steps.decide.outputs.run == 'true'
+        # continue-on-error: a validation rejection still publishes data/status.json
+        # (failure_reason) while served artifacts keep their last good state; the job
+        # is re-failed in the propagate step.
+        continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python scripts/update_daily.py
+
+      - name: Referee (one sweep over data/ and data/screen/)
+        id: audit
+        if: steps.decide.outputs.run == 'true'
+        # CRITICAL: served files under data/ (both trees) are restored to the last good
+        # commit, status.json names the checks, this step fails (the job fails in the
+        # propagate step) — the deploy then publishes the last good board + the new
+        # status.json. HIGH: logged in status.json.audit.high and surfaced in the status
+        # strips; never blocks. One repository: every CRITICAL blocks (--scope all).
+        continue-on-error: true
+        run: |
+          mkdir -p reports
+          set +e
+          python scripts/audit_nightly.py data data/screen > reports/audit_last.txt 2>&1
+          rc=$?
+          set -e
+          cat reports/audit_last.txt
+          python scripts/audit_status.py reports/audit_last.txt --status data/status.json --restore-dir data --scope all
+          exit $rc
+
+      - name: Commit
+        if: steps.decide.outputs.run == 'true'
+        run: |
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/ reports/audit_last.txt
+          git diff --cached --quiet || git commit -m "📊 $(date -u +%Y-%m-%d)"
+          git pull --rebase --strategy-option=ours origin main || true
+          git push
+
+      - name: Signal alerts
+        if: steps.decide.outputs.run == 'true'
+        # Post-publish: compares the served state just committed with data/alert_state.json
+        # and opens / closes ONE labelled issue per event type through gh with the job
+        # token. Never fails the nightly; the state file is committed on its own.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/signal_alerts.py --write-state || true
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          if git add data/alert_state.json 2>/dev/null && ! git diff --cached --quiet; then
+            git commit -m "🔔 alert state $(date -u +%Y-%m-%d)" \
+              && git pull --rebase --strategy-option=ours origin main \
+              && git push \
+              || echo "::warning::alert state commit/push failed (non-fatal)"
+          fi
+
+      - name: Propagate pipeline failure
+        if: steps.decide.outputs.run == 'true' && (steps.pipeline.outcome == 'failure' || steps.audit.outcome == 'failure')
+        run: |
+          echo "pipeline rejected or audit CRITICAL — served artifacts preserved (last good), status.json published with the check names"
+          exit 1
+
+  deploy:
+    # Shared Pages-deploy concurrency guard (see intraday.yml): serialize the
+    # overlapping Pages deployers so they never collide and 404 the live site.
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    needs: update
+    # deploy even on rejection: main carries preserved artifacts + the new
+    # status.json so the pages can surface the failure.
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4

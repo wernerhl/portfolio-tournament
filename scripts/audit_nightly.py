@@ -139,7 +139,7 @@ def audit_dir(root, label, last_sess):
 def main(troot, sroot, today=None):
     ls=last_session(today)
     print(f'last trading session: {ls}')
-    audit_dir(troot,'tournament',ls); audit_dir(sroot,'screener',ls)
+    audit_dir(troot,'tournament',ls); audit_dir(sroot,'screener',ls)   # 'screener' = the screen view's tree (data/screen after the merge)
 
     T=lambda n: json.load(open(os.path.join(troot,n)))
     # ---------- tournament identities ----------
@@ -339,5 +339,6 @@ def main(troot, sroot, today=None):
     return 1 if crit else 0
 
 if __name__=='__main__':
-    troot=sys.argv[1] if len(sys.argv)>1 else 'data'; sroot=sys.argv[2] if len(sys.argv)>2 else '../portfolio-screener/data'
+    # Order 16-Sept 6.4: one repository — the screen view's tree is data/screen; discovery covers it.
+    troot=sys.argv[1] if len(sys.argv)>1 else 'data'; sroot=sys.argv[2] if len(sys.argv)>2 else os.path.join(troot,'screen')
     sys.exit(main(troot,sroot))

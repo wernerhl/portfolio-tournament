@@ -19,33 +19,29 @@ ROOT = HERE.parent
 DATA = ROOT / "data"
 
 scripts = [
-    "refresh_data.py",
-    "compute_regime_v2.py",
-    "compute_book.py",             # order 16-Sept 1.3/1.5/1.6: book analytics, stress, sleeves (descriptive)
-    "compute_comparators.py",      # dashboard order 9-Sept P2.2: today's state of the C3 rules (descriptive);
-                                   # order 16-Sept 1.4: each rule translated to the book's beta (reads book.json)
-    "score_regime_v4_daily.py",    # AUDIT FIX 2a: v4 was never in the daily
-                                   # pipeline (CI lacked scikit-learn), so
-                                   # regime_v4_daily.csv froze at its last
-                                   # manual run while the headline kept
-                                   # quoting it. Light numpy-only scorer —
-                                   # bit-compatible isotonic via saved knots;
-                                   # full regime_v4_ml.py recalibrates monthly.
-    "compute_nav.py",
-    "compute_factor_exposure.py",  # dashboard order 9-Sept P3.3: per-name 252-session factor betas → book + tiers
+    # Order 16-Sept 6.4 — one nightly, in the order the order states: canonical closes, the regime and
+    # volatility layers, both scoring views, signals, book analytics, comparators, thesis and attribution;
+    # the referee and the publish step follow in the workflow.
+    "build_universe.py",           # 6.2: one universe (tournament ∪ screen ∪ midcaps ∪ held) → data/universe.txt
+    "refresh_data.py",             # canonical closes: prices (new universe names fetched on first appearance), vol complex, sector ETFs, FRED
+    "compute_regime_v2.py",        # regime layer (R_lead / R_full, published vintage)
+    "score_regime_v4_daily.py",    # graduated model, daily scorer (AUDIT FIX 2a)
+    "compute_vol_regime.py",       # volatility layer: VIX term-structure regime + attribution
+    "build_canonical.py",          # #92 canonical fundamentals artifact — ONE fetch, consumed by both scoring views
+    "score_universe.py",           # scoring view 1 (tournament): technical + fundamental, nightly (selection stays monthly)
+    "screen/build_json.py",        # scoring view 2 (the screen): 4-factor board, vintages, tripwires (relocated, 6.1)
+    "screen/reconcile_views.py",   # 6.3: rank correlation of the two views and the ten largest divergences
+    "compute_nav.py",              # tier NAVs (closes OF the session or a rejection), action log
+    "compute_signals.py",          # signals: position mode for held names, setup readings otherwise
+    "compute_book.py",             # 1.3/1.5/1.6/5: book analytics, stress, sleeves
+    "compute_comparators.py",      # 1.4/4: the C3 rules and every rule translated to the book's beta
+    "compute_factor_exposure.py",  # P3.3: per-name factor betas → book + tiers
     "build_ticker_data.py",
     "build_indicator_series.py",
-    "compute_signals.py",
     "compute_intraday.py",         # best-effort; OK to fail (yfinance flake)
-    "compute_vol_regime.py",       # VIX term-structure regime + attribution
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
-    "build_earnings_calendar.py",  # order 16-Sept 3.2: provider earnings dates into the event calendar (weekly refresh)
-    "compute_thesis_daily.py",     # MESO layer: thesis exposure + attribution + auto-log (earnings dates against the register)
-    "build_canonical.py",          # #92 canonical artifact: ONE fundamentals fetch
-                                   # for both repos (screener consumes at 23:15 UTC).
-                                   # Best-effort by position: a canonical failure never
-                                   # blocks the tournament's own outputs above; the
-                                   # screener's freshness assert catches staleness.
+    "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh)
+    "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
 ]
 
 # ─────────────────────────────────────────────────────────────────────
