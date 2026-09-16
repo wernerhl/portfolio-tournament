@@ -2573,37 +2573,61 @@ function thesisOf(tk){
   const [k, t] = hits[0]; return `${thesisLabel(k)}${t.members[tk] < 0.999 ? " · " + t.members[tk].toFixed(2) : ""}`;
 }
 function renderBookPanel(){
-  const h = S.tournament && S.tournament.history; if (!h || !h.length) return "";
-  const last = h[h.length - 1], prev = h.length > 1 ? h[h.length - 2] : null;
-  const w = last.tiers && last.tiers["5_werner"]; if (!w) return "";
-  const prevPx = {}; ((prev && prev.tiers && prev.tiers["5_werner"] && prev.tiers["5_werner"].positions) || []).forEach(p => { if (p.price) prevPx[p.ticker] = p.price; });
-  const hf = S.holdingsFile; const acq = {}; ((hf && hf.holdings) || []).forEach(x => { acq[x.ticker] = x; });
-  const pos = (w.positions || []).filter(p => p.value > 0).map(p => {
-    const cost = p.cost_basis != null ? p.cost_basis : (acq[p.ticker] && acq[p.ticker].cost_basis);
-    const pl = cost ? (p.price - cost) * p.shares : null, plPct = cost ? p.price / cost - 1 : null;
-    const r1 = prevPx[p.ticker] ? p.price / prevPx[p.ticker] - 1 : null;
-    return {...p, cost, pl, plPct, r1};
-  }).sort((a, b) => b.value - a.value);
-  const equity = pos.reduce((s, p) => s + p.value, 0), cash = w.cash || 0, nav = equity + cash;
-  const costTot = pos.reduce((s, p) => s + (p.cost ? p.cost * p.shares : 0), 0);
-  const plTot = pos.reduce((s, p) => s + (p.pl || 0), 0);
-  const base1 = pos.reduce((s, p) => s + (p.r1 != null ? p.value / (1 + p.r1) : 0), 0);
-  const r1Tot = base1 > 0 ? pos.reduce((s, p) => s + (p.r1 != null ? p.value - p.value / (1 + p.r1) : 0), 0) / base1 : null;
-  const th = S.thesis && S.thesis.tiers && S.thesis.tiers["5_werner"];
-  const exp = (th && th.exposure_invested) || {};
-  const bars = Object.entries(exp).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
-    `<div class="th-exp-row"><span class="th-exp-k mono t1 c-2">${thesisLabel(k)}</span><span class="th-exp-bar"><span class="${cc(thesisColor(k), 'bg')}" style="width:${(v * 100).toFixed(1)}%"></span></span><span class="th-exp-v mono t1 c-1">${(v * 100).toFixed(0)}%</span></div>`).join("");
-  const money = v => "$" + fmt(Math.round(Math.abs(v)));
+  const b = S.book;
+  const h = S.tournament && S.tournament.history; if (!b && !(h && h.length)) return "";
+  const money = v => v == null ? "—" : "$" + fmt(Math.round(Math.abs(v)));
+  const pct = (v, nd = 1) => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : ""}${(v * 100).toFixed(nd)}%</span>`;
   const pl = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : "−"}${money(v)}</span>`;
-  const pct = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%</span>`;
-  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">tier 5 · positions from data/holdings.json, the only holdings source</span>${asOfBadge(last.date)}</h3>
+  const n2 = v => v == null ? "—" : (+v).toFixed(2);
+  const p1 = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
+  const th = S.thesis && S.thesis.tiers && S.thesis.tiers["5_werner"];
+  const exp = (b && b.portfolio && b.portfolio.thesis_exposure) || (th && th.exposure_invested) || {};
+  const bars = Object.entries(exp).sort((a, c) => c[1] - a[1]).map(([k, v]) =>
+    `<div class="th-exp-row"><span class="th-exp-k mono t1 c-2">${thesisLabel(k)}</span><span class="th-exp-bar"><span class="${cc(thesisColor(k), 'bg')}" style="width:${(v * 100).toFixed(1)}%"></span></span><span class="th-exp-v mono t1 c-1">${(v * 100).toFixed(0)}%</span></div>`).join("");
+  if (!b) {   // fallback: the tournament row only (book.json not yet published)
+    const last = h[h.length - 1], w = last.tiers && last.tiers["5_werner"]; if (!w) return "";
+    const pos = (w.positions || []).filter(p => p.value > 0).sort((a, c) => c.value - a.value);
+    const nav = pos.reduce((s_, p) => s_ + p.value, 0) + (w.cash || 0);
+    return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">positions from data/holdings.json, the only holdings source · analytics arrive with book.json at the next nightly</span>${asOfBadge(last.date)}</h3>
+      <div class="tbl-scroll"><table class="book-table"><tr><th>TICKER</th><th class="num">WEIGHT</th><th class="num">SHARES</th><th class="num">COST</th><th class="num">PRICE</th><th class="num">GAIN</th></tr>
+      ${pos.map(p => `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td class="num">${(p.value / nav * 100).toFixed(1)}%</td><td class="num">${p.shares}</td><td class="num">${p.cost_basis != null ? p.cost_basis.toFixed(2) : "—"}</td><td class="num">${p.price.toFixed(2)}</td><td class="num">${p.gain_pct != null ? pct(p.gain_pct / 100) : "—"}</td></tr>`).join("")}</table></div></div>`;
+  }
+  const P = b.portfolio || {};
+  const pos = (b.positions || []).slice().sort((a, c) => (c.value || 0) - (a.value || 0));
+  const rows = pos.map(p => {
+    if (p.value == null) return `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td colspan="15" class="c-3 t1">${p.status} · ${p.shares} shares at cost ${p.cost_basis} · excluded from the analytics (no price source carries this name)</td></tr>`;
+    const insuff = p.insufficient_history;
+    return `<tr${insuff ? ' class="dim"' : ""}>
+      <td class="mono t2 c-1 w6">${p.ticker}${insuff ? ` <span class="c-warn t1" title="${p.status}">·</span>` : ""}</td>
+      <td class="num">${p1(p.share_nav)}</td><td class="num">${p1(p.share_equity)}</td>
+      <td class="num">${p.shares}</td><td class="num">${p.cost_basis.toFixed(2)}</td><td class="num">${p.price.toFixed(2)}</td>
+      <td class="num">${money(p.value)}</td><td class="num">${pl(p.unrealized)}</td><td class="num">${pct(p.return_vs_cost)}</td>
+      <td class="num" title="annualised, ${b.definitions ? b.definitions.window_sessions : 126} sessions">${p1(p.vol_ann)}</td>
+      <td class="num" title="OLS to SPY, n ${p.beta_spy && p.beta_spy.n_obs}">${n2(p.beta_spy && p.beta_spy.beta)}</td>
+      <td class="num" title="OLS to SMH, n ${p.beta_smh && p.beta_smh.n_obs}">${n2(p.beta_smh && p.beta_smh.beta)}</td>
+      <td class="num" title="share of portfolio variance, cash at zero volatility">${p.risk_share == null ? "—" : `<span class="risk-cell"><span class="risk-fill bg-warn" style="width:${Math.min(100, p.risk_share * 100).toFixed(0)}%"></span><span>${p1(p.risk_share)}</span></span>`}</td>
+      <td class="num" title="from the one-year peak ${p.peak_1y_date || ""}">${pct(p.drawdown_1y)}</td>
+      <td class="num" title="distance from the 200-day average">${pct(p.ma200_dist)}</td>
+      <td class="num">${p.rsi14 == null ? "—" : p.rsi14.toFixed(0)}</td>
+      <td class="c-3 t1">${thesisOf(p.ticker)}${insuff ? ` · <span class="c-warn">${p.status}</span>` : ""}</td></tr>`;
+  }).join("");
+  const cell = (k, v, sub, cls) => `<div class="so-cell"><div class="k">${k}</div><div class="v ${cls || "c-1"}">${v}</div><div class="s">${sub || ""}</div></div>`;
+  const stats = `<div class="so-strip book-stats">
+    ${cell("VOLATILITY · ANNUALISED", `${p1(P.vol_ann_with_cash)} <span class="c-3">with cash</span> · ${p1(P.vol_ann_equity)} <span class="c-3">equity sleeve</span>`, `126 sessions · 60-session sleeve figure ${p1(P.vol_ann_equity_60)}`)}
+    ${cell("BETA TO SPY", `${n2(P.beta_spy_with_cash)} <span class="c-3">with cash</span> · ${n2(P.beta_spy_equity)} <span class="c-3">equity sleeve</span>`, `Σ w β over position betas; sleeve regression ${n2(P.beta_spy_equity_regression)} · to SMH ${n2(P.beta_smh_with_cash)} with cash, ${n2(P.beta_smh_equity)} sleeve`)}
+    ${cell("EFFECTIVE THESES · SIZING FIGURE", `${P.effective_theses != null ? P.effective_theses : "—"}`, `1/Σw² over the registry exposure of the invested sleeve · this is the figure used for sizing`)}
+    ${cell("EFFECTIVE BETS · CORRELATION", `${P.effective_bets != null ? P.effective_bets : "—"}`, `exponential entropy of the equity correlation eigenvalues · ${P.effective_bets_note || ""}`)}
+  </div>`;
+  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">positions from data/holdings.json (${b.source && b.source.holdings_as_of ? "holdings as of " + b.source.holdings_as_of : "the only holdings source"}) · analytics through ${b.as_of}</span>${asOfBadge(b.session_date)}</h3>
+    <div class="mono t1 c-3 mb2">NAV ${money(b.nav)} = equity ${money(b.equity)} + cash ${money(b.cash)} · invested ${p1(b.invested_share)} · window ${b.window ? b.window.start + " → " + b.window.end : ""} · ${b.note || ""}${(b.warnings || []).length ? ` · <span class="c-warn">${b.warnings.join("; ")}</span>` : ""}</div>
     <div class="tbl-scroll"><table class="book-table">
-      <tr><th>TICKER</th><th class="num">WEIGHT</th><th class="num">SHARES</th><th class="num">COST</th><th class="num">PRICE</th><th class="num">UNREALIZED</th><th class="num">%</th><th class="num">1D</th><th>THESIS</th></tr>
-      ${pos.map(p => `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td class="num">${(p.value / nav * 100).toFixed(1)}%</td><td class="num">${p.shares}</td><td class="num">${p.cost != null ? p.cost.toFixed(2) : "—"}</td><td class="num">${p.price.toFixed(2)}</td><td class="num">${pl(p.pl)}</td><td class="num">${pct(p.plPct)}</td><td class="num">${pct(p.r1)}</td><td class="c-3 t1">${thesisOf(p.ticker)}${acq[p.ticker] && acq[p.ticker].acquired ? " · acquired " + acq[p.ticker].acquired : ""}</td></tr>`).join("")}
-      <tr class="book-total"><td class="mono t2 c-1 w6">TOTAL</td><td class="num">${(equity / nav * 100).toFixed(1)}%</td><td class="num">${pos.length} names</td><td class="num">${money(costTot)}</td><td class="num">${money(equity)}</td><td class="num">${pl(plTot)}</td><td class="num">${costTot ? pct(equity / costTot - 1) : "—"}</td><td class="num">${pct(r1Tot)}</td><td class="c-3 t1">cash ${money(cash)} · NAV ${money(nav)}</td></tr>
+      <tr><th>TICKER</th><th class="num">NAV %</th><th class="num">EQ %</th><th class="num">SHARES</th><th class="num">COST</th><th class="num">PRICE</th><th class="num">VALUE</th><th class="num">UNREAL.</th><th class="num">vs COST</th><th class="num">VOL</th><th class="num">β SPY</th><th class="num">β SMH</th><th class="num">RISK SHARE</th><th class="num">DD 1Y</th><th class="num">vs MA200</th><th class="num">RSI</th><th>THESIS</th></tr>
+      ${rows}
+      <tr class="book-total"><td class="mono t2 c-1 w6">TOTAL</td><td class="num">${p1(b.invested_share)}</td><td class="num">100%</td><td class="num">${pos.filter(p => p.value != null).length} names</td><td></td><td></td><td class="num">${money(b.equity)}</td><td class="num">${pl(pos.reduce((s_, p) => s_ + (p.unrealized || 0), 0))}</td><td></td><td class="num">${p1(P.vol_ann_equity)}</td><td class="num">${n2(P.beta_spy_equity)}</td><td class="num">${n2(P.beta_smh_equity)}</td><td class="num">100%</td><td></td><td></td><td></td><td class="c-3 t1">cash ${money(b.cash)} · NAV ${money(b.nav)}</td></tr>
     </table></div>
+    ${stats}
     <div class="book-grid">
-      <div><div class="fx-head mono t1 c-3">THESIS EXPOSURE · <span class="c-3">N<sub>eff</sub> ${th && th.n_eff != null ? th.n_eff : "—"} effective bets · invested ${th && th.invested_share != null ? (th.invested_share * 100).toFixed(0) + "%" : "—"} of NAV</span></div>
+      <div><div class="fx-head mono t1 c-3">THESIS EXPOSURE · <span class="c-3">registry v${(S.thesisReg && S.thesisReg.version) || "—"} · N<sub>eff</sub> ${P.effective_theses != null ? P.effective_theses : (th && th.n_eff != null ? th.n_eff : "—")} effective theses · invested ${p1(b.invested_share)} of NAV</span></div>
         ${bars || '<div class="mono t1 c-3">no classified exposure</div>'}
         ${th && th.coverage_caveat ? `<div class="mono t1 c-warn mt1">${th.coverage_caveat}</div>` : ""}
         <div class="mono t1 c-3 mt1">partial memberships leave a remainder counted as unclassified (registry policy)</div></div>
@@ -3066,6 +3090,7 @@ async function init(){
   try { S.c3Paths = await loadJSON("data/c3_drawdown_paths.json"); } catch (e) { S.c3Paths = null; }       // P2.2 C3 drawdown paths
   try { S.provLedger = await loadJSON("data/provisional_ledger.json"); } catch (e) { S.provLedger = null; } // P2.3 provisional memberships
   try { S.factors = await loadJSON("data/factor_exposure.json"); } catch (e) { S.factors = null; }         // P3.3 style-factor exposure
+  try { S.book = await loadJSON("data/book.json"); } catch (e) { S.book = null; }                           // 16-Sept 1.3/1.5/1.6 book analytics, stress, sleeves
   try { S.holdingsFile = await loadJSON("data/holdings.json"); } catch (e) { S.holdingsFile = null; }      // P3.1 the only holdings source
   try {                                                                                                     // P4.1 action log (jsonl)
     const r = await fetch("data/actions.jsonl?" + Date.now());
