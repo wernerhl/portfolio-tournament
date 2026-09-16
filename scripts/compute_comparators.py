@@ -221,6 +221,74 @@ def cross_check(spy: pd.Series, reg_series: pd.Series, rd: date, monthly: dict) 
     return res
 
 
+# ----------------------------------------------------------------------------- the book's beta (order 16-Sept 1.4 / Phase 4)
+BOOK_NOTE = "descriptive; no rule drives this book"
+VOL_TARGETS_BOOK = (0.10, 0.15)
+
+
+def clamp_cash(R: float, spec: dict) -> float:
+    fl, sl, mx = float(spec["cash_floor"]), float(spec["cash_slope"]), float(spec["cash_max"])
+    return max(fl, min(mx, fl + R * sl))
+
+
+def book_posture(R: float, rules: dict, cur: dict, cfg: dict, warnings: list) -> dict | None:
+    """Every rule's implied equity share for a beta-one index beside the same share
+    divided by the equity sleeve's beta, capped at 100 percent ("translated to a
+    book of your beta"), the actual equity share beside them. Volatility targeting
+    on the book uses the book's own realised volatility (the registered 60-session
+    window; the 126-session figure beside it). Reads data/book.json (compute_book.py
+    runs first in the nightly)."""
+    bp = DATA / "book.json"
+    if not bp.exists():
+        warnings.append("data/book.json absent — book posture not computed (compute_book.py runs before this job)")
+        return None
+    b = json.load(open(bp))
+    pf = b.get("portfolio", {})
+    beta_eq = pf.get("beta_spy_equity"); sig60 = pf.get("vol_ann_equity_60"); sig126 = pf.get("vol_ann_equity")
+    actual = b.get("invested_share")
+    if not beta_eq or beta_eq <= 0:
+        warnings.append("book.json has no equity-sleeve beta — translation skipped")
+        return None
+    tr = lambda e: None if e is None else min(1.0, float(e) / beta_eq)
+    rows = []
+    # (i) the regime schedule per tier: cash = clamp(floor + R × slope, floor, max)
+    specs = list(cfg["tier_specs"].items()) + [("5_werner", cfg["werner_picks"])]
+    for tid, spec in specs:
+        cash = clamp_cash(R, spec); e = 1.0 - cash; e_full = 1.0 - float(spec["cash_floor"])
+        rows.append({"rule": f"regime schedule · {spec.get('short', tid)}", "kind": "regime_schedule", "tier": tid,
+                     "index_share": r4(e), "book_share": r4(tr(e)),
+                     "full_deployment_index_share": r4(e_full), "full_deployment_book_share": r4(tr(e_full)),
+                     "computed_from": {"R_full": r4(R), "cash_floor": spec["cash_floor"], "cash_slope": spec["cash_slope"],
+                                       "cash_max": spec["cash_max"], "cash": r4(cash)},
+                     "label": f"cash = clamp({spec['cash_floor']} + R × {spec['cash_slope']}, {spec['cash_floor']}, {spec['cash_max']}) at R_full {R:.3f}"})
+    # (ii) the registered one-line rules on the index
+    for k in RULES:
+        e = rules[k]["exposure"]
+        rows.append({"rule": RULE_LABELS[k].split(";")[0], "kind": "c3_rule", "id": k,
+                     "index_share": r4(e), "book_share": r4(tr(e)), "state": rules[k]["state"]})
+    # (iii) volatility targeting at 10 and 15 percent: on the index and on the book's own realised volatility
+    sig_idx = cur["vol_target_10"]["sigma_ann"]
+    for tgt in VOL_TARGETS_BOOK:
+        e_idx = min(VOL_CAP, tgt / sig_idx) if sig_idx else None
+        e_b60 = min(1.0, tgt / sig60) if sig60 else None
+        e_b126 = min(1.0, tgt / sig126) if sig126 else None
+        rows.append({"rule": f"volatility targeting at {int(tgt*100)}%", "kind": "vol_target", "target": tgt,
+                     "index_share": r4(e_idx), "book_share": r4(tr(e_idx)),
+                     "book_share_on_book_vol": r4(e_b60), "book_share_on_book_vol_126": r4(e_b126),
+                     "computed_from": {"sigma_index_60": r4(sig_idx), "sigma_book_60": r4(sig60), "sigma_book_126": r4(sig126)},
+                     "label": (f"index: min(1, {tgt:.2f}/σ60 index {sig_idx*100:.1f}%) translated by β; "
+                               f"book: min(1, {tgt:.2f}/σ60 book {sig60*100 if sig60 else float('nan'):.1f}%) — the book's own realised volatility, "
+                               f"not the index's") + (" (registered rule at 10%; 15% is a comparator, not registered)" if tgt == 0.10 else " (not a registered rule; comparator)")})
+    return {
+        "beta_equity_sleeve": r4(beta_eq), "beta_with_cash": pf.get("beta_spy_with_cash"),
+        "beta_definition": pf.get("beta_definition"), "sigma_book_60": r4(sig60), "sigma_book_126": r4(sig126),
+        "actual_equity_share": r4(actual), "actual_cash_share": r4(1.0 - actual) if actual is not None else None,
+        "book_as_of": b.get("as_of"), "book_session": b.get("session_date"),
+        "translation": "index equity share ÷ equity-sleeve beta, capped at 100 percent",
+        "rows": rows, "note": BOOK_NOTE,
+    }
+
+
 # ----------------------------------------------------------------------------- output
 def build(session_date: str) -> dict:
     session_ts = pd.Timestamp(session_date)
@@ -310,6 +378,7 @@ def build(session_date: str) -> dict:
             "session_date": session_date,
         },
     }
+    posture = book_posture(float(regime["R_full"]), rules, cur, cfg, warnings)   # order 16-Sept 1.4
     et = now_et()
     return {
         "cadence": "daily", "session_date": session_date, "as_of": iso(through),
@@ -317,6 +386,7 @@ def build(session_date: str) -> dict:
         "index": INDEX_LABEL, "index_through": iso(through), "index_last_close": r4(hist.iloc[-1]),
         "registration": REGISTRATION, "note": NOTE,
         "regime": regime, "rules": rules,
+        "book_posture": posture,
         "cross_check": check, "warnings": warnings,
     }
 
@@ -335,6 +405,13 @@ def print_summary(out: dict) -> None:
     v = ru["vol_target_10"]; c = v["computed_from"]; m = v["monthly_as_registered"]
     mtxt = f"; monthly-registered exposure {m['exposure']:.4f} set {m['set_at']} (σ {m['sigma_ann']*100:.2f}%)" if m else ""
     print(f"  vol_target_10  {v['state']} ({v['exposure']:.4f}): σ60 {c['sigma_ann']*100:.2f}% ann. through {c['through']} → min(1, 0.10/σ){mtxt}")
+    bp = out.get("book_posture")
+    if bp:
+        print(f"  book posture: equity-sleeve β {bp['beta_equity_sleeve']:.2f} · σ60 book {bp['sigma_book_60']*100:.1f}% · actual equity share {bp['actual_equity_share']*100:.1f}%")
+        for r in bp["rows"]:
+            extra = f" · on book vol {r['book_share_on_book_vol']*100:.1f}%" if r.get("book_share_on_book_vol") is not None else ""
+            full = f" · full deployment {r['full_deployment_book_share']*100:.1f}%" if r.get("full_deployment_book_share") is not None else ""
+            print(f"    {r['rule']:52s} index {r['index_share']*100:6.1f}% → book {r['book_share']*100:6.1f}%{extra}{full}")
     ck = out["cross_check"]
     print(f"  cross-check vs c3_regime_vs_rules.signals_at: {ck['status']}" + (f" at {ck['rebalance_session']}" if "rebalance_session" in ck else f" ({ck.get('reason')})"))
     for w in out["warnings"]:

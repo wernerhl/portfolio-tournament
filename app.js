@@ -2510,12 +2510,16 @@ function renderRetirementPanel(){
   if (cp && cp.rules && cp.rules.sma10 && cp.rules.tsmom_12_1 && cp.rules.vol_target_10) {
     const rg = cp.regime || {}, sm = cp.rules.sma10, tm = cp.rules.tsmom_12_1, vt = cp.rules.vol_target_10;
     const expCls = e => e >= 0.999 ? "c-pos" : e <= 0.001 ? "c-neg" : "c-warn";
+    const bpr = (cp.book_posture && cp.book_posture.rows) || [];
+    const trRow = f => bpr.find(f);
+    const tr = r => r && r.book_share != null ? ` · <span class="c-2">at your beta ${(r.book_share * 100).toFixed(0)}%</span>` : "";
+    const actualTxt = cp.book_posture && cp.book_posture.actual_equity_share != null ? ` · actual ${(cp.book_posture.actual_equity_share * 100).toFixed(0)}%` : "";
     const cell = (k, v, s, cls) => `<div class="so-cell"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div><div class="s">${s}</div></div>`;
     strip = `<div class="so-strip">
-      ${cell("REGIME INDEX · READING", `${rg.state || "—"} · R<sub>full</sub> ${rg.R_full != null ? (+rg.R_full).toFixed(3) : "—"}`, `tier-4 exposure ${rg.exposure != null ? (rg.exposure * 100).toFixed(0) + "%" : "—"} · as of ${rg.as_of || cp.session_date}`, cc(ewColor(rg.state)))}
-      ${cell("10-MONTH SMA · MONTHLY", String(sm.state || "—").toUpperCase(), `P<sub>m</sub> ${sm.computed_from.P_m} vs SMA10 ${(+sm.computed_from.sma10).toFixed(2)} at ${sm.computed_from.month_end_date}${sm.evaluation && sm.evaluation.next_evaluation ? " · next " + sm.evaluation.next_evaluation : ""}`, expCls(sm.exposure))}
-      ${cell("12-1 MOMENTUM · MONTHLY", String(tm.state || "—").toUpperCase(), `12-1 return ${(tm.computed_from.ret_12_1 * 100).toFixed(1)}% (${tm.computed_from.P_m_12_date} → ${tm.computed_from.P_m_1_date})${tm.evaluation && tm.evaluation.next_evaluation ? " · next " + tm.evaluation.next_evaluation : ""}`, expCls(tm.exposure))}
-      ${cell("10% VOL TARGET · DAILY", `${(vt.exposure * 100).toFixed(0)}% exposure`, `σ<sub>60</sub> ${(vt.computed_from.sigma_ann * 100).toFixed(1)}% ann. through ${vt.computed_from.through} · min(1, 10% / σ)`, expCls(vt.exposure))}
+      ${cell("REGIME INDEX · READING", `${rg.state || "—"} · R<sub>full</sub> ${rg.R_full != null ? (+rg.R_full).toFixed(3) : "—"}`, `tier-4 exposure ${rg.exposure != null ? (rg.exposure * 100).toFixed(0) + "%" : "—"}${tr(trRow(r => r.tier === "4_tactical"))}${actualTxt} · as of ${rg.as_of || cp.session_date}`, cc(ewColor(rg.state)))}
+      ${cell("10-MONTH SMA · MONTHLY", String(sm.state || "—").toUpperCase(), `P<sub>m</sub> ${sm.computed_from.P_m} vs SMA10 ${(+sm.computed_from.sma10).toFixed(2)} at ${sm.computed_from.month_end_date}${sm.evaluation && sm.evaluation.next_evaluation ? " · next " + sm.evaluation.next_evaluation : ""}${tr(trRow(r => r.id === "sma10"))}`, expCls(sm.exposure))}
+      ${cell("12-1 MOMENTUM · MONTHLY", String(tm.state || "—").toUpperCase(), `12-1 return ${(tm.computed_from.ret_12_1 * 100).toFixed(1)}% (${tm.computed_from.P_m_12_date} → ${tm.computed_from.P_m_1_date})${tm.evaluation && tm.evaluation.next_evaluation ? " · next " + tm.evaluation.next_evaluation : ""}${tr(trRow(r => r.id === "tsmom_12_1"))}`, expCls(tm.exposure))}
+      ${cell("10% VOL TARGET · DAILY", `${(vt.exposure * 100).toFixed(0)}% exposure`, `σ<sub>60</sub> ${(vt.computed_from.sigma_ann * 100).toFixed(1)}% ann. through ${vt.computed_from.through} · min(1, 10% / σ)${tr(trRow(r => r.id === "vol_target_10"))}${(() => { const v = trRow(r => r.kind === "vol_target" && r.target === 0.1); return v && v.book_share_on_book_vol != null ? ` · on the book's own vol ${(v.book_share_on_book_vol * 100).toFixed(0)}%` : ""; })()}`, expCls(vt.exposure))}
     </div>
     <div class="mono t1 c-3 mt1">second opinion today · ${cp.note || "descriptive; no rule drives sizing"} · constants from ${cp.registration || "reports/c3_registration.md §B6"} · session ${cp.session_date}</div>`;
   }
@@ -2525,6 +2529,23 @@ function renderRetirementPanel(){
     <div class="chart-wrap c3-wrap"><canvas id="c3-chart"></canvas></div>
     <div class="chart-meta" id="c3-meta"></div>
     ${strip}
+  </div>`;
+}
+// ── 16-Sept 1.4 / Phase 4: posture versus every rule, at the book's beta (descriptive) ──
+function renderPostureCard(){
+  const cp = S.comparators, bp = cp && cp.book_posture; if (!bp) return "";
+  const p1 = v => v == null ? "—" : (v * 100).toFixed(0) + "%";
+  const actual = bp.actual_equity_share;
+  const rows = (bp.rows || []).map(r => {
+    const sub = r.kind === "regime_schedule"
+      ? `<div class="c-3 t1">full deployment (cash at the floor): index ${p1(r.full_deployment_index_share)} → book ${p1(r.full_deployment_book_share)}</div>`
+      : r.kind === "vol_target" ? `<div class="c-3 t1">on the book's own realised volatility (σ<sub>60</sub> ${(bp.sigma_book_60 * 100).toFixed(1)}%): <strong class="c-1">${p1(r.book_share_on_book_vol)}</strong> · 126-session σ ${p1(r.book_share_on_book_vol_126)}</div>` : (r.state ? `<div class="c-3 t1">state ${r.state}</div>` : "");
+    const gap = (r.book_share != null && actual != null) ? actual - r.book_share : null;
+    return `<tr title="${(r.label || "").replace(/"/g, "'")}"><td class="c-2">${r.rule}${sub}</td><td class="num">${p1(r.index_share)}</td><td class="num c-1 w6">${p1(r.book_share)}</td><td class="num">${p1(actual)}${gap != null ? ` <span class="${gap > 0 ? "c-warn" : "c-3"} t1">(${gap >= 0 ? "+" : ""}${(gap * 100).toFixed(0)} pp)</span>` : ""}</td></tr>`;
+  }).join("");
+  return `<div class="rcc-card posture-card"><h3>POSTURE VERSUS EVERY RULE · <span class="c-3 w5">at the book's beta · equity-sleeve β ${bp.beta_equity_sleeve} (${bp.beta_with_cash} with cash)</span>${asOfBadge(cp.session_date)}</h3>
+    <div class="tbl-scroll"><table class="posture-table"><tr><th>RULE</th><th class="num" title="the equity share the rule implies for a beta-one index">INDEX (β = 1)</th><th class="num" title="index share ÷ equity-sleeve beta, capped at 100 percent">TRANSLATED TO A BOOK OF YOUR BETA</th><th class="num">ACTUAL EQUITY SHARE</th></tr>${rows}</table></div>
+    <div class="chart-meta">${bp.translation} · volatility targeting on the book uses the book's own realised volatility, not the index's · regime schedule at R<sub>full</sub> ${cp.regime && cp.regime.R_full} · <strong class="c-2">${bp.note || "descriptive; no rule drives this book"}</strong> · session ${cp.session_date}</div>
   </div>`;
 }
 function renderC3PathChart(){
@@ -2883,7 +2904,7 @@ function render(){
   // rest of tier two: treemap (P2.3) · retirement panel (P2.2) · regime & overlay · the book (P3.2)
   h += renderTreemapCard() + renderRetirementPanel();
   h += `<div class="tier2-grid">${renderRegimeOverlayPanel()}<div>${rv.timeline}${rv.deployment}</div></div>`;
-  h += renderBookPanel();
+  h += renderBookPanel() + renderPostureCard();
   h += `</div>`;   // close tier two
 
   // ══ TIER THREE (reduced type and contrast): indicators · thesis register · v4 · status · records · calendar ══

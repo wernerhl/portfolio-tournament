@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-14",
-  "computed_at": "2026-09-15T20:06:33-04:00",
+  "computed_at": "2026-09-16T14:22:45-04:00",
   "index": "SPY (data/source/sector_etfs.parquet, dividend-adjusted)",
   "index_through": "2026-09-14",
   "index_last_close": 760.88,
@@ -163,6 +163,160 @@
       },
       "session_date": "2026-09-15"
     }
+  },
+  "book_posture": {
+    "beta_equity_sleeve": 2.4712,
+    "beta_with_cash": 1.6423,
+    "beta_definition": "\u03a3 w \u03b2 over position betas; with cash: w over NAV (cash at beta 0); equity sleeve: w over equity; the constant-weight sleeve regression is the cross-check",
+    "sigma_book_60": 0.471,
+    "sigma_book_126": 0.4739,
+    "actual_equity_share": 0.6646,
+    "actual_cash_share": 0.3354,
+    "book_as_of": "2026-09-14",
+    "book_session": "2026-09-15",
+    "translation": "index equity share \u00f7 equity-sleeve beta, capped at 100 percent",
+    "rows": [
+      {
+        "rule": "regime schedule \u00b7 CAP PRES",
+        "kind": "regime_schedule",
+        "tier": "1_cap_pres",
+        "index_share": 0.5488,
+        "book_share": 0.2221,
+        "full_deployment_index_share": 0.75,
+        "full_deployment_book_share": 0.3035,
+        "computed_from": {
+          "R_full": 0.2683,
+          "cash_floor": 0.25,
+          "cash_slope": 0.75,
+          "cash_max": 1.0,
+          "cash": 0.4512
+        },
+        "label": "cash = clamp(0.25 + R \u00d7 0.75, 0.25, 1.0) at R_full 0.268"
+      },
+      {
+        "rule": "regime schedule \u00b7 BALANCED",
+        "kind": "regime_schedule",
+        "tier": "2_balanced",
+        "index_share": 0.6622,
+        "book_share": 0.268,
+        "full_deployment_index_share": 0.85,
+        "full_deployment_book_share": 0.344,
+        "computed_from": {
+          "R_full": 0.2683,
+          "cash_floor": 0.15,
+          "cash_slope": 0.7,
+          "cash_max": 0.85,
+          "cash": 0.3378
+        },
+        "label": "cash = clamp(0.15 + R \u00d7 0.7, 0.15, 0.85) at R_full 0.268"
+      },
+      {
+        "rule": "regime schedule \u00b7 AGGRESSIVE",
+        "kind": "regime_schedule",
+        "tier": "3_aggressive",
+        "index_share": 0.7927,
+        "book_share": 0.3208,
+        "full_deployment_index_share": 0.9,
+        "full_deployment_book_share": 0.3642,
+        "computed_from": {
+          "R_full": 0.2683,
+          "cash_floor": 0.1,
+          "cash_slope": 0.4,
+          "cash_max": 0.5,
+          "cash": 0.2073
+        },
+        "label": "cash = clamp(0.1 + R \u00d7 0.4, 0.1, 0.5) at R_full 0.268"
+      },
+      {
+        "rule": "regime schedule \u00b7 TACTICAL",
+        "kind": "regime_schedule",
+        "tier": "4_tactical",
+        "index_share": 0.7317,
+        "book_share": 0.2961,
+        "full_deployment_index_share": 1.0,
+        "full_deployment_book_share": 0.4047,
+        "computed_from": {
+          "R_full": 0.2683,
+          "cash_floor": 0.0,
+          "cash_slope": 1.0,
+          "cash_max": 1.0,
+          "cash": 0.2683
+        },
+        "label": "cash = clamp(0.0 + R \u00d7 1.0, 0.0, 1.0) at R_full 0.268"
+      },
+      {
+        "rule": "regime schedule \u00b7 WERNER",
+        "kind": "regime_schedule",
+        "tier": "5_werner",
+        "index_share": 0.6622,
+        "book_share": 0.268,
+        "full_deployment_index_share": 0.85,
+        "full_deployment_book_share": 0.344,
+        "computed_from": {
+          "R_full": 0.2683,
+          "cash_floor": 0.15,
+          "cash_slope": 0.7,
+          "cash_max": 0.85,
+          "cash": 0.3378
+        },
+        "label": "cash = clamp(0.15 + R \u00d7 0.7, 0.15, 0.85) at R_full 0.268"
+      },
+      {
+        "rule": "Ten-month simple moving average on SPY month-end closes",
+        "kind": "c3_rule",
+        "id": "sma10",
+        "index_share": 1.0,
+        "book_share": 0.4047,
+        "state": "invested"
+      },
+      {
+        "rule": "Time-series momentum: sign of trailing twelve-month return excluding the last month (P_{m-1} / P_{m-12} - 1 on month-end closes)",
+        "kind": "c3_rule",
+        "id": "tsmom_12_1",
+        "index_share": 1.0,
+        "book_share": 0.4047,
+        "state": "invested"
+      },
+      {
+        "rule": "Volatility targeting at 10% annualized with 60-day realized volatility (sample std of daily log returns x sqrt(252))",
+        "kind": "c3_rule",
+        "id": "vol_target_10",
+        "index_share": 0.8612,
+        "book_share": 0.3485,
+        "state": "scaled"
+      },
+      {
+        "rule": "volatility targeting at 10%",
+        "kind": "vol_target",
+        "target": 0.1,
+        "index_share": 0.8612,
+        "book_share": 0.3485,
+        "book_share_on_book_vol": 0.2123,
+        "book_share_on_book_vol_126": 0.211,
+        "computed_from": {
+          "sigma_index_60": 0.1161,
+          "sigma_book_60": 0.471,
+          "sigma_book_126": 0.4739
+        },
+        "label": "index: min(1, 0.10/\u03c360 index 11.6%) translated by \u03b2; book: min(1, 0.10/\u03c360 book 47.1%) \u2014 the book's own realised volatility, not the index's (registered rule at 10%; 15% is a comparator, not registered)"
+      },
+      {
+        "rule": "volatility targeting at 15%",
+        "kind": "vol_target",
+        "target": 0.15,
+        "index_share": 1.0,
+        "book_share": 0.4047,
+        "book_share_on_book_vol": 0.3185,
+        "book_share_on_book_vol_126": 0.3165,
+        "computed_from": {
+          "sigma_index_60": 0.1161,
+          "sigma_book_60": 0.471,
+          "sigma_book_126": 0.4739
+        },
+        "label": "index: min(1, 0.15/\u03c360 index 11.6%) translated by \u03b2; book: min(1, 0.15/\u03c360 book 47.1%) \u2014 the book's own realised volatility, not the index's (not a registered rule; comparator)"
+      }
+    ],
+    "note": "descriptive; no rule drives this book"
   },
   "cross_check": {
     "status": "ok",
