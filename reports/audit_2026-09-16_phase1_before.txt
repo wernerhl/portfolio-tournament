@@ -1,0 +1,9 @@
+last trading session: 2026-09-15
+Traceback (most recent call last):
+  File "/Users/whl/portfolio-tournament/scripts/audit_nightly.py", line 305, in <module>
+    sys.exit(main(troot,sroot))
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/whl/portfolio-tournament/scripts/audit_nightly.py", line 244, in main
+    if c and abs(c.get('active',0)-(c.get('cash_eff',0)+c.get('alloc_eff',0)+c.get('selection',0)))>1e-4:
+                                    ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'NoneType'
