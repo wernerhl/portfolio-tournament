@@ -39,13 +39,49 @@ def load_registry() -> dict:
     return json.load(open(DATA / "thesis_registry.json"))
 
 
+def member_weight(v) -> float:
+    """Registry v4 (order 16-Sept 3.1): a member value is a weight or {weight, sub}."""
+    return float(v["weight"]) if isinstance(v, dict) else float(v)
+
+
+def member_sub(v) -> str | None:
+    return v.get("sub") if isinstance(v, dict) else None
+
+
 def name_thesis_weights(registry: dict) -> dict[str, dict[str, float]]:
     """ticker → {thesis_id: membership_weight}. Residual to 1.0 = unclassified."""
     out: dict[str, dict[str, float]] = {}
     for tid, th in registry["theses"].items():
         for name, w in th["members"].items():
-            out.setdefault(name, {})[tid] = float(w)
+            out.setdefault(name, {})[tid] = member_weight(w)
     return out
+
+
+def name_sub_keys(registry: dict) -> dict[str, dict[str, str]]:
+    """ticker → {thesis_id: 'thesis/sub'} for theses that define sub_theses; members of such a
+    thesis without a sub fall in 'thesis/other'. Display resolution only (v4 sub_note)."""
+    out: dict[str, dict[str, str]] = {}
+    for tid, th in registry["theses"].items():
+        if not th.get("sub_theses"):
+            continue
+        for name, w in th["members"].items():
+            out.setdefault(name, {})[tid] = f"{tid}/{member_sub(w) or 'other'}"
+    return out
+
+
+def exposure_sub_for_positions(positions: list[dict], equity: float, nw: dict, subs: dict) -> dict:
+    """Invested exposure at sub-thesis resolution for theses with sub_theses: {'ai_infra/memory': w, ...}."""
+    inv: dict[str, float] = {}
+    for p in positions:
+        v = p.get("value")
+        if not v or equity <= 0:
+            continue
+        share_inv = v / equity
+        for tid, w in nw.get(p["ticker"], {}).items():
+            key = subs.get(p["ticker"], {}).get(tid)
+            if key:
+                inv[key] = inv.get(key, 0.0) + share_inv * w
+    return inv
 
 
 def basket_members(registry: dict) -> dict[str, list[str]]:
@@ -183,6 +219,7 @@ def main():
     registry = load_registry()
     frozen = registry.get("frozen_at") is not None
     nw = name_thesis_weights(registry)
+    subs = name_sub_keys(registry)
     members = basket_members(registry)
 
     # ── Σ weights per name ≤ 1.0 (hard registry invariant) ────────────
@@ -308,8 +345,10 @@ def main():
         uncl_share = inv.get(UNCLASSIFIED, 0.0)
         prov_share = max(0.0, inv_r.get(UNCLASSIFIED, 0.0) - uncl_share)      # A1: covered provisionally
         prov_names = sorted(set(uncl_names_r) - set(uncl_names))
+        exp_sub = exposure_sub_for_positions(td.get("positions", []), equity, nw, subs)
         tiers_out[tid] = {
             "date": last["date"],
+            "exposure_sub": {k: round(v, 4) for k, v in sorted(exp_sub.items(), key=lambda kv: -kv[1])},   # v4 display resolution
             "invested_share": round(equity / (equity + cash), 4) if (equity + cash) > 0 else 0,
             "cash_share": round(cash / (equity + cash), 4) if (equity + cash) > 0 else 0,
             "exposure_invested": {k: round(v, 4) for k, v in sorted(inv.items(), key=lambda kv: -kv[1])},
@@ -406,14 +445,50 @@ def main():
         for e in cal["events"]:
             if e["type"] in ("CPI", "FOMC", "NFP"):
                 events_by_date.setdefault(e["date"], []).append(e["type"])
+        # order 16-Sept 3.2: EARNINGS events (build_earnings_calendar.py) keyed by ticker
+        earnings_by_date: dict[str, list[str]] = {}
+        next_earnings: dict[str, list[str]] = {}
+        for e in cal["events"]:
+            if e.get("type") == "EARNINGS" and e.get("ticker"):
+                earnings_by_date.setdefault(e["date"], []).append(e["ticker"])
+                next_earnings.setdefault(e["ticker"], []).append(e["date"])
         claims = json.load(open(DATA / "thesis_claims.json"))
         session_dates = [h["date"] for h in history]
         for c in claims["claims"]:
             tid = c["thesis_id"]
-            have = {(l.get("date"), l.get("type")) for l in c.get("log", [])}
+            have = {(l.get("date"), l.get("type"), l.get("event")) for l in c.get("log", [])}
+            tks = [str(t).upper() for t in (c.get("tickers") or [])]
+            if tks:
+                # a ticker-scoped register entry (sub-thesis claim): each earnings date of its tickers
+                # is logged with the equal-weight one-day return of those tickers — no macro events
+                sub_ret = equal_weight_basket_returns(prices, tks)
+                for d_str in session_dates:
+                    hits = [t for t in earnings_by_date.get(d_str, []) if t in tks]
+                    if not hits: continue
+                    ev = "EARNINGS " + " · ".join(hits)
+                    if (d_str, "auto", ev) in have: continue
+                    dd = pd.Timestamp(d_str)
+                    if dd not in sub_ret.index or math.isnan(sub_ret.loc[dd]): continue
+                    entry = {"date": d_str, "type": "auto", "event": ev, "basket_ret_1d": round(float(sub_ret.loc[dd]), 5),
+                             "basket": tks}
+                    c.setdefault("log", []).append(entry)
+                    appended.append({**entry, "thesis_id": tid, "claim_id": c.get("claim_id")})
+                # review_by = next earnings + 14 days: rolled forward mechanically once a date has passed
+                cur_next = c.get("next_earnings")
+                if cur_next and cur_next < as_of:
+                    later = sorted(d for t in tks for d in next_earnings.get(t, []) if d > cur_next)
+                    if later:
+                        from datetime import date as _date, timedelta as _td
+                        new_next = later[0]; new_rb = (_date.fromisoformat(new_next) + _td(days=14)).isoformat()
+                        entry = {"date": as_of, "type": "auto", "event": f"review_by rolled {c.get('review_by')} → {new_rb}",
+                                 "note": f"earnings {cur_next} passed; next provider date {new_next} + 14 days"}
+                        c["next_earnings"], c["review_by"] = new_next, new_rb
+                        c.setdefault("log", []).append(entry)
+                        appended.append({**entry, "thesis_id": tid, "claim_id": c.get("claim_id")})
+                continue
             for d_str in session_dates:
                 if d_str not in events_by_date: continue
-                if (d_str, "auto") in have: continue
+                if any(k[0] == d_str and k[1] == "auto" for k in have): continue
                 dd = pd.Timestamp(d_str)
                 if dd not in basket_ret[tid].index: continue
                 r1d = basket_ret[tid].loc[dd]
@@ -436,7 +511,7 @@ def main():
     kill_status = {}
     for c in claims["claims"]:
         met = [l for l in c.get("log", []) if l.get("kill") is True]
-        kill_status[c["thesis_id"]] = {"met": bool(met), "date": met[0]["date"] if met else None}
+        kill_status[c.get("claim_id") or c["thesis_id"]] = {"met": bool(met), "date": met[0]["date"] if met else None}
 
     payload = {
         "updated": datetime.now().isoformat(),

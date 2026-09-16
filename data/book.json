@@ -2,14 +2,14 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-14",
-  "computed_at": "2026-09-16T14:13:31-04:00",
+  "computed_at": "2026-09-16T15:02:22-04:00",
   "source": {
     "holdings": "data/holdings.json",
     "holdings_as_of": "2026-09-16",
     "holdings_source": "brokerage positions, 2026-09-16 (manual transcription; replaced by CSV ingestion in Phase 2)",
     "prices": "data/source/prices_daily.parquet",
     "indices": "data/source/sector_etfs.parquet (SPY, SMH, sector ETFs); TLT from vol_indicators.parquet",
-    "registry": "data/thesis_registry.json v3",
+    "registry": "data/thesis_registry.json v4",
     "screen_universe": "sibling:/Users/whl/portfolio-screener/data/scored_universe.csv"
   },
   "definitions": {
@@ -292,10 +292,10 @@
     "beta_smh_equity": 0.9319,
     "beta_smh_equity_regression": 0.9319,
     "beta_definition": "\u03a3 w \u03b2 over position betas; with cash: w over NAV (cash at beta 0); equity sleeve: w over equity; the constant-weight sleeve regression is the cross-check",
-    "effective_theses": 1.55,
+    "effective_theses": 1.3,
     "thesis_exposure": {
-      "ai_infra": 0.7819,
-      "unclassified": 0.1832,
+      "ai_infra": 0.8707,
+      "unclassified": 0.0944,
       "speculative_crypto": 0.0349
     },
     "effective_bets": 5.13,
@@ -463,14 +463,19 @@
       "label": "AI infrastructure basket \u221230%",
       "shock": -0.3,
       "method": "\u03a3 value_i \u00d7 registry membership weight in ai_infra \u00d7 \u221230%",
-      "loss": -34633.86,
-      "share_nav": -0.1559,
-      "share_equity": -0.2346,
+      "loss": -38570.28,
+      "share_nav": -0.1736,
+      "share_equity": -0.2612,
       "positions": [
         {
           "ticker": "MU",
           "exposure_weight": 1.0,
           "loss": -13860.45
+        },
+        {
+          "ticker": "GEV",
+          "exposure_weight": 0.6,
+          "loss": -3936.42
         },
         {
           "ticker": "NVDA",
@@ -498,7 +503,7 @@
       "id": "memory_-40",
       "label": "Memory \u221240%",
       "shock": -0.4,
-      "method": "\u03a3 value_i \u00d7 \u221240% over ['MU', 'SNDK'] (registry v3 queue: memory_semis proposal (MU, SNDK) \u2014 no sub-thesis field yet)",
+      "method": "\u03a3 value_i \u00d7 \u221240% over ['MU'] (registry sub-thesis 'memory' (ai_infra members with sub: memory))",
       "loss": -18480.6,
       "share_nav": -0.0832,
       "share_equity": -0.1252,

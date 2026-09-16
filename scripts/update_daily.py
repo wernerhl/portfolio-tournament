@@ -39,7 +39,8 @@ scripts = [
     "compute_intraday.py",         # best-effort; OK to fail (yfinance flake)
     "compute_vol_regime.py",       # VIX term-structure regime + attribution
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
-    "compute_thesis_daily.py",     # MESO layer: thesis exposure + attribution + auto-log
+    "build_earnings_calendar.py",  # order 16-Sept 3.2: provider earnings dates into the event calendar (weekly refresh)
+    "compute_thesis_daily.py",     # MESO layer: thesis exposure + attribution + auto-log (earnings dates against the register)
     "build_canonical.py",          # #92 canonical artifact: ONE fundamentals fetch
                                    # for both repos (screener consumes at 23:15 UTC).
                                    # Best-effort by position: a canonical failure never
@@ -245,7 +246,7 @@ def validate_outputs() -> None:
             per_name = {}
             for _t, _th in reg["theses"].items():
                 for nm, w in _th["members"].items():
-                    per_name[nm] = per_name.get(nm, 0.0) + float(w)
+                    per_name[nm] = per_name.get(nm, 0.0) + (float(w["weight"]) if isinstance(w, dict) else float(w))   # registry v4: {weight, sub}
             for nm, tot in per_name.items():
                 if tot > 1.0 + 1e-9:
                     errors.append(f"THESIS REGISTRY: {nm} Σweights = {tot:.2f} > 1.0")

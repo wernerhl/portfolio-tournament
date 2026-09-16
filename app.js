@@ -1615,7 +1615,13 @@ const THESIS_COLORS = {
   defensive_quality: "var(--cat6)", ldg_ex_ai: "var(--cat7)", consumer_cyclical: "var(--cat4)",
   speculative_crypto: "var(--cat5)", unclassified: "var(--text-3)", cash: "var(--hairline-hi)",
 };
-function thesisColor(k){ return THESIS_COLORS[k] || "var(--cat8)"; }
+function memberWeight(v){ return (v && typeof v === "object") ? +v.weight : (v == null ? null : +v); }   // registry v4: {weight, sub}
+function memberSub(v){ return (v && typeof v === "object") ? (v.sub || null) : null; }
+function parentOf(k){ return String(k).split("/")[0]; }
+function subLabel(k){ const [p, sub] = String(k).split("/"); const reg = (S.thesisReg && S.thesisReg.theses && S.thesisReg.theses[p]) || {}; const st = reg.sub_theses && reg.sub_theses[sub]; return sub ? (st && st.label ? st.label : sub) : ""; }
+const SUB_ORDER = ["memory", "chips", "networking", "hyperscaler", "power", "other"];
+function subShade(k){ const sub = String(k).split("/")[1]; const i = SUB_ORDER.indexOf(sub); return "sub-" + (i < 0 ? 5 : i); }
+function thesisColor(k){ return THESIS_COLORS[parentOf(k)] || "var(--cat8)"; }
 function thesisLabel(k){
   const reg = S.thesisReg && S.thesisReg.theses;
   if (k === "unclassified") return "unclassified";
@@ -1632,11 +1638,15 @@ function renderThesisSection(){
   const expKey = view === "total" ? "exposure_total" : "exposure_invested";
 
   // ---- B1: exposure stacked bars + N_eff + overlap ----
+  const subSegs = (t, k, w, scale) => {   // v4: a thesis with sub_theses renders its sub-segments, parent total in the title
+    const subs = Object.entries(t.exposure_sub || {}).filter(([sk]) => parentOf(sk) === k).sort((a, b) => b[1] - a[1]);
+    if (!subs.length) return `<div class="${cc(thesisColor(k),'bg')}" style="width:${(w*100).toFixed(1)}%" title="${thesisLabel(k)}: ${(w*100).toFixed(1)}%"></div>`;
+    return subs.map(([sk, sw]) => `<div class="${cc(thesisColor(k),'bg')} ${subShade(sk)}" style="width:${(sw*scale*100).toFixed(1)}%" title="${thesisLabel(k)} · ${subLabel(sk)}: ${(sw*scale*100).toFixed(1)}% (parent ${(w*100).toFixed(1)}%)"></div>`).join("");
+  };
   const tierRows = Object.entries(td.tiers || {}).map(([tid, t]) => {
     const exp = t[expKey] || {};
-    const segs = Object.entries(exp).map(([k, w]) =>
-      `<div class="${cc(thesisColor(k),'bg')}" style="width:${(w*100).toFixed(1)}%"
-        title="${thesisLabel(k)}: ${(w*100).toFixed(1)}%"></div>`).join("");
+    const scale = expKey === "exposure_total" ? (t.invested_share || 1) : 1;
+    const segs = Object.entries(exp).map(([k, w]) => subSegs(t, k, w, scale)).join("");
     const ts = tierSpec(tid);
     return `<div class="th-bar-row">
       <div class="tname ${cc(ts ? ts.color : 'var(--t2)')}">${ts ? ts.short : tid}</div>
@@ -1679,7 +1689,7 @@ function renderThesisSection(){
   const claims = (S.thesisClaims && S.thesisClaims.claims) || [];
   const ks = td.kill_status || {};
   const claimCards = claims.map(c => {
-    const k = ks[c.thesis_id] || {};
+    const k = ks[c.claim_id || c.thesis_id] || {};
     const status = k.met
       ? `<span class="cl-status c-neg">KILL CRITERIA MET ON ${k.date}</span>`
       : `<span class="cl-status c-pos">no kill criteria met</span>`;
@@ -1688,12 +1698,16 @@ function renderThesisSection(){
         ? `<div>${l.date} · ${l.event} · basket 1d ${(l.basket_ret_1d*100).toFixed(2)}%</div>`
         : `<div class="an">${l.date} · analyst entry · ${l.note || ""}${l.kill ? " · KILL" : ""}</div>`
     ).join("");
+    const subHead = c.claim_id ? ` <span class="c-3">· ${c.label || c.sub}</span> <span class="mono t1 c-3">(${(c.tickers || []).join(", ")})</span>` : "";
+    const review = c.review_by ? `<div class="mono t1 c-3 mt1">review by <strong class="c-2">${c.review_by}</strong> · next earnings ${c.next_earnings || "—"} + 14 days (event calendar) · frozen ${String(c.frozen_at || "").slice(0, 10)}</div>` : "";
     return `<div class="th-claim">
       <div class="cl-head">
-        <span class="cl-name ${cc(thesisColor(c.thesis_id))}">${thesisLabel(c.thesis_id)}</span>
+        <span class="cl-name ${cc(thesisColor(c.thesis_id))}">${thesisLabel(c.thesis_id)}${subHead}</span>
         ${status}
       </div>
       <div class="cl-text">${c.claim}</div>
+      ${c.disconfirmers && c.claim_id ? `<div class="mono t1 c-3">disconfirmers: ${c.disconfirmers.join(" · ")}</div>` : ""}
+      ${review}
       <div class="cl-kill"><span class="k">KILL</span>${c.kill_criteria}</div>
       <div class="th-log">${log || '<div class="c-3 it">no log entries</div>'}</div>
     </div>`;
@@ -2450,13 +2464,13 @@ function treemapData(tid){
   const groups = {};
   (td.positions || []).filter(p => p.value > 0).forEach(p => {
     const w = p.value / nav; const pp = prevPx[p.ticker]; const ret = (pp && p.price) ? p.price / pp - 1 : null;
-    let best = null, bw = 0, multi = 0;
-    Object.entries(reg).forEach(([k, th]) => { const mw = th.members && th.members[p.ticker]; if (mw) { multi++; if (mw > bw) { bw = mw; best = k; } } });
+    let best = null, bw = 0, multi = 0, bsub = null;
+    Object.entries(reg).forEach(([k, th]) => { const mv = th.members && th.members[p.ticker]; const mw = memberWeight(mv); if (mw) { multi++; if (mw > bw) { bw = mw; best = k; bsub = th.sub_theses ? (memberSub(mv) || "other") : null; } } });
     let provisional = false;
     if (!best && provNames.has(p.ticker) && ledger[p.ticker] && ledger[p.ticker].proposed) {
       const [k, mw] = Object.entries(ledger[p.ticker].proposed).sort((a, b) => b[1] - a[1])[0]; best = k; bw = mw; provisional = true;
     }
-    const key = best || "unclassified";
+    const key = best ? (bsub ? `${best}/${bsub}` : best) : "unclassified";   // v4: sub-thesis resolution (display only)
     (groups[key] = groups[key] || []).push({ticker: p.ticker, w, ret, mw: best ? bw : null, partial: !!best && bw < 0.999, multi, provisional});
   });
   const cashW = (td.cash || 0) / nav;
@@ -2474,15 +2488,16 @@ function renderTreemapCard(){
   if (d.cashW > 0) gitems.push({key: "cash", area: d.cashW});
   const grects = squarify(gitems, 0, 0, W, H);
   let svg = "";
+  const parentTot = {}; gitems.forEach(g => { const pk = parentOf(g.key); parentTot[pk] = (parentTot[pk] || 0) + g.area; });
   grects.forEach(g => {
-    const label = thesisLabel(g.key);
+    const label = thesisLabel(parentOf(g.key)) + (g.key.includes("/") ? " · " + subLabel(g.key) : "");
     svg += `<rect class="tm-group" x="${g.x.toFixed(1)}" y="${g.y.toFixed(1)}" width="${g.w.toFixed(1)}" height="${g.h.toFixed(1)}"></rect>`;
     if (g.key === "cash") {
       svg += `<rect class="tm-rect cash" x="${(g.x + 2).toFixed(1)}" y="${(g.y + 2).toFixed(1)}" width="${Math.max(0, g.w - 4).toFixed(1)}" height="${Math.max(0, g.h - 4).toFixed(1)}"><title>cash · ${(d.cashW * 100).toFixed(1)}% of NAV</title></rect>`;
       if (g.w > 60 && g.h > 24) svg += `<text class="tm-t" x="${(g.x + 8).toFixed(1)}" y="${(g.y + 18).toFixed(1)}">cash ${(d.cashW * 100).toFixed(0)}%</text>`;
       return;
     }
-    if (g.w > 70 && g.h > LBL + 8) svg += `<text class="tm-glabel" x="${(g.x + 6).toFixed(1)}" y="${(g.y + 12).toFixed(1)}">${label.toUpperCase()} · ${(g.area * 100).toFixed(0)}%</text>`;
+    if (g.w > 70 && g.h > LBL + 8) svg += `<text class="tm-glabel" x="${(g.x + 6).toFixed(1)}" y="${(g.y + 12).toFixed(1)}">${label.toUpperCase()} · ${(g.area * 100).toFixed(0)}%${g.key.includes("/") && g.w > 240 ? ` (${thesisLabel(parentOf(g.key)).toUpperCase()} ${(parentTot[parentOf(g.key)] * 100).toFixed(0)}%)` : ""}</text>`;
     const members = d.groups[g.key] || [];
     const big = members.filter(m => m.w >= 0.005), small = members.filter(m => m.w < 0.005);
     const items = big.map(m => ({key: m.ticker, area: m.w, m}));
@@ -2501,10 +2516,13 @@ function renderTreemapCard(){
     });
   });
   const legend = ["dv-2", "dv-1", "dv0", "dv1", "dv2"].map((c, i) => `<span class="tm-lg ${c}"></span>${["≤ −1.8%", "−1.8…−0.6", "±0.6", "0.6…1.8", "≥ 1.8%"][i]}`).join(" ");
+  const subKeys = Object.keys(d.groups).filter(k => k.includes("/"));
+  const parents = {}; subKeys.forEach(k => { const pk = parentOf(k); (parents[pk] = parents[pk] || []).push(k); });
+  const parentLine = Object.entries(parents).map(([pk, ks]) => `<strong class="c-1">${thesisLabel(pk)} ${(parentTot[pk] * 100).toFixed(0)}%</strong> = ${ks.sort((a, b) => (d.groups[b].reduce((s_, m) => s_ + m.w, 0)) - (d.groups[a].reduce((s_, m) => s_ + m.w, 0))).map(k => `${subLabel(k)} ${(d.groups[k].reduce((s_, m) => s_ + m.w, 0) * 100).toFixed(0)}%`).join(" · ")}`).join(" ; ");
   return `<div class="rcc-card tm-card">
-    <div class="chart-head"><h3>THESIS TREEMAP · <span class="c-3 w5">${sel === "5_werner" ? "the book" : (tierSpec(sel) || {}).short} · weight by area, one-day return by colour</span>${asOfBadge(d.date)}</h3>${selector}</div>
+    <div class="chart-head"><h3>THESIS TREEMAP · <span class="c-3 w5">${sel === "5_werner" ? "the book" : (tierSpec(sel) || {}).short} · weight by area, one-day return by colour · sub-thesis resolution</span>${asOfBadge(d.date)}</h3>${selector}</div>
     <svg class="tm-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="thesis treemap">${svg}</svg>
-    <div class="chart-meta">N<sub>eff</sub> = <strong class="c-1">${d.neff != null ? d.neff : "—"}</strong> effective bets across ${d.n} positions · grouped by thesis (largest membership) · dashed = provisional or partial membership · ${legend} · bounded ±3% daily</div>
+    <div class="chart-meta">N<sub>eff</sub> = <strong class="c-1">${d.neff != null ? d.neff : "—"}</strong> effective theses across ${d.n} positions · grouped by thesis and, inside ai_infra, by sub-thesis (registry v${(S.thesisReg && S.thesisReg.version) || "—"}; display only, the parent bucket sizes) · ${parentLine ? "parent totals: " + parentLine + " · " : ""}dashed = provisional or partial membership · ${legend} · bounded ±3% daily</div>
   </div>`;
 }
 // P2.2 — "What the overlay has shown": the deflated claim verbatim, both C3 verdicts on one line
@@ -2601,9 +2619,10 @@ function renderFactorStrip(key){
 //    thesis exposure bars + N_eff, and the factor strip beside them. Sorted by weight. ──
 function thesisOf(tk){
   const reg = (S.thesisReg && S.thesisReg.theses) || {};
-  const hits = Object.entries(reg).filter(([k, t]) => t.members && t.members[tk]).sort((a, b) => b[1].members[tk] - a[1].members[tk]);
+  const hits = Object.entries(reg).filter(([k, t]) => t.members && t.members[tk] != null).sort((a, b) => memberWeight(b[1].members[tk]) - memberWeight(a[1].members[tk]));
   if (!hits.length) return "unclassified";
-  const [k, t] = hits[0]; return `${thesisLabel(k)}${t.members[tk] < 0.999 ? " · " + t.members[tk].toFixed(2) : ""}`;
+  const [k, t] = hits[0]; const mw = memberWeight(t.members[tk]), sub = memberSub(t.members[tk]);
+  return `${thesisLabel(k)}${sub ? " · " + subLabel(k + "/" + sub) : ""}${mw < 0.999 ? " · " + mw.toFixed(2) : ""}`;
 }
 function renderBookPanel(){
   const b = S.book;
@@ -2615,8 +2634,14 @@ function renderBookPanel(){
   const p1 = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
   const th = S.thesis && S.thesis.tiers && S.thesis.tiers["5_werner"];
   const exp = (b && b.portfolio && b.portfolio.thesis_exposure) || (th && th.exposure_invested) || {};
-  const bars = Object.entries(exp).sort((a, c) => c[1] - a[1]).map(([k, v]) =>
-    `<div class="th-exp-row"><span class="th-exp-k mono t1 c-2">${thesisLabel(k)}</span><span class="th-exp-bar"><span class="${cc(thesisColor(k), 'bg')}" style="width:${(v * 100).toFixed(1)}%"></span></span><span class="th-exp-v mono t1 c-1">${(v * 100).toFixed(0)}%</span></div>`).join("");
+  const expSub = (th && th.exposure_sub) || {};
+  const bars = Object.entries(exp).sort((a, c) => c[1] - a[1]).map(([k, v]) => {
+    const subs = Object.entries(expSub).filter(([sk]) => parentOf(sk) === k).sort((a, c) => c[1] - a[1]);
+    const fill = subs.length
+      ? subs.map(([sk, sw]) => `<span class="${cc(thesisColor(k), 'bg')} ${subShade(sk)} ib" style="width:${(sw * 100).toFixed(1)}%" title="${subLabel(sk)} ${(sw * 100).toFixed(1)}%"></span>`).join("")
+      : `<span class="${cc(thesisColor(k), 'bg')}" style="width:${(v * 100).toFixed(1)}%"></span>`;
+    const subTxt = subs.length ? `<div class="mono t1 c-3">${subs.map(([sk, sw]) => `${subLabel(sk)} ${(sw * 100).toFixed(0)}%`).join(" · ")}</div>` : "";
+    return `<div class="th-exp-row"><span class="th-exp-k mono t1 c-2">${thesisLabel(k)}${subTxt}</span><span class="th-exp-bar">${fill}</span><span class="th-exp-v mono t1 c-1">${(v * 100).toFixed(0)}%</span></div>`; }).join("");
   if (!b) {   // fallback: the tournament row only (book.json not yet published)
     const last = h[h.length - 1], w = last.tiers && last.tiers["5_werner"]; if (!w) return "";
     const pos = (w.positions || []).filter(p => p.value > 0).sort((a, c) => c.value - a.value);

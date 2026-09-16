@@ -43,7 +43,7 @@ def main():
     nw: dict[str, dict[str, float]] = {}
     for tid, th in registry["theses"].items():
         for name, w in th["members"].items():
-            nw.setdefault(name, {})[tid] = float(w)
+            nw.setdefault(name, {})[tid] = float(w["weight"]) if isinstance(w, dict) else float(w)   # registry v4: {weight, sub}
     members = {tid: list(th["members"].keys()) for tid, th in registry["theses"].items()}
 
     prices = pd.read_parquet(SOURCE / "prices_daily.parquet")

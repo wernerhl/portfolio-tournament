@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "frozen_at": "2026-09-08T06:38:22-06:00",
+  "version": 4,
+  "frozen_at": "2026-09-16T13:25:00-06:00",
   "proposed_at": "2026-06-11",
   "weighting": "equal_within_basket",
   "note": "PROPOSED from the current books — Werner reviews/edits, then sets frozen_at to freeze. After freezing, classification changes happen ONLY via an explicit version bump (new version object appended to data/thesis_registry_history.json). Names may belong to multiple theses with split weights summing <= 1 per name; the residual maps to 'unclassified'.",
@@ -9,22 +9,89 @@
       "label": "AI infrastructure",
       "proxy_etf": "SMH",
       "members": {
-        "NVDA": 1.0,
-        "AVGO": 1.0,
-        "TSM": 1.0,
-        "MU": 1.0,
-        "SNDK": 1.0,
-        "ANET": 1.0,
-        "MSFT": 0.7,
-        "GOOG": 0.7,
-        "META": 0.6,
-        "PLTR": 0.7,
-        "ETN": 0.6,
-        "VRT": 0.8,
-        "CEG": 0.6,
-        "VST": 0.5
+        "NVDA": {
+          "weight": 1.0,
+          "sub": "chips"
+        },
+        "AVGO": {
+          "weight": 1.0,
+          "sub": "chips"
+        },
+        "TSM": {
+          "weight": 1.0,
+          "sub": "chips"
+        },
+        "MU": {
+          "weight": 1.0,
+          "sub": "memory"
+        },
+        "SNDK": {
+          "weight": 1.0
+        },
+        "ANET": {
+          "weight": 1.0,
+          "sub": "networking"
+        },
+        "MSFT": {
+          "weight": 0.7,
+          "sub": "hyperscaler"
+        },
+        "GOOG": {
+          "weight": 0.7,
+          "sub": "hyperscaler"
+        },
+        "META": {
+          "weight": 0.6,
+          "sub": "hyperscaler"
+        },
+        "PLTR": {
+          "weight": 0.7
+        },
+        "ETN": {
+          "weight": 0.6,
+          "sub": "power"
+        },
+        "VRT": {
+          "weight": 0.8,
+          "sub": "power"
+        },
+        "CEG": {
+          "weight": 0.6,
+          "sub": "power"
+        },
+        "VST": {
+          "weight": 0.5,
+          "sub": "power"
+        },
+        "GEV": {
+          "weight": 0.6,
+          "sub": "power"
+        }
       },
-      "notes": "Chips/memory/networking full weight; hyperscalers partial (also other businesses); power-buildout leg partial."
+      "notes": "Chips/memory/networking full weight; hyperscalers partial (also other businesses); power-buildout leg partial. v4 (2026-09-16): GEV joins at 0.6 with sub power; sub field per member (memory / chips / networking / hyperscaler / power).",
+      "sub_theses": {
+        "memory": {
+          "label": "Memory",
+          "note": "high-bandwidth memory pricing and margin"
+        },
+        "chips": {
+          "label": "Chips",
+          "note": "accelerators, custom silicon, foundry"
+        },
+        "networking": {
+          "label": "Networking",
+          "note": "switching for AI clusters"
+        },
+        "hyperscaler": {
+          "label": "Hyperscalers",
+          "note": "partial weights — other businesses"
+        },
+        "power": {
+          "label": "Power",
+          "note": "data-center power buildout — partial weights"
+        }
+      },
+      "sub_note": "v4: `sub` is a DISPLAY dimension inside ai_infra (treemap and exposure bars at sub-thesis resolution, parent totals shown). The retirement and attribution machinery keys on the parent bucket, which is unchanged. Members without a sub (SNDK, PLTR) render as 'other' inside ai_infra."
     },
     "fin_plumbing": {
       "label": "Financial plumbing & rate beneficiaries",
@@ -114,10 +181,10 @@
       "notes": "Decision Memo 2026-09-09 §8: BMNR is a bet on a different variable from every other bucket and is not forced into one. No proxy ETF (no crypto ETF column in the price store); basket-vs-proxy divergence not computed."
     }
   },
-  "approval": "v3: Decision Memo 9 Sept 2026 §8 — create a speculative_crypto thesis with BMNR at weight 1.0. Written order is the approval instrument; nothing else changed. memory_semis remains deferred (own registration after C4).",
-  "approved_by": "Werner Hernani-Limarino (Decision Memo, 2026-09-09, §8)",
-  "approved_at": "2026-09-08T06:38:22-06:00",
-  "supersedes": 2,
+  "approval": "v4: Execution Order of 16 September 2026, item 3.1 — a `sub` field on the members of ai_infra (MU memory; NVDA, AVGO, TSM chips; ANET networking; GOOG, MSFT, META hyperscaler; GEV, CEG, ETN, VRT, VST power); GEV joins ai_infra at weight 0.6 with sub power (the remaining 0.4 unclassified, consistent with CEG and ETN). Sub-resolution is a display dimension; parent buckets, the retirement and attribution machinery are unchanged. Written order is the approval instrument; nothing else changed.",
+  "approved_by": "Werner Hernani-Limarino (written instruction, 2026-09-16)",
+  "approved_at": "2026-09-16T13:25:00-06:00",
+  "supersedes": 3,
   "proposals_source": {
     "repo_head": "a881266f40d92aeb436a08e15d8faf7ccc617109",
     "file": "data/registry_proposals.json",
@@ -151,6 +218,39 @@
         "hard_assets",
         "ldg_ex_ai"
       ]
+    },
+    {
+      "version": 3,
+      "frozen_at": "2026-09-08T06:38:22-06:00",
+      "approved_by": "Werner Hernani-Limarino (Decision Memo, 2026-09-09, §8)",
+      "approved_at": "2026-09-08T06:38:22-06:00",
+      "approval": "v3: Decision Memo 9 Sept 2026 §8 — create a speculative_crypto thesis with BMNR at weight 1.0. Written order is the approval instrument; nothing else changed. memory_semis remains deferred (own registration after C4).",
+      "supersedes": 2,
+      "theses_at_v3": [
+        "ai_infra",
+        "consumer_cyclical",
+        "defensive_quality",
+        "fin_plumbing",
+        "hard_assets",
+        "ldg_ex_ai",
+        "speculative_crypto"
+      ],
+      "ai_infra_members_at_v3": {
+        "NVDA": 1.0,
+        "AVGO": 1.0,
+        "TSM": 1.0,
+        "MU": 1.0,
+        "SNDK": 1.0,
+        "ANET": 1.0,
+        "MSFT": 0.7,
+        "GOOG": 0.7,
+        "META": 0.6,
+        "PLTR": 0.7,
+        "ETN": 0.6,
+        "VRT": 0.8,
+        "CEG": 0.6,
+        "VST": 0.5
+      }
     }
   ],
   "v3_queue": [
@@ -161,13 +261,20 @@
       "reason": "deferred by Decision Memo 2026-09-09 §8 — changes attribution resolution; gets its own registration after C4"
     }
   ],
-  "effective": "forward from the 2026-09-09 close run; no historical recomputation",
+  "effective": "forward from the 2026-09-16 close run; no historical recomputation",
   "cadence": "on_change",
-  "as_of": "2026-09-09",
+  "as_of": "2026-09-16",
   "resolved_in_v3": [
     {
       "ticker": "BMNR",
       "resolution": "speculative_crypto @ 1.0 (Decision Memo 2026-09-09 §8)"
     }
-  ]
+  ],
+  "resolved_in_v4": [
+    {
+      "ticker": "GEV",
+      "resolution": "ai_infra @ 0.6, sub power (order 16-Sept item 3.1)"
+    }
+  ],
+  "member_schema": "a member value is a weight (float) or {weight, sub}; consumers read the weight through a helper (scripts/book_analytics.member_weight, app.js memberWeight)"
 }
