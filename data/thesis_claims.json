@@ -425,8 +425,86 @@
           "basket_ret_1d": -0.00829
         }
       ]
+    },
+    {
+      "claim_id": "memory",
+      "thesis_id": "ai_infra",
+      "sub": "memory",
+      "label": "Memory (MU)",
+      "tickers": [
+        "MU"
+      ],
+      "claim": "Demand for high-bandwidth memory sustains pricing and margin through 2027.",
+      "disconfirmers": [
+        "contract-price rollover",
+        "announced capacity additions exceeding demand growth",
+        "guidance cuts"
+      ],
+      "kill_criteria": "Two consecutive quarters of guided margin decline.",
+      "next_earnings": "2026-09-30",
+      "review_by": "2026-10-14",
+      "review_by_basis": "next earnings 2026-09-30 + 14 days (provider earnings calendar (yfinance Ticker.calendar) retrieved 2026-09-16 into data/event_calendar.json as EARNINGS; the nightly rolls review_by to the next date + 14 days once a date has passed)",
+      "frozen_at": "2026-09-16T13:25:00-06:00",
+      "approved_by": "Werner Hernani-Limarino (written instruction, 2026-09-16)",
+      "provenance": "Execution Order of 16 September 2026, item 3.2 \u2014 written instruction is the approval instrument; frozen with the registry v4 provenance",
+      "log": []
+    },
+    {
+      "claim_id": "power",
+      "thesis_id": "ai_infra",
+      "sub": "power",
+      "label": "Power (GEV)",
+      "tickers": [
+        "GEV"
+      ],
+      "claim": "Data-center power demand sustains orders and backlog through 2027.",
+      "disconfirmers": [
+        "order cancellations",
+        "quarter-on-quarter backlog decline",
+        "repricing of power agreements"
+      ],
+      "kill_criteria": "Backlog decline in two consecutive quarters.",
+      "next_earnings": "2026-10-28",
+      "review_by": "2026-11-11",
+      "review_by_basis": "next earnings 2026-10-28 + 14 days (provider earnings calendar (yfinance Ticker.calendar) retrieved 2026-09-16 into data/event_calendar.json as EARNINGS; the nightly rolls review_by to the next date + 14 days once a date has passed)",
+      "frozen_at": "2026-09-16T13:25:00-06:00",
+      "approved_by": "Werner Hernani-Limarino (written instruction, 2026-09-16)",
+      "provenance": "Execution Order of 16 September 2026, item 3.2 \u2014 written instruction is the approval instrument; frozen with the registry v4 provenance",
+      "log": [],
+      "note": "GEV's visibility override in the screen view's visibility registry keeps its own review date; this entry's review_by is the register's."
+    },
+    {
+      "claim_id": "networking",
+      "thesis_id": "ai_infra",
+      "sub": "networking",
+      "label": "Networking (ANET)",
+      "tickers": [
+        "ANET"
+      ],
+      "claim": "Hyperscaler capital expenditure sustains switching demand.",
+      "disconfirmers": [
+        "capital-expenditure guidance cuts",
+        "white-box share gains reported by customers"
+      ],
+      "kill_criteria": "Two consecutive quarters of revenue guidance cuts.",
+      "next_earnings": "2026-11-03",
+      "review_by": "2026-11-17",
+      "review_by_basis": "next earnings 2026-11-03 + 14 days (provider earnings calendar (yfinance Ticker.calendar) retrieved 2026-09-16 into data/event_calendar.json as EARNINGS; the nightly rolls review_by to the next date + 14 days once a date has passed)",
+      "frozen_at": "2026-09-16T13:25:00-06:00",
+      "approved_by": "Werner Hernani-Limarino (written instruction, 2026-09-16)",
+      "provenance": "Execution Order of 16 September 2026, item 3.2 \u2014 written instruction is the approval instrument; frozen with the registry v4 provenance",
+      "log": []
     }
   ],
   "cadence": "on_change",
-  "as_of": "2026-09-04"
+  "as_of": "2026-09-16",
+  "sub_thesis_entries": {
+    "added": "2026-09-16",
+    "claim_ids": [
+      "memory",
+      "power",
+      "networking"
+    ],
+    "note": "ticker-scoped entries under ai_infra (registry v4 sub field): the auto-log records each earnings date of the entry's tickers with the equal-weight one-day return of those tickers; review_by is the next earnings date + 14 days from the event calendar; kill status is mechanical (an explicit manual log entry with kill: true). The six parent entries are untouched."
+  }
 }
