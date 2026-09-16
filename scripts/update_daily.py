@@ -21,7 +21,9 @@ DATA = ROOT / "data"
 scripts = [
     "refresh_data.py",
     "compute_regime_v2.py",
-    "compute_comparators.py",      # dashboard order 9-Sept P2.2: today's state of the C3 rules (descriptive)
+    "compute_book.py",             # order 16-Sept 1.3/1.5/1.6: book analytics, stress, sleeves (descriptive)
+    "compute_comparators.py",      # dashboard order 9-Sept P2.2: today's state of the C3 rules (descriptive);
+                                   # order 16-Sept 1.4: each rule translated to the book's beta (reads book.json)
     "score_regime_v4_daily.py",    # AUDIT FIX 2a: v4 was never in the daily
                                    # pipeline (CI lacked scikit-learn), so
                                    # regime_v4_daily.csv froze at its last
@@ -164,6 +166,23 @@ def validate_outputs() -> None:
         import pandas as _pd
         t2 = json.load(open(DATA / "tournament.json"))
         check_fresh("tournament.json", t2["history"][-1]["date"] if t2.get("history") else None)
+        # Repair 2026-09-16: the price store must carry the session being published
+        # (the 14/15-Sept runs ran a session behind and rows shipped with the prior
+        # session's closes). A store that ends before the session rejects the run.
+        try:
+            _px = _pd.read_parquet(DATA / "source" / "prices_daily.parquet")
+            _last = str(_pd.to_datetime(_px.index).max().date())
+            if _last < session:
+                errors.append(f"PRICE_STORE_SESSION prices_daily.parquet ends {_last} < publish session {session}")
+            _spy = t2["history"][-1].get("benchmarks", {}).get("spy", {}).get("price") if t2.get("history") else None
+            _se = _pd.read_parquet(DATA / "source" / "sector_etfs.parquet")
+            _se.index = _pd.to_datetime(_se.index)
+            if _spy and _pd.Timestamp(session) in _se.index and _pd.notna(_se.loc[_pd.Timestamp(session), "spy"]):
+                _ref = float(_se.loc[_pd.Timestamp(session), "spy"])
+                if abs(float(_spy) / _ref - 1) > 0.005:
+                    errors.append(f"BAR_SESSION_MISMATCH tournament.json spy price {_spy} on {session} vs store close {_ref:.2f} (>0.5%): row carries another session's closes")
+        except Exception as _e:
+            errors.append(f"PRICE_STORE_SESSION check could not run: {type(_e).__name__}: {_e}")
         for csv_name, date_col in [("regime_daily.csv", "date"),
                                     ("regime_v2_daily.csv", "date"),
                                     ("regime_daily_published.csv", "date"),
@@ -358,6 +377,7 @@ SERVED_CADENCE = {
     "intraday.json": "daily", "vol_regime.json": "daily", "vol_close_canonical.json": "daily",
     "comparators.json": "daily",                                               # P2.2 (dashboard order 9-Sept)
     "factor_exposure.json": "daily",                                           # P3.3 (dashboard order 9-Sept)
+    "book.json": "daily",                                                      # 1.3 (order 16-Sept)
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",
@@ -385,7 +405,17 @@ def stamp_served_json() -> None:
         if not isinstance(d, dict):
             continue
         if cadence == "daily":
-            meta = served_meta("daily", session_date=d.get("session_date") or d.get("as_of") or session)
+            # Repair 2026-09-16: a file's own content dates outrank a stamp this
+            # pass wrote earlier (tournament.json kept its first-ever stamp,
+            # 2026-09-04, while history advanced). Use, in order: the last
+            # history row's date, the producer's as_of, the existing stamp, the
+            # publish session — never an older stamp over a newer content date.
+            own = None
+            hist = d.get("history")
+            if isinstance(hist, list) and hist and isinstance(hist[-1], dict) and hist[-1].get("date"):
+                own = str(hist[-1]["date"])[:10]
+            cands = [c for c in (own, d.get("as_of"), d.get("session_date")) if c]
+            meta = served_meta("daily", session_date=(max(str(c)[:10] for c in cands) if cands else session))
         else:
             as_of = (d.get("as_of") or d.get("frozen_at") or d.get("generated_at")
                      or d.get("approved_at") or d.get("updated") or "")

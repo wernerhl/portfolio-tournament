@@ -134,7 +134,7 @@ def equal_weight_basket_returns(prices: pd.DataFrame, members: list[str]) -> pd.
     cols = [m for m in members if m in prices.columns]
     if not cols:
         return pd.Series(dtype=float)
-    rets = prices[cols].pct_change()
+    rets = prices[cols].pct_change(fill_method=None)   # pandas 3: never pad a gap into a 0% return
     return rets.mean(axis=1)
 
 
@@ -229,8 +229,14 @@ def main():
         basket_ret[tid] = equal_weight_basket_returns(prices, mem)
         basket_n_priced[tid] = sum(1 for m in mem if m in prices.columns)
 
-    # SPY closes live in sector_etfs.parquet (price store carries only SPY_volume)
-    spy_ret = sect["spy"].pct_change()
+    # SPY closes live in sector_etfs.parquet (price store carries only SPY_volume).
+    # Repair 2026-09-16: the 15-Sept nightly wrote an all-NaN sector row; under
+    # pandas 3 (runner) pct_change no longer pads, the SPY return was NaN, every
+    # attribution component went null and the referee crashed on the null. The
+    # gap is now explicit: fill_method=None, and a session without a SPY return
+    # is SKIPPED and listed in attribution[tid]["skipped_sessions"] — never a
+    # NaN component, never a padded 0% return.
+    spy_ret = sect["spy"].pct_change(fill_method=None)
 
     def period_ret(r: pd.Series, since: str) -> float | None:
         sub = r[r.index >= pd.Timestamp(since)].dropna()
@@ -337,6 +343,7 @@ def main():
     attribution = {}
     for tid in tids:
         rows = []
+        skipped = []
         max_resid_bp = 0.0
         for i in range(1, len(history)):
             prev, cur = history[i - 1], history[i]
@@ -346,8 +353,11 @@ def main():
             if nav0 <= 0: continue
             r_tier = nav1 / nav0 - 1
             d = pd.Timestamp(cur["date"])
-            if d not in spy_ret.index: continue
+            if d not in spy_ret.index or pd.isna(spy_ret.loc[d]):
+                skipped.append(cur["date"]); continue        # no SPY return for the session: stated, not padded
             r_spy = float(spy_ret.loc[d])
+            if not math.isfinite(r_tier):
+                skipped.append(cur["date"]); continue
             cash_rate = float(prev.get("effr_daily_pct", 4.0)) / 100.0 / 252.0
             equity0 = float(tdp.get("equity") or 0); cash0 = float(tdp.get("cash") or 0)
             inv0, total0, uncl0 = exposure_for_positions(tdp.get("positions", []), equity0, cash0, nw)
@@ -357,7 +367,9 @@ def main():
             if uncl0:
                 cols = [t for t in uncl0 if t in prices.columns and d in prices.index]
                 if cols:
-                    uncl_ret = float(prices[cols].pct_change().loc[d].mean())
+                    uncl_ret = float(prices[cols].pct_change(fill_method=None).loc[d].mean())
+                    if not math.isfinite(uncl_ret):
+                        uncl_ret = None
             cash_eff = w_cash * (cash_rate - r_spy)
             alloc_eff = 0.0
             implied = w_cash * cash_rate
@@ -376,10 +388,12 @@ def main():
             rows.append({"d": cur["date"], "active": active, "cash_eff": cash_eff,
                           "alloc_eff": alloc_eff, "selection": selection})
         cum = {k: round(sum(r[k] for r in rows), 5) for k in ("active", "cash_eff", "alloc_eff", "selection")}
+        assert all(math.isfinite(v) for v in cum.values()), f"attribution {tid}: non-finite component {cum}"
         attribution[tid] = {
             "cum": cum,
             "last_day": {k: round(rows[-1][k], 5) for k in ("active", "cash_eff", "alloc_eff", "selection")} if rows else None,
             "n_days": len(rows),
+            "skipped_sessions": skipped,          # sessions without a SPY return (source gap) — stated, not padded
             "check_max_residual_bp": round(max_resid_bp, 4),
             "method": "arithmetic sum of daily components; start-of-period weights; selection = residual",
         }

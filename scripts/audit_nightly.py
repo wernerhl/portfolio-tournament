@@ -241,7 +241,14 @@ def main(troot, sroot, today=None):
     at=dd.get('attribution',{})
     for k,v in at.items():
         c=v.get('cum',{})
-        if c and abs(c.get('active',0)-(c.get('cash_eff',0)+c.get('alloc_eff',0)+c.get('selection',0)))>1e-4:
+        if not c: continue
+        # Repair 2026-09-16: a null component is a broken identity (the 15-Sept run served
+        # nulls and this line crashed with a TypeError, recorded as "0 findings"). Same
+        # severity as a non-summing identity; the referee must never crash on served data.
+        nulls=[f for f in ('active','cash_eff','alloc_eff','selection') if c.get(f) is None]
+        if nulls:
+            add('CRITICAL','identity:attribution',f'{k}: null component(s) {nulls} — identity cannot be verified'); continue
+        if abs(c.get('active',0)-(c.get('cash_eff',0)+c.get('alloc_eff',0)+c.get('selection',0)))>1e-4:
             add('CRITICAL','identity:attribution',f'{k}: components do not sum to active')
     # visibility review dates (screener)
     vp=os.path.join(sroot,'visibility_registry.json')

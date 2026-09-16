@@ -48,9 +48,38 @@ def drop_partial_today(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def drop_empty_and_phantom_rows(df: pd.DataFrame, label: str) -> pd.DataFrame:
+    """Repair 2026-09-16: the 15-Sept nightly persisted a sector_etfs row for
+    2026-09-15 with every column NaN (the provider returned the index entry
+    before the bars); downstream pct_change turned it into a NaN SPY return
+    under pandas 3 and the attribution identity went null. A row with no
+    value in any column carries no information and is dropped; so is any
+    row on a non-trading date (the vol-store phantom-holiday guard, applied
+    to every store). Both are logged."""
+    from trading_calendar import is_trading_day
+    if df is None or not len(df):
+        return df
+    empty = df.index[df.isna().all(axis=1)]
+    if len(empty):
+        log(f"  {label}: dropping {len(empty)} all-NaN row(s): {[str(pd.Timestamp(d).date()) for d in empty[-3:]]}")
+        df = df.drop(index=empty)
+    phantom = [d for d in df.index if not is_trading_day(pd.Timestamp(d).date())]
+    if phantom:
+        log(f"  {label}: dropping {len(phantom)} non-session row(s): {[str(pd.Timestamp(d).date()) for d in phantom[-3:]]}")
+        df = df.drop(index=phantom)
+    return df
+
+
 def download_close(tickers, start, end=None) -> pd.DataFrame:
-    """Returns DataFrame of close prices, columns=tickers, index=date."""
-    end = end or datetime.now()
+    """Returns DataFrame of close prices, columns=tickers, index=date.
+
+    Repair 2026-09-16: `end` is EXCLUSIVE in yfinance and the runner's clock is
+    UTC — at 20:05 ET the calendar date is already tomorrow in UTC, but the
+    newer yfinance resolves a datetime `end` in exchange time, so the session
+    just closed fell outside the window and the store ran one session behind
+    (14-Sept run ended at 09-11; 15-Sept run at 09-14). The end bound is now
+    tomorrow; drop_partial_today() still guards an in-progress session."""
+    end = end or (datetime.now() + timedelta(days=1))
     out = {}
     BATCH = 50
     failed = []
@@ -284,6 +313,7 @@ def main():
         "oil":  "CL=F",  "gold": "GC=F",  "tlt":  "TLT",
         "hyg":  "HYG",   "lqd":  "LQD",
     }
+    merged = drop_empty_and_phantom_rows(merged, "prices_daily")
     vol_data = {}
     for name, tk in vol_tickers.items():
         try:
@@ -327,6 +357,7 @@ def main():
     if "spx" in vol_df:
         spx = vol_df["spx"]
         vd["spx_drawdown"]        = (spx / spx.cummax() - 1) * 100
+    vol_df = drop_empty_and_phantom_rows(vol_df, "vol_indicators")
         vd["spx_return_20d"]      = spx.pct_change(20) * 100
         vd["spx_return_60d"]      = spx.pct_change(60) * 100
         vd["spx_realized_vol_20d"] = spx.pct_change().rolling(20).std() * np.sqrt(252) * 100
@@ -387,6 +418,7 @@ def main():
                 "kcfsi":           "KCFSI",    # monthly: Kansas City Fed financial stress index
                 "stlfsi":          "STLFSI4",  # weekly:  St. Louis Fed FSI (v4 supersedes STLFSI2)
                 "loan_tightening": "DRTSCILM", # quarterly: SLOOS net % tightening C&I std
+    sect_df = drop_empty_and_phantom_rows(sect_df, "sector_etfs")
                 "consumer_expect": "MICH",     # monthly: Michigan consumer expectations (1-5Y)
             }
             # Fetch with retry. If a series fails twice, we'll preserve any existing values

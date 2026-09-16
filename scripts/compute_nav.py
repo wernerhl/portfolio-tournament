@@ -30,20 +30,54 @@ START_CAPITAL = 100000.0
 def load_json(p): return json.load(open(p))
 
 
-def fetch_prices(tickers: list[str]) -> dict[str, float]:
+def fetch_prices(tickers: list[str], session: str | None = None) -> dict[str, float]:
+    """Closes of the session being published.
+
+    Repair 2026-09-16: the rows published for 09-09, 09-11, 09-14 and 09-15
+    carry the PREVIOUS session's closes (NVDA 210.96 under 2026-09-15 is the
+    14-Sept close). `period="5d"` took whatever last bar the provider served at
+    ~20:00 ET, and on those evenings the just-closed session was not there yet.
+    Now: an explicit window ending tomorrow, the row for `session` selected by
+    date, and a hard stop when the provider has no bar for that session — a
+    rejected run keeps the last good board; a mislabeled row never ships.
+    Published rows are not rewritten (as-published values stand; see the
+    Phase 1 report of the 16-Sept order)."""
+    from datetime import timedelta
     tickers = [t for t in tickers if t]
     if not tickers: return {}
     try:
-        data = yf.download(tickers, period="5d", progress=False, auto_adjust=True)
+        end = datetime.now() + timedelta(days=1)
+        start = end - timedelta(days=14)
+        data = yf.download(tickers, start=start.strftime("%Y-%m-%d"), end=end.strftime("%Y-%m-%d"),
+                           progress=False, auto_adjust=True)
         if data is None or data.empty: return {}
         closes = data["Close"]
         if isinstance(closes, pd.Series):
-            return {tickers[0]: float(closes.dropna().iloc[-1])} if not closes.dropna().empty else {}
+            closes = closes.to_frame(tickers[0])
+        closes.index = pd.to_datetime(closes.index)
+        try:
+            closes.index = closes.index.tz_localize(None)
+        except (TypeError, AttributeError):
+            pass
+        closes = closes[~closes.isna().all(axis=1)]
+        if session:
+            on = closes[closes.index.strftime("%Y-%m-%d") == session]
+            if on.empty or on.dropna(axis=1).shape[1] < 0.5 * closes.shape[1]:
+                last = str(closes.index[-1].date()) if len(closes) else "none"
+                msg = (f"ASSERTION bar_session_mismatch: provider has no close bar for publish session {session} "
+                       f"(last bar {last}, {0 if on.empty else int(on.notna().sum().sum())} closes on the session) — "
+                       f"refusing to publish a row with another session's prices")
+                print(msg, file=sys.stderr, flush=True)
+                raise SystemExit(msg)
+            row = on.iloc[-1]
+            return {t: float(v) for t, v in row.items() if pd.notna(v)}
         out = {}
         for t in closes.columns:
             ser = closes[t].dropna()
             if not ser.empty: out[t] = float(ser.iloc[-1])
         return out
+    except SystemExit:
+        raise
     except Exception as e:
         print(f"  warn fetch_prices: {e}", file=sys.stderr)
         return {}
@@ -372,7 +406,7 @@ def main():
     all_tickers.update(werner_tickers)
     all_tickers.update(BENCHMARK_TICKERS)
     print(f"Fetching prices for {len(all_tickers)} tickers...")
-    prices = fetch_prices(sorted(all_tickers))
+    prices = fetch_prices(sorted(all_tickers), session=today)   # closes OF the session being published (repair 2026-09-16)
     print(f"  got {len(prices)}/{len(all_tickers)} prices")
 
     # ----- Load existing tournament for NAV continuity -----
@@ -576,6 +610,13 @@ def main():
     tournament["drawdown"] = annotate_drawdowns(history, today)                        # P2.1, additive (per-row drawdown alongside nav)
     write_backtest_drawdown(today)                                                    # P2.1 companion for the backtest curves
     tournament["last_updated"] = datetime.now().isoformat()
+    # Repair 2026-09-16: the producer stamps the declared session. The generic
+    # stamping pass in update_daily.py kept whatever session_date it found, so
+    # this file read 2026-09-04 from the day it was first stamped while its
+    # history advanced — the referee (correctly) called it stale. The declared
+    # session is the label of the row just written: correct by construction.
+    tournament["cadence"] = "daily"
+    tournament["session_date"] = today
 
     with open(tournament_file, "w") as f:
         json.dump(tournament, f, indent=2, default=str)
