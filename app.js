@@ -1209,6 +1209,15 @@ function divergenceState(quality, qPct, trade, sig){
   // those modes means "definitely act," not "good entry." Buy quadrants only
   // apply when the signal is actually BUY or STRONG BUY.
   const S = (sig || "").toUpperCase();
+  if (arguments.length > 4 && arguments[4] === "position") {   // 16-Sept 1.7: observations, no quadrant
+    const st = arguments[5] || "";
+    if (st === "below_stop_from_cost" || st === "thesis_flags") return {cls:"exit", color:"#f87171", icon:"▽", text:"Below the rulebook stop from cost (observation)."};
+    if (st === "below_trailing_level") return {cls:"trim", color:"#facc15", icon:"◇", text:"Below the trailing level (observation)."};
+    if (st === "past_trim_level") return {cls:"trim", color:"#facc15", icon:"◆", text:"Past a trim level of the schedule (observation)."};
+    if (st === "hedge_condition") return {cls:"hedge", color:"#a78bfa", icon:"◈", text:"Hedge condition of the rulebook met (observation)."};
+    if (st === "insufficient_history" || st === "no_price_history") return {cls:"hold", color:"#737373", icon:"·", text:"No signal — insufficient history."};
+    return {cls:"hold", color:"#737373", icon:"○", text:"Within the rulebook's levels."};
+  }
   if (S.startsWith("SELL"))            return {cls:"exit",   color:"#f87171", icon:"▼",
                                                 text:"Exit signal — stop or thesis triggered."};
   if (S.startsWith("TRIM"))            return {cls:"trim",   color:"#facc15", icon:"✂",
@@ -1238,11 +1247,7 @@ function tradeContext(s){
   // One short phrase that summarises the trade-now reading using existing data.
   if (!s) return "";
   if (s.mode === "position"){
-    const p = s.position || {};
-    if (s.signal && s.signal.startsWith("SELL")) return `stop triggered · ${p.gain_pct >= 0 ? "+" : ""}${p.gain_pct?.toFixed?.(0) || "?"}%`;
-    if (s.signal && s.signal.startsWith("TRIM")) return `${p.gain_pct?.toFixed?.(0) || "?"}% gain · trim trigger`;
-    if (s.signal && s.signal.includes("HEDGE")) return `+${p.gain_pct?.toFixed?.(0) || "?"}% · extended · ${s.hedge?.strike ? "sell $" + s.hedge.strike + " calls" : "hedge"}`;
-    return `${p.gain_pct >= 0 ? "+" : ""}${p.gain_pct?.toFixed?.(0) || "?"}% gain · trail $${s.stops?.active_stop ?? "?"}`;
+    return s.observation || "";
   }
   const d = s.data || {};
   const bits = [];
@@ -1267,10 +1272,26 @@ function renderTwoScore(tk){
   const quality = (s.data && s.data.composite != null) ? +s.data.composite : 0;
   const qPct    = (s.data && s.data.composite_pct != null) ? +s.data.composite_pct : 0;
   const rank    = (s.data && s.data.rank != null) ? +s.data.rank : null;
-  const trade   = s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength;
+  const isPos   = s.mode === "position";
+  const trade   = isPos ? null : (s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength);
   const sig     = s.signal || "—";
   const note    = s.trade_now_note;
-  const div     = divergenceState(quality, qPct, trade, sig);
+  const div     = divergenceState(quality, qPct, trade, sig, s.mode, s.state);
+  if (isPos) return `<div class="two-score">
+    <div class="ts-row">
+      <div class="ts-label">Business quality</div>
+      ${twoScoreBar(quality, 50, qualityColor(quality))}
+      <div class="ts-val">${quality.toFixed(1)}<span class="ts-of">/50</span></div>
+      <div class="ts-sub">${qPct.toFixed(0)}th pct${rank === 1 ? " · #1 in universe" : rank ? " · rank #" + rank : ""}</div>
+    </div>
+    <div class="ts-row">
+      <div class="ts-label">Position vs rulebook</div>
+      <div class="ts-sub">${sig}</div>
+      <div class="ts-val"><span class="${cc(div.color)}">${div.icon}</span> <span class="t1 c-3">no entry strength in position mode</span></div>
+      <div class="ts-sub">${tradeContext(s)}</div>
+    </div>
+    <div class="ts-divergence ${cc(div.color)} ${cc(div.color,'bl')}">${div.icon} ${div.text} <span class="c-3">· ${s.label || "mechanical rulebook; expectancy not validated"}</span></div>
+  </div>`;
 
   return `<div class="two-score">
     <div class="ts-row">
@@ -1850,9 +1871,9 @@ function scannerRows(){
     const quality = (s.data && s.data.composite != null) ? +s.data.composite : 0;
     const qPct    = (s.data && s.data.composite_pct != null) ? +s.data.composite_pct : 0;
     const rank    = (s.data && s.data.rank != null) ? +s.data.rank : 9999;
-    const trade   = s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength;
+    const trade   = s.mode === "position" ? null : (s.trade_now_strength != null ? +s.trade_now_strength : +s.signal_strength);
     const sig     = s.signal || "—";
-    const div     = divergenceState(quality, qPct, trade, sig);
+    const div     = divergenceState(quality, qPct, trade, sig, s.mode, s.state);
     // quad order: actionable buys + exits at the top, holds at the bottom
     const quadOrder = ({clean:9, exit:8, trim:7, watch:6, momo:5, hedge:4,
                         wait:3, monitor:2, hold:1, avoid:0})[div.cls] ?? 0;
@@ -1874,7 +1895,7 @@ function scannerSortFn(sortKey, dir){
   const mult = dir === "asc" ? 1 : -1;
   if (sortKey === "tk")      return (a,b) => mult * a.tk.localeCompare(b.tk);
   if (sortKey === "quality") return (a,b) => mult * (a.quality - b.quality);
-  if (sortKey === "trade")   return (a,b) => mult * (a.trade   - b.trade);
+  if (sortKey === "trade")   return (a,b) => mult * ((a.trade ?? -1) - (b.trade ?? -1));
   // quad (default): divergence-quadrant ordering first, then quality desc
   return (a,b) => (mult * (a.quadOrder - b.quadOrder))
                 || (b.quality - a.quality);
@@ -1902,7 +1923,7 @@ function renderScanner(){
   let body = "";
   for (const r of rows){
     const qPct = Math.max(0, Math.min(100, r.quality / 50 * 100));
-    const tPct = Math.max(0, Math.min(100, r.trade));
+    const tPct = r.trade == null ? 0 : Math.max(0, Math.min(100, r.trade));
     body += `<tr class="row" data-scanner-tk="${r.tk}">
       <td class="tk">${r.tk}</td>
       <td class="bar-cell">
@@ -1911,12 +1932,11 @@ function renderScanner(){
         </div>
       </td>
       <td class="val">${r.quality.toFixed(1)}<small class="c-3">/50</small>${r.rank===1 ? ' <span class="x25">#1</span>' : r.rank<=10 ? ` <span class="c-3">#${r.rank}</span>` : ''}</td>
-      <td class="bar-cell">
-        <div class="minibar-wrap">
+      <td class="bar-cell">${r.trade == null ? `<span class="c-3 t1">position mode</span>` : `<div class="minibar-wrap">
           <div class="minibar"><div class="minibar-fill ${cc(tradeColorFor(r.trade),'bg')}" style="width:${tPct.toFixed(0)}%"></div></div>
-        </div>
+        </div>`}
       </td>
-      <td class="val"><span class="${cc(tradeColorFor(r.trade))}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}</td>
+      <td class="val">${r.trade == null ? `<span class="${cc(r.divColor)}">${r.sig.length > 22 ? r.sig.substring(0,20) + "…" : r.sig}</span>` : `<span class="${cc(tradeColorFor(r.trade))}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}`}</td>
       <td class="flag ${cc(r.divColor)}">${r.divIcon} ${r.divCls}</td>
     </tr>`;
   }
@@ -2029,85 +2049,58 @@ function renderEntryBox(sig){
         <div><span class="c-3 w7">SELL:</span> ${condList(sig.conditions?.sell)}</div>
       </div>
     </details>
+    ${sigLabelLine(sig)}
   </div>`;
 }
 
-// -------- Position-mode signal box (owned stocks) --------
+// -------- Position-mode signal box (held names) — 16-Sept 1.7: observations against the rulebook, never imperatives --------
+const POS_STATE = {
+  below_stop_from_cost: {cls: "sig-neg",  icon: "▽"}, below_trailing_level: {cls: "sig-warn", icon: "◇"},
+  past_trim_level:      {cls: "sig-warn", icon: "◆"}, thesis_flags:         {cls: "sig-neg",  icon: "✗"},
+  hedge_condition:      {cls: "sig-info", icon: "◈"}, yellow_flags:         {cls: "sig-2",    icon: "◦"},
+  within_rules:         {cls: "sig-2",    icon: "○"}, insufficient_history: {cls: "sig-2",    icon: "·"},
+  no_price_history:     {cls: "sig-2",    icon: "·"},
+};
+function sigLabelLine(sig){ return `<div class="sig-label mono t1 c-3 mt2">${sig.label || "mechanical rulebook; expectancy not validated"}</div>`; }
 function renderPositionBox(sig){
-  const p = sig.position, s = sig.stops;
-  const baseSig = sigVerb(sig.signal);
-  const sc = SIG_COLORS[baseSig] || SIG_COLORS["HOLD"];
-  const gainColor = p.gain_pct >= 0 ? "#4ade80" : "#f87171";
-
-  // Thesis dots
-  const thesisRows = (sig.thesis || []).map(t => {
-    const color = t.status === "green" ? "#4ade80" : t.status === "yellow" ? "#facc15" : "#f87171";
-    const icon  = t.status === "green" ? "✓"      : t.status === "yellow" ? "⚠"      : "✗";
-    return `<div class="serif t1 ${cc(color)} lh17">${icon} ${t.text}</div>`;
-  }).join("");
-
-  // Hedge callout
-  const hedgeHtml = sig.hedge ? `
-    <div class="mt3 r2 x31">
-      <div class="mono t1 w6 c-info ls12 mb1">ACTION</div>
-      <div class="serif t1 lh155 x32">${sig.hedge.text}</div>
-    </div>` : "";
-
-  // Trim status line
-  const trimHtml = sig.trim ? `
-    <div class="mono t1 c-3 mt2">
-      Next trim: <strong class="c-2">${sig.trim.trim_pct}%</strong> at ${sig.trim.at_gain}
-      ($${sig.trim.trigger_price} · ${sig.trim.distance >= 0 ? "+" : ""}${sig.trim.distance}% from here)
-    </div>` : `
-    <div class="mono t1 c-3 mt2">No upcoming trim trigger</div>`;
-
-  const cell = (label, big, sub, color="var(--t1)") => `
-    <div>
-      <div class="mono t1 w6 c-3 ls16 mb1">${label}</div>
-      <div class="mono t3 w7 ${cc(color)}">${big}</div>
-      ${sub ? `<div class="mono t1 c-3 mt1">${sub}</div>` : ""}
+  const p = sig.position || {}, s = sig.stops || {};
+  const st = POS_STATE[sig.state] || POS_STATE.within_rules;
+  const money = v => v == null ? "—" : "$" + fmt(Math.round(Math.abs(v)));
+  const cell = (label, big, sub, cls="c-1") => `<div><div class="mono t1 w6 c-3 ls16 mb1">${label}</div><div class="mono t3 w7 ${cls}">${big}</div>${sub ? `<div class="mono t1 c-3 mt1">${sub}</div>` : ""}</div>`;
+  if (sig.state === "insufficient_history" || sig.state === "no_price_history") {
+    return `<div class="sig-card ${st.cls} r2 mb3 x26">
+      <div class="flx mb3 gap3 x27"><div><span class="sig-badge mono t1 w8 ls15 ${st.cls} r1 x28">${st.icon} ${sig.signal}</span><span class="mono t1 w5 c-3 ml2">position mode · ${p.shares != null ? p.shares + " shares" : ""}</span></div><div class="mono t1 w5 c-3">POSITION MODE</div></div>
+      <p class="c-2 lh16 x30">${sig.observation || ""}</p>
+      <div class="gap2 mb2 x29">${cell("COST", sig.cost_basis != null ? "$" + (+sig.cost_basis).toFixed(2) : "—", "", "c-2")}${cell("RULEBOOK STOP FROM COST", sig.stop_from_cost != null ? "$" + (+sig.stop_from_cost).toFixed(2) : "—", sig.stop_rule || "", "c-2")}${p.current_price != null ? cell("PRICE", "$" + (+p.current_price).toFixed(2), p.gain_pct != null ? (p.gain_pct >= 0 ? "+" : "") + p.gain_pct.toFixed(1) + "% on cost" : "") : ""}</div>
+      ${sigLabelLine(sig)}
     </div>`;
-
-  return `<div class="sig-card ${sc.cls} r2 mb3 x26">
+  }
+  const thesisRows = (sig.thesis || []).map(t => {
+    const cls = t.status === "green" ? "c-pos" : t.status === "yellow" ? "c-warn" : "c-neg";
+    const icon = t.status === "green" ? "✓" : t.status === "yellow" ? "⚠" : "✗";
+    return `<div class="serif t1 ${cls} lh17">${icon} ${t.text}</div>`; }).join("");
+  const trimHtml = sig.trim
+    ? `<div class="mono t1 c-3 mt2">next rulebook trim level: <strong class="c-2">${sig.trim.at_gain}</strong> at $${sig.trim.trigger_price} (${sig.trim.distance >= 0 ? "+" : ""}${sig.trim.distance}% from here; ${sig.trim.trim_pct}% of the position at that level)</div>`
+    : (sig.trim_passed ? `<div class="mono t1 c-3 mt2">every trim level of the schedule (+100 / +200 / +300 percent) has been passed</div>` : `<div class="mono t1 c-3 mt2">no trim level ahead</div>`);
+  const hedgeHtml = sig.hedge ? `<div class="mt2 mono t1 c-3">${sig.hedge.text}</div>` : "";
+  const gainCls = (p.gain_pct || 0) >= 0 ? "c-pos" : "c-neg";
+  return `<div class="sig-card ${st.cls} r2 mb3 x26">
     <div class="flx mb3 gap3 x27">
-      <div>
-        <span class="sig-badge mono t1 w8 ls15 ${sc.cls} r1 x28">${sc.icon} ${sig.signal}</span>
-        <span class="mono t1 w5 c-3 ml2">${sig.category} · ${p.weight_pct}% of portfolio</span>
-      </div>
+      <div><span class="sig-badge mono t1 w8 ls15 ${st.cls} r1 x28">${st.icon} ${sig.signal}</span><span class="mono t1 w5 c-3 ml2">${sig.category} · ${p.weight_pct}% of portfolio</span></div>
       <div class="mono t1 w5 c-3">POSITION MODE</div>
     </div>
-
+    <p class="c-1 lh16 x30 sig-observation">${sig.observation || ""}</p>
     <div class="gap2 mb2 x29">
-      ${cell("COST",    "$" + p.cost_basis.toFixed(2),    `${p.shares} shares`, "var(--t2)")}
-      ${cell("CURRENT", "$" + p.current_price.toFixed(2), fmtMoney(p.position_value), "var(--t1)")}
-      ${cell("GAIN",    (p.gain_pct >= 0 ? "+" : "") + p.gain_pct.toFixed(1) + "%",
-                       (p.gain_dollars >= 0 ? "+" : "") + fmtMoney(p.gain_dollars), gainColor)}
-      ${cell("ACTIVE STOP", "$" + s.active_stop.toFixed(2),
-                            `${s.active_stop_type} · -${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak`,
-                            "#f87171")}
+      ${cell("COST", "$" + (+p.cost_basis).toFixed(2), `${p.shares} shares`, "c-2")}
+      ${cell("PRICE", "$" + (+p.current_price).toFixed(2), money(p.position_value))}
+      ${cell("ON COST", (p.gain_pct >= 0 ? "+" : "") + (+p.gain_pct).toFixed(1) + "%", (p.gain_dollars >= 0 ? "+" : "−") + money(p.gain_dollars), gainCls)}
+      ${cell("RULEBOOK STOP FROM COST", "$" + (+sig.stop_from_cost).toFixed(2), `${sig.stop_rule || ""} · price ${s.vs_stop_from_cost_pct >= 0 ? "+" : ""}${s.vs_stop_from_cost_pct}% from it`, "c-neg")}
+      ${cell("TRAILING LEVEL", "$" + (+s.trail_stop).toFixed(2), `−${s.trail_pct}% from the $${(+p.peak_price).toFixed(0)} peak · ${s.trail_bracket} bracket · price ${s.vs_trailing_pct >= 0 ? "+" : ""}${s.vs_trailing_pct}% from it`, "c-warn")}
     </div>
-
-    ${trimHtml}
-    ${hedgeHtml}
-
-    <div class="mt3">
-      <div class="mono t1 w6 c-3 ls12 mb2">THESIS CHECK</div>
-      ${thesisRows}
-    </div>
-
-    <div class="mt3">
-      <span class="mono t1 w6 c-3 ls16">POSITION MANAGEMENT</span>
-      <p class="c-2 lh16 mt1 x30">${sig.why || ""}</p>
-    </div>
-
-    <details class="mt2">
-      <summary class="mono t1 w5 c-3 ptr ls05">Stop details</summary>
-      <div class="mt2 mono t1 c-3 lh17">
-        Trailing stop: $${s.trail_stop.toFixed(2)} (-${s.trail_pct}% from $${p.peak_price.toFixed(0)} peak, bracket ${s.trail_bracket}) ·
-        Hard stop: $${s.hard_stop.toFixed(2)} (-${s.hard_stop_pct}% from cost) ·
-        Active = higher of the two = <strong class="c-neg">$${s.active_stop.toFixed(2)}</strong>
-      </div>
-    </details>
+    ${trimHtml}${hedgeHtml}
+    <div class="mt3"><div class="mono t1 w6 c-3 ls12 mb2">THESIS CHECK · descriptive readings</div>${thesisRows}</div>
+    <details class="mt2"><summary class="mono t1 w5 c-3 ptr ls05">Rulebook levels</summary><div class="mt2 mono t1 c-3 lh17">${sig.why || ""}</div></details>
+    ${sigLabelLine(sig)}
   </div>`;
 }
 

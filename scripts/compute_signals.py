@@ -171,12 +171,54 @@ def trade_now_note(price: float | None, entry: float | None, signal: str) -> str
 # ====================================================================
 # Position mode (owned stocks)
 # ====================================================================
+LABEL = "mechanical rulebook; expectancy not validated"     # order 16-Sept 1.7: on every signal record
+POSITION_MIN_HISTORY = 120                                    # order 16-Sept 1.2: below this, "no signal (insufficient history)"
+
+
+def _pct(x: float, nd: int = 1) -> str:
+    return f"{x:+.{nd}f} percent" if abs(x) >= 0.05 else "0.0 percent"
+
+
 def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_df,
                              regime, portfolio_value):
+    """Position mode (order 16-Sept 1.7): observations against the rulebook, never
+    imperatives. The stop level is computed from the cost basis under the
+    rulebook's category rule; the record carries cost_basis, stop_from_cost and
+    the label; no entry-mode trade-now strength is produced."""
     px = prices_df[ticker].dropna()
-    if len(px) < 50:
-        return None
-    current = float(px.iloc[-1])
+    current = float(px.iloc[-1]) if len(px) else None
+    fund = fund_df.loc[ticker].to_dict() if ticker in fund_df.index else {}
+    category   = classify_category(fund)
+    hard_stop_pct = STOP_PCT_BY_CATEGORY.get(category, 0.15)
+    hard_stop  = round(cost_basis * (1 - hard_stop_pct), 2)
+    stop_rule  = f"-{int(hard_stop_pct*100)} percent rule ({category})"
+    base = {
+        "ticker": ticker, "mode": "position", "label": LABEL, "category": category,
+        "cost_basis": round(float(cost_basis), 2), "stop_from_cost": hard_stop, "stop_rule": stop_rule,
+        "signal_strength": None, "trade_now_strength": None, "trade_now_note": None,
+        "history_sessions": int(len(px)),
+    }
+    if current is None or len(px) < POSITION_MIN_HISTORY:
+        # 1.2: held, displayed, marked — never omitted
+        gain_pct = (current / cost_basis - 1) * 100 if (current and cost_basis) else None
+        base.update({
+            "signal": "no signal (insufficient history)", "state": "insufficient_history",
+            "observation": (f"{int(len(px))} sessions of price history; the rulebook's signals need "
+                            f"{POSITION_MIN_HISTORY}. Held and displayed; not scored."),
+            "position": {"shares": float(shares), "cost_basis": round(float(cost_basis), 2),
+                         "current_price": round(current, 2) if current else None,
+                         "gain_pct": round(gain_pct, 1) if gain_pct is not None else None,
+                         "gain_dollars": round((current - cost_basis) * shares, 2) if current else None,
+                         "position_value": round(current * shares, 2) if current else None,
+                         "weight_pct": round(current * shares / portfolio_value * 100, 1) if (current and portfolio_value > 0) else None,
+                         "peak_price": None},
+            "stops": {"hard_stop": hard_stop, "hard_stop_pct": int(hard_stop_pct * 100), "trail_stop": None,
+                      "trail_pct": None, "trail_bracket": None, "trail_distance_pct": None,
+                      "active_stop": hard_stop, "active_stop_type": "hard"},
+            "trim": None, "hedge": None, "thesis": [], "why": "insufficient history for the rulebook's signals",
+            "data": {"price": round(current, 2) if current else None},
+        })
+        return base
 
     # P&L
     gain_pct      = (current / cost_basis - 1) * 100
@@ -184,17 +226,11 @@ def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_
     position_value = current * shares
     pos_weight     = position_value / portfolio_value * 100 if portfolio_value > 0 else 0
 
-    # Trailing stop from 252d peak
+    # Trailing level from the 252-session peak (the rulebook's trailing schedule)
     peak = float(px.tail(252).max())
     trail_pct, bracket = trail_for_gain(gain_pct)
     trail_stop = round(peak * (1 - trail_pct), 2)
     trail_dist = round((current / trail_stop - 1) * 100, 1) if trail_stop > 0 else 0
-
-    # Hard stop from cost basis × category rule
-    fund = fund_df.loc[ticker].to_dict() if ticker in fund_df.index else {}
-    category   = classify_category(fund)
-    hard_stop_pct = STOP_PCT_BY_CATEGORY.get(category, 0.15)
-    hard_stop  = round(cost_basis * (1 - hard_stop_pct), 2)
 
     active_stop = max(trail_stop, hard_stop)
     active_stop_type = "trailing" if trail_stop >= hard_stop else "hard"
@@ -222,24 +258,21 @@ def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_
     rsi   = rsi14(px)
     ma200_dist = ((current / ma200) - 1) * 100 if ma200 else 0
 
-    # Hedge: stack reasons; ≥2 → covered call
+    # Hedge conditions of the rulebook (observed, not prescribed)
     reasons = []
     if rsi > 70:               reasons.append(f"RSI {rsi:.0f} (overbought)")
     if ma200_dist > 25:        reasons.append(f"{ma200_dist:.0f}% above 200-DMA (extended)")
-    if gain_pct > 40:          reasons.append(f"+{gain_pct:.0f}% unrealized gain (protect profits)")
+    if gain_pct > 40:          reasons.append(f"+{gain_pct:.0f}% unrealized gain")
     R_full = float(regime.get("R_full", 0.3))
     if R_full > 0.50:          reasons.append(f"regime elevated (R={R_full:.2f})")
-
     hedge = None
     if len(reasons) >= 2:
-        strike = round(current * 1.05 / 5) * 5
-        if strike <= current: strike += 5
-        hedge = {"type": "covered_call", "strike": int(strike),
-                 "text": f"Sell covered calls at ${int(strike)} strike (nearest monthly). " + ". ".join(reasons) + "."}
+        hedge = {"type": "condition_met", "reasons": reasons,
+                 "text": f"the rulebook's hedge condition is met (two or more of its four flags): {'; '.join(reasons)}."}
     elif len(reasons) == 1:
-        hedge = {"type": "monitor", "text": f"Monitor for hedge entry. {reasons[0]}."}
+        hedge = {"type": "one_flag", "reasons": reasons, "text": f"one of the rulebook's four hedge flags is present: {reasons[0]}."}
 
-    # Thesis check (5 items)
+    # Thesis check (5 items) — descriptive readings
     thesis = []
     rev_g = fund_num(fund, "revenueGrowth")
     if   rev_g is not None and rev_g >  0.10: thesis.append({"status":"green",  "text":f"Revenue growth {rev_g*100:.0f}%"})
@@ -249,57 +282,72 @@ def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_
     if   gm is not None and gm > 0.50: thesis.append({"status":"green",  "text":f"Gross margins {gm*100:.0f}%"})
     elif gm is not None and gm > 0.30: thesis.append({"status":"yellow", "text":f"Gross margins compressing ({gm*100:.0f}%)"})
     elif gm is not None:                thesis.append({"status":"red",    "text":f"Gross margins weak ({gm*100:.0f}%)"})
-    if   rsi > 70: thesis.append({"status":"yellow", "text":f"RSI {rsi:.0f} — overbought, pullback risk"})
-    elif rsi < 30: thesis.append({"status":"yellow", "text":f"RSI {rsi:.0f} — oversold, momentum breakdown?"})
+    if   rsi > 70: thesis.append({"status":"yellow", "text":f"RSI {rsi:.0f} — overbought"})
+    elif rsi < 30: thesis.append({"status":"yellow", "text":f"RSI {rsi:.0f} — oversold"})
     else:          thesis.append({"status":"green",  "text":f"RSI {rsi:.0f} — neutral"})
     if   ma200_dist > 30:  thesis.append({"status":"yellow", "text":f"{ma200_dist:.0f}% above 200-DMA — technically extended"})
     elif ma200_dist < -10: thesis.append({"status":"red",    "text":f"{abs(ma200_dist):.0f}% below 200-DMA — trend broken"})
     else:                  thesis.append({"status":"green",  "text":"Within normal range of 200-DMA"})
-    # Score
     srow = scores[scores["ticker"] == ticker]
     if len(srow) > 0:
         composite = float(srow.iloc[0]["composite"]); rank = int(srow.iloc[0]["composite_rank"])
     else:
         composite = 0.0; rank = 999
     if   composite >= 35: thesis.append({"status":"green",  "text":f"Score {composite:.1f}/50 (rank #{rank})"})
-    elif composite >= 25: thesis.append({"status":"yellow", "text":f"Score declining: {composite:.1f}/50 (rank #{rank})"})
+    elif composite >= 25: thesis.append({"status":"yellow", "text":f"Score {composite:.1f}/50 (rank #{rank})"})
     else:                 thesis.append({"status":"red",    "text":f"Score weak: {composite:.1f}/50 (rank #{rank})"})
-
     n_red    = sum(1 for t in thesis if t["status"] == "red")
     n_yellow = sum(1 for t in thesis if t["status"] == "yellow")
 
-    # Determine signal
-    if current <= active_stop:
-        signal, strength = "SELL — STOP TRIGGERED", 100
-    elif n_red >= 2:
-        signal, strength = "SELL — THESIS BROKEN", 85
+    # The observation (1.7): the position's standing against each rulebook level, in words.
+    # Imperatives ("SELL", "TRIM") are gone; the record states where price is relative to the level.
+    vs_hard  = (current / hard_stop - 1) * 100
+    vs_trail = (current / trail_stop - 1) * 100 if trail_stop > 0 else None
+    if current <= hard_stop:
+        state = "below_stop_from_cost"
+        observation = (f"price ${current:.2f} is {abs(vs_hard):.1f} percent below the rulebook stop of ${hard_stop:.2f} "
+                       f"(from cost ${cost_basis:.2f}, {stop_rule})")
+    elif current <= trail_stop:
+        state = "below_trailing_level"
+        observation = (f"price ${current:.2f} is {abs(vs_trail):.1f} percent below the trailing level of ${trail_stop:.2f} "
+                       f"(-{int(trail_pct*100)} percent from the ${peak:.2f} peak, {bracket} bracket); "
+                       f"{_pct(vs_hard)} from the rulebook stop of ${hard_stop:.2f} (from cost, {stop_rule})")
     elif fired_trim is not None:
-        signal, strength = f"TRIM {fired_trim['trim_pct']}% at {fired_trim['at_gain']}", 75
-    elif hedge and hedge["type"] == "covered_call":
-        signal, strength = "HOLD — HEDGE", 60
+        state = "past_trim_level"
+        observation = (f"position is {gain_pct:+.0f} percent on cost; the rulebook's trim level was {fired_trim['at_gain']} "
+                       f"({fired_trim['trim_pct']} percent of the position at that level)")
+    elif n_red >= 2:
+        state = "thesis_flags"
+        observation = (f"{n_red} of {len(thesis)} thesis checks read red: "
+                       + "; ".join(t["text"] for t in thesis if t["status"] == "red")
+                       + f". Price ${current:.2f} is {_pct(vs_hard)} from the rulebook stop of ${hard_stop:.2f} (from cost, {stop_rule})")
+    elif hedge and hedge["type"] == "condition_met":
+        state = "hedge_condition"
+        observation = hedge["text"].rstrip(".") + f"; price ${current:.2f} is {_pct(vs_hard)} from the rulebook stop of ${hard_stop:.2f} (from cost, {stop_rule})"
     elif n_yellow >= 2:
-        signal, strength = "HOLD — MONITOR", 50
+        state = "yellow_flags"
+        observation = (f"{n_yellow} of {len(thesis)} thesis checks read yellow; price ${current:.2f} is {_pct(vs_hard)} from the "
+                       f"rulebook stop of ${hard_stop:.2f} (from cost ${cost_basis:.2f}, {stop_rule})")
     else:
-        signal, strength = "HOLD", 50
+        state = "within_rules"
+        observation = (f"price ${current:.2f} is {_pct(vs_hard)} from the rulebook stop of ${hard_stop:.2f} "
+                       f"(from cost ${cost_basis:.2f}, {stop_rule})")
+    STATE_LABEL = {"below_stop_from_cost": "BELOW RULEBOOK STOP", "below_trailing_level": "BELOW TRAILING LEVEL",
+                   "past_trim_level": "PAST TRIM LEVEL", "thesis_flags": "THESIS CHECKS RED",
+                   "hedge_condition": "HEDGE CONDITION MET", "yellow_flags": "YELLOW FLAGS", "within_rules": "WITHIN RULES"}
 
-    # WHY
-    parts = [f"+{gain_pct:.0f}% gain ({bracket} bracket)",
-             f"active stop ${active_stop} ({active_stop_type}, -{int(trail_pct*100)}% from ${peak:.0f} peak)"]
+    parts = [f"{gain_pct:+.0f}% on cost ({bracket} bracket)",
+             f"trailing level ${trail_stop:.2f} (-{int(trail_pct*100)}% from the ${peak:.0f} peak)",
+             f"rulebook stop from cost ${hard_stop:.2f} ({stop_rule})",
+             f"active level = the higher of the two: ${active_stop:.2f} ({active_stop_type})"]
     if next_trim:
-        parts.append(f"next trim at {next_trim['at_gain']} (${next_trim['trigger_price']}, {next_trim['distance']:+.0f}% from here)")
+        parts.append(f"next trim level {next_trim['at_gain']} at ${next_trim['trigger_price']} ({next_trim['distance']:+.0f}% from here)")
     if hedge:
         parts.append(hedge["text"])
     why = ". ".join(parts) + "."
 
-    # Position mode: no entry to compare against → trade_now == setup strength
-    return {
-        "ticker": ticker,
-        "mode": "position",
-        "signal": signal,
-        "signal_strength": int(strength),
-        "trade_now_strength": int(strength),
-        "trade_now_note": None,
-        "category": category,
+    base.update({
+        "signal": STATE_LABEL[state], "state": state, "observation": observation,
         "position": {
             "shares":         float(shares),
             "cost_basis":     round(float(cost_basis), 2),
@@ -319,8 +367,11 @@ def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_
             "hard_stop_pct":       int(hard_stop_pct * 100),
             "active_stop":         active_stop,
             "active_stop_type":    active_stop_type,
+            "vs_stop_from_cost_pct": round(vs_hard, 1),
+            "vs_trailing_pct":     round(vs_trail, 1) if vs_trail is not None else None,
         },
         "trim":   next_trim,
+        "trim_passed": fired_trim,
         "hedge":  hedge,
         "thesis": thesis,
         "why":    why,
@@ -333,7 +384,8 @@ def compute_position_signal(ticker, shares, cost_basis, scores, prices_df, fund_
             "composite":  round(composite, 1),
             "rank":       rank,
         },
-    }
+    })
+    return base
 
 
 # ====================================================================
@@ -598,7 +650,10 @@ def compute_signal(ticker, scores, prices_df, fund_df, regime,
     if shares > 0 and cost > 0 and ticker in prices_df.columns:
         return compute_position_signal(ticker, shares, cost, scores, prices_df,
                                         fund_df, regime, portfolio_value)
-    return compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_value)
+    sig = compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_value)
+    if sig is not None:
+        sig["label"] = LABEL           # 1.7: the label rides on every signal record
+    return sig
 
 
 # ====================================================================
@@ -622,13 +677,12 @@ def _sanitize(o):
 
 def estimate_portfolio_value() -> float:
     try:
-        cfg = json.load(open(REPO / "config.json"))
-        wp  = cfg.get("werner_picks", {})
-        cash = float(wp.get("cash", 0))
+        hj = json.load(open(DATA / "holdings.json"))          # the only holdings source
+        cash = float(hj.get("cash", 0) or 0)
         prices = pd.read_parquet(SOURCE / "prices_daily.parquet")
         equity = 0.0
-        for tk, h in wp.get("holdings", {}).items():
-            sh = float(h.get("shares", 0) or 0)
+        for h in hj.get("holdings", []):
+            tk = h["ticker"]; sh = float(h.get("shares", 0) or 0)
             if sh <= 0: continue
             sym = tk if tk in prices.columns else tk.replace("-", ".")
             if sym in prices.columns:
@@ -681,6 +735,13 @@ def main():
     for tk in sorted(tickers):
         sym = tk if tk in prices.columns else tk.replace(".", "-")
         if sym not in prices.columns:
+            if tk in holdings:            # 1.2: a held name outside every price source is displayed, not omitted
+                h = holdings[tk]
+                signals[tk] = {"ticker": tk, "mode": "position", "label": LABEL, "signal": "no price history",
+                               "state": "no_price_history", "observation": "no price source carries this name; excluded from analytics",
+                               "cost_basis": h.get("cost"), "stop_from_cost": None, "signal_strength": None,
+                               "trade_now_strength": None, "trade_now_note": None,
+                               "position": {"shares": float(h.get("shares") or 0), "cost_basis": h.get("cost")}}
             continue
         sig = compute_signal(sym, scores, prices, fund, regime, holdings, pv)
         if sig is None:
@@ -695,17 +756,21 @@ def main():
         signals[tk] = sig
         mode = sig["mode"]
         if mode == "position":
-            p = sig["position"]; s = sig["stops"]
-            print(f"    {tk:8s} [POS] {sig['signal']:30s}  +{p['gain_pct']:>6.1f}%  "
-                  f"current ${p['current_price']:>7.2f}  trail ${s['active_stop']:>7.2f}  "
-                  f"weight {p['weight_pct']:>5.1f}%")
+            p = sig.get("position", {}); s = sig.get("stops", {})
+            print(f"    {tk:8s} [POS] {sig['signal']:26s}  {(p.get('gain_pct') if p.get('gain_pct') is not None else 0):>+6.1f}%  "
+                  f"price ${(p.get('current_price') or 0):>8.2f}  stop-from-cost ${(sig.get('stop_from_cost') or 0):>8.2f}  "
+                  f"weight {(p.get('weight_pct') or 0):>5.1f}%  · {sig.get('observation','')[:90]}")
         else:
             sz = sig["size"]
             print(f"    {tk:8s} [ENT] {sig['signal']:30s}  entry ${sig['entry']['primary']:>7.2f}  "
                   f"stop ${sig['stop']['price']:>7.2f}  target ${sig['target']['base']:>7.2f}  "
                   f"size ${sz['dollars']:>7.0f}")
 
-    payload = _sanitize({"updated": pd.Timestamp.now().isoformat(),
+    from trading_calendar import last_completed_session
+    payload = _sanitize({"cadence": "daily", "session_date": last_completed_session(),   # declared date (self-stamped)
+                          "prices_through": str(prices.index[-1].date()),
+                          "updated": pd.Timestamp.now().isoformat(),
+                          "label": LABEL,
                           "portfolio_value": pv, "regime": regime,
                           "n": len(signals), "signals": signals})
     out = DATA / "ticker_signals.json"
@@ -715,7 +780,7 @@ def main():
     dist = {}
     for s in signals.values():
         m = s["mode"]
-        base = s["signal"].split("—")[0].strip() if "—" in s["signal"] else s["signal"].split(" at ")[0]
+        base = s.get("state") or (s["signal"].split("—")[0].strip() if "—" in s["signal"] else s["signal"].split(" at ")[0])
         key = f"[{m[:3].upper()}] {base}"
         dist[key] = dist.get(key, 0) + 1
     print(f"\nSignal distribution:")
