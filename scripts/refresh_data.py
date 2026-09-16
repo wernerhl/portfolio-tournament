@@ -16,7 +16,7 @@ Usage:
   python scripts/refresh_data.py
 """
 from __future__ import annotations
-import os, sys, time, warnings
+import json, os, sys, time, warnings
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -266,6 +266,37 @@ def main():
     last_existing = existing.index.max()
     log(f"  {len(universe)} tickers, existing last date {last_existing.date()}")
 
+    # Order 16-Sept 1.2: every ticker in data/holdings.json is a member of the
+    # universe, with price history fetched on first appearance. A held name the
+    # store has never seen gets its full history now and joins the canonical
+    # universe file; a name no provider serves stays listed by the book with
+    # "no price history" (compute_book) — never silently dropped.
+    try:
+        held = [str(h["ticker"]).upper() for h in json.load(open(SOURCE.parent / "holdings.json")).get("holdings", [])
+                if (h.get("shares") or 0) > 0]
+    except Exception as e:
+        held = []
+        log(f"  warn holdings.json unreadable ({e}); held-name universe rule skipped this run")
+    new_held = [t for t in held if t not in universe]
+    if new_held:
+        log(f"  held names absent from the price store — fetching full history: {new_held}")
+        full = download_close(new_held, "2005-01-01")
+        full.index = pd.to_datetime(full.index)
+        for t in new_held:
+            if t in full.columns and not full[t].dropna().empty:
+                existing[t] = full[t].reindex(existing.index)
+                universe.append(t)
+                log(f"    {t}: {int(full[t].notna().sum())} sessions from {full[t].dropna().index.min().date()}")
+            else:
+                log(f"    {t}: no price history from the provider — listed by the book as 'no price history'")
+    uni_file = SOURCE.parent / "canonical" / "universe.txt"
+    if uni_file.exists():
+        canon = [t.strip() for t in uni_file.read_text().split() if t.strip()]
+        add = [t for t in held if t not in canon]
+        if add:
+            uni_file.write_text("\n".join(sorted(set(canon) | set(add))) + "\n")
+            log(f"  canonical universe: added held names {add} ({len(canon) + len(add)} tickers)")
+
     # Fetch from a buffer before last_existing to allow merge alignment
     fetch_start = (last_existing - timedelta(days=10)).strftime("%Y-%m-%d")
     log(f"fetching prices from {fetch_start} for {len(universe)} tickers...")
@@ -282,6 +313,7 @@ def main():
     ])
     merged = merged[~merged.index.duplicated(keep="last")].sort_index()
     merged = drop_partial_today(merged)
+    merged = drop_empty_and_phantom_rows(merged, "prices_daily")
     new_last = merged.index.max()
     log(f"  merged: {merged.shape}, new last date {new_last.date()}")
 
@@ -313,7 +345,6 @@ def main():
         "oil":  "CL=F",  "gold": "GC=F",  "tlt":  "TLT",
         "hyg":  "HYG",   "lqd":  "LQD",
     }
-    merged = drop_empty_and_phantom_rows(merged, "prices_daily")
     vol_data = {}
     for name, tk in vol_tickers.items():
         try:
@@ -326,6 +357,7 @@ def main():
             log(f"  warn {name}: {e}")
     vol_df = pd.DataFrame(vol_data)
     vol_df = drop_partial_today(vol_df)
+    vol_df = drop_empty_and_phantom_rows(vol_df, "vol_indicators")
     vol_df.to_parquet(SOURCE / "vol_indicators.parquet")
     log(f"  saved vol_indicators.parquet ({vol_df.shape})")
 
@@ -357,7 +389,6 @@ def main():
     if "spx" in vol_df:
         spx = vol_df["spx"]
         vd["spx_drawdown"]        = (spx / spx.cummax() - 1) * 100
-    vol_df = drop_empty_and_phantom_rows(vol_df, "vol_indicators")
         vd["spx_return_20d"]      = spx.pct_change(20) * 100
         vd["spx_return_60d"]      = spx.pct_change(60) * 100
         vd["spx_realized_vol_20d"] = spx.pct_change().rolling(20).std() * np.sqrt(252) * 100
@@ -387,6 +418,7 @@ def main():
             log(f"  warn {tk}: {e}")
     sect_df = pd.DataFrame(sect_data)
     sect_df = drop_partial_today(sect_df)
+    sect_df = drop_empty_and_phantom_rows(sect_df, "sector_etfs")
     sect_df.to_parquet(SOURCE / "sector_etfs.parquet")
     log(f"  saved sector_etfs.parquet ({sect_df.shape})")
 
@@ -418,7 +450,6 @@ def main():
                 "kcfsi":           "KCFSI",    # monthly: Kansas City Fed financial stress index
                 "stlfsi":          "STLFSI4",  # weekly:  St. Louis Fed FSI (v4 supersedes STLFSI2)
                 "loan_tightening": "DRTSCILM", # quarterly: SLOOS net % tightening C&I std
-    sect_df = drop_empty_and_phantom_rows(sect_df, "sector_etfs")
                 "consumer_expect": "MICH",     # monthly: Michigan consumer expectations (1-5Y)
             }
             # Fetch with retry. If a series fails twice, we'll preserve any existing values

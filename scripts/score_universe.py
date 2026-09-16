@@ -42,10 +42,23 @@ def main():
     today = prices.index[-1]
     print(f"  scoring as of {today.date()}  ({prices.shape[1]} tickers)")
 
-    # Eligibility: ≥ 252 days of non-null price history through today
+    # Eligibility: ≥ 252 days of non-null price history through today.
+    # Order 16-Sept 1.2: a held name (data/holdings.json) is always a member of
+    # the universe — scored on the metrics its history supports once it has 120
+    # sessions (a missing MA200 ranks neutral, as any absent metric does); below
+    # 120 it is listed by the book as "no signal (insufficient history)".
     history_days = prices.notna().sum()
     eligible = history_days[history_days >= 252].index.tolist()
-    print(f"  eligible: {len(eligible)} tickers")
+    try:
+        held = [str(h["ticker"]).upper() for h in json.load(open(DATA / "holdings.json")).get("holdings", [])
+                if (h.get("shares") or 0) > 0]
+    except Exception:
+        held = []
+    held_added = [t for t in held if t in prices.columns and t not in eligible and history_days.get(t, 0) >= 120]
+    held_below = [t for t in held if t not in prices.columns or history_days.get(t, 0) < 120]
+    eligible = eligible + held_added
+    print(f"  eligible: {len(eligible)} tickers (held names added below the 252 floor: {held_added or 'none'}; "
+          f"held below 120 sessions, not scored: {held_below or 'none'})")
 
     # --- Technical metrics (latest values) ---
     ma200 = prices[eligible].rolling(200, min_periods=200).mean().iloc[-1]

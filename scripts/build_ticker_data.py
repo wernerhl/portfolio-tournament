@@ -55,9 +55,12 @@ def main():
         in_tiers_map.setdefault(t, []).append("5_werner")
 
     tickers = sorted(all_tickers)
+    held_names = {h["ticker"] for h in _hj.get("holdings", [])}
     missing = [t for t in tickers if t not in prices.columns]
     if missing:
-        print(f"  WARN: {len(missing)} tickers not in price data, skipping: {missing}")
+        print(f"  WARN: {len(missing)} tickers not in price data: {missing} "
+              f"(held names among them are emitted with status 'no price history' — order 16-Sept 1.2)")
+    unpriced_held = [t for t in missing if t in held_names]
     tickers = [t for t in tickers if t in prices.columns]
     print(f"building data for {len(tickers)} tickers")
 
@@ -71,11 +74,20 @@ def main():
     corr_mat = rets_60d.corr()
 
     out = {}
+    for t in unpriced_held:
+        out[t] = {"ticker": t, "name": t, "sector": None, "industry": None, "in_tiers": in_tiers_map.get(t, []),
+                  "status": "no price history", "chart": [], "tech": {}, "fund": {}, "score": None, "corr": {}}
     for t in tickers:
         if t not in prices.columns:
             continue
         ser = prices[t].dropna()
-        if len(ser) < 30:
+        if len(ser) < 30 and t not in held_names:
+            continue
+        if len(ser) < 30:            # a held name with a short listing: displayed, marked, never omitted
+            out[t] = {"ticker": t, "name": t, "sector": None, "industry": None, "in_tiers": in_tiers_map.get(t, []),
+                      "status": "no signal (insufficient history)", "history_sessions": int(len(ser)),
+                      "chart": [{"d": d.strftime("%Y-%m-%d"), "c": round(float(ser.loc[d]), 2), "m50": None, "m200": None} for d in ser.index],
+                      "tech": {"price": round(float(ser.iloc[-1]), 2)}, "fund": {}, "score": None, "corr": {}}
             continue
         # Last 252 days for chart
         chart_ser = ser.tail(252)
