@@ -1,0 +1,46 @@
+{
+  "_note": "Relocated 2026-09-16 (order 6.1) from portfolio-screener/config.json — paths changed, nothing else. Order 3.1 (2026-09-09): this file holds NO holdings. The book (ticker, shares, cost basis, cash) lives in this repository's data/holdings.json — the only holdings source — and is read by scripts/screen/score_universe.py fetch_holdings(). holding_categories is a screener-only tag per held ticker; a ticker without an entry is 'Core'.",
+  "portfolio_source": "data/holdings.json (this repository; recorded fallback: https://raw.githubusercontent.com/wernerhl/portfolio-tournament/main/data/holdings.json, or HOLDINGS_LOCAL_PATH override)",
+  "holding_categories": {
+    "GOOG": "Compounder",
+    "AVGO": "Compounder",
+    "MSFT": "Catalyst",
+    "NVDA": "Compounder"
+  },
+  "broken_base": {
+    "gap_pct": 10,
+    "rsi": 25,
+    "tech_cap": 12
+  },
+  "visibility_fallback_cap": 10,
+  "visibility_overrides": {
+    "GEV":  [23, "$163B backlog, 25yr service contracts"],
+    "AVGO": [22, "$73B contracted backlog through 2028"],
+    "ANET": [20, "Multi-year AI networking pipeline"],
+    "VRT":  [20, "$15B backlog, 109% YoY growth"],
+    "CEG":  [21, "Multi-decade nuclear PPAs"],
+    "LMT":  [22, "$166B defense backlog"],
+    "RTX":  [21, "$196B defense/aero backlog"],
+    "GD":   [21, "$91B defense backlog"],
+    "ORCL": [19, "RPO $130B+"],
+    "GOOG": [20, "$460B cloud backlog"],
+    "MSFT": [18, "$627B commercial RPO"],
+    "NVDA": [20, "$1T order book through 2027"],
+    "TSM":  [21, "Multi-year contracted wafer starts"],
+    "ETN":  [19, "Record electrical backlog"],
+    "POWL": [18, "Backlog at record levels"],
+    "TLN":  [19, "AWS nuclear PPA"],
+    "META": [17, "Ad revenue recurring but not contracted"]
+  },
+  "midcap_additions": [
+    "BMNR", "TSM",
+    "CRDO","ALAB","COHR","LITE","CIEN","FN",
+    "ONTO","ACMR","AEHR","PLAB","COHU","UCTT","KLIC",
+    "TLN","NRG","OKLO","BWXT","POWL",
+    "NBIS","DLR","EQIX",
+    "PLTR","AI","SOUN","BBAI","PATH","ESTC","MDB","CFLT","DDOG",
+    "IONQ","RGTI","QBTS",
+    "MRVL","ARM","SMCI","DELL","PSTG","WDC",
+    "GEV","VST","IREN","WULF","APLD","CIFR"
+  ]
+}

@@ -1,0 +1,322 @@
+{
+ "version": 1,
+ "frozen_at": "2026-07-29",
+ "proposed_at": "2026-07-29",
+ "policy": {
+  "review": "earnings-anchored +14d grace for overrides >=5 pts above sector prior; 180d for the rest",
+  "decay": "past review_by, value decays LINEARLY to min(sector prior, fallback cap) over 90 days",
+  "hard_triggers": "guidance cut, backlog decline QoQ, cancelled PPA/contract \u2014 immediate review regardless of calendar",
+  "fallback_cap": 10,
+  "note": "Judgment artifact. The agent proposes; Werner approves by freeze (frozen_at). Never auto-merged.",
+  "retirement": "two consecutive earnings cycles without review \u2192 retire to the sector prior, archive with history under 'retired'; re-registration (fresh rationale + date) required to restore"
+ },
+ "entries": {
+  "AMZN": {
+   "value": 17,
+   "rationale": "AWS backlog growing",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Consumer Cyclical",
+   "sector_prior": 11,
+   "delta_vs_prior": 6,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-30",
+   "review_by": "2026-08-13",
+   "falsification": {
+    "claim": "AWS backlog growing",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "ANET": {
+   "value": 20,
+   "rationale": "Multi-year AI networking pipeline",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Technology",
+   "sector_prior": 13,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-08-04",
+   "review_by": "2026-08-18",
+   "falsification": {
+    "claim": "Multi-year AI networking pipeline",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "AVGO": {
+   "value": 22,
+   "rationale": "$73B contracted backlog through 2028",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Technology",
+   "sector_prior": 13,
+   "delta_vs_prior": 9,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-09-03",
+   "review_by": "2026-09-17",
+   "falsification": {
+    "claim": "$73B contracted backlog through 2028",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "CEG": {
+   "value": 21,
+   "rationale": "Multi-decade nuclear PPAs",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Utilities",
+   "sector_prior": 18,
+   "delta_vs_prior": 3,
+   "cadence": "180d",
+   "next_earnings": "2026-08-06",
+   "review_by": "2027-01-25",
+   "falsification": {
+    "claim": "Multi-decade nuclear PPAs",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "ETN": {
+   "value": 19,
+   "rationale": "Record electrical backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 5,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-31",
+   "review_by": "2026-08-14",
+   "falsification": {
+    "claim": "Record electrical backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "GD": {
+   "value": 21,
+   "rationale": "$91B defense backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-29",
+   "review_by": "2026-08-12",
+   "falsification": {
+    "claim": "$91B defense backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "GEV": {
+   "value": 23,
+   "rationale": "$163B backlog, 25yr service contracts",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 9,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-10-28",
+   "review_by": "2026-11-11",
+   "falsification": {
+    "claim": "$163B backlog, 25yr service contracts",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "GOOG": {
+   "value": 20,
+   "rationale": "$460B cloud backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Communication Services",
+   "sector_prior": 13,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-10-28",
+   "review_by": "2026-11-11",
+   "falsification": {
+    "claim": "$460B cloud backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "LMT": {
+   "value": 22,
+   "rationale": "$166B defense backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 8,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-10-20",
+   "review_by": "2026-11-03",
+   "falsification": {
+    "claim": "$166B defense backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "META": {
+   "value": 17,
+   "rationale": "Ad revenue recurring but not contracted",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Communication Services",
+   "sector_prior": 13,
+   "delta_vs_prior": 4,
+   "cadence": "180d",
+   "next_earnings": "2026-07-29",
+   "review_by": "2027-01-25",
+   "falsification": {
+    "claim": "Ad revenue recurring but not contracted",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "MSFT": {
+   "value": 18,
+   "rationale": "$627B commercial RPO",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Technology",
+   "sector_prior": 13,
+   "delta_vs_prior": 5,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-29",
+   "review_by": "2026-08-12",
+   "falsification": {
+    "claim": "$627B commercial RPO",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "NOC": {
+   "value": 21,
+   "rationale": "$85B defense backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-10-20",
+   "review_by": "2026-11-03",
+   "falsification": {
+    "claim": "$85B defense backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "NVDA": {
+   "value": 20,
+   "rationale": "$1T order book through 2027",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Technology",
+   "sector_prior": 13,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-08-26",
+   "review_by": "2026-09-09",
+   "falsification": {
+    "claim": "$1T order book through 2027",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "ORCL": {
+   "value": 19,
+   "rationale": "RPO $130B+",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Technology",
+   "sector_prior": 13,
+   "delta_vs_prior": 6,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-09-09",
+   "review_by": "2026-09-23",
+   "falsification": {
+    "claim": "RPO $130B+",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "POWL": {
+   "value": 18,
+   "rationale": "Backlog at record levels",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 4,
+   "cadence": "180d",
+   "next_earnings": "2026-08-03",
+   "review_by": "2027-01-25",
+   "falsification": {
+    "claim": "Backlog at record levels",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "RTX": {
+   "value": 21,
+   "rationale": "$196B defense/aero backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-10-20",
+   "review_by": "2026-11-03",
+   "falsification": {
+    "claim": "$196B defense/aero backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "TLN": {
+   "value": 19,
+   "rationale": "AWS nuclear PPA",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Utilities",
+   "sector_prior": 18,
+   "delta_vs_prior": 1,
+   "cadence": "180d",
+   "next_earnings": "2026-08-05",
+   "review_by": "2027-01-25",
+   "falsification": {
+    "claim": "AWS nuclear PPA",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "TSM": {
+   "value": 21,
+   "rationale": "Multi-year contracted wafer starts",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "",
+   "sector_prior": 12.5,
+   "delta_vs_prior": 8.5,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-10-15",
+   "review_by": "2026-10-29",
+   "falsification": {
+    "claim": "Multi-year contracted wafer starts",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  },
+  "VRT": {
+   "value": 20,
+   "rationale": "$15B backlog, 109% YoY growth",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 6,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-29",
+   "review_by": "2026-08-12",
+   "falsification": {
+    "claim": "$15B backlog, 109% YoY growth",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   }
+  }
+ },
+ "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched with thesis registry v1). Values migrated unchanged from code+config union; governance (earnings-anchored review, 90d decay, hard triggers, 10/25 fallback cap) active from tonight's run.",
+ "cadence": "on_change",
+ "as_of": "2026-07-29"
+}
