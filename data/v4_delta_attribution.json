@@ -1,51 +1,76 @@
 {
-  "as_of": "2026-09-14",
-  "session_date": "2026-09-14",
+  "as_of": "2026-09-15",
+  "session_date": "2026-09-15",
   "cadence": "daily",
-  "prev": "2026-09-11",
-  "raw_score_today": 0.2954,
-  "raw_score_prev": 0.2682,
+  "prev": "2026-09-14",
+  "raw_score_today": 0.3106,
+  "raw_score_prev": 0.3027,
   "model_cols_scored_at": "2026-09-04",
   "model_cols_note": "p_*_logistic_pc / p_*_elastic_net are produced only by the monthly regime_v4_ml run; the nightly rescore preserves them (it used to blank the last 5 rows) \u2014 they advance monthly",
-  "p_today": 0.1336,
-  "p_prev": 0.1336,
-  "delta_pp": 0.0,
+  "p_today": 0.1538,
+  "p_prev": 0.1452,
+  "delta_pp": 0.87,
   "top3": [
     {
-      "feature": "nfci",
-      "delta_feature": 0.0015,
-      "contribution_pp": 0.0
+      "feature": "breakeven_5y",
+      "delta_feature": 0.0301,
+      "contribution_pp": 0.87
     },
     {
-      "feature": "anfci",
-      "delta_feature": 0.0004,
-      "contribution_pp": 0.0
+      "feature": "vix_term",
+      "delta_feature": 0.0055,
+      "contribution_pp": 0.87
     },
     {
-      "feature": "yield_3m10y",
-      "delta_feature": 0.0008,
-      "contribution_pp": 0.0
+      "feature": "vix",
+      "delta_feature": 0.0103,
+      "contribution_pp": 0.87
     }
   ],
   "all": [
     {
+      "feature": "breakeven_5y",
+      "delta_feature": 0.0301,
+      "contribution_pp": 0.87
+    },
+    {
+      "feature": "vix_term",
+      "delta_feature": 0.0055,
+      "contribution_pp": 0.87
+    },
+    {
+      "feature": "vix",
+      "delta_feature": 0.0103,
+      "contribution_pp": 0.87
+    },
+    {
+      "feature": "dxy",
+      "delta_feature": 0.0671,
+      "contribution_pp": 0.87
+    },
+    {
+      "feature": "spx_drawdown",
+      "delta_feature": 0.0851,
+      "contribution_pp": 0.87
+    },
+    {
+      "feature": "oil_60d_vel",
+      "delta_feature": 0.0649,
+      "contribution_pp": 0.87
+    },
+    {
       "feature": "nfci",
       "delta_feature": 0.0015,
       "contribution_pp": 0.0
     },
     {
       "feature": "anfci",
-      "delta_feature": 0.0004,
+      "delta_feature": 0.0003,
       "contribution_pp": 0.0
     },
     {
       "feature": "yield_3m10y",
-      "delta_feature": 0.0008,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "breakeven_5y",
-      "delta_feature": 0.0001,
+      "delta_feature": 0.0011,
       "contribution_pp": 0.0
     },
     {
@@ -54,23 +79,13 @@
       "contribution_pp": 0.0
     },
     {
-      "feature": "vix_term",
-      "delta_feature": 0.2019,
-      "contribution_pp": 0.0
-    },
-    {
       "feature": "skew",
-      "delta_feature": 0.0013,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "vix",
-      "delta_feature": 0.1326,
+      "delta_feature": 0.0008,
       "contribution_pp": 0.0
     },
     {
       "feature": "vvix",
-      "delta_feature": 0.1067,
+      "delta_feature": 0.0009,
       "contribution_pp": 0.0
     },
     {
@@ -85,7 +100,7 @@
     },
     {
       "feature": "stlfsi",
-      "delta_feature": 0.0019,
+      "delta_feature": 0.0016,
       "contribution_pp": 0.0
     },
     {
@@ -100,27 +115,22 @@
     },
     {
       "feature": "hy_oas",
-      "delta_feature": 0.0012,
+      "delta_feature": 0.0008,
       "contribution_pp": 0.0
     },
     {
       "feature": "gold_spx",
-      "delta_feature": -0.0345,
+      "delta_feature": -0.0061,
       "contribution_pp": 0.0
     },
     {
       "feature": "tlt_spx",
-      "delta_feature": 0.0014,
+      "delta_feature": 0.0015,
       "contribution_pp": 0.0
     },
     {
       "feature": "def_cyc",
       "delta_feature": 0.0018,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "dxy",
-      "delta_feature": 0.1324,
       "contribution_pp": 0.0
     },
     {
@@ -130,20 +140,10 @@
     },
     {
       "feature": "spx_ret_60d",
-      "delta_feature": -0.0592,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "spx_drawdown",
-      "delta_feature": 0.1061,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "oil_60d_vel",
-      "delta_feature": 0.0248,
+      "delta_feature": -0.0884,
       "contribution_pp": 0.0
     }
   ],
-  "residual_pp": 0.0,
+  "residual_pp": -4.35,
   "method": "finite difference through the isotonic curve, one feature at a time; contributions approximate (isotonic is piecewise-constant) \u2014 residual reported, not hidden"
 }
