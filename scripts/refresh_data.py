@@ -277,9 +277,15 @@ def main():
     except Exception as e:
         held = []
         log(f"  warn holdings.json unreadable ({e}); held-name universe rule skipped this run")
-    new_held = [t for t in held if t not in universe]
+    # Order 16-Sept 6.2: the union universe (data/universe.txt, build_universe.py) is the store's
+    # membership rule; any of its names the store has never seen gets its full history now.
+    try:
+        uni_union = [t.strip().upper() for t in (SOURCE.parent / "universe.txt").read_text().split() if t.strip()]
+    except Exception:
+        uni_union = []
+    new_held = [t for t in held if t not in universe] + [t for t in uni_union if t not in universe and t not in held]
     if new_held:
-        log(f"  held names absent from the price store — fetching full history: {new_held}")
+        log(f"  universe names absent from the price store — fetching full history: {new_held[:20]}{' …' if len(new_held) > 20 else ''}")
         full = download_close(new_held, "2005-01-01")
         full.index = pd.to_datetime(full.index)
         for t in new_held:

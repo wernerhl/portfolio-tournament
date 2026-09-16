@@ -1,0 +1,41 @@
+{
+ "cadence": "on_change",
+ "as_of": "2026-09-16",
+ "built_by": "scripts/build_universe.py (order 6.2, 2026-09-16)",
+ "rule": "union of the tournament's canonical universe, the screen view's universe (historical file + config midcap_additions) and every held name in data/holdings.json; sorted, one ticker per line; consumed by both scoring views",
+ "inputs": {
+  "tournament_canonical": {
+   "path": "data/canonical/universe.txt",
+   "n": 537
+  },
+  "screener_historical": {
+   "path": "data/screen/universe_535.txt",
+   "n": 535
+  },
+  "midcap_additions": {
+   "path": "scripts/screen/config.json#midcap_additions",
+   "n": 47
+  },
+  "holdings": {
+   "path": "data/holdings.json",
+   "n": 7,
+   "as_of": "2026-09-16",
+   "tickers": [
+    "MU",
+    "GEV",
+    "NVDA",
+    "ANET",
+    "GOOG",
+    "AVGO",
+    "BMNR"
+   ]
+  }
+ },
+ "screen_universe_size": 537,
+ "union_size": 537,
+ "only_tournament": [],
+ "only_screener_or_midcap": [],
+ "held_added": [],
+ "sha256": "7bb5fcca840d1d2901582f703f5561ac77fa44e9f0a0186e36a7a59e587ac63c",
+ "output": "data/universe.txt"
+}
