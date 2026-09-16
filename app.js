@@ -2573,9 +2573,9 @@ function renderPostureCard(){
     const gap = (r.book_share != null && actual != null) ? actual - r.book_share : null;
     return `<tr title="${(r.label || "").replace(/"/g, "'")}"><td class="c-2">${r.rule}${sub}</td><td class="num">${p1(r.index_share)}</td><td class="num c-1 w6">${p1(r.book_share)}</td><td class="num">${p1(actual)}${gap != null ? ` <span class="${gap > 0 ? "c-warn" : "c-3"} t1">(${gap >= 0 ? "+" : ""}${(gap * 100).toFixed(0)} pp)</span>` : ""}</td></tr>`;
   }).join("");
-  return `<div class="rcc-card posture-card"><h3>POSTURE VERSUS EVERY RULE · <span class="c-3 w5">at the book's beta · equity-sleeve β ${(+bp.beta_equity_sleeve).toFixed(2)} (${bp.beta_with_cash != null ? (+bp.beta_with_cash).toFixed(2) : "—"} with cash)</span>${asOfBadge(cp.session_date)}</h3>
+  return `<div class="rcc-card posture-card"><h3>BOOK-AWARE SIZING, DESCRIPTIVE · <span class="c-3 w5">posture versus every rule at the book's beta · equity-sleeve β ${(+bp.beta_equity_sleeve).toFixed(2)} (${bp.beta_with_cash != null ? (+bp.beta_with_cash).toFixed(2) : "—"} with cash) · updated nightly</span>${asOfBadge(cp.session_date)}</h3>
     <div class="tbl-scroll"><table class="posture-table"><tr><th>RULE</th><th class="num" title="the equity share the rule implies for a beta-one index">INDEX (β = 1)</th><th class="num" title="index share ÷ equity-sleeve beta, capped at 100 percent">TRANSLATED TO A BOOK OF YOUR BETA</th><th class="num">ACTUAL EQUITY SHARE</th></tr>${rows}</table></div>
-    <div class="chart-meta">${bp.translation} · volatility targeting on the book uses the book's own realised volatility, not the index's · regime schedule at R<sub>full</sub> ${cp.regime && cp.regime.R_full} · <strong class="c-2">${bp.note || "descriptive; no rule drives this book"}</strong> · session ${cp.session_date}</div>
+    <div class="chart-meta">the regime schedule's cash share for each tier scaled by the equity sleeve's beta; volatility targeting at 10 and 15 percent on the book's realised volatility; each beside the actual share · ${bp.translation} · regime schedule at R<sub>full</sub> ${cp.regime && cp.regime.R_full} · <strong class="c-1">descriptive; no rule drives this book.</strong> no execution path · session ${cp.session_date}</div>
   </div>`;
 }
 function renderC3PathChart(){
