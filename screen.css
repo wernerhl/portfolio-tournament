@@ -1,0 +1,59 @@
+/* screen.css — the screen view's own rules (relocated from portfolio-screener/screener.css on 2026-09-16, order 6.3); written with the tokens of styles.css. */
+
+/* ── Tier one: the header is tier one — page title, as-of, status strips; compact ── */
+.tier-1 .hd2{margin-bottom:var(--s3)}
+.asof{font:400 var(--t1) var(--mono);color:var(--text-3);text-align:right;line-height:1.6}
+.tier > .lbtable:last-child{margin-bottom:0}
+
+/* ── Tier three: re-resolve the inherited colour and body size inside the re-bound subtree, so the
+   "one size and one contrast level down" step reaches inherited text (table cells, notes) too ── */
+.tier-3{color:var(--text-1);font-size:var(--t3)}
+/* panel titles use the legacy alias --fs-h2, which styles.css resolves at :root and so ignores the re-binding;
+   bind them to the tier's own --t4 so they sit one step below the tier-three section title */
+.tier-3 .lb-h h2{font-size:var(--t4)}
+
+/* ── Panels (inside .lbtable cards) ── */
+.panel-body{padding:0 var(--s3) var(--s3)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s2);margin-top:var(--s3)}
+.stat-cell{background:var(--surface-2);border:var(--hair) solid var(--hairline);border-radius:var(--radius-2);padding:var(--s2) var(--s3);min-width:0}
+.stat-cell .k{font:600 var(--t1) var(--mono);color:var(--text-3);letter-spacing:.12em}
+.stat-cell .v{font:600 var(--t4) var(--mono);letter-spacing:-.02em;margin-top:var(--s1);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat-cell .v small{font-size:var(--t1);color:var(--text-3);font-weight:500;margin-left:var(--s1)}
+.stat-cell .s{font:400 var(--t1) var(--mono);color:var(--text-3);margin-top:var(--s1)}
+.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s3)}
+.dist-head{font:600 var(--t1) var(--mono);color:var(--text-3);letter-spacing:.12em;margin-bottom:var(--s2)}
+.dist-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── Tables: sortable headers, row hover, ticker/name cells ── */
+th[data-k]{cursor:pointer;user-select:none}
+th[data-k]:hover{color:var(--text-1)}
+th.sort{color:var(--accent)}
+th.sort::after{content:" ▾"}
+th.sort.asc::after{content:" ▴"}
+.lbtable tbody tr:hover td{background:color-mix(in srgb,var(--text-1) 2%,transparent)}
+td.tk{font-weight:700;color:var(--text-1)}
+td.nm{color:var(--text-2);max-width:160px;overflow:hidden;text-overflow:ellipsis}
+
+/* ── F/T/V breakdown bar: segment weights arrive as custom properties set at render time ── */
+.sbar{display:flex;width:64px;height:var(--s1);border-radius:var(--radius-1);overflow:hidden;background:var(--surface-2);margin-bottom:var(--s1)}
+.sbar span{display:block;height:100%}
+.sbar span+span{border-left:var(--hair) solid var(--surface)}
+.sbar span:nth-child(1){flex:var(--f,0)}
+.sbar span:nth-child(2){flex:var(--t,0)}
+.sbar span:nth-child(3){flex:var(--v,0)}
+
+/* ── Badges (HELD, BB, category): colour comes from styles.css .sig-*; .sig-accent added for Catalyst ── */
+.badge{display:inline-block;font:600 var(--t1) var(--mono);letter-spacing:.08em;line-height:1.5;padding:0 var(--s1);border-radius:var(--radius-1);border:var(--hair) solid var(--hairline);vertical-align:middle;white-space:nowrap}
+.sig-accent{background:var(--accent-dim);border-color:color-mix(in srgb,var(--accent) 40%,transparent);color:var(--accent)}
+
+/* ── Legend and notes under a table ── */
+.legend{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);padding:var(--s2) var(--s3);font:400 var(--t1) var(--mono);color:var(--text-3);line-height:1.5}
+.note{padding:var(--s2) var(--s3);font:italic 400 var(--t1) var(--serif);color:var(--text-3);line-height:1.5}
+.tbl-scroll + .legend,.tbl-scroll + .note{border-top:var(--hair) solid var(--hairline)}
+
+/* ── Single column below 820px (styles.css already stacks the tiers and steps the type down) ── */
+@media (max-width:820px){
+  .stats{grid-template-columns:1fr 1fr}
+  .dist-grid{grid-template-columns:1fr;gap:var(--s3)}
+  .asof{text-align:left}
+}

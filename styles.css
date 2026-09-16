@@ -894,3 +894,16 @@ tr.dim td{opacity:.7}
 .th-stack .sub-5,.th-exp-bar .sub-5{opacity:.3}
 .th-exp-bar span.ib{display:inline-block;height:100%;vertical-align:top}
 .sleeves-table tr.sleeve-group td{padding-top:var(--s3);border-bottom:var(--hair) solid var(--hairline-hi);letter-spacing:.1em}
+
+/* ── 6.3 multi-page site: navigation strip and page-only components ── */
+.site-nav{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);margin:0 0 var(--s3);padding:var(--s2) 0;border-bottom:var(--hair) solid var(--hairline);font:600 var(--t1) var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.site-nav a{color:var(--text-3);text-decoration:none;padding:var(--s1) var(--s2);border-radius:var(--radius-1);border:var(--hair) solid transparent}
+.site-nav a:hover{color:var(--text-1);border-color:var(--hairline-hi)}
+.site-nav a.on{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:var(--accent-dim)}
+.pos-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.pos-box{min-width:0}
+.audit-pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;background:var(--surface-2);padding:var(--s2) var(--s3);border-radius:var(--radius-2);margin-top:var(--s2)}
+.guide .site-nav{margin-bottom:var(--s4)}
+@media (max-width:820px){.pos-grid{grid-template-columns:1fr}}
+/* 6.3: the two-score rows stack on narrow screens (they sat only inside expanded tickers before; the book page lists them) */
+@media (max-width:820px){.two-score .ts-row{grid-template-columns:1fr;gap:var(--s1)}.two-score .ts-sub,.two-score .ts-val{min-width:0;overflow-wrap:anywhere}}

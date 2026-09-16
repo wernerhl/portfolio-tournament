@@ -485,9 +485,9 @@ function v4RegimeColor(reg){
 }
 function v4RegimeAction(reg){
   return ({
-    DEPLOY:    "Full sizing; new entries OK; sell out-of-the-money premium.",
-    CAUTIOUS:  "Reduce new entries to 75%; favour limit orders at lower levels.",
-    DEFENSIVE: "Trim concentrated holdings; activate put spreads; raise cash to tier maximum.",
+    DEPLOY:    "graduated reading: low drawdown probability; the schedules sit at their cash floors.",
+    CAUTIOUS:  "graduated reading: elevated drawdown probability; the schedules move partway toward their cash maxima.",
+    DEFENSIVE: "graduated reading: high drawdown probability; the schedules sit near their cash maxima.",
     CRISIS:    "Full Portfolio OS crisis mode.",
   })[reg] || "—";
 }
@@ -715,12 +715,12 @@ function headlineVerdict(){
     "INTRADAY STRESS":"#dc2626", "COMPLACENT":"#c084fc",
   };
   const actionMap = {
-    "DEPLOY":     "Full sizing; new entries OK; sell out-of-the-money premium.",
-    "CAUTIOUS":   "Trim sizing to 75%; require quality screens; tighten stops.",
-    "DEFENSIVE":  "Trim sizing to 50%; raise cash; no new positions in cyclicals.",
-    "CRISIS":     "Defensive: max cash, exit weak positions, hedge remaining longs.",
-    "INTRADAY STRESS": "Do not deploy new capital until the close. Hedge or wait.",
-    "COMPLACENT": "Cheap protection available; consider buying VIX/puts before re-deploying.",
+    "DEPLOY":     "the regime schedules sit at their cash floors (full deployment for every tier).",
+    "CAUTIOUS":   "the regime schedules hold roughly three quarters of full deployment.",
+    "DEFENSIVE":  "the regime schedules hold roughly half of full deployment.",
+    "CRISIS":     "the regime schedules sit at their cash maxima.",
+    "INTRADAY STRESS": "the end-of-day reading below is stale for this session; it re-reads at the close.",
+    "COMPLACENT": "the complacency flag is active: implied protection is cheap by the flag's definition.",
   };
 
   let worst = "DEPLOY";
@@ -1587,7 +1587,7 @@ function eventTodayBadge(){
   if (!r || !r.event_today || !r.event_today.length) return "";
   return `<div class="event-today-badge">
     <span class="lbl">⊙</span> SCHEDULED MACRO EVENT TODAY · ${r.event_today.join(" · ")}
-    <div class="event-today-cap">Regime read is conditional; vol moves expected; do not deploy fresh capital pre-print.</div>
+    <div class="event-today-cap">Regime read is conditional on the print; volatility around it is expected.</div>
   </div>`;
 }
 
@@ -1629,7 +1629,7 @@ function thesisLabel(k){
   return (reg && reg[k] && reg[k].label) || k;
 }
 
-function renderThesisSection(){
+function thesisParts(){
   const td = S.thesis;
   if (!td) return "";
   const frozen = td.registry_frozen;
@@ -1755,7 +1755,17 @@ function renderThesisSection(){
   }).join("");
   const btCaveats = (bt.caveats || []).map(c => `<div class="th-caveat">⚠ ${c}</div>`).join("");
 
-  const liveBody = `
+  return {td, frozen, view, tab, tierRows, legend, overlapTable, basketRows, claimCards, attrBlocks, btRows, btCaveats, bt};
+}
+function thesisHead(title, sub, extra){
+  const td = S.thesis; if (!td) return "";
+  const frozen = td.registry_frozen;
+  return `<div class="thesis-head"><div><h2>${title}${asOfBadge(td.session_date || td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span class="mono t1 w5 c-3 ml2">registry v' + td.registry_version + ' frozen ' + String(td.registry_frozen_at || "").slice(0, 10) + '</span>'}</h2><div class="sub">${sub}</div></div>${extra || ""}</div>`;
+}
+function renderThesisExposure(){   // B1 + B2 (tournament page)
+  const P = thesisParts(); if (!P) return "";
+  const {td, view, tierRows, legend, overlapTable, basketRows} = P;
+  return `<section class="thesis">${thesisHead("THESIS — EXPOSURE & BASKETS", "the meso level: cross-sectional structure of the bets — risk accounting, not a return forecaster")}
     <div class="th-block">
       <h4>B1 · EXPOSURE & CONCENTRATION
         <span class="th-toggle">
@@ -1781,22 +1791,25 @@ function renderThesisSection(){
       </div>
       <div class="th-caveat">${td.small_n_caveat}</div>
     </div>
-    <div class="th-block">
-      <h4>B3 · THESIS REGISTER — claims · kill criteria · log (auto = mechanical event-day entries; analyst = Werner)</h4>
-      ${claimCards}
-    </div>
-    <div class="th-block">
+  </section>`;
+}
+function renderThesisRegister(){   // B3 (register page)
+  const P = thesisParts(); if (!P) return "";
+  return `<section class="thesis">${thesisHead("THESIS REGISTER — CLAIMS · DISCONFIRMERS · KILL CRITERIA · LOG", "auto = mechanical event-day and earnings-day entries; analyst = Werner; kill status is mechanical")}
+    <div class="th-block">${P.claimCards}</div>
+  </section>`;
+}
+function renderThesisAttribution(){   // B4 live + B5 backtest (tournament page)
+  const P = thesisParts(); if (!P) return "";
+  const {td, tab, attrBlocks, btRows, btCaveats, bt} = P;
+  const toggle = `<span class="th-toggle"><button class="${tab==='live' ? 'on' : ''}" data-thesis-tab="live">LIVE</button><button class="${tab==='backtest' ? 'on' : ''}" data-thesis-tab="backtest">BACKTEST</button></span>`;
+  const live = `<div class="th-block">
       <h4>B4 · ATTRIBUTION — cash | allocation | selection (sums to active vs SPY; residual-defined)</h4>
       ${attrBlocks}
       <div class="th-caveat">${td.small_n_caveat} Components are arithmetic sums of daily effects; no CIs fabricated on ${td.sessions_since_inception} points.</div>
-      <div class="th-caveat">"Selection" is measured against equal-weight thesis baskets; with coarse
-        buckets, within-thesis composition (e.g. memory-semis vs megacap-AI) appears as selection.
-        Finer sub-theses would reclassify part of it as allocation — a memory_semis sub-thesis
-        proposal is in registry_proposals.json to demonstrate this bucket-dependence live.</div>
+      <div class="th-caveat">"Selection" is measured against equal-weight thesis baskets; with coarse buckets, within-thesis composition (e.g. memory vs megacap-AI) appears as selection. Registry v4 carries a sub-thesis field for display; the parent buckets — and this attribution — are unchanged by it.</div>
     </div>`;
-
-  const btBody = `
-    <div class="th-block">
+  const back = `<div class="th-block">
       <h4>B5 · BACKTEST ATTRIBUTION — full walk-forward, ${(bt.tiers && Object.values(bt.tiers)[0] || {}).n_periods || "—"} monthly periods</h4>
       <table class="th-table">
         <tr><th>TIER</th><th>PERIODS</th><th>CUM ACTIVE</th><th>CASH</th><th>ALLOCATION</th><th>SELECTION</th><th class="tal">AVG TOP EXPOSURES</th></tr>
@@ -1804,19 +1817,8 @@ function renderThesisSection(){
       </table>
       ${btCaveats}
     </div>`;
-
-  return `<section class="thesis">
-    <div class="thesis-head">
-      <div>
-        <h2>THESIS — EXPOSURE · FALSIFICATION · ATTRIBUTION${asOfBadge(td.session_date || td.as_of)}${!frozen ? '<span class="th-pending">REGISTRY v' + td.registry_version + ' PENDING APPROVAL</span>' : '<span class="mono t1 w5 c-3 ml2">registry v' + td.registry_version + ' frozen ' + (td.registry_frozen_at||"") + '</span>'}</h2>
-        <div class="sub">the meso level: cross-sectional structure of the bets — risk accounting, not a return forecaster</div>
-      </div>
-      <span class="th-toggle">
-        <button class="${tab==='live' ? 'on' : ''}" data-thesis-tab="live">LIVE</button>
-        <button class="${tab==='backtest' ? 'on' : ''}" data-thesis-tab="backtest">BACKTEST</button>
-      </span>
-    </div>
-    ${tab === "live" ? liveBody : btBody}
+  return `<section class="thesis">${thesisHead("THESIS — ATTRIBUTION", "cash effect, thesis allocation and selection; live since inception and over the walk-forward backtest", toggle)}
+    ${tab === "live" ? live : back}
   </section>`;
 }
 
@@ -2067,9 +2069,9 @@ function renderEntryBox(sig){
     <details class="mt2">
       <summary class="mono t1 w5 c-3 ptr ls05">Signal conditions</summary>
       <div class="mt2 mono t1 lh19">
-        <div><span class="c-3 w7">BUY:</span> ${condList(sig.conditions?.buy)}</div>
+        <div><span class="c-3 w7">ENTRY:</span> ${condList(sig.conditions?.buy)}</div>
         <div><span class="c-3 w7">STRONG:</span> ${condList(sig.conditions?.strong_buy)}</div>
-        <div><span class="c-3 w7">SELL:</span> ${condList(sig.conditions?.sell)}</div>
+        <div><span class="c-3 w7">CAUTION:</span> ${condList(sig.conditions?.sell)}</div>
       </div>
     </details>
     ${sigLabelLine(sig)}
@@ -2250,7 +2252,7 @@ function renderTickerDetail(tk){
 
 function hedgingNote(level){
   return ({
-    "full":           "Buy SPY put spreads when R<sub>t</sub> > 0.6 (50% notional, 0.5%/q budget). Standing VIX call tail hedge.",
+    "full":           "Tier policy: SPY put spreads when R<sub>t</sub> > 0.6 (50% notional, 0.5%/q budget); a standing VIX call tail hedge.",
     "moderate":       "Covered calls on +30% winners. SPY put spreads when R<sub>t</sub> > 0.7.",
     "light":          "Covered calls on +40% winners. Put spreads only when R<sub>t</sub> > 0.85.",
     "none_until_crisis": "No hedging. Exit to cash on R<sub>t</sub> > 0.85.",
@@ -2797,18 +2799,10 @@ function applyTweens(){
   });
 }
 
-function render(){
-  const a = document.getElementById("app");
-  if (!S.config) { a.innerHTML = '<div class="ld">config.json missing</div>'; return; }
-
+// ── 6.3: the leaderboard block (leader banner · race chart · leaderboard), used by tournament.html ──
+function renderLeaderboardBlock(){
   const live = S.tournament && S.tournament.history && S.tournament.history.length > 0
     ? S.tournament.history[S.tournament.history.length-1] : null;
-  const R = live ? live.R_t : null;
-  const regime = live ? live.regime : "—";
-  const updated = S.tournament && S.tournament.last_updated
-    ? new Date(S.tournament.last_updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})
-    : "—";
-
   const allSeries = buildSeries();
   const tmMap = {};
   TIER_ORDER.forEach(tid => {
@@ -2822,29 +2816,7 @@ function render(){
   let leader = null, leaderRet = -Infinity;
   Object.entries(tmMap).forEach(([tid, m]) => { if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; } });
 
-  // ---- Slim header ----
-  let h = `<div class="hd2">
-    <div>
-      <span class="hd-dot"></span><h1 class="inl">PORTFOLIO TOURNAMENT</h1>
-      <span class="mono t1 c-3 ml2">v2.0</span>
-      <a class="mono t1 c-info ml2" href="guide.html" title="How to read this — the guide page">how to read this →</a>
-      <div class="hd2-sub">${updated} · 4 algo tiers + Werner · monthly rescore + regime overlay</div>
-    </div>
-  </div>`;
-
-  // ---- 0. INTRADAY SHOCK / STALENESS BANNER — a live alert, stays above everything ----
-  h += renderTopBanner();
-
-  // ══ TIER ONE (P1.4): gauge with its moved-by line · the claim sentence · the drawdown chart ══
-  const rv = renderRegimeCommandCenter(R);
-  const statusStrip = renderStatusStrip();
-  h += `<div class="tier tier-1"><h2 class="tier-title">REGIME</h2>
-    ${statusStrip ? `<div class="only-mobile">${statusStrip}</div>` : ""}
-    <div class="tier1-grid">${rv.gauge}${renderDrawdownCard()}</div></div>`;
-
-  // ══ TIER TWO: leaderboard · treemap · regime-and-overlay · the book ══
-  h += `<div class="tier tier-2"><h2 class="tier-title">TOURNAMENT &amp; BOOK</h2>`;
-
+  let h = "";
   // ---- Leader banner ----
   if (leader && tmMap[leader]) {
     const lt = tierSpec(leader); const m = tmMap[leader];
@@ -2958,39 +2930,10 @@ function render(){
     }
   });
   h += `</table></div>`;
-
-  // rest of tier two: treemap (P2.3) · retirement panel (P2.2) · regime & overlay · the book (P3.2)
-  h += renderTreemapCard() + renderRetirementPanel();
-  h += `<div class="tier2-grid">${renderRegimeOverlayPanel()}<div>${rv.timeline}${rv.deployment}</div></div>`;
-  h += renderBookPanel() + renderPostureCard() + renderSleevesPanel();
-  h += `</div>`;   // close tier two
-
-  // ══ TIER THREE (reduced type and contrast): indicators · thesis register · v4 · status · records · calendar ══
-  // P5.1: on mobile every tier-three panel sits under a disclosure control, closed by default;
-  // on desktop the controls are open and their summaries hidden (CSS).
-  const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
-  const d3 = (title, html) => html ? `<details class="t3-panel"${isMobile ? "" : " open"}><summary>${title}</summary>${html}</details>` : "";
-  h += `<div class="tier tier-3"><h2 class="tier-title">RECORDS &amp; SIGNALS</h2>`;
-  h += `<div class="only-desktop">${statusStrip}</div>` + renderRegistryBanner();
-  h += d3("INDICATOR READINGS", rv.indicators);
-  h += d3("THESIS REGISTER", renderThesisSection());
-  h += d3("V4 RANKING PANEL", rv.v4);
-  h += d3("SCANNER", renderScanner());
-  h += d3("ACTION LOG", renderActionLog()) + d3("V4 CALIBRATION", renderCalibrationPanel()) + d3("CALENDAR", renderCalendarCard());
-
-  // ---- Footer ----
-  h += `<div class="ft">
-    <span class="k">SCORING </span>4-factor cross-sectional model: technical (MA200 dist, RSI, 6m relative strength) + fundamental (Fwd P/E, rev growth, gross/op margins, ROE). Tier 3/4 double-weight 6m RS.<br>
-    <span class="k">SELECTION </span>Monthly. Each tier picks top-N from its filtered universe — Tier 1 restricted to defensive sectors with GM>30% and FCF>0; Tiers 2-4 use the full universe.<br>
-    <span class="k">REGIME </span>R<sub>t</sub> from 12 risk indicators z-scored over 252 days, mapped via Φ, equal-weight mean. Sizes cash sleeve per tier formula.<br>
-    <span class="k">TIER 5 (WERNER) </span>Positions from data/holdings.json — the only holdings source, read by the screener too. Not backtested (no discretionary history). Updated when Werner trades.<br>
-    <span class="k">DATA </span>Yahoo + FRED. Updated weekdays 6 pm ET (daily NAV) and 1st of month 10 am ET (rescore + reselect).
-  </div>`;
-
-  h += `</div>`;   // close tier three
-  a.innerHTML = h;
-  applyTweens();   // P1.5: value changes tween over --tween (200 ms; 0 under reduced motion)
-
+  return {html: h, allSeries};
+}
+// ── 6.3: event bindings shared by every page (elements absent on a page are simply not bound) ──
+function bindEvents(){
   // ---- Bindings ----
   document.querySelectorAll(".period-btn[data-p]").forEach(b => b.addEventListener("click", () => {
     S.period = b.dataset.p; render();
@@ -3098,7 +3041,9 @@ function render(){
     render();
   }));
 
-  // Draw charts after DOM
+}
+// ── 6.3: chart draws shared by every page; each draw returns when its canvas is absent ──
+function drawCharts(allSeries){
   setTimeout(() => {
     renderRegimeTimeline();
     renderRopCurveChart();
@@ -3119,14 +3064,6 @@ function render(){
     }
   }, 10);
 }
-
-async function loadJSON(path){ try { const r = await fetch(path + "?" + Date.now()); if (r.ok) return await r.json(); } catch(e){} return null; }
-async function loadCSV(path){
-  try { const r = await fetch(path + "?" + Date.now()); if (!r.ok) return null;
-    return Papa.parse(await r.text(), {header:true, dynamicTyping:true, skipEmptyLines:true}).data;
-  } catch(e){ return null; }
-}
-
 // Decision Memo 9-Sept-2026 §6: standing disclosure on the backtest panel — the
 // regime-index history uses revised FRED inputs; the point-in-time figure (C2)
 // is shown beside the displayed one. Served tier sizing uses the internal vol
@@ -3148,66 +3085,3 @@ function c2TierTitle(tid){
   if (!c || !c.rev || !c.pit) return "max drawdown of the displayed series";
   return `C2: 24-indicator overlay through the same engine — drawdown reduction vs SPY ${(c.rev.dd_reduction_vs_spy*100).toFixed(1)}% on revised inputs (max DD ${(c.rev.max_dd*100).toFixed(1)}%) vs ${(c.pit.dd_reduction_vs_spy*100).toFixed(1)}% on point-in-time inputs (max DD ${(c.pit.max_dd*100).toFixed(1)}%). The displayed max DD is the served series (internal vol-index sizing, no FRED inputs).`;
 }
-
-async function init(){
-  S.config     = await loadJSON("config.json");
-  S.tournament = await loadJSON("data/tournament.json");
-  S.holdings   = await loadJSON("data/tier_holdings.json");
-  S.tickers    = await loadJSON("data/ticker_indicators.json");
-  S.metrics    = await loadJSON("data/backtest_metrics.json");
-  S.regime     = await loadJSON("data/regime_indicators.json");
-  S.status     = await loadJSON("data/status.json");   // order item 6: pipeline + audit status strip
-  S.regimeDaily = await loadCSV("data/regime_daily.csv");
-  S.indicatorSeries = await loadJSON("data/indicator_series.json");
-  S.signals    = await loadJSON("data/ticker_signals.json");
-  S.regimeV4   = await loadCSV("data/regime_v4_daily.csv");
-  S.v4Cal      = await loadJSON("data/v4_calibration.json");
-  try { S.c2 = await loadJSON("data/c2_vintage_comparison.json"); } catch (e) { S.c2 = null; }   // memo §6 disclosure
-  try { S.c3 = await loadJSON("data/c3_results.json"); } catch (e) { S.c3 = null; }             // memo §1 verdicts of record
-  try { S.backtestDD = await loadJSON("data/backtest_drawdown.json"); } catch (e) { S.backtestDD = null; }   // P2.1 companion
-  try { S.comparators = await loadJSON("data/comparators.json"); } catch (e) { S.comparators = null; }     // P2.2 second opinion
-  try { S.c3Paths = await loadJSON("data/c3_drawdown_paths.json"); } catch (e) { S.c3Paths = null; }       // P2.2 C3 drawdown paths
-  try { S.provLedger = await loadJSON("data/provisional_ledger.json"); } catch (e) { S.provLedger = null; } // P2.3 provisional memberships
-  try { S.factors = await loadJSON("data/factor_exposure.json"); } catch (e) { S.factors = null; }         // P3.3 style-factor exposure
-  try { S.book = await loadJSON("data/book.json"); } catch (e) { S.book = null; }                           // 16-Sept 1.3/1.5/1.6 book analytics, stress, sleeves
-  try { S.holdingsFile = await loadJSON("data/holdings.json"); } catch (e) { S.holdingsFile = null; }      // P3.1 the only holdings source
-  try {                                                                                                     // P4.1 action log (jsonl)
-    const r = await fetch("data/actions.jsonl?" + Date.now());
-    S.actions = r.ok ? (await r.text()).split("\n").filter(l => l.trim()).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean) : [];
-  } catch (e) { S.actions = []; }
-  S.intraday   = await loadJSON("data/intraday.json");
-  S.volRegime  = await loadJSON("data/vol_regime.json");
-  S.condScores = await loadJSON("data/regime_conditional_scores.json");
-  S.eventCal   = await loadJSON("data/event_calendar.json");
-  S.regimePub  = await loadCSV("data/regime_daily_published.csv");
-  S.thesis     = await loadJSON("data/thesis_daily.json");
-  S.thesisReg  = await loadJSON("data/thesis_registry.json");
-  S.thesisClaims = await loadJSON("data/thesis_claims.json");
-  S.thesisBT   = await loadJSON("data/thesis_backtest.json");
-  S.v4Attr     = await loadJSON("data/v4_delta_attribution.json");
-  S.regProposals = await loadJSON("data/registry_proposals.json");
-  const rows   = await loadCSV("data/backtest_equity_curves.csv");
-  S.backtest   = rows ? {rows} : null;
-
-  if (!S.config) {
-    document.getElementById("app").innerHTML = '<div class="ld">config.json not found</div>';
-    return;
-  }
-  if (!S.tournament && !S.backtest) {
-    document.getElementById("app").innerHTML = `<div class="ld">No tournament data yet.</div>`;
-    return;
-  }
-  render();
-}
-init();
-
-// P5.1: re-render when the viewport crosses the mobile breakpoint (disclosure state, chart ticks)
-(() => {
-  const mq = window.matchMedia ? window.matchMedia("(max-width: 820px)") : null;
-  if (!mq) return;
-  let was = mq.matches, timer = null;
-  window.addEventListener("resize", () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => { if (mq.matches !== was) { was = mq.matches; if (S.config) render(); } }, 150);
-  });
-})();
