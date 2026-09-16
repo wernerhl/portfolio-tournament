@@ -1698,7 +1698,7 @@ function renderThesisSection(){
         ? `<div>${l.date} · ${l.event} · basket 1d ${(l.basket_ret_1d*100).toFixed(2)}%</div>`
         : `<div class="an">${l.date} · analyst entry · ${l.note || ""}${l.kill ? " · KILL" : ""}</div>`
     ).join("");
-    const subHead = c.claim_id ? ` <span class="c-3">· ${c.label || c.sub}</span> <span class="mono t1 c-3">(${(c.tickers || []).join(", ")})</span>` : "";
+    const subHead = c.claim_id ? ` <span class="c-3">· ${c.label || c.sub}</span>${(c.label || "").includes("(") ? "" : ` <span class="mono t1 c-3">(${(c.tickers || []).join(", ")})</span>`}` : "";
     const review = c.review_by ? `<div class="mono t1 c-3 mt1">review by <strong class="c-2">${c.review_by}</strong> · next earnings ${c.next_earnings || "—"} + 14 days (event calendar) · frozen ${String(c.frozen_at || "").slice(0, 10)}</div>` : "";
     return `<div class="th-claim">
       <div class="cl-head">
