@@ -2749,17 +2749,25 @@ function renderCalibrationChart(){
     plugins: {tooltip: {callbacks: {label: ctx => ` ${ctx.dataset.label}: predicted ${(ctx.parsed.x * 100).toFixed(1)}% → observed ${(ctx.parsed.y * 100).toFixed(1)}%${ctx.raw && ctx.raw.n ? " (n " + ctx.raw.n + ")" : ""}`}}},
   }});
 }
-// ── 16-Sept 1.6: diversification sleeves — correlation to the equity book, ascending ──
+// ── 16-Sept 1.6 / Phase 5: diversification sleeves — grouped by thesis, quality-gated; correlation to the equity book ──
+function sleeveRow(s_){
+  const c = s_.corr; const w = c == null ? 0 : Math.abs(c) * 50;
+  const bar = c == null ? `<span class="c-3 t1">${s_.note || "n/a"}</span>` : `<span class="sleeve-bar"><span class="sleeve-zero"></span><span class="sleeve-fill ${c >= 0 ? "bg-warn" : "bg-pos"}" style="left:${(c >= 0 ? 50 : 50 - w).toFixed(1)}%;width:${w.toFixed(1)}%"></span></span>`;
+  const kind = s_.kind === "etf" ? "sector / asset ETF" : `quality-passing screen name · ${thesisLabel(s_.group || "")} · composite ${s_.screen_composite} (F ${s_.fundamental} · V ${s_.visibility})`;
+  return `<tr><td class="mono t2 c-1 w6">${s_.ticker}</td><td class="c-2">${s_.label}</td><td class="c-3 t1">${kind}</td><td class="sleeve-cell">${bar}</td><td class="num c-1">${c == null ? "—" : (c >= 0 ? "+" : "") + c.toFixed(2)}</td><td class="num c-3">${s_.n_obs}</td></tr>`;
+}
 function renderSleevesPanel(){
   const b = S.book; if (!b || !b.sleeves) return "";
-  const rows = b.sleeves.map(s_ => {
-    const c = s_.corr; const w = c == null ? 0 : Math.abs(c) * 50;
-    const bar = c == null ? `<span class="c-3 t1">${s_.note || "n/a"}</span>` : `<span class="sleeve-bar"><span class="sleeve-zero"></span><span class="sleeve-fill ${c >= 0 ? "bg-warn" : "bg-pos"}" style="left:${(c >= 0 ? 50 : 50 - w).toFixed(1)}%;width:${w.toFixed(1)}%"></span></span>`;
-    return `<tr><td class="mono t2 c-1 w6">${s_.ticker}</td><td class="c-2">${s_.label}${s_.kind === "screen_name" ? ` <span class="c-3 t1">· screen name · composite ${s_.screen_composite} (F ${s_.fundamental} · V ${s_.visibility})</span>` : ""}</td><td class="c-3 t1">${s_.kind === "etf" ? "sector / asset ETF" : "quality-passing screen name · " + (s_.group || "")}</td><td class="sleeve-cell">${bar}</td><td class="num c-1">${c == null ? "—" : (c >= 0 ? "+" : "") + c.toFixed(2)}</td><td class="num c-3">${s_.n_obs}</td></tr>`;
+  const qb = b.quality_bar || {fundamental: 18, visibility: 15};
+  const groups = (b.sleeve_groups || []).map(g => {
+    const rows = g.etfs.map(sleeveRow).join("") + (g.names.length ? g.names.map(sleeveRow).join("")
+      : `<tr><td></td><td colspan="5" class="c-3 t1">no screen name in ${g.theses.length ? g.theses.map(thesisLabel).join(" / ") : "this group"} passes the quality bar (fundamental ≥ ${qb.fundamental}, visibility ≥ ${qb.visibility}) — the group's evidence is its ETFs</td></tr>`);
+    return `<tr class="sleeve-group"><td colspan="6" class="mono t1 w6 c-2">${g.label.toUpperCase()}${g.theses.length ? ` <span class="c-3 w4">· registry ${g.theses.map(thesisLabel).join(", ")}</span>` : ""}</td></tr>${rows}`;
   }).join("");
-  return `<div class="rcc-card sleeves-panel"><h3>DIVERSIFICATION SLEEVES · <span class="c-3 w5">correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions, ascending</span>${asOfBadge(b.session_date)}</h3>
-    <div class="tbl-scroll"><table class="sleeves-table"><tr><th>SLEEVE</th><th>NAME</th><th>KIND</th><th>CORRELATION TO THE BOOK</th><th class="num">ρ</th><th class="num">n</th></tr>${rows}</table></div>
-    <div class="chart-meta">${b.sleeves_note || ""} · screen names pass the quality bar (fundamental ≥ ${b.quality_bar ? b.quality_bar.fundamental : 18}, visibility ≥ ${b.quality_bar ? b.quality_bar.visibility : 15}) and carry a registry thesis; held names excluded · book series: constant current equity weights</div>
+  const rest = b.sleeves.filter(s_ => !(b.sleeve_groups || []).some(g => g.etfs.some(e => e.ticker === s_.ticker) || g.names.some(n => n.ticker === s_.ticker)));
+  return `<div class="rcc-card sleeves-panel"><h3>${(b.sleeves_heading || "exposures the book lacks, at the level where the system has evidence").toUpperCase()} · <span class="c-3 w5">sleeves grouped by thesis · correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions</span>${asOfBadge(b.session_date)}</h3>
+    <div class="tbl-scroll"><table class="sleeves-table"><tr><th>SLEEVE</th><th>NAME</th><th>KIND</th><th>CORRELATION TO THE BOOK</th><th class="num">ρ</th><th class="num">n</th></tr>${groups}${rest.length ? `<tr class="sleeve-group"><td colspan="6" class="mono t1 w6 c-2">OTHER SLEEVES · <span class="c-3 w4">ascending</span></td></tr>${rest.map(sleeveRow).join("")}` : ""}</table></div>
+    <div class="chart-meta">${b.sleeves_note || ""} · screen names pass the quality bar (fundamental ≥ ${qb.fundamental}, visibility ≥ ${qb.visibility}, the shelf's bar) and carry a registry thesis; held names excluded · book series: constant current equity weights · sorted ascending within each group</div>
   </div>`;
 }
 function renderCalendarCard(){

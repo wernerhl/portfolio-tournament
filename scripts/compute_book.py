@@ -52,6 +52,15 @@ STRESS_INDEX = [
 ]
 SLEEVE_ETFS = [("XLP", "Consumer staples"), ("XLE", "Energy"), ("XLF", "Financials"), ("XLU", "Utilities"),
                ("TLT", "Long Treasuries"), ("GLD", "Gold"), ("IWM", "Small caps")]
+# Phase 5: sleeves grouped by thesis — each group's ETFs and the registry theses whose
+# quality-passing screen names belong in it. Treasuries and gold have no equity thesis.
+SLEEVE_GROUPS = [
+    ("staples_defensives", "Staples and defensives",  ["XLP", "XLU"], ["defensive_quality"]),
+    ("energy_hard_assets", "Energy and hard assets",  ["XLE", "GLD"], ["hard_assets"]),
+    ("financial_plumbing", "Financial plumbing",      ["XLF"],        ["fin_plumbing"]),
+    ("treasuries_gold",    "Treasuries and gold",     ["TLT", "GLD"], []),
+]
+SLEEVES_HEADING = "exposures the book lacks, at the level where the system has evidence"
 QUALITY_BAR = {"fundamental": 18.0, "visibility": 15.0}   # the screen view's quality bar (build_json drawdown shelf)
 SLEEVE_NOTE = ("name selection has no measured skill; this panel describes exposure the book lacks, "
                "at the level where the system has evidence")
@@ -255,6 +264,15 @@ def build(session: str) -> dict:
                                   "screen_composite": r4(row.get("composite"), 1),
                                   "fundamental": r4(row.get("fundamental"), 1), "visibility": r4(row.get("visibility"), 1)})
     sleeves = sorted(sleeves + quality_names, key=lambda s: (s["corr"] is None, s["corr"] if s["corr"] is not None else 9))
+    # Phase 5: the same sleeves grouped by thesis, each group's ETFs and its quality-passing screen names
+    etf_by = {s_["ticker"]: s_ for s_ in sleeves if s_["kind"] == "etf"}
+    groups = []
+    for gid, glabel, etfs, theses in SLEEVE_GROUPS:
+        gnames = sorted([q for q in quality_names if q["group"] in theses],
+                        key=lambda q: (q["corr"] is None, q["corr"] if q["corr"] is not None else 9))
+        groups.append({"id": gid, "label": glabel, "theses": theses,
+                       "etfs": [etf_by[t] for t in etfs if t in etf_by],
+                       "names": gnames, "n_quality_names": len(gnames)})
 
     payload = {
         "cadence": "daily", "session_date": session, "as_of": str(through.date()),
@@ -286,6 +304,7 @@ def build(session: str) -> dict:
         },
         "stress": stress, "stress_note": "fixed scenarios; descriptive; betas from the same 126-session window",
         "sleeves": sleeves, "sleeves_note": SLEEVE_NOTE,
+        "sleeve_groups": groups, "sleeves_heading": SLEEVES_HEADING,
         "quality_bar": QUALITY_BAR,
         "warnings": warnings,
         "note": "descriptive; no rule drives this book; nothing here is a recommendation",

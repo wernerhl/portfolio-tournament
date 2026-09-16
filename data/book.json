@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-14",
-  "computed_at": "2026-09-16T15:02:22-04:00",
+  "computed_at": "2026-09-16T15:05:46-04:00",
   "source": {
     "holdings": "data/holdings.json",
     "holdings_as_of": "2026-09-16",
@@ -636,6 +636,107 @@
     }
   ],
   "sleeves_note": "name selection has no measured skill; this panel describes exposure the book lacks, at the level where the system has evidence",
+  "sleeve_groups": [
+    {
+      "id": "staples_defensives",
+      "label": "Staples and defensives",
+      "theses": [
+        "defensive_quality"
+      ],
+      "etfs": [
+        {
+          "ticker": "XLP",
+          "label": "Consumer staples",
+          "kind": "etf",
+          "group": null,
+          "corr": -0.4384,
+          "n_obs": 124
+        },
+        {
+          "ticker": "XLU",
+          "label": "Utilities",
+          "kind": "etf",
+          "group": null,
+          "corr": -0.0294,
+          "n_obs": 124
+        }
+      ],
+      "names": [],
+      "n_quality_names": 0
+    },
+    {
+      "id": "energy_hard_assets",
+      "label": "Energy and hard assets",
+      "theses": [
+        "hard_assets"
+      ],
+      "etfs": [
+        {
+          "ticker": "XLE",
+          "label": "Energy",
+          "kind": "etf",
+          "group": null,
+          "corr": -0.2816,
+          "n_obs": 124
+        },
+        {
+          "ticker": "GLD",
+          "label": "Gold",
+          "kind": "etf",
+          "group": null,
+          "corr": 0.4158,
+          "n_obs": 124
+        }
+      ],
+      "names": [],
+      "n_quality_names": 0
+    },
+    {
+      "id": "financial_plumbing",
+      "label": "Financial plumbing",
+      "theses": [
+        "fin_plumbing"
+      ],
+      "etfs": [
+        {
+          "ticker": "XLF",
+          "label": "Financials",
+          "kind": "etf",
+          "group": null,
+          "corr": -0.022,
+          "n_obs": 124
+        }
+      ],
+      "names": [],
+      "n_quality_names": 0
+    },
+    {
+      "id": "treasuries_gold",
+      "label": "Treasuries and gold",
+      "theses": [],
+      "etfs": [
+        {
+          "ticker": "TLT",
+          "label": "Long Treasuries",
+          "kind": "etf",
+          "group": null,
+          "corr": 0.2363,
+          "n_obs": 124
+        },
+        {
+          "ticker": "GLD",
+          "label": "Gold",
+          "kind": "etf",
+          "group": null,
+          "corr": 0.4158,
+          "n_obs": 124
+        }
+      ],
+      "names": [],
+      "n_quality_names": 0
+    }
+  ],
+  "sleeves_heading": "exposures the book lacks, at the level where the system has evidence",
   "quality_bar": {
     "fundamental": 18.0,
     "visibility": 15.0
