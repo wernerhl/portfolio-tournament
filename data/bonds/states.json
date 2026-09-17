@@ -1,0 +1,87 @@
+{
+  "cadence": "daily",
+  "session_date": "2026-09-15",
+  "as_of": "2026-09-16",
+  "computed_at": "2026-09-16T22:21:03-06:00",
+  "vintage": {
+    "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
+    "fred_through": "2026-09-15",
+    "history_years": 10
+  },
+  "config_frozen_at": "2026-09-16",
+  "curve": {
+    "series": "yield_2s10s",
+    "label": "2s10s slope (10y minus 2y Treasury)",
+    "slope_2s10s_pct": 0.32,
+    "slope_2s10s_bps": 32.0,
+    "slope_2s10s_pctile_10y": 45.9,
+    "slope_3m10y_pct": 0.86,
+    "state": "normal",
+    "as_of": "2026-09-14",
+    "maturities": [
+      {
+        "maturity": "3m",
+        "series": "us03m",
+        "level_pct": 4.11,
+        "pctile_10y": 71.3,
+        "as_of": "2026-09-14"
+      },
+      {
+        "maturity": "2y",
+        "series": "us02y",
+        "level_pct": 4.65,
+        "pctile_10y": 91.6,
+        "as_of": "2026-09-14"
+      },
+      {
+        "maturity": "5y",
+        "series": "us05y",
+        "level_pct": null,
+        "pctile_10y": null,
+        "as_of": null,
+        "unavailable": "series not yet in the store (pending FRED fetch)"
+      },
+      {
+        "maturity": "10y",
+        "series": "us10y",
+        "level_pct": 4.97,
+        "pctile_10y": 99.9,
+        "as_of": "2026-09-14"
+      },
+      {
+        "maturity": "30y",
+        "series": "us30y",
+        "level_pct": null,
+        "pctile_10y": null,
+        "as_of": null,
+        "unavailable": "series not yet in the store (pending FRED fetch)"
+      }
+    ],
+    "bands": [
+      {
+        "id": "inverted",
+        "max_pct": 10,
+        "desc": "slope below its 10th percentile over ten years"
+      },
+      {
+        "id": "flat",
+        "min_pct": 10,
+        "max_pct": 40,
+        "desc": "10th to 40th percentile"
+      },
+      {
+        "id": "normal",
+        "min_pct": 40,
+        "max_pct": 80,
+        "desc": "40th to 80th percentile"
+      },
+      {
+        "id": "steep",
+        "min_pct": 80,
+        "desc": "above the 80th percentile"
+      }
+    ],
+    "footnote": "States: inverted (2s10s below its 10th percentile over ten years), flat (10th\u201340th), normal (40th\u201380th), steep (above 80th). Descriptive; no rate direction implied."
+  },
+  "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
+}

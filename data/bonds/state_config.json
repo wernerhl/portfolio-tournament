@@ -1,0 +1,28 @@
+{
+  "as_of": "2026-09-16",
+  "frozen": true,
+  "frozen_at": "2026-09-16",
+  "history_years": 10,
+  "note": "Percentile bands are computed over the trailing ten years of the as-published (point-in-time) series and are frozen here before the state runs. A state is descriptive: it names where the curve or a spread sits in its own history and implies no rate or spread direction.",
+  "curve": {
+    "series": "yield_2s10s",
+    "label": "2s10s slope (10y minus 2y Treasury)",
+    "bands": [
+      { "id": "inverted", "max_pct": 10, "desc": "slope below its 10th percentile over ten years" },
+      { "id": "flat", "min_pct": 10, "max_pct": 40, "desc": "10th to 40th percentile" },
+      { "id": "normal", "min_pct": 40, "max_pct": 80, "desc": "40th to 80th percentile" },
+      { "id": "steep", "min_pct": 80, "desc": "above the 80th percentile" }
+    ]
+  },
+  "credit": {
+    "method": "option-adjusted spread (OAS) series — IG BAMLC0A0CM, HY BAMLH0A0HYM2 — which are duration-controlled by construction; NOT an ETF price ratio",
+    "bands": [
+      { "id": "tight", "max_pct": 20, "desc": "below the 20th percentile over ten years" },
+      { "id": "normal", "min_pct": 20, "max_pct": 60, "desc": "20th to 60th percentile" },
+      { "id": "wide", "min_pct": 60, "max_pct": 90, "desc": "60th to 90th percentile" },
+      { "id": "stressed", "min_pct": 90, "desc": "above the 90th percentile" }
+    ]
+  },
+  "maturities": ["us03m", "us02y", "us05y", "us10y", "us30y"],
+  "maturity_labels": { "us03m": "3m", "us02y": "2y", "us05y": "5y", "us10y": "10y", "us30y": "30y" }
+}
