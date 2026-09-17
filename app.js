@@ -3115,7 +3115,7 @@ function renderBondsCurveChart(){
   if (!ch || !ctx) return;
   if (S.bondsCurveChart){ try { S.bondsCurveChart.destroy(); } catch(e){} }
   const CV = CHARTS.colors();
-  const styles = [{c: CV.pos, w: 2.5, d: []}, {c: CHARTS.alpha(CV.info,0.8), w: 1.5, d: [4,3]}, {c: CHARTS.alpha(CV.neg,0.6), w: 1.5, d: [2,3]}];
+  const styles = [{c: CV.pos, w: 2.5, d: []}, {c: CV.info, w: 1.5, d: [4,3]}, {c: CV.neg, w: 1.5, d: [2,3]}];
   const datasets = (ch.series || []).map((ser, i) => ({
     label: ser.label, data: ser.yields.map(y => y == null ? null : y),
     borderColor: styles[i].c, borderWidth: styles[i].w, borderDash: styles[i].d,
