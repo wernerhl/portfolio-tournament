@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:22:30-06:00",
+  "computed_at": "2026-09-16T22:23:49-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -137,6 +137,43 @@
     "footnote": "This read decides only whether TIPS or nominal Treasuries carry better at a given maturity; it is not an inflation forecast.",
     "fwd_5y5y_unavailable": "T5YIFR not yet in the store (pending FRED fetch)",
     "real_10y_unavailable": "DFII10 not yet in the store (pending FRED fetch)"
+  },
+  "allocation_questions": {
+    "duration": {
+      "question": "Are you paid to take duration?",
+      "cash": {
+        "ticker": "SHV",
+        "yield_pct": 3.73,
+        "duration": 0.35,
+        "yield_per_duration": 0.1066
+      },
+      "intermediate": {
+        "ticker": "IEF",
+        "yield_pct": 3.97,
+        "duration": 7.3,
+        "yield_per_duration": 0.0054
+      },
+      "long": {
+        "ticker": "TLT",
+        "yield_pct": 4.73,
+        "duration": 16.5,
+        "yield_per_duration": 0.0029
+      },
+      "pickup_cash_to_intermediate_pct": 0.24,
+      "pickup_per_year_duration_intermediate": 0.035,
+      "pickup_cash_to_long_pct": 1.0,
+      "pickup_per_year_duration_long": 0.062,
+      "term_premium_proxy": {
+        "definition": "long-minus-cash yield spread (10y minus 3m)",
+        "value_pct": 0.86,
+        "value_bps": 86.0,
+        "pctile_10y": 63.9
+      },
+      "highest_yield_per_duration": "SHV",
+      "extension_favoured": false,
+      "read": "cash (SHV) yields 3.73% at duration 0.35, intermediate (IEF) 3.97% at duration 7.3, long (TLT) 4.73% at duration 16.5; the yield per unit of duration is highest at SHV.",
+      "note": "Descriptive, not a rate call. The historical evidence that starting yield explains most of a bond sleeve's multi-year return is the basis; a low term-premium percentile means extension is thinly compensated."
+    }
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
 }

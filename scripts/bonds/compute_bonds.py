@@ -170,6 +170,61 @@ def real_nominal(ind: pd.DataFrame, through: pd.Timestamp) -> dict:
     return out
 
 
+# ── 3.1 are you paid to take duration ──────────────────────────────────────
+def load_sleeve_metrics() -> dict:
+    p = bc.BONDS / "sleeve_metrics.json"
+    if not p.exists():
+        return {}
+    j = json.loads(p.read_text())
+    return {r["ticker"]: r for r in j.get("sleeves", [])}
+
+
+def q_duration(sm: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
+    """Compare the yield pickup of extending from cash to intermediate and long duration
+    against the additional rate risk. Descriptive; not a rate call."""
+    def leg(tk):
+        r = sm.get(tk, {})
+        return {"ticker": tk, "yield_pct": r.get("distribution_yield_pct"),
+                "duration": r.get("effective_duration"), "yield_per_duration": r.get("yield_per_duration")}
+    cash, inter, long = leg("SHV"), leg("IEF"), leg("TLT")
+    def pickup(a, b):
+        if a["yield_pct"] is None or b["yield_pct"] is None or a["duration"] is None or b["duration"] is None:
+            return None, None
+        dd = b["duration"] - a["duration"]
+        return round(b["yield_pct"] - a["yield_pct"], 2), (round((b["yield_pct"] - a["yield_pct"]) / dd, 3) if dd else None)
+    up_i, per_i = pickup(cash, inter)
+    up_l, per_l = pickup(cash, long)
+    # term premium proxy: long-minus-cash yield spread (10y − 3m), and its 10y percentile
+    tp = (ind["us10y"] - ind["us03m"]) if ("us10y" in ind and "us03m" in ind) else pd.Series(dtype=float)
+    tp_cur, _ = last_valid(tp)
+    tp_pct = pctile(tp, tp_cur, through)
+    # which sleeve has the highest yield per unit of duration among the Treasury ladder
+    ladder = ["SHV", "SHY", "IEF", "TLT", "GOVT"]
+    ypd = {tk: sm.get(tk, {}).get("yield_per_duration") for tk in ladder if sm.get(tk, {}).get("yield_per_duration") is not None}
+    best = max(ypd, key=ypd.get) if ypd else None
+    favorable = None
+    if best is not None:
+        favorable = best not in ("SHV",)   # if cash has the highest carry per duration, extension is not favoured
+    return {
+        "question": "Are you paid to take duration?",
+        "cash": cash, "intermediate": inter, "long": long,
+        "pickup_cash_to_intermediate_pct": up_i, "pickup_per_year_duration_intermediate": per_i,
+        "pickup_cash_to_long_pct": up_l, "pickup_per_year_duration_long": per_l,
+        "term_premium_proxy": {"definition": "long-minus-cash yield spread (10y minus 3m)",
+                               "value_pct": round(tp_cur, 2) if tp_cur is not None else None,
+                               "value_bps": round(tp_cur * 100, 0) if tp_cur is not None else None, "pctile_10y": tp_pct},
+        "highest_yield_per_duration": best,
+        "extension_favoured": favorable,
+        "read": (f"cash ({cash['ticker']}) yields {cash['yield_pct']}% at duration {cash['duration']}, "
+                 f"intermediate ({inter['ticker']}) {inter['yield_pct']}% at duration {inter['duration']}, "
+                 f"long ({long['ticker']}) {long['yield_pct']}% at duration {long['duration']}; "
+                 f"the yield per unit of duration is highest at {best}."),
+        "note": ("Descriptive, not a rate call. The historical evidence that starting yield explains most "
+                 "of a bond sleeve's multi-year return is the basis; a low term-premium percentile means "
+                 "extension is thinly compensated."),
+    }
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -178,6 +233,8 @@ def build() -> dict:
     curve = curve_state(cfg, ind, through)
     credit = credit_state(cfg, ind, through)
     realnom = real_nominal(ind, through)
+    sm = load_sleeve_metrics()
+    alloc = {"duration": q_duration(sm, ind, through)}
 
     session = str(through.date())
     return {
@@ -190,6 +247,7 @@ def build() -> dict:
         "curve": curve,
         "credit": credit,
         "real_nominal": realnom,
+        "allocation_questions": alloc,
         "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction.",
     }
 
