@@ -3222,3 +3222,13 @@ function renderBondsWholeStress(){
     </div>
     <div class="chart-meta">rate shock ±100bp via duration; spread shock to the 90th-percentile OAS (IG ${sp.ig&&sp.ig.current_bps}→${sp.ig&&sp.ig.p90_bps}bp, HY ${sp.hy&&sp.hy.current_bps}→${sp.hy&&sp.hy.p90_bps}bp) via spread duration. ${w.note || ""}</div></div>`;
 }
+
+// Fixed-income retirement registration (evidence page): the three bond tests are registered,
+// not run; the rates-regime state stays DIAGNOSTIC until Test 1 passes its paired criterion.
+function renderBondsRegistrationCard(){
+  const rr = S.bondsStates && S.bondsStates.rates_regime; if (!rr) return "";
+  return `<div class="rcc-card"><h3>FIXED-INCOME RETIREMENT TESTS ${_diagChip()} · <span class="c-3 w5">registered, not run — three rules by the method of the regime test</span></h3>
+    <div class="mono t1 c-2">Rates-regime vs static duration and a constant-maturity ladder · a carry rule (highest yield-per-duration sleeve) vs equal-weight · credit-timing (add HY when spreads are wide, reduce when tight) vs static credit.</div>
+    <div class="mono t1 c-3 mt1">Paired difference on common resampled paths (60-session blocks, 1,000 resamples), point-in-time yields and spreads, costs at one third of quoted bid-ask width. The rates-regime state (bonds page) is gated DIAGNOSTIC and drives no sizing until Test 1 passes; adoption is a separate written decision.</div>
+    <div class="chart-meta">registration: ${rr.registration || "reports/bonds_retirement_registration_2026-09-16.md"}</div></div>`;
+}

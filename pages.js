@@ -120,10 +120,10 @@ const PAGES = {
   },
   evidence: {
     title: "EVIDENCE", sub: () => "the retirement tests with both registrations · the calibration of the graduated model · the point-in-time vintage comparison",
-    loads: ["config","c3","c3Paths","comparators","v4Cal","c2","regimeV4","regime","regimePub","v4Attr","status","tournament","metrics"],
+    loads: ["config","c3","c3Paths","comparators","v4Cal","c2","regimeV4","regime","regimePub","v4Attr","status","tournament","metrics","bondsStates"],
     compose(){
       const live = liveRow(); const rv = renderRegimeCommandCenter(live ? live.R_t : null);
-      let h = `<div class="tier tier-1"><h2 class="tier-title">RETIREMENT TESTS</h2>${renderRetirementPanel()}</div>`;
+      let h = `<div class="tier tier-1"><h2 class="tier-title">RETIREMENT TESTS</h2>${renderRetirementPanel()}${renderBondsRegistrationCard()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">CALIBRATION AND VINTAGES</h2>${renderCalibrationPanel()}${renderVintageCard()}</div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">THE GRADUATED MODEL</h2>${d3("V4 RANKING PANEL", rv.v4)}</div>`;
       return h;
