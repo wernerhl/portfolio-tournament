@@ -281,6 +281,44 @@ def main(troot, sroot, today=None):
             add('INFO','book:export',f'no brokerage export on record (holdings_export.json absent); holdings.json source: {hj.get("source")}')
     else:
         add('CRITICAL','book:holdings_missing','data/holdings.json absent — the only holdings source')
+    # ---------- the fixed-income module (order 16-Sept) ----------
+    # Served under data/bonds/ (outside the generic data/*.json sweep), so the module's
+    # artifacts are checked here. Governance is enforced, not assumed:
+    #   rates-regime state must carry the DIAGNOSTIC label                → CRITICAL (the gate)
+    #   the credit read must be computed from option-adjusted spreads     → HIGH
+    #   no served bond file may contain a buy/sell directive, edge, alpha → CRITICAL
+    #   sleeve metrics missing / stale / with data gaps                   → HIGH
+    sm_=os.path.join(troot,'bonds','sleeve_metrics.json')
+    if os.path.exists(sm_):
+        sm=json.load(open(sm_)); sd=to_date(sm.get('session_date') or '')
+        if sd and sd<ls and (len(trading_days(sd,ls))-1)>5:
+            add('HIGH','bond:sleeve_stale',f'sleeve_metrics.json session_date {sd} is {len(trading_days(sd,ls))-1} sessions old (>5)')
+        sl=sm.get('sleeves',[])
+        gaps=[r['ticker'] for r in sl if r.get('correlation_to_book') is None or r.get('vol_126_ann') is None]
+        if gaps: add('HIGH','bond:sleeve_coverage',f'sleeves missing volatility/correlation (no price history?): {gaps}')
+        noyield=[r['ticker'] for r in sl if not r.get('yield_available')]
+        if noyield: add('INFO','bond:sleeve_yield',f'sleeves with distribution yield unavailable (not substituted): {noyield}')
+    else:
+        add('HIGH','bond:sleeve_metrics_missing','data/bonds/sleeve_metrics.json absent — the fixed-income sleeve menu has no data')
+    stp_=os.path.join(troot,'bonds','states.json')
+    if os.path.exists(stp_):
+        stj=json.load(open(stp_))
+        rr=(stj.get('rates_regime') or {})
+        if rr and str(rr.get('label','')).upper()!='DIAGNOSTIC':
+            add('CRITICAL','bond:diagnostic_gate',f'rates-regime state label is {rr.get("label")!r}, not DIAGNOSTIC — the sizing gate is not held')
+        cr=(stj.get('credit') or {})
+        meth=str(cr.get('method','')).lower()
+        if cr and ('option-adjusted' not in meth and 'oas' not in meth):
+            add('HIGH','bond:credit_method','credit read method does not reference option-adjusted spreads (an ETF price ratio is prohibited)')
+    # language: the words edge and alpha appear nowhere in the module; no buy/sell directive
+    for bf in ('bonds/sleeve_metrics.json','bonds/states.json','bonds/sleeve_universe.json'):
+        bp_=os.path.join(troot,bf)
+        if os.path.exists(bp_):
+            blob=open(bp_).read().lower()
+            hits=[w for w in ('edge','alpha') if re.search(r'\b'+w+r'\b',blob)]
+            if hits: add('CRITICAL','bond:language',f'{bf} contains prohibited word(s) {hits} (order §9.9)')
+            for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
+                if tok in blob: add('CRITICAL','bond:directive',f'{bf} contains a buy/sell directive ({tok!r})')
     # visibility review dates (screener)
     vp=os.path.join(sroot,'visibility_registry.json')
     if os.path.exists(vp):
