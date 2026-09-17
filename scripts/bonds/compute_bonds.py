@@ -113,12 +113,42 @@ def curve_state(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
     }
 
 
+# ── 2.2 credit state ───────────────────────────────────────────────────────
+def _oas_leg(ind: pd.DataFrame, col: str, bands: list[dict], through: pd.Timestamp) -> dict:
+    if col not in ind.columns:
+        return {"oas_pct": None, "oas_bps": None, "pctile_10y": None, "state": None,
+                "unavailable": "OAS series not in the store"}
+    lvl, d = last_valid(ind[col])                    # OAS series are in percent (0.80 = 80 bps)
+    pct = pctile(ind[col], lvl, through)
+    return {"oas_pct": round(lvl, 3) if lvl is not None else None,
+            "oas_bps": round(lvl * 100, 0) if lvl is not None else None,
+            "pctile_10y": pct, "state": band_for(pct, bands),
+            "as_of": str(d.date()) if d is not None else None}
+
+
+def credit_state(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
+    cc = cfg["credit"]
+    return {
+        "method": cc["method"],   # references option-adjusted spreads; the referee enforces this
+        "ig": _oas_leg(ind, "ig_oas", cc["bands"], through),
+        "hy": _oas_leg(ind, "hy_oas", cc["bands"], through),
+        "bands": cc["bands"],
+        "duration_caveat": ("Computed from the option-adjusted spread series, which are "
+                            "duration-controlled by construction — NOT an ETF price ratio. A raw "
+                            "HYG-versus-LQD ratio is prohibited (duration-confounding, per the ledger)."),
+        "footnote": ("States against ten-year OAS history: tight (<20th percentile), normal (20–60th), "
+                     "wide (60–90th), stressed (>90th). Descriptive; no spread direction implied. "
+                     "Tight spreads mean little compensation for default and illiquidity risk."),
+    }
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
     ind, store, through = load_fred()
 
     curve = curve_state(cfg, ind, through)
+    credit = credit_state(cfg, ind, through)
 
     session = str(through.date())
     return {
@@ -129,6 +159,7 @@ def build() -> dict:
         "vintage": {"store": store, "fred_through": str(through.date()), "history_years": HISTORY_YEARS},
         "config_frozen_at": cfg.get("frozen_at"),
         "curve": curve,
+        "credit": credit,
         "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction.",
     }
 
@@ -141,6 +172,9 @@ def main() -> int:
     c = payload["curve"]
     log(f"saved states.json  vintage={payload['vintage']['store']} through {payload['session_date']}")
     log(f"  curve: 2s10s {c['slope_2s10s_bps']}bp (pctile {c['slope_2s10s_pctile_10y']}) → state {c['state']!r}")
+    cr = payload["credit"]
+    log(f"  credit IG: {cr['ig']['oas_bps']}bp (pctile {cr['ig']['pctile_10y']}) → {cr['ig']['state']!r} · "
+        f"HY: {cr['hy']['oas_bps']}bp (pctile {cr['hy']['pctile_10y']}) → {cr['hy']['state']!r}")
     return 0
 
 

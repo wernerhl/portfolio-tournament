@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:21:03-06:00",
+  "computed_at": "2026-09-16T22:22:00-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -82,6 +82,49 @@
       }
     ],
     "footnote": "States: inverted (2s10s below its 10th percentile over ten years), flat (10th\u201340th), normal (40th\u201380th), steep (above 80th). Descriptive; no rate direction implied."
+  },
+  "credit": {
+    "method": "option-adjusted spread (OAS) series \u2014 IG BAMLC0A0CM, HY BAMLH0A0HYM2 \u2014 which are duration-controlled by construction; NOT an ETF price ratio",
+    "ig": {
+      "oas_pct": 0.8,
+      "oas_bps": 80.0,
+      "pctile_10y": 21.5,
+      "state": "normal",
+      "as_of": "2026-09-14"
+    },
+    "hy": {
+      "oas_pct": 2.71,
+      "oas_bps": 271.0,
+      "pctile_10y": 10.1,
+      "state": "tight",
+      "as_of": "2026-09-14"
+    },
+    "bands": [
+      {
+        "id": "tight",
+        "max_pct": 20,
+        "desc": "below the 20th percentile over ten years"
+      },
+      {
+        "id": "normal",
+        "min_pct": 20,
+        "max_pct": 60,
+        "desc": "20th to 60th percentile"
+      },
+      {
+        "id": "wide",
+        "min_pct": 60,
+        "max_pct": 90,
+        "desc": "60th to 90th percentile"
+      },
+      {
+        "id": "stressed",
+        "min_pct": 90,
+        "desc": "above the 90th percentile"
+      }
+    ],
+    "duration_caveat": "Computed from the option-adjusted spread series, which are duration-controlled by construction \u2014 NOT an ETF price ratio. A raw HYG-versus-LQD ratio is prohibited (duration-confounding, per the ledger).",
+    "footnote": "States against ten-year OAS history: tight (<20th percentile), normal (20\u201360th), wide (60\u201390th), stressed (>90th). Descriptive; no spread direction implied. Tight spreads mean little compensation for default and illiquidity risk."
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
 }
