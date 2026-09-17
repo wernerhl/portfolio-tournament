@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:29:17-06:00",
+  "computed_at": "2026-09-16T22:30:15-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -559,6 +559,237 @@
       ],
       "message": "The top name (MU) is 57% of the book's variance, above 40%. Adding 10% of NAV ($22,218) in an intermediate Treasury (IEF, ~0 equity beta, funded from cash) leaves the SPY \u221220% stress loss at -32.9% of NAV essentially unchanged and moves book volatility from 31.5% to 31.5%. Halving MU to cash instead takes the SPY \u221220% loss to -25.4% of NAV. Fixed-income diversification has limited effect until the equity concentration is reduced.",
       "note": "The marginal effect of adding a bond sleeve, at the book's current concentration. This is the honest first message and is shown, not buried. Descriptive."
+    },
+    "whole_portfolio_stress": {
+      "equity_scenarios": [
+        {
+          "id": "smh_-30",
+          "label": "Semiconductors (SMH) \u221230%",
+          "loss": -41279.91,
+          "share_nav": -0.1858,
+          "share_equity": -0.2796
+        },
+        {
+          "id": "spy_-20",
+          "label": "Market (SPY) \u221220%",
+          "loss": -72975.89,
+          "share_nav": -0.3285,
+          "share_equity": -0.4942
+        },
+        {
+          "id": "spy_-34",
+          "label": "Market (SPY) \u221234%, 2020-scale",
+          "loss": -124059.02,
+          "share_nav": -0.5584,
+          "share_equity": -0.8402
+        },
+        {
+          "id": "ai_infra_-30",
+          "label": "AI infrastructure basket \u221230%",
+          "loss": -38570.28,
+          "share_nav": -0.1736,
+          "share_equity": -0.2612
+        },
+        {
+          "id": "memory_-40",
+          "label": "Memory \u221240%",
+          "loss": -18480.6,
+          "share_nav": -0.0832,
+          "share_equity": -0.1252
+        },
+        {
+          "id": "bmnr_0",
+          "label": "BMNR to zero",
+          "loss": -5153.81,
+          "share_nav": -0.0232,
+          "share_equity": -0.0349
+        }
+      ],
+      "fixed_income": {
+        "rate_shock": {
+          "magnitude": "\u00b1100bp parallel",
+          "method": "sleeve return \u2248 \u2213 effective duration \u00d7 0.01"
+        },
+        "spread_shock": {
+          "magnitude": "index OAS widened to its 90th percentile over ten years",
+          "ig": {
+            "current_bps": 80.0,
+            "p90_bps": 123.0,
+            "widen_decimal": 0.0043
+          },
+          "hy": {
+            "current_bps": 271.0,
+            "p90_bps": 397.0,
+            "widen_decimal": 0.0126
+          },
+          "method": "credit sleeve return \u2248 \u2212 spread duration \u00d7 spread widening"
+        },
+        "sleeves": [
+          {
+            "ticker": "SHV",
+            "effective_duration": 0.35,
+            "rate_up_100bp": -0.0035,
+            "rate_down_100bp": 0.0035,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "SHY",
+            "effective_duration": 1.85,
+            "rate_up_100bp": -0.0185,
+            "rate_down_100bp": 0.0185,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "IEF",
+            "effective_duration": 7.3,
+            "rate_up_100bp": -0.073,
+            "rate_down_100bp": 0.073,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "TLT",
+            "effective_duration": 16.5,
+            "rate_up_100bp": -0.165,
+            "rate_down_100bp": 0.165,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "GOVT",
+            "effective_duration": 5.9,
+            "rate_up_100bp": -0.059,
+            "rate_down_100bp": 0.059,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "TIP",
+            "effective_duration": 6.8,
+            "rate_up_100bp": -0.068,
+            "rate_down_100bp": 0.068,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "VCSH",
+            "effective_duration": 2.6,
+            "rate_up_100bp": -0.026,
+            "rate_down_100bp": 0.026,
+            "credit_index": "ig",
+            "spread_duration": 2.6,
+            "spread_widen_return": -0.0112
+          },
+          {
+            "ticker": "VCIT",
+            "effective_duration": 6.2,
+            "rate_up_100bp": -0.062,
+            "rate_down_100bp": 0.062,
+            "credit_index": "ig",
+            "spread_duration": 6.2,
+            "spread_widen_return": -0.0267
+          },
+          {
+            "ticker": "LQD",
+            "effective_duration": 8.4,
+            "rate_up_100bp": -0.084,
+            "rate_down_100bp": 0.084,
+            "credit_index": "ig",
+            "spread_duration": 8.4,
+            "spread_widen_return": -0.0361
+          },
+          {
+            "ticker": "HYG",
+            "effective_duration": 3.2,
+            "rate_up_100bp": -0.032,
+            "rate_down_100bp": 0.032,
+            "credit_index": "hy",
+            "spread_duration": 3.2,
+            "spread_widen_return": -0.0403
+          },
+          {
+            "ticker": "JNK",
+            "effective_duration": 3.3,
+            "rate_up_100bp": -0.033,
+            "rate_down_100bp": 0.033,
+            "credit_index": "hy",
+            "spread_duration": 3.3,
+            "spread_widen_return": -0.0416
+          },
+          {
+            "ticker": "BKLN",
+            "effective_duration": 0.2,
+            "rate_up_100bp": -0.002,
+            "rate_down_100bp": 0.002,
+            "credit_index": "hy",
+            "spread_duration": 2.5,
+            "spread_widen_return": -0.0315
+          },
+          {
+            "ticker": "FLOT",
+            "effective_duration": 0.1,
+            "rate_up_100bp": -0.001,
+            "rate_down_100bp": 0.001,
+            "credit_index": "ig",
+            "spread_duration": 0.1,
+            "spread_widen_return": -0.0004
+          },
+          {
+            "ticker": "EMB",
+            "effective_duration": 7.0,
+            "rate_up_100bp": -0.07,
+            "rate_down_100bp": 0.07,
+            "credit_index": "hy",
+            "spread_duration": 7.0,
+            "spread_widen_return": -0.0882
+          },
+          {
+            "ticker": "MUB",
+            "effective_duration": 6.3,
+            "rate_up_100bp": -0.063,
+            "rate_down_100bp": 0.063,
+            "credit_index": "ig",
+            "spread_duration": 6.3,
+            "spread_widen_return": -0.0271
+          },
+          {
+            "ticker": "MBB",
+            "effective_duration": 5.9,
+            "rate_up_100bp": -0.059,
+            "rate_down_100bp": 0.059,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "AGG",
+            "effective_duration": 6.0,
+            "rate_up_100bp": -0.06,
+            "rate_down_100bp": 0.06,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          },
+          {
+            "ticker": "BND",
+            "effective_duration": 5.9,
+            "rate_up_100bp": -0.059,
+            "rate_down_100bp": 0.059,
+            "credit_index": null,
+            "spread_duration": null,
+            "spread_widen_return": null
+          }
+        ]
+      },
+      "note": "One portfolio. The equity scenarios are the book's actual losses; the fixed-income rows are per-sleeve sensitivities (the book holds no bonds), shown so a candidate sleeve's behaviour under the same stress is visible beside the equity book. Descriptive."
     }
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."

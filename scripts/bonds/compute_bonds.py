@@ -426,6 +426,63 @@ def conditional_message(bk: dict, srets: pd.DataFrame, spy_ret: pd.Series, bj: d
     }
 
 
+# ── 4.3 whole-portfolio stress ─────────────────────────────────────────────
+def pctile_level(series: pd.Series, through: pd.Timestamp, q: float, years: int = HISTORY_YEARS) -> float | None:
+    w = series.loc[through - pd.DateOffset(years=years):through].dropna()
+    if len(w) < 250:
+        return None
+    return float(np.percentile(w, q))
+
+
+def whole_portfolio_stress(bj: dict, sm: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
+    """One portfolio: the equity stress scenarios alongside the fixed-income sleeves' rate and
+    spread shocks. Rate shock ±100bp via each sleeve's duration; spread shock via each credit
+    sleeve's spread duration, widening its index OAS to the 90th percentile (order §7). The book
+    holds no bonds, so the fixed-income rows are per-sleeve sensitivities — how each sleeve would
+    behave under the same stress — shown beside the equity book so the user sees one portfolio."""
+    eq = [{"id": s.get("id"), "label": s.get("label"), "loss": s.get("loss"),
+           "share_nav": s.get("share_nav"), "share_equity": s.get("share_equity")}
+          for s in bj.get("stress", [])]
+
+    # spread widening magnitude: index OAS to its 90th percentile, minus current (in decimal)
+    def widen(col):
+        cur, _ = last_valid(ind[col]) if col in ind.columns else (None, None)
+        p90 = pctile_level(ind[col], through, 90) if col in ind.columns else None
+        if cur is None or p90 is None:
+            return None, None, None
+        d = max(0.0, p90 - cur)                     # percent
+        return round(cur * 100, 0), round(p90 * 100, 0), round(d / 100.0, 4)  # cur bps, p90 bps, decimal move
+    ig_cur, ig_p90, ig_move = widen("ig_oas")
+    hy_cur, hy_p90, hy_move = widen("hy_oas")
+    widen_map = {"ig": ig_move, "hy": hy_move}
+
+    rows = []
+    for tk in bc.sleeve_tickers():
+        dur = bc.EFF_DURATION.get(tk)
+        rate_up = round(-dur * 0.01, 4) if dur is not None else None       # +100bp → price return
+        rate_dn = round(dur * 0.01, 4) if dur is not None else None        # −100bp
+        sd = bc.SPREAD_DURATION.get(tk); idx = bc.CREDIT_INDEX.get(tk)
+        move = widen_map.get(idx) if idx else None
+        spread_ret = round(-sd * move, 4) if (sd is not None and move is not None) else None
+        rows.append({"ticker": tk, "effective_duration": dur, "rate_up_100bp": rate_up, "rate_down_100bp": rate_dn,
+                     "credit_index": idx, "spread_duration": sd, "spread_widen_return": spread_ret})
+
+    return {
+        "equity_scenarios": eq,
+        "fixed_income": {
+            "rate_shock": {"magnitude": "±100bp parallel", "method": "sleeve return ≈ ∓ effective duration × 0.01"},
+            "spread_shock": {"magnitude": "index OAS widened to its 90th percentile over ten years",
+                             "ig": {"current_bps": ig_cur, "p90_bps": ig_p90, "widen_decimal": ig_move},
+                             "hy": {"current_bps": hy_cur, "p90_bps": hy_p90, "widen_decimal": hy_move},
+                             "method": "credit sleeve return ≈ − spread duration × spread widening"},
+            "sleeves": rows,
+        },
+        "note": ("One portfolio. The equity scenarios are the book's actual losses; the fixed-income rows "
+                 "are per-sleeve sensitivities (the book holds no bonds), shown so a candidate sleeve's "
+                 "behaviour under the same stress is visible beside the equity book. Descriptive."),
+    }
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -443,7 +500,8 @@ def build() -> dict:
     etfs = ba.load_etfs(); spy_ret = ba.daily_returns(etfs)["SPY"] if "SPY" in etfs.columns else pd.Series(dtype=float)
     bj = _book_json()
     book_int = {"menu": diversifier_menu(sm),
-                "conditional_message": conditional_message(bk, srets, spy_ret, bj)}
+                "conditional_message": conditional_message(bk, srets, spy_ret, bj),
+                "whole_portfolio_stress": whole_portfolio_stress(bj, sm, ind, through)}
 
     session = str(through.date())
     return {
