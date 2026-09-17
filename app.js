@@ -3052,6 +3052,7 @@ function drawCharts(allSeries){
     renderDrawdownChart();      // P2.1 (tier one)
     renderC3PathChart();        // P2.2 (tier two)
     renderCalibrationChart();   // P4.2 (tier three)
+    renderBondsCurveChart();    // fixed-income module (bonds page; guarded by canvas id)
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
       // Scroll FIRST so the panel area is committed to layout, then render
@@ -3084,4 +3085,140 @@ function c2TierTitle(tid){
   const c = S.c2 && S.c2.drawdown_reduction && S.c2.drawdown_reduction[tid];
   if (!c || !c.rev || !c.pit) return "max drawdown of the displayed series";
   return `C2: 24-indicator overlay through the same engine — drawdown reduction vs SPY ${(c.rev.dd_reduction_vs_spy*100).toFixed(1)}% on revised inputs (max DD ${(c.rev.max_dd*100).toFixed(1)}%) vs ${(c.pit.dd_reduction_vs_spy*100).toFixed(1)}% on point-in-time inputs (max DD ${(c.pit.max_dd*100).toFixed(1)}%). The displayed max DD is the served series (internal vol-index sizing, no FRED inputs).`;
+}
+
+// ── Fixed-income module (order 16-Sept-2026, Phase 5) ────────────────────────────────────
+// bonds.html panels. Every panel is descriptive: states and associations, no rate forecast,
+// no buy or sell instruction. The rates-regime state carries the DIAGNOSTIC label.
+function _bpct(v, d){ return v == null ? "—" : (v).toFixed(d == null ? 1 : d) + "%"; }
+function _bnum(v, d){ return v == null ? "—" : (+v).toFixed(d == null ? 2 : d); }
+function _diagChip(){ return `<span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span>`; }
+const _CURVE_STATE_CLR = {inverted:"c-neg", flat:"c-warn", normal:"c-2", steep:"c-pos"};
+const _CREDIT_STATE_CLR = {tight:"c-warn", normal:"c-2", wide:"c-warn", stressed:"c-neg"};
+
+function renderBondsCurve(){
+  const s = S.bondsStates; if (!s || !s.curve) return `<div class="rcc-card"><h3>THE CURVE</h3><div class="mono t1 c-3">data/bonds/states.json not loaded</div></div>`;
+  const c = s.curve; const clr = _CURVE_STATE_CLR[c.state] || "c-2";
+  const mats = (c.maturities || []).map(m => `<tr><td class="mono t2 c-1 w6">${m.maturity}</td><td class="num c-2">${m.level_pct == null ? "<span class='c-3'>unavailable</span>" : _bpct(m.level_pct)}</td><td class="num c-3">${m.pctile_10y == null ? "—" : m.pctile_10y + "th"}</td></tr>`).join("");
+  return `<div class="rcc-card"><h3>THE CURVE · <span class="c-3 w5">Treasury level and slope, and each maturity's place in its ten-year range</span>${asOfBadge(c.as_of || s.session_date)}</h3>
+    <div class="dd-body"><div class="dd-wrap"><canvas id="bonds-curve-chart" height="220"></canvas></div>
+    <div class="stress-panel"><div class="fx-head mono t1 c-3">STATE · <span class="${clr} w6">${(c.state||"—").toUpperCase()}</span></div>
+      <div class="mono t1 c-2 mt1">2s10s slope <span class="c-1 w6">${c.slope_2s10s_bps == null ? "—" : c.slope_2s10s_bps + "bp"}</span> · ${c.slope_2s10s_pctile_10y == null ? "—" : c.slope_2s10s_pctile_10y + "th percentile over ten years"}</div>
+      <div class="mono t1 c-3 mt1">3m10y ${c.slope_3m10y_pct == null ? "—" : _bpct(c.slope_3m10y_pct)}</div>
+      <table class="stress-table mt1"><tr><th>MATURITY</th><th class="num">YIELD</th><th class="num">10y %ILE</th></tr>${mats}</table>
+    </div></div>
+    <div class="chart-meta">${c.footnote || ""} · vintage: ${(s.vintage && s.vintage.store) || "—"}</div></div>`;
+}
+
+function renderBondsCurveChart(){
+  const s = S.bondsStates; const ch = s && s.curve && s.curve.chart; const ctx = document.getElementById("bonds-curve-chart");
+  if (!ch || !ctx) return;
+  if (S.bondsCurveChart){ try { S.bondsCurveChart.destroy(); } catch(e){} }
+  const CV = CHARTS.colors();
+  const styles = [{c: CV.pos, w: 2.5, d: []}, {c: CHARTS.alpha(CV.info,0.8), w: 1.5, d: [4,3]}, {c: CHARTS.alpha(CV.neg,0.6), w: 1.5, d: [2,3]}];
+  const datasets = (ch.series || []).map((ser, i) => ({
+    label: ser.label, data: ser.yields.map(y => y == null ? null : y),
+    borderColor: styles[i].c, borderWidth: styles[i].w, borderDash: styles[i].d,
+    tension: 0.2, pointRadius: 3, pointBackgroundColor: styles[i].c, spanGaps: true, fill: false }));
+  try {
+    S.bondsCurveChart = CHARTS.make(ctx, {
+      type: "line",
+      data: { labels: ch.maturities, datasets },
+      options: { plugins: { tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y == null ? "n/a" : c.parsed.y.toFixed(2) + "%"}` } } },
+        scales: { y: { ticks: { callback: v => Number(v).toFixed(1) + "%" } } } },
+    });
+  } catch(e){ console.error("[bonds-curve] Chart.js failed:", e); }
+}
+
+function renderBondsCredit(){
+  const s = S.bondsStates; if (!s || !s.credit) return "";
+  const c = s.credit; const leg = (x, name) => {
+    const clr = _CREDIT_STATE_CLR[x.state] || "c-2";
+    return `<div class="so-cell"><div class="k">${name}</div><div class="v ${clr}">${x.oas_bps == null ? "—" : x.oas_bps + "bp"}</div><div class="s">${x.pctile_10y == null ? "" : x.pctile_10y + "th percentile · " + (x.state || "")}</div></div>`;
+  };
+  return `<div class="rcc-card"><h3>CREDIT SPREADS · <span class="c-3 w5">investment grade and high yield against their own ten-year history</span>${asOfBadge(c.ig && c.ig.as_of || s.session_date)}</h3>
+    <div class="so-strip">${leg(c.ig, "IG OAS")}${leg(c.hy, "HY OAS")}</div>
+    <div class="chart-meta">${c.duration_caveat || ""}</div>
+    <div class="chart-meta">${c.footnote || ""}</div></div>`;
+}
+
+function renderBondsBreakeven(){
+  const s = S.bondsStates; const r = s && s.real_nominal; if (!r) return "";
+  return `<div class="rcc-card"><h3>REAL VS NOMINAL · <span class="c-3 w5">the 10-year breakeven as priced inflation, and the real yield</span>${asOfBadge(r.as_of || s.session_date)}</h3>
+    <div class="so-strip">
+      <div class="so-cell"><div class="k">10Y BREAKEVEN</div><div class="v c-1">${_bpct(r.breakeven_10y_pct)}</div><div class="s">${r.breakeven_10y_pctile_10y == null ? "" : r.breakeven_10y_pctile_10y + "th percentile · priced inflation"}</div></div>
+      <div class="so-cell"><div class="k">REAL 10Y YIELD</div><div class="v c-2">${r.real_10y_yield_pct == null ? "<span class='c-3'>unavailable</span>" : _bpct(r.real_10y_yield_pct)}</div><div class="s">${r.real_10y_yield_pct == null ? "DFII10 pending FRED fetch" : "DFII10"}</div></div>
+      <div class="so-cell"><div class="k">5y5y FORWARD</div><div class="v c-2">${r.fwd_5y5y_infl_pct == null ? "<span class='c-3'>unavailable</span>" : _bpct(r.fwd_5y5y_infl_pct)}</div><div class="s">${r.fwd_5y5y_infl_pct == null ? "T5YIFR pending FRED fetch" : "T5YIFR"}</div></div>
+    </div>
+    <div class="chart-meta">${r.footnote || ""}</div></div>`;
+}
+
+function renderBondsRatesRegime(){
+  const s = S.bondsStates; const rr = s && s.rates_regime; if (!rr) return "";
+  return `<div class="rcc-card"><h3>THE RATES REGIME ${_diagChip()} · <span class="c-3 w5">a combined curve-plus-credit state, a diagnostic lens</span>${asOfBadge(s.session_date)}</h3>
+    <div class="mono t2 c-1 w7">${(rr.state || "—").toUpperCase()}</div>
+    <div class="mono t1 c-2 mt1">${rr.basis || ""} · favours ${rr.favors || ""}</div>
+    <div class="mono t1 c-3 mt1">inputs: curve ${(rr.inputs && rr.inputs.curve_state) || "—"} · IG ${(rr.inputs && rr.inputs.credit_ig_state) || "—"} · HY ${(rr.inputs && rr.inputs.credit_hy_state) || "—"}</div>
+    <div class="chart-meta c-warn">${rr.gate || ""}</div>
+    <div class="chart-meta">registration: ${rr.registration || ""}</div></div>`;
+}
+
+function renderBondsAllocationReads(){
+  const s = S.bondsStates; const a = s && s.allocation_questions; if (!a) return "";
+  const card = (q) => q ? `<div class="th-pending-wrap"><div class="mono t1 w6 c-1">${q.question}</div><div class="mono t1 c-2 mt1">${q.read || ""}</div><div class="chart-meta">${q.note || ""}</div></div>` : "";
+  return `<div class="rcc-card"><h3>THE ALLOCATION READS · <span class="c-3 w5">observable, evidence-based; each registered before it runs; no rate forecast</span>${asOfBadge(s.session_date)}</h3>
+    ${card(a.duration)}${card(a.credit)}${card(a.real_vs_nominal)}</div>`;
+}
+
+function bondsSortBy(key){
+  const cur = S._bondsSort || {key: "correlation_to_book", dir: 1};
+  S._bondsSort = (cur.key === key) ? {key, dir: -cur.dir} : {key, dir: (key === "correlation_to_book" ? 1 : -1)};
+  if (typeof render === "function") render();
+}
+function renderBondsSleeveMenu(){
+  const m = S.bondsStates && S.bondsStates.book_integration && S.bondsStates.book_integration.menu; if (!m) return "";
+  const sort = S._bondsSort || {key: "correlation_to_book", dir: 1};
+  const rows = (m.sleeves || []).slice().sort((x, y) => {
+    const a = x[sort.key], b = y[sort.key];
+    if (a == null) return 1; if (b == null) return -1;
+    return (a > b ? 1 : a < b ? -1 : 0) * sort.dir;
+  });
+  const cols = [["ticker","SLEEVE"],["distribution_yield_pct","YIELD"],["effective_duration","DURATION"],["yield_per_duration","YIELD/DUR"],["vol_126_ann","VOL 126"],["correlation_to_book","CORR→BOOK"]];
+  const head = cols.map(([k,l]) => `<th class="${k==="ticker"?"":"num"} ptr" onclick="bondsSortBy('${k}')">${l}${sort.key===k?(sort.dir>0?" ▲":" ▼"):""}</th>`).join("");
+  const body = rows.map(r => {
+    const corr = r.correlation_to_book; const c = corr == null ? 0 : corr;
+    const bar = `<span class="sleeve-bar"><span class="sleeve-zero"></span><span class="sleeve-fill ${c>=0?"bg-warn":"bg-pos"}" style="left:${c>=0?50:50+c*50}%;width:${Math.abs(c)*50}%"></span></span>`;
+    return `<tr><td class="mono t2 c-1 w6" title="${r.role||""}">${r.ticker}</td>
+      <td class="num c-2">${_bpct(r.distribution_yield_pct,2)}</td>
+      <td class="num c-2">${_bnum(r.effective_duration,2)}</td>
+      <td class="num c-2">${_bnum(r.yield_per_duration,3)}</td>
+      <td class="num c-3">${r.vol_126_ann==null?"—":_bpct(r.vol_126_ann*100,1)}</td>
+      <td class="num c-1">${corr==null?"—":corr.toFixed(2)} ${bar}</td></tr>`;
+  }).join("");
+  return `<div class="rcc-card"><h3>THE SLEEVE MENU · <span class="c-3 w5">sorted by correlation to the book — a sleeve's value here is its correlation with what is held, not its yield</span>${asOfBadge(S.bondsStates.session_date)}</h3>
+    <div class="tbl-scroll"><table class="sleeves-table"><tr>${head}</tr>${body}</table></div>
+    <div class="chart-meta">${m.note || ""} · click a header to sort</div></div>`;
+}
+
+function renderBondsConditional(){
+  const cm = S.bondsStates && S.bondsStates.book_integration && S.bondsStates.book_integration.conditional_message; if (!cm) return "";
+  const tn = cm.top_name || {};
+  return `<div class="rcc-card"><h3>ADDING A SLEEVE TO THIS BOOK · <span class="c-3 w5">the marginal effect on volatility and stress loss, at the book's current concentration</span></h3>
+    ${cm.fires ? `<div class="mono t1 c-warn w5">${cm.message || ""}</div>` : `<div class="mono t1 c-2">Top-name risk share ${tn.risk_share==null?"—":(tn.risk_share*100).toFixed(0)+"%"} (below 40%): diversification effects are not concentration-limited.</div>`}
+    <div class="chart-meta">${cm.note || ""}</div></div>`;
+}
+
+function renderBondsWholeStress(){
+  const w = S.bondsStates && S.bondsStates.book_integration && S.bondsStates.book_integration.whole_portfolio_stress; if (!w) return "";
+  const eq = (w.equity_scenarios || []).map(s => `<tr><td class="c-2">${s.label||s.id}</td><td class="num c-neg">${s.share_nav==null?"—":(s.share_nav*100).toFixed(1)+"%"}</td></tr>`).join("");
+  const fi = (w.fixed_income && w.fixed_income.sleeves || []).map(r => `<tr><td class="mono t2 c-1 w6">${r.ticker}</td><td class="num c-neg">${r.rate_up_100bp==null?"—":(r.rate_up_100bp*100).toFixed(1)+"%"}</td><td class="num c-pos">${r.rate_down_100bp==null?"—":"+"+(r.rate_down_100bp*100).toFixed(1)+"%"}</td><td class="num c-neg">${r.spread_widen_return==null?"—":(r.spread_widen_return*100).toFixed(1)+"%"}</td></tr>`).join("");
+  const sp = w.fixed_income && w.fixed_income.spread_shock || {};
+  return `<div class="rcc-card"><h3>WHOLE-PORTFOLIO STRESS · <span class="c-3 w5">the equity book's scenarios beside each sleeve's rate and spread sensitivity — one portfolio</span></h3>
+    <div class="book-grid">
+      <div><div class="fx-head mono t1 c-3">EQUITY BOOK (actual losses, share of NAV)</div>
+        <table class="stress-table"><tr><th>SCENARIO</th><th class="num">OF NAV</th></tr>${eq}</table></div>
+      <div><div class="fx-head mono t1 c-3">FIXED-INCOME SLEEVES (per-sleeve sensitivity)</div>
+        <table class="stress-table"><tr><th>SLEEVE</th><th class="num">+100bp</th><th class="num">−100bp</th><th class="num">SPREAD→90th</th></tr>${fi}</table></div>
+    </div>
+    <div class="chart-meta">rate shock ±100bp via duration; spread shock to the 90th-percentile OAS (IG ${sp.ig&&sp.ig.current_bps}→${sp.ig&&sp.ig.p90_bps}bp, HY ${sp.hy&&sp.hy.current_bps}→${sp.hy&&sp.hy.p90_bps}bp) via spread duration. ${w.note || ""}</div></div>`;
 }

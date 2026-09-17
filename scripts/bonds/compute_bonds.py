@@ -76,6 +76,27 @@ def band_for(pct: float | None, bands: list[dict]) -> str | None:
 
 
 # ── 2.1 curve state ────────────────────────────────────────────────────────
+def _asof(series: pd.Series, sessions_ago: int, through: pd.Timestamp) -> float | None:
+    s = series.dropna().loc[:through]
+    if len(s) <= sessions_ago:
+        return None
+    return round(float(s.iloc[-1 - sessions_ago]), 2)
+
+
+def curve_chart(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
+    """The curve today, three months ago (~63 sessions) and one year ago (~252 sessions),
+    for the curve panel. Maturities absent from the store are omitted, not substituted."""
+    labels, cur, m3, y1 = [], [], [], []
+    for m in cfg["maturities"]:
+        if m in ind.columns and ind[m].dropna().size:
+            labels.append(cfg["maturity_labels"].get(m, m))
+            cur.append(_asof(ind[m], 0, through)); m3.append(_asof(ind[m], 63, through)); y1.append(_asof(ind[m], 252, through))
+    return {"maturities": labels,
+            "series": [{"label": "today", "yields": cur},
+                       {"label": "3 months ago", "yields": m3},
+                       {"label": "1 year ago", "yields": y1}]}
+
+
 def curve_state(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
     cc = cfg["curve"]
     have = lambda c: c in ind.columns and ind[c].dropna().size > 0
@@ -107,6 +128,7 @@ def curve_state(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
         "state": state,
         "as_of": str(slope_date.date()) if slope_date is not None else None,
         "maturities": maturities,
+        "chart": curve_chart(cfg, ind, through),
         "bands": cc["bands"],
         "footnote": ("States: inverted (2s10s below its 10th percentile over ten years), flat (10th–40th), "
                      "normal (40th–80th), steep (above 80th). Descriptive; no rate direction implied."),

@@ -32,6 +32,9 @@ const FILES = {
   screen:["data/screen/scores.json","json"], screenStatus:["data/screen/status.json","json"],
   visReg:["data/screen/visibility_registry.json","json"], reconciliation:["data/screen/reconciliation.json","json"],
   auditLast:["reports/audit_last.txt","text"],
+  // fixed-income module (order 16-Sept-2026)
+  bondsStates:["data/bonds/states.json","json"], bondsMetrics:["data/bonds/sleeve_metrics.json","json"],
+  bondsUniverse:["data/bonds/sleeve_universe.json","json"],
 };
 async function loadFiles(keys, into){
   const target = into || S;
@@ -50,7 +53,7 @@ async function loadFiles(keys, into){
 }
 
 // The navigation strip: seven pages and the guide; the current page marked.
-const NAV = [["index.html","Home"],["book.html","Book"],["screen.html","Screen"],["tournament.html","Tournament"],
+const NAV = [["index.html","Home"],["book.html","Book"],["bonds.html","Bonds"],["screen.html","Screen"],["tournament.html","Tournament"],
              ["evidence.html","Evidence"],["register.html","Register"],["system.html","System"],["guide.html","Guide"]];
 function renderNav(page){
   return `<nav class="site-nav" aria-label="Pages">${NAV.map(([href, label]) => {
