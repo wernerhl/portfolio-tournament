@@ -47,6 +47,13 @@ PIT_SERIES = {
     "hy_oas": "BAMLH0A0HYM2",
     "us10y": "DGS10", "us03m": "DGS3MO",          # → yield_3m10y
     "baa_yield": "BAA", "aaa_yield": "AAA",        # → baa_aaa_spread
+    # order 16-Sept-2026 B1.2 (fixed-income module): the curve/credit/breakeven reads are
+    # computed as-published, so the module's new series carry a point-in-time overlay too.
+    "us02y": "DGS2", "us05y": "DGS5", "us30y": "DGS30",   # → yield_2s10s (2s10s), 5s30s
+    "ig_oas": "BAMLC0A0CM",                                # credit state (IG), as-published
+    "effr": "EFFR",                                        # cash-rate anchor for "paid to take duration"
+    "breakeven_10y": "T10YIE", "fwd_5y5y_infl": "T5YIFR",  # real-vs-nominal read
+    "tips_real_10y": "DFII10",                             # real 10y yield
 }
 # Did the series exist as published data before its first ALFRED vintage?
 # False = the product was created at (about) its first vintage; its earlier
@@ -58,6 +65,11 @@ EXISTED_BEFORE_VINTAGES = {
     "breakeven_5y": True, "mfg_new_orders": True, "loan_tightening": True,
     "consumer_expect": True, "hy_oas": True, "us10y": True, "us03m": True,
     "baa_yield": True, "aaa_yield": True,
+    # order 16-Sept-2026 B1.2: all Treasury CMT, OAS, EFFR and breakeven/real series existed
+    # as published products long before ALFRED began tracking them — release lag honoured,
+    # revisions negligible (yields/OAS are essentially not revised).
+    "us02y": True, "us05y": True, "us30y": True, "ig_oas": True, "effr": True,
+    "breakeven_10y": True, "fwd_5y5y_infl": True, "tips_real_10y": True,
 }
 ROW_CAP = 100_000
 VINTAGE_START = "1990-01-01"
@@ -207,6 +219,9 @@ def main() -> int:
     der_pit = der.copy()
     der_pit["yield_3m10y"] = pit["us10y"] - pit["us03m"]
     der_pit["baa_aaa_spread"] = pit["baa_yield"] - pit["aaa_yield"]
+    # order 16-Sept-2026 B1.2: the curve state's 2s10s, as-published (module 2.1)
+    if "us02y" in pit.columns:
+        der_pit["yield_2s10s"] = pit["us10y"] - pit["us02y"]
     der_pit.to_parquet(SOURCE / "fred_derived_pit.parquet")
     with open(SOURCE / "fred_vintage_meta.json", "w") as f:
         json.dump(meta, f, indent=2)

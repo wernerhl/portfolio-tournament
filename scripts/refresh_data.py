@@ -440,11 +440,19 @@ def main():
             fred_series = {
                 "hy_oas":"BAMLH0A0HYM2", "ig_oas":"BAMLC0A0CM",
                 "us02y":"DGS2", "us10y":"DGS10", "us03m":"DGS3MO",
+                # order 16-Sept-2026 B1.2 (fixed-income module): 5y and 30y CMT so the
+                # curve is read at 3m/2y/5y/10y/30y; the module's curve state uses 2s10s
+                # (already derived) and reports each maturity's percentile in its 10y range.
+                "us05y":"DGS5", "us30y":"DGS30",
                 "sofr":"SOFR", "effr":"EFFR", "ted_spread":"TEDRATE",
                 "claims_weekly":"ICSA", "claims_4wk":"IC4WSA", "continued_claims":"CCSA",
                 "fed_balance_sheet":"WALCL", "rrp":"RRPONTSYD",
                 "nfci":"NFCI", "anfci":"ANFCI",
                 "breakeven_5y":"T5YIE", "breakeven_10y":"T10YIE",
+                # order 16-Sept-2026 B1.2: 5y5y forward breakeven and the real 10y yield
+                # (TIPS). The real-vs-nominal read (module 2.3) uses breakeven_10y with
+                # tips_real_10y; fwd_5y5y_infl is the market's longer-horizon priced inflation.
+                "fwd_5y5y_infl":"T5YIFR", "tips_real_10y":"DFII10",
                 "baa_yield":"BAA", "aaa_yield":"AAA",
                 "mortgage_30y":"MORTGAGE30US",
                 "umich_sentiment":"UMCSENT", "ism_mfg":"BUSLOANS",
