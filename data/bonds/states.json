@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:24:11-06:00",
+  "computed_at": "2026-09-16T22:24:33-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -190,6 +190,16 @@
       },
       "read": "IG spreads pick up 80.0bp over duration-matched Treasuries (21.5th percentile, normal); HY 271.0bp (10.1th percentile, tight).",
       "note": "The pickup is the option-adjusted spread over duration-matched Treasuries. Credit spreads mean-revert slowly; a tight percentile means little compensation for default and illiquidity risk. Descriptive; no spread-direction prediction."
+    },
+    "real_vs_nominal": {
+      "question": "TIPS or nominal Treasuries?",
+      "maturity": "10y",
+      "breakeven_pct": 2.38,
+      "breakeven_pctile_10y": 81.9,
+      "real_10y_yield_pct": null,
+      "read": "At the 10-year maturity, TIPS and nominal Treasuries carry the same real yield when inflation runs at the 2.38% breakeven; TIPS out-carry nominal if realized inflation exceeds 2.38%, nominal out-carry if it runs below. The breakeven sits at its 81.9th percentile over ten years \u2014 the inflation compensation priced into nominals is historically high.",
+      "note": "Descriptive; decides only which carries better at the breakeven, not an inflation forecast.",
+      "real_10y_unavailable": "DFII10 not yet in the store (pending FRED fetch); the read uses the breakeven identity only"
     }
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."

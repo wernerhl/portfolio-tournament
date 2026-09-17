@@ -245,6 +245,29 @@ def q_credit(credit: dict) -> dict:
     }
 
 
+# ── 3.3 real vs nominal ────────────────────────────────────────────────────
+def q_real_nominal(realnom: dict) -> dict:
+    """At the 10-year maturity, which of TIPS and nominal Treasuries has the higher real
+    carry given the breakeven. Descriptive — a break-even identity, not an inflation call."""
+    be = realnom.get("breakeven_10y_pct")
+    pct = realnom.get("breakeven_10y_pctile_10y")
+    real10 = realnom.get("real_10y_yield_pct")
+    read = (f"At the 10-year maturity, TIPS and nominal Treasuries carry the same real yield when "
+            f"inflation runs at the {be}% breakeven; TIPS out-carry nominal if realized inflation "
+            f"exceeds {be}%, nominal out-carry if it runs below. The breakeven sits at its {pct}th "
+            f"percentile over ten years — the inflation compensation priced into nominals is "
+            f"{'historically high' if (pct is not None and pct >= 70) else 'in its historical range'}.")
+    out = {
+        "question": "TIPS or nominal Treasuries?",
+        "maturity": "10y", "breakeven_pct": be, "breakeven_pctile_10y": pct, "real_10y_yield_pct": real10,
+        "read": read,
+        "note": "Descriptive; decides only which carries better at the breakeven, not an inflation forecast.",
+    }
+    if real10 is None:
+        out["real_10y_unavailable"] = "DFII10 not yet in the store (pending FRED fetch); the read uses the breakeven identity only"
+    return out
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -254,7 +277,8 @@ def build() -> dict:
     credit = credit_state(cfg, ind, through)
     realnom = real_nominal(ind, through)
     sm = load_sleeve_metrics()
-    alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit)}
+    alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit),
+             "real_vs_nominal": q_real_nominal(realnom)}
 
     session = str(through.date())
     return {
