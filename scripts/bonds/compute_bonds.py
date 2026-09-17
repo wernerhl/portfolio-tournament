@@ -302,6 +302,44 @@ def rates_regime(cfg: dict, curve: dict, credit: dict) -> dict:
     }
 
 
+# ── 4.1 correlation to the equity book (sorted menu) ───────────────────────
+ADD_FRACTION = 0.10   # a "given dollar amount" for the marginal read: 10% of NAV, funded from cash
+
+
+def equity_book():
+    """Return series, dollar figures and weights of the current equity book (holdings.json)."""
+    h = ba.load_holdings()
+    prices = ba.load_prices(); rets = ba.daily_returns(prices)
+    last = prices.ffill().iloc[-1]
+    vals = {}
+    for pos in h.get("holdings", []):
+        tk = str(pos.get("ticker", "")).upper(); sh = pos.get("shares") or 0
+        if sh > 0 and tk in prices.columns and pd.notna(last.get(tk)):
+            vals[tk] = float(sh) * float(last[tk])
+    equity = sum(vals.values()); cash = float(h.get("cash") or 0); nav = equity + cash
+    w_eq = {tk: v / equity for tk, v in vals.items()} if equity else {}
+    eq_series = ba.book_series(rets, w_eq) if w_eq else pd.Series(dtype=float)
+    return {"eq_series": eq_series, "equity": equity, "cash": cash, "nav": nav,
+            "w_eq": w_eq, "vals": vals, "rets": rets, "prices": prices,
+            "holdings_as_of": h.get("as_of")}
+
+
+def diversifier_menu(sm: dict) -> dict:
+    """The sleeve menu sorted by correlation to the book ascending: a sleeve's value to THIS
+    book is its correlation with what is already held, not its standalone yield (order 4.1)."""
+    rows = [{"ticker": r["ticker"], "asset_class": r.get("asset_class"), "role": r.get("role"),
+             "correlation_to_book": r.get("correlation_to_book"),
+             "distribution_yield_pct": r.get("distribution_yield_pct"),
+             "effective_duration": r.get("effective_duration"),
+             "yield_per_duration": r.get("yield_per_duration"),
+             "vol_126_ann": r.get("vol_126_ann")}
+            for r in sm.values()]
+    rows.sort(key=lambda r: (r["correlation_to_book"] is None, r["correlation_to_book"]))
+    return {"sorted_by": "correlation_to_book ascending",
+            "note": "A sleeve's value to this book is its correlation with what is already held, not its standalone yield.",
+            "sleeves": rows}
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -314,6 +352,7 @@ def build() -> dict:
     alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit),
              "real_vs_nominal": q_real_nominal(realnom)}
     rregime = rates_regime(cfg, curve, credit)
+    book_int = {"menu": diversifier_menu(sm)}
 
     session = str(through.date())
     return {
@@ -328,6 +367,7 @@ def build() -> dict:
         "real_nominal": realnom,
         "allocation_questions": alloc,
         "rates_regime": rregime,
+        "book_integration": book_int,
         "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction.",
     }
 

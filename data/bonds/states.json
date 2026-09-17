@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:25:14-06:00",
+  "computed_at": "2026-09-16T22:28:05-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -235,6 +235,194 @@
     "gate": "Gated as DIAGNOSTIC until the pre-registered fixed-income retirement test (rates-regime state vs static duration) passes on the method of the regime retirement test. Drives no sizing. Do not execute on this value.",
     "frozen_at": "2026-09-16",
     "note": "Diagnostic lens, not a forecast. Gated DIAGNOSTIC: it drives no sizing until the pre-registered retirement test passes (Phase 6). Do not execute on this value."
+  },
+  "book_integration": {
+    "menu": {
+      "sorted_by": "correlation_to_book ascending",
+      "note": "A sleeve's value to this book is its correlation with what is already held, not its standalone yield.",
+      "sleeves": [
+        {
+          "ticker": "SHV",
+          "asset_class": "bills",
+          "role": "0-1y Treasury bills (cash proxy)",
+          "correlation_to_book": -0.0166,
+          "distribution_yield_pct": 3.73,
+          "effective_duration": 0.35,
+          "yield_per_duration": 0.1066,
+          "vol_126_ann": 0.0021
+        },
+        {
+          "ticker": "TLT",
+          "asset_class": "treasury",
+          "role": "20y+ Treasury",
+          "correlation_to_book": 0.2363,
+          "distribution_yield_pct": 4.73,
+          "effective_duration": 16.5,
+          "yield_per_duration": 0.0029,
+          "vol_126_ann": 0.0955
+        },
+        {
+          "ticker": "FLOT",
+          "asset_class": "ig_credit_float",
+          "role": "floating-rate investment-grade",
+          "correlation_to_book": 0.2583,
+          "distribution_yield_pct": 4.4,
+          "effective_duration": 0.1,
+          "yield_per_duration": 0.44,
+          "vol_126_ann": 0.0089
+        },
+        {
+          "ticker": "TIP",
+          "asset_class": "tips",
+          "role": "TIPS (inflation-linked Treasury)",
+          "correlation_to_book": 0.2705,
+          "distribution_yield_pct": 4.98,
+          "effective_duration": 6.8,
+          "yield_per_duration": 0.0073,
+          "vol_126_ann": 0.0368
+        },
+        {
+          "ticker": "SHY",
+          "asset_class": "treasury",
+          "role": "1-3y Treasury",
+          "correlation_to_book": 0.2848,
+          "distribution_yield_pct": 3.63,
+          "effective_duration": 1.85,
+          "yield_per_duration": 0.0196,
+          "vol_126_ann": 0.0153
+        },
+        {
+          "ticker": "GOVT",
+          "asset_class": "treasury",
+          "role": "broad Treasury",
+          "correlation_to_book": 0.2886,
+          "distribution_yield_pct": 3.65,
+          "effective_duration": 5.9,
+          "yield_per_duration": 0.0062,
+          "vol_126_ann": 0.0384
+        },
+        {
+          "ticker": "IEF",
+          "asset_class": "treasury",
+          "role": "7-10y Treasury",
+          "correlation_to_book": 0.306,
+          "distribution_yield_pct": 3.97,
+          "effective_duration": 7.3,
+          "yield_per_duration": 0.0054,
+          "vol_126_ann": 0.0512
+        },
+        {
+          "ticker": "BND",
+          "asset_class": "aggregate",
+          "role": "US aggregate",
+          "correlation_to_book": 0.3382,
+          "distribution_yield_pct": 4.04,
+          "effective_duration": 5.9,
+          "yield_per_duration": 0.0068,
+          "vol_126_ann": 0.0414
+        },
+        {
+          "ticker": "MUB",
+          "asset_class": "municipal",
+          "role": "municipal (tax-exempt)",
+          "correlation_to_book": 0.3461,
+          "distribution_yield_pct": 3.25,
+          "effective_duration": 6.3,
+          "yield_per_duration": 0.0052,
+          "vol_126_ann": 0.037
+        },
+        {
+          "ticker": "AGG",
+          "asset_class": "aggregate",
+          "role": "US aggregate",
+          "correlation_to_book": 0.3478,
+          "distribution_yield_pct": 4.05,
+          "effective_duration": 6.0,
+          "yield_per_duration": 0.0067,
+          "vol_126_ann": 0.0428
+        },
+        {
+          "ticker": "MBB",
+          "asset_class": "agency_mbs",
+          "role": "agency mortgage-backed",
+          "correlation_to_book": 0.3555,
+          "distribution_yield_pct": 4.34,
+          "effective_duration": 5.9,
+          "yield_per_duration": 0.0074,
+          "vol_126_ann": 0.0508
+        },
+        {
+          "ticker": "LQD",
+          "asset_class": "ig_credit",
+          "role": "broad investment-grade corporate",
+          "correlation_to_book": 0.3705,
+          "distribution_yield_pct": 4.67,
+          "effective_duration": 8.4,
+          "yield_per_duration": 0.0056,
+          "vol_126_ann": 0.0583
+        },
+        {
+          "ticker": "BKLN",
+          "asset_class": "bank_loans",
+          "role": "senior bank loans (floating rate)",
+          "correlation_to_book": 0.375,
+          "distribution_yield_pct": 6.42,
+          "effective_duration": 0.2,
+          "yield_per_duration": 0.321,
+          "vol_126_ann": 0.0248
+        },
+        {
+          "ticker": "VCSH",
+          "asset_class": "ig_credit",
+          "role": "short investment-grade corporate",
+          "correlation_to_book": 0.3818,
+          "distribution_yield_pct": 4.47,
+          "effective_duration": 2.6,
+          "yield_per_duration": 0.0172,
+          "vol_126_ann": 0.0225
+        },
+        {
+          "ticker": "VCIT",
+          "asset_class": "ig_credit",
+          "role": "intermediate investment-grade corporate",
+          "correlation_to_book": 0.3959,
+          "distribution_yield_pct": 4.89,
+          "effective_duration": 6.2,
+          "yield_per_duration": 0.0079,
+          "vol_126_ann": 0.0473
+        },
+        {
+          "ticker": "EMB",
+          "asset_class": "em_sovereign",
+          "role": "emerging-market USD sovereign",
+          "correlation_to_book": 0.4922,
+          "distribution_yield_pct": 5.14,
+          "effective_duration": 7.0,
+          "yield_per_duration": 0.0073,
+          "vol_126_ann": 0.0679
+        },
+        {
+          "ticker": "JNK",
+          "asset_class": "high_yield",
+          "role": "high yield corporate",
+          "correlation_to_book": 0.5174,
+          "distribution_yield_pct": 6.61,
+          "effective_duration": 3.3,
+          "yield_per_duration": 0.02,
+          "vol_126_ann": 0.0409
+        },
+        {
+          "ticker": "HYG",
+          "asset_class": "high_yield",
+          "role": "high yield corporate",
+          "correlation_to_book": 0.5185,
+          "distribution_yield_pct": 5.88,
+          "effective_duration": 3.2,
+          "yield_per_duration": 0.0184,
+          "vol_126_ann": 0.0422
+        }
+      ]
+    }
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
 }
