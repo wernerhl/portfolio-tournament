@@ -26,6 +26,11 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 import bonds_common as bc
 import book_analytics as ba
+try:
+    from trading_calendar import now_et
+except Exception:                       # pragma: no cover
+    def now_et():
+        return datetime.now().astimezone()
 
 HISTORY_YEARS = 10
 
@@ -328,8 +333,11 @@ def rates_regime(cfg: dict, curve: dict, credit: dict) -> dict:
 ADD_FRACTION = 0.10   # a "given dollar amount" for the marginal read: 10% of NAV, funded from cash
 
 
-def equity_book():
-    """Return series, dollar figures and weights of the current equity book (holdings.json)."""
+def equity_book(live: dict | None = None):
+    """Return series, dollar figures and weights of the current equity book (holdings.json).
+    In intraday mode the dollar figures use the live tape; the book return series (weights over
+    the settled window) is unchanged."""
+    live = live or {}
     h = ba.load_holdings()
     prices = ba.load_prices(); rets = ba.daily_returns(prices)
     last = prices.ffill().iloc[-1]
@@ -337,7 +345,8 @@ def equity_book():
     for pos in h.get("holdings", []):
         tk = str(pos.get("ticker", "")).upper(); sh = pos.get("shares") or 0
         if sh > 0 and tk in prices.columns and pd.notna(last.get(tk)):
-            vals[tk] = float(sh) * float(last[tk])
+            px = float(live[tk]) if tk in live and live[tk] else float(last[tk])
+            vals[tk] = float(sh) * px
     equity = sum(vals.values()); cash = float(h.get("cash") or 0); nav = equity + cash
     w_eq = {tk: v / equity for tk, v in vals.items()} if equity else {}
     eq_series = ba.book_series(rets, w_eq) if w_eq else pd.Series(dtype=float)
@@ -506,7 +515,7 @@ def whole_portfolio_stress(bj: dict, sm: dict, ind: pd.DataFrame, through: pd.Ti
 
 
 # ── payload ────────────────────────────────────────────────────────────────
-def build() -> dict:
+def build(live: dict | None = None, intraday: bool = False) -> dict:
     cfg = bc.load_state_config()
     ind, store, through = load_fred()
 
@@ -517,7 +526,7 @@ def build() -> dict:
     alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit),
              "real_vs_nominal": q_real_nominal(realnom)}
     rregime = rates_regime(cfg, curve, credit)
-    bk = equity_book()
+    bk = equity_book(live)
     srets = ba.daily_returns(bc.load_sleeve_prices())
     etfs = ba.load_etfs(); spy_ret = ba.daily_returns(etfs)["SPY"] if "SPY" in etfs.columns else pd.Series(dtype=float)
     bj = _book_json()
@@ -526,11 +535,18 @@ def build() -> dict:
                 "whole_portfolio_stress": whole_portfolio_stress(bj, sm, ind, through)}
 
     session = str(through.date())
+    now_iso = (now_et() if intraday else datetime.now().astimezone()).isoformat(timespec="seconds")
     return {
-        "cadence": "daily",
+        "cadence": "intraday" if intraday else "daily",
+        "mode": "intraday" if intraday else "close",
+        "intraday": bool(intraday),
+        "intraday_as_of": now_iso if intraday else None,
+        "intraday_note": ("intraday: the book-integration figures (NAV, the conditional message, the "
+                          "whole-portfolio stress) are on the live tape; the curve, credit and breakeven "
+                          "states are the daily FRED vintage and do not move intraday") if intraday else None,
         "session_date": session,
         "as_of": datetime.now().astimezone().date().isoformat(),
-        "computed_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "computed_at": now_iso,
         "vintage": {"store": store, "fred_through": str(through.date()), "history_years": HISTORY_YEARS},
         "config_frozen_at": cfg.get("frozen_at"),
         "curve": curve,
@@ -544,7 +560,14 @@ def build() -> dict:
 
 
 def main() -> int:
-    payload = build()
+    intraday = "--intraday" in sys.argv
+    live = {}
+    if intraday:
+        h = ba.load_holdings()
+        held = [str(x["ticker"]).upper() for x in h.get("holdings", []) if (x.get("shares") or 0) > 0]
+        live = ba.fetch_live_prices(held)
+        log(f"intraday: fetched {len(live)}/{len(held)} live held prices")
+    payload = build(live=live, intraday=intraday)
     out = bc.BONDS / "states.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2))

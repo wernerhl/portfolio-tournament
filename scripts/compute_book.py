@@ -37,9 +37,9 @@ import pandas as pd
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from book_analytics import (ANN, DATA, MIN_OBS, REPO, WINDOW, ann_vol, book_series, corr,  # noqa: E402
-                            daily_returns, effective_bets, load_etfs, load_holdings, load_prices,
-                            member_sub, member_weight, n_eff, ols_beta, risk_contributions, rsi14,
-                            thesis_exposure, window_returns)
+                            daily_returns, effective_bets, fetch_live_prices, load_etfs, load_holdings,
+                            load_prices, member_sub, member_weight, n_eff, ols_beta, risk_contributions,
+                            rsi14, thesis_exposure, window_returns)
 from trading_calendar import last_completed_session, now_et, require_trading_day  # noqa: E402
 
 OUT = DATA / "book.json"
@@ -101,10 +101,12 @@ def screen_universe() -> tuple[pd.DataFrame | None, str | None]:
         return None, None
 
 
-def build(session: str) -> dict:
+def build(session: str, live: dict | None = None, intraday: bool = False) -> dict:
     hold = load_holdings()
     prices = load_prices()
     etfs = load_etfs()
+    live = live or {}
+    live_used: list[str] = []
     registry = json.load(open(DATA / "thesis_registry.json"))
     through = min(prices.index[-1], etfs.index[-1])
     warnings: list[str] = []
@@ -128,8 +130,15 @@ def build(session: str) -> dict:
         s = prices[tk].dropna()
         s = s.loc[:through]
         px = float(s.iloc[-1])
+        priced_at = str(s.index[-1].date())
+        price_source = "close"
+        # Intraday overlay: the CURRENT price (hence market value, share of NAV, stress
+        # dollars, return-vs-cost) is the live tape; every return window below stays on the
+        # settled daily closes. The settled store is not modified.
+        if intraday and tk in live and live[tk]:
+            px = float(live[tk]); price_source = "intraday"; live_used.append(tk)
         positions.append({"ticker": tk, "shares": sh, "cost_basis": cost, "price": px, "value": sh * px,
-                          "priced_at": str(s.index[-1].date()), "history_sessions": int(len(s)),
+                          "priced_at": priced_at, "price_source": price_source, "history_sessions": int(len(s)),
                           "status": "ok", "excluded_from_analytics": False})
     priced = [p for p in positions if p["value"] is not None]
     equity = float(sum(p["value"] for p in priced))
@@ -274,8 +283,17 @@ def build(session: str) -> dict:
                        "etfs": [etf_by[t] for t in etfs if t in etf_by],
                        "names": gnames, "n_quality_names": len(gnames)})
 
+    if intraday:
+        warnings.append("intraday snapshot: position values, NAV and stress are at the live tape; "
+                        "volatility, beta, risk shares and correlations are the last settled close's "
+                        f"126-session windows (through {through.date()})")
     payload = {
-        "cadence": "daily", "session_date": session, "as_of": str(through.date()),
+        "cadence": "intraday" if intraday else "daily",
+        "mode": "intraday" if intraday else "close",
+        "intraday": bool(intraday),
+        "intraday_as_of": now_et().isoformat(timespec="seconds") if intraday else None,
+        "intraday_priced": sorted(live_used) if intraday else [],
+        "session_date": session, "as_of": str(through.date()),
         "computed_at": now_et().isoformat(timespec="seconds"),
         "source": {"holdings": "data/holdings.json", "holdings_as_of": hold.get("as_of"), "holdings_source": hold.get("source"),
                    "prices": "data/source/prices_daily.parquet", "indices": "data/source/sector_etfs.parquet (SPY, SMH, sector ETFs); TLT from vol_indicators.parquet",
@@ -357,13 +375,21 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", dest="do_print", action="store_true")
     ap.add_argument("--allow-non-trading", action="store_true")
-    ap.parse_args()
+    ap.add_argument("--intraday", action="store_true",
+                    help="recompute on the live tape (values, NAV, stress); the settled store and windows are untouched")
+    args = ap.parse_args()
     require_trading_day("compute_book")
     session = last_completed_session()
-    payload = build(session)
+    live: dict = {}
+    if args.intraday:
+        hold = load_holdings()
+        held = [str(h["ticker"]).upper() for h in hold.get("holdings", []) if (h.get("shares") or 0) > 0]
+        live = fetch_live_prices(held)
+        log(f"intraday: fetched {len(live)}/{len(held)} live prices")
+    payload = build(session, live=live, intraday=args.intraday)
     OUT.write_text(json.dumps(_clean(payload), indent=2) + "\n")
-    log(f"wrote {OUT.relative_to(REPO)}")
-    if "--print" in sys.argv:
+    log(f"wrote {OUT.relative_to(REPO)}{' (intraday)' if args.intraday else ''}")
+    if args.do_print:
         print_summary(payload)
     return 0
 

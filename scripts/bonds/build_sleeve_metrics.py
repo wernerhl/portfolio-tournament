@@ -22,14 +22,22 @@ sys.path.insert(0, str(HERE))                       # bonds_common
 sys.path.insert(0, str(HERE.parent))                # book_analytics
 import bonds_common as bc
 import book_analytics as ba
+try:
+    from trading_calendar import now_et
+except Exception:                       # pragma: no cover
+    def now_et():
+        return datetime.now().astimezone()
 
 
 def log(m: str) -> None:
     print(m, flush=True)
 
 
-def equity_book():
-    """(equity_$, w_eq {ticker: share_of_equity}, holdings_as_of, n_positions) from holdings.json."""
+def equity_book(live: dict | None = None):
+    """(equity_$, w_eq {ticker: share_of_equity}, holdings_as_of, n_positions) from holdings.json.
+    In intraday mode the equity dollar figure uses the live tape; the weights and the correlation
+    window below stay on the settled closes."""
+    live = live or {}
     h = ba.load_holdings()
     prices = ba.load_prices()
     last = prices.ffill().iloc[-1]
@@ -38,20 +46,21 @@ def equity_book():
         tk = str(pos.get("ticker", "")).upper()
         sh = pos.get("shares") or 0
         if sh > 0 and tk in prices.columns and pd.notna(last.get(tk)):
-            vals[tk] = float(sh) * float(last[tk])
+            px = float(live[tk]) if tk in live and live[tk] else float(last[tk])
+            vals[tk] = float(sh) * px
     equity = sum(vals.values())
     w_eq = {tk: v / equity for tk, v in vals.items()} if equity else {}
     return equity, w_eq, h.get("as_of"), len(vals)
 
 
-def build() -> dict:
+def build(live: dict | None = None, intraday: bool = False) -> dict:
     uni = bc.load_sleeve_universe()["sleeves"]
     yj = bc.load_sleeve_yields()
     ys = yj.get("yields", {})
     sp = bc.load_sleeve_prices()
     srets = ba.daily_returns(sp)
 
-    equity, w_eq, holdings_as_of, n_pos = equity_book()
+    equity, w_eq, holdings_as_of, n_pos = equity_book(live)
     rets = ba.daily_returns(ba.load_prices())
     eq_series = ba.book_series(rets, w_eq) if w_eq else pd.Series(dtype=float)
     eq_win = eq_series.iloc[-bc.WINDOW:] if len(eq_series) else pd.Series(dtype=float)
@@ -90,11 +99,15 @@ def build() -> dict:
         })
 
     session = str(sp.index.max().date())
+    now_iso = (now_et() if intraday else datetime.now().astimezone()).isoformat(timespec="seconds")
     return {
-        "cadence": "daily",
+        "cadence": "intraday" if intraday else "daily",
+        "mode": "intraday" if intraday else "close",
+        "intraday": bool(intraday),
+        "intraday_as_of": now_iso if intraday else None,
         "session_date": session,
         "as_of": datetime.now().astimezone().date().isoformat(),
-        "computed_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "computed_at": now_iso,
         "level": "sleeve",
         "window": bc.WINDOW,
         "duration_source": bc.DURATION_SOURCE,
@@ -110,7 +123,14 @@ def build() -> dict:
 
 
 def main() -> int:
-    payload = build()
+    intraday = "--intraday" in sys.argv
+    live = {}
+    if intraday:
+        h = ba.load_holdings()
+        held = [str(x["ticker"]).upper() for x in h.get("holdings", []) if (x.get("shares") or 0) > 0]
+        live = ba.fetch_live_prices(held)
+        log(f"intraday: fetched {len(live)}/{len(held)} live held prices")
+    payload = build(live=live, intraday=intraday)
     out = bc.BONDS / "sleeve_metrics.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2))

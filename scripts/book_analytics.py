@@ -54,6 +54,31 @@ def load_prices() -> pd.DataFrame:
     return px.sort_index()
 
 
+def fetch_live_prices(tickers: list[str]) -> dict:
+    """Latest traded price per ticker from the provider's 1-minute tape (raw close).
+    For the intraday recompute ONLY: it overrides each holding's CURRENT price for the
+    market-value figures; the 126-session return windows (vol, beta, risk share,
+    correlation) stay on the settled daily closes. Never raises — a ticker that fails to
+    fetch is simply absent from the result, and its settled close is used instead."""
+    out: dict[str, float] = {}
+    try:
+        import yfinance as yf
+    except Exception:
+        return out
+    for tk in tickers:
+        for period in ("1d", "5d"):
+            try:
+                d = yf.Ticker(tk).history(period=period, interval="1m", auto_adjust=False)
+                if d is not None and not d.empty:
+                    c = d["Close"].dropna()
+                    if not c.empty:
+                        out[tk] = float(c.iloc[-1])
+                        break
+            except Exception:
+                continue
+    return out
+
+
 def load_etfs() -> pd.DataFrame:
     """Sector / index ETFs (lowercase columns) plus TLT from the vol store,
     upper-cased to ticker names."""
