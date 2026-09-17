@@ -225,6 +225,26 @@ def q_duration(sm: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
     }
 
 
+# ── 3.2 are you paid to take credit ────────────────────────────────────────
+def q_credit(credit: dict) -> dict:
+    """IG and HY spread percentiles translated to a yield pickup over duration-matched
+    Treasuries (the OAS is that pickup by construction). Descriptive; no spread forecast."""
+    ig, hy = credit.get("ig", {}), credit.get("hy", {})
+    def leg(x, label):
+        return {"index": label, "pickup_bps": x.get("oas_bps"), "pctile_10y": x.get("pctile_10y"),
+                "state": x.get("state")}
+    return {
+        "question": "Are you paid to take credit?",
+        "ig": leg(ig, "IG (BAMLC0A0CM)"), "hy": leg(hy, "HY (BAMLH0A0HYM2)"),
+        "read": (f"IG spreads pick up {ig.get('oas_bps')}bp over duration-matched Treasuries "
+                 f"({ig.get('pctile_10y')}th percentile, {ig.get('state')}); HY {hy.get('oas_bps')}bp "
+                 f"({hy.get('pctile_10y')}th percentile, {hy.get('state')})."),
+        "note": ("The pickup is the option-adjusted spread over duration-matched Treasuries. Credit "
+                 "spreads mean-revert slowly; a tight percentile means little compensation for default "
+                 "and illiquidity risk. Descriptive; no spread-direction prediction."),
+    }
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -234,7 +254,7 @@ def build() -> dict:
     credit = credit_state(cfg, ind, through)
     realnom = real_nominal(ind, through)
     sm = load_sleeve_metrics()
-    alloc = {"duration": q_duration(sm, ind, through)}
+    alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit)}
 
     session = str(through.date())
     return {

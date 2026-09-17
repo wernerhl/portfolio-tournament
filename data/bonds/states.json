@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:23:49-06:00",
+  "computed_at": "2026-09-16T22:24:11-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -173,6 +173,23 @@
       "extension_favoured": false,
       "read": "cash (SHV) yields 3.73% at duration 0.35, intermediate (IEF) 3.97% at duration 7.3, long (TLT) 4.73% at duration 16.5; the yield per unit of duration is highest at SHV.",
       "note": "Descriptive, not a rate call. The historical evidence that starting yield explains most of a bond sleeve's multi-year return is the basis; a low term-premium percentile means extension is thinly compensated."
+    },
+    "credit": {
+      "question": "Are you paid to take credit?",
+      "ig": {
+        "index": "IG (BAMLC0A0CM)",
+        "pickup_bps": 80.0,
+        "pctile_10y": 21.5,
+        "state": "normal"
+      },
+      "hy": {
+        "index": "HY (BAMLH0A0HYM2)",
+        "pickup_bps": 271.0,
+        "pctile_10y": 10.1,
+        "state": "tight"
+      },
+      "read": "IG spreads pick up 80.0bp over duration-matched Treasuries (21.5th percentile, normal); HY 271.0bp (10.1th percentile, tight).",
+      "note": "The pickup is the option-adjusted spread over duration-matched Treasuries. Credit spreads mean-revert slowly; a tight percentile means little compensation for default and illiquidity risk. Descriptive; no spread-direction prediction."
     }
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
