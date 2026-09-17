@@ -364,7 +364,8 @@ def print_summary(b: dict) -> None:
         log(f"stress {s['label']:34s} {s['loss']:12,.0f}  {s['share_nav']*100:6.1f}% of NAV")
     for s in b["sleeves"]:
         if s["kind"] == "etf":
-            log(f"sleeve {s['ticker']:5s} {s['label']:18s} corr {s['corr'] if s['corr'] is None else f'{s['corr']:+.3f}'} (n {s['n_obs']})")
+            cs = "n/a" if s["corr"] is None else f"{s['corr']:+.3f}"   # 3.11-safe: no nested f-string
+            log(f"sleeve {s['ticker']:5s} {s['label']:18s} corr {cs} (n {s['n_obs']})")
     qn = [s for s in b["sleeves"] if s["kind"] == "screen_name"]
     log(f"quality-passing screen names with a registry thesis: {len(qn)} (lowest: {[(s['ticker'], s['corr']) for s in qn[:5]]})")
     for w in b["warnings"]:
