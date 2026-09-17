@@ -1,0 +1,27 @@
+{
+  "as_of": "2026-09-16",
+  "module": "fixed-income",
+  "level": "sleeve",
+  "note": "Asset-class ETFs and the yield curve only. No CUSIP-level prices, no single-bond selection. Descriptive: this file names the tradable sleeves and the role each represents; it emits no buy or sell instruction. Order 16-Sept-2026, item 1.1.",
+  "source": "sleeve tickers and roles per the execution order; asset_class assigned by the module.",
+  "sleeves": [
+    { "ticker": "SHV",  "asset_class": "bills",           "role": "0-1y Treasury bills (cash proxy)" },
+    { "ticker": "SHY",  "asset_class": "treasury",        "role": "1-3y Treasury" },
+    { "ticker": "IEF",  "asset_class": "treasury",        "role": "7-10y Treasury" },
+    { "ticker": "TLT",  "asset_class": "treasury",        "role": "20y+ Treasury" },
+    { "ticker": "GOVT", "asset_class": "treasury",        "role": "broad Treasury" },
+    { "ticker": "TIP",  "asset_class": "tips",            "role": "TIPS (inflation-linked Treasury)" },
+    { "ticker": "VCSH", "asset_class": "ig_credit",       "role": "short investment-grade corporate" },
+    { "ticker": "VCIT", "asset_class": "ig_credit",       "role": "intermediate investment-grade corporate" },
+    { "ticker": "LQD",  "asset_class": "ig_credit",       "role": "broad investment-grade corporate" },
+    { "ticker": "HYG",  "asset_class": "high_yield",      "role": "high yield corporate" },
+    { "ticker": "JNK",  "asset_class": "high_yield",      "role": "high yield corporate" },
+    { "ticker": "BKLN", "asset_class": "bank_loans",      "role": "senior bank loans (floating rate)" },
+    { "ticker": "FLOT", "asset_class": "ig_credit_float", "role": "floating-rate investment-grade" },
+    { "ticker": "EMB",  "asset_class": "em_sovereign",    "role": "emerging-market USD sovereign" },
+    { "ticker": "MUB",  "asset_class": "municipal",       "role": "municipal (tax-exempt)" },
+    { "ticker": "MBB",  "asset_class": "agency_mbs",      "role": "agency mortgage-backed" },
+    { "ticker": "AGG",  "asset_class": "aggregate",       "role": "US aggregate" },
+    { "ticker": "BND",  "asset_class": "aggregate",       "role": "US aggregate" }
+  ]
+}
