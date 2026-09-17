@@ -35,6 +35,9 @@ scripts = [
     "compute_signals.py",          # signals: position mode for held names, setup readings otherwise
     "compute_book.py",             # 1.3/1.5/1.6/5: book analytics, stress, sleeves
     "compute_comparators.py",      # 1.4/4: the C3 rules and every rule translated to the book's beta
+    "bonds/fetch_sleeves.py",      # fixed-income module: sleeve prices + distribution yields (canonical provider)
+    "bonds/build_sleeve_metrics.py", # FI 1.3: per-sleeve yield, duration, yield/duration, vol, 1y return, corr to book
+    "bonds/compute_bonds.py",      # FI 2/3/4: curve/credit/breakeven states, allocation reads, book integration, whole-portfolio stress
     "compute_factor_exposure.py",  # P3.3: per-name factor betas → book + tiers
     "build_ticker_data.py",
     "build_indicator_series.py",
