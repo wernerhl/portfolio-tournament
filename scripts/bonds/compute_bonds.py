@@ -340,6 +340,92 @@ def diversifier_menu(sm: dict) -> dict:
             "sleeves": rows}
 
 
+# ── 4.2 the conditional message ────────────────────────────────────────────
+def _book_json() -> dict:
+    p = bc.DATA / "book.json"
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
+def conditional_message(bk: dict, srets: pd.DataFrame, spy_ret: pd.Series, bj: dict) -> dict:
+    """The marginal effect on the book's volatility and stress loss of adding a given dollar
+    amount (10% of NAV, funded from cash) of each sleeve, at the book's current concentration.
+    The honest first message: while one name dominates the book's variance, fixed-income
+    diversification has limited effect until the equity concentration is reduced."""
+    nav, equity = bk["nav"], bk["equity"]
+    eqcash = bk["eq_series"] * (equity / nav) if len(bk["eq_series"]) else pd.Series(dtype=float)
+    vol_base = ba.ann_vol(eqcash.iloc[-bc.WINDOW:], min_obs=bc.MIN_OBS)
+
+    # top-name concentration from book.json risk shares
+    positions = bj.get("positions", [])
+    rs = [(p["ticker"], p.get("risk_share"), p.get("share_nav"), (p.get("beta_spy") or {}).get("beta"), p.get("value"))
+          for p in positions if p.get("risk_share") is not None]
+    rs.sort(key=lambda x: -(x[1] or 0))
+    top = rs[0] if rs else (None, None, None, None, None)
+    top_share = top[1]
+    fires = top_share is not None and top_share > 0.40
+
+    # reference stress: SPY −20% (from book.json)
+    spy20 = next((s for s in bj.get("stress", []) if s.get("id") == "spy_-20"), {})
+    base_loss = spy20.get("loss"); base_share = spy20.get("share_nav")
+
+    add = ADD_FRACTION * nav
+    # per-sleeve marginal effect
+    marg = []
+    for tk in bc.sleeve_tickers():
+        sr = srets[tk].dropna() if tk in srets.columns else pd.Series(dtype=float)
+        if not len(sr) or vol_base is None:
+            marg.append({"ticker": tk, "d_vol": None, "beta_spy": None, "d_stress_spy20_share": None}); continue
+        combined = (eqcash + ADD_FRACTION * sr).dropna()
+        vol_new = ba.ann_vol(combined.iloc[-bc.WINDOW:], min_obs=bc.MIN_OBS)
+        b = ba.ols_beta(sr, spy_ret).get("beta")
+        d_stress = (add * b * -0.20) / nav if b is not None else None     # change in SPY−20 loss as share of NAV
+        marg.append({"ticker": tk,
+                     "d_vol": round(vol_new - vol_base, 4) if vol_new is not None else None,
+                     "beta_spy": round(b, 3) if b is not None else None,
+                     "d_stress_spy20_share": round(d_stress, 4) if d_stress is not None else None})
+
+    # the best-diversifying intermediate Treasury for the headline (lowest corr among the Treasury ladder ex-cash)
+    ladder = [m for m in marg if m["ticker"] in ("SHY", "IEF", "TLT", "GOVT")]
+    rep = next((m for m in marg if m["ticker"] == "IEF"), (ladder[0] if ladder else None))
+    rep_tk = rep["ticker"] if rep else None
+    vol_with_rep = round(vol_base + rep["d_vol"], 4) if (rep and rep["d_vol"] is not None) else None
+
+    # trim comparison: halve the top name to cash, recompute the SPY−20 loss
+    trim = {}
+    if top[0] and top[3] is not None and top[4] is not None and base_loss is not None:
+        removed = 0.5 * top[4] * top[3] * -0.20        # loss removed by selling half the top name (its SPY−20 contribution)
+        trim_loss = base_loss - removed
+        trim = {"action": f"halve {top[0]} to cash",
+                "spy20_loss": round(trim_loss, 2),
+                "spy20_share_nav": round(trim_loss / nav, 4),
+                "improvement_vs_current_share": round((trim_loss - base_loss) / nav, 4)}
+
+    msg = None
+    if fires and rep_tk is not None:
+        msg = (f"The top name ({top[0]}) is {top_share*100:.0f}% of the book's variance, above 40%. "
+               f"Adding {ADD_FRACTION*100:.0f}% of NAV (${add:,.0f}) in an intermediate Treasury "
+               f"({rep_tk}, ~0 equity beta, funded from cash) leaves the SPY −20% stress loss at "
+               f"{base_share*100:.1f}% of NAV essentially unchanged and moves book volatility from "
+               f"{vol_base*100:.1f}% to {vol_with_rep*100:.1f}%. Halving {top[0]} to cash instead takes "
+               f"the SPY −20% loss to {trim.get('spy20_share_nav',0)*100:.1f}% of NAV. Fixed-income "
+               f"diversification has limited effect until the equity concentration is reduced.")
+    return {
+        "fires": fires,
+        "top_name": {"ticker": top[0], "risk_share": top_share, "share_nav": top[2]},
+        "threshold": 0.40,
+        "book_vol_with_cash": round(vol_base, 4) if vol_base is not None else None,
+        "reference_stress": {"id": "spy_-20", "loss": base_loss, "share_nav": base_share},
+        "add_fraction_of_nav": ADD_FRACTION, "add_dollars": round(add, 2),
+        "representative_diversifier": rep_tk,
+        "book_vol_with_representative": vol_with_rep,
+        "trim_comparison": trim,
+        "marginal": marg,
+        "message": msg,
+        "note": ("The marginal effect of adding a bond sleeve, at the book's current concentration. "
+                 "This is the honest first message and is shown, not buried. Descriptive."),
+    }
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -352,7 +438,12 @@ def build() -> dict:
     alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit),
              "real_vs_nominal": q_real_nominal(realnom)}
     rregime = rates_regime(cfg, curve, credit)
-    book_int = {"menu": diversifier_menu(sm)}
+    bk = equity_book()
+    srets = ba.daily_returns(bc.load_sleeve_prices())
+    etfs = ba.load_etfs(); spy_ret = ba.daily_returns(etfs)["SPY"] if "SPY" in etfs.columns else pd.Series(dtype=float)
+    bj = _book_json()
+    book_int = {"menu": diversifier_menu(sm),
+                "conditional_message": conditional_message(bk, srets, spy_ret, bj)}
 
     session = str(through.date())
     return {

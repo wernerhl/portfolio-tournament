@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:28:05-06:00",
+  "computed_at": "2026-09-16T22:29:17-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -422,6 +422,143 @@
           "vol_126_ann": 0.0422
         }
       ]
+    },
+    "conditional_message": {
+      "fires": true,
+      "top_name": {
+        "ticker": "MU",
+        "risk_share": 0.574764,
+        "share_nav": 0.207944
+      },
+      "threshold": 0.4,
+      "book_vol_with_cash": 0.3149,
+      "reference_stress": {
+        "id": "spy_-20",
+        "loss": -72975.89,
+        "share_nav": -0.3285
+      },
+      "add_fraction_of_nav": 0.1,
+      "add_dollars": 22218.23,
+      "representative_diversifier": "IEF",
+      "book_vol_with_representative": 0.3151,
+      "trim_comparison": {
+        "action": "halve MU to cash",
+        "spy20_loss": -56507.34,
+        "spy20_share_nav": -0.2543,
+        "improvement_vs_current_share": 0.0741
+      },
+      "marginal": [
+        {
+          "ticker": "SHV",
+          "d_vol": -0.0015,
+          "beta_spy": -0.003,
+          "d_stress_spy20_share": 0.0001
+        },
+        {
+          "ticker": "SHY",
+          "d_vol": -0.001,
+          "beta_spy": -0.017,
+          "d_stress_spy20_share": 0.0003
+        },
+        {
+          "ticker": "IEF",
+          "d_vol": 0.0002,
+          "beta_spy": -0.101,
+          "d_stress_spy20_share": 0.002
+        },
+        {
+          "ticker": "TLT",
+          "d_vol": 0.001,
+          "beta_spy": -0.229,
+          "d_stress_spy20_share": 0.0046
+        },
+        {
+          "ticker": "GOVT",
+          "d_vol": -0.0003,
+          "beta_spy": -0.05,
+          "d_stress_spy20_share": 0.001
+        },
+        {
+          "ticker": "TIP",
+          "d_vol": -0.0004,
+          "beta_spy": -0.032,
+          "d_stress_spy20_share": 0.0006
+        },
+        {
+          "ticker": "VCSH",
+          "d_vol": -0.0006,
+          "beta_spy": 0.033,
+          "d_stress_spy20_share": -0.0007
+        },
+        {
+          "ticker": "VCIT",
+          "d_vol": 0.0005,
+          "beta_spy": 0.05,
+          "d_stress_spy20_share": -0.001
+        },
+        {
+          "ticker": "LQD",
+          "d_vol": 0.0008,
+          "beta_spy": 0.089,
+          "d_stress_spy20_share": -0.0018
+        },
+        {
+          "ticker": "HYG",
+          "d_vol": 0.0008,
+          "beta_spy": 0.376,
+          "d_stress_spy20_share": -0.0075
+        },
+        {
+          "ticker": "JNK",
+          "d_vol": 0.0008,
+          "beta_spy": 0.354,
+          "d_stress_spy20_share": -0.0071
+        },
+        {
+          "ticker": "BKLN",
+          "d_vol": -0.0005,
+          "beta_spy": 0.201,
+          "d_stress_spy20_share": -0.004
+        },
+        {
+          "ticker": "FLOT",
+          "d_vol": -0.0012,
+          "beta_spy": 0.068,
+          "d_stress_spy20_share": -0.0014
+        },
+        {
+          "ticker": "EMB",
+          "d_vol": 0.002,
+          "beta_spy": 0.216,
+          "d_stress_spy20_share": -0.0043
+        },
+        {
+          "ticker": "MUB",
+          "d_vol": -0.0002,
+          "beta_spy": 0.037,
+          "d_stress_spy20_share": -0.0007
+        },
+        {
+          "ticker": "MBB",
+          "d_vol": 0.0004,
+          "beta_spy": 0.007,
+          "d_stress_spy20_share": -0.0001
+        },
+        {
+          "ticker": "AGG",
+          "d_vol": 0.0001,
+          "beta_spy": 0.001,
+          "d_stress_spy20_share": -0.0
+        },
+        {
+          "ticker": "BND",
+          "d_vol": 0.0,
+          "beta_spy": -0.0,
+          "d_stress_spy20_share": 0.0
+        }
+      ],
+      "message": "The top name (MU) is 57% of the book's variance, above 40%. Adding 10% of NAV ($22,218) in an intermediate Treasury (IEF, ~0 equity beta, funded from cash) leaves the SPY \u221220% stress loss at -32.9% of NAV essentially unchanged and moves book volatility from 31.5% to 31.5%. Halving MU to cash instead takes the SPY \u221220% loss to -25.4% of NAV. Fixed-income diversification has limited effect until the equity concentration is reduced.",
+      "note": "The marginal effect of adding a bond sleeve, at the book's current concentration. This is the honest first message and is shown, not buried. Descriptive."
     }
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
