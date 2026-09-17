@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:22:00-06:00",
+  "computed_at": "2026-09-16T22:22:30-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -125,6 +125,18 @@
     ],
     "duration_caveat": "Computed from the option-adjusted spread series, which are duration-controlled by construction \u2014 NOT an ETF price ratio. A raw HYG-versus-LQD ratio is prohibited (duration-confounding, per the ledger).",
     "footnote": "States against ten-year OAS history: tight (<20th percentile), normal (20\u201360th), wide (60\u201390th), stressed (>90th). Descriptive; no spread direction implied. Tight spreads mean little compensation for default and illiquidity risk."
+  },
+  "real_nominal": {
+    "breakeven_10y_pct": 2.38,
+    "breakeven_10y_pctile_10y": 81.9,
+    "priced_inflation": 2.38,
+    "priced_inflation_note": "the 10-year breakeven is the market's priced average inflation over ten years",
+    "fwd_5y5y_infl_pct": null,
+    "real_10y_yield_pct": null,
+    "as_of": "2026-09-15",
+    "footnote": "This read decides only whether TIPS or nominal Treasuries carry better at a given maturity; it is not an inflation forecast.",
+    "fwd_5y5y_unavailable": "T5YIFR not yet in the store (pending FRED fetch)",
+    "real_10y_unavailable": "DFII10 not yet in the store (pending FRED fetch)"
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
 }

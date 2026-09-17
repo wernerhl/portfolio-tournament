@@ -142,6 +142,34 @@ def credit_state(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
     }
 
 
+# ── 2.3 real-vs-nominal read ───────────────────────────────────────────────
+def real_nominal(ind: pd.DataFrame, through: pd.Timestamp) -> dict:
+    def leg(col):
+        if col not in ind.columns:
+            return None, None, None
+        lvl, d = last_valid(ind[col])
+        return (round(lvl, 3) if lvl is not None else None,
+                pctile(ind[col], lvl, through),
+                str(d.date()) if d is not None else None)
+    be10, be10_pct, be10_d = leg("breakeven_10y")
+    fwd, _, _ = leg("fwd_5y5y_infl")
+    real10, _, real_d = leg("tips_real_10y")
+    out = {
+        "breakeven_10y_pct": be10, "breakeven_10y_pctile_10y": be10_pct,
+        "priced_inflation": be10, "priced_inflation_note": "the 10-year breakeven is the market's priced average inflation over ten years",
+        "fwd_5y5y_infl_pct": fwd,
+        "real_10y_yield_pct": real10,
+        "as_of": be10_d,
+        "footnote": ("This read decides only whether TIPS or nominal Treasuries carry better at a given "
+                     "maturity; it is not an inflation forecast."),
+    }
+    if fwd is None:
+        out["fwd_5y5y_unavailable"] = "T5YIFR not yet in the store (pending FRED fetch)"
+    if real10 is None:
+        out["real_10y_unavailable"] = "DFII10 not yet in the store (pending FRED fetch)"
+    return out
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -149,6 +177,7 @@ def build() -> dict:
 
     curve = curve_state(cfg, ind, through)
     credit = credit_state(cfg, ind, through)
+    realnom = real_nominal(ind, through)
 
     session = str(through.date())
     return {
@@ -160,6 +189,7 @@ def build() -> dict:
         "config_frozen_at": cfg.get("frozen_at"),
         "curve": curve,
         "credit": credit,
+        "real_nominal": realnom,
         "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction.",
     }
 
