@@ -1,0 +1,89 @@
+name: Intraday analytics
+
+# Every 2 hours during US market hours, recompute the price-dependent panels on the LIVE
+# tape and deploy: the book (position values, NAV, stress dollars, return-vs-cost) and the
+# bonds book-integration (the conditional message, the whole-portfolio stress). Stamped
+# "intraday" with the fetch time.
+#
+# What this job does NOT touch (the settled record is left to the nightly):
+#   * the settled daily-close price store (prices are overlaid in memory only);
+#   * scores, cost basis, the regime/tournament vintages, the referee, the FRED fetch;
+#   * the 126-session risk windows (vol, beta, risk share, correlation) — those stay on the
+#     last settled close; only the current price used for market value comes from the tape.
+# Only data/book.json and data/bonds/{states,sleeve_metrics}.json are rewritten and pushed.
+# The nightly overwrites all three with the settled close each evening.
+
+on:
+  schedule:
+    - cron: '0 14,16,18,20 * * 1-5'   # 10:00, 12:00, 14:00, 16:00 ET — every 2 hours over the session
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install yfinance pandas numpy pyarrow scipy
+
+      - name: Trading day?
+        id: gate
+        run: |
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import sys
+          sys.path.insert(0, 'scripts')
+          from trading_calendar import now_et, is_trading_day
+          d = now_et().strftime('%Y-%m-%d')
+          print(f"go={'true' if is_trading_day(d) else 'false'}")
+          EOF
+
+      - name: Recompute on the live tape (book + bonds book-integration)
+        if: steps.gate.outputs.go == 'true'
+        # No FRED key: the bonds states read the committed FRED store; only the equity/sleeve
+        # tape is fetched. A failure of any step keeps the last good served file.
+        continue-on-error: true
+        run: |
+          python scripts/compute_book.py --intraday
+          python scripts/bonds/build_sleeve_metrics.py --intraday
+          python scripts/bonds/compute_bonds.py --intraday
+
+      - name: Commit
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/book.json data/bonds/states.json data/bonds/sleeve_metrics.json
+          git diff --cached --quiet || git commit -m "📈 intraday analytics $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase --strategy-option=ours origin main || true
+          git push
+
+  deploy:
+    # Shared Pages-deploy concurrency guard: serialize the overlapping deployers (nightly,
+    # intraday, market-open, this job) so they never collide and 404 the live site.
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    needs: refresh
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4

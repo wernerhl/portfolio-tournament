@@ -534,6 +534,16 @@ function asOfBadge(dateStr){
   }
   return `<span class="mono t1 w5 ls06 c-3 ml2">as of ${d}</span>`;
 }
+// Intraday-aware chip: a green "live · HH:MM ET" when the served file is an intraday
+// snapshot, else the ordinary as-of badge on its session date. Used by the panels the
+// 2-hourly intraday refresh recomputes (the book, and the bonds book-integration).
+function intradayBadge(o){
+  if (o && o.intraday && o.intraday_as_of){
+    const t = String(o.intraday_as_of).slice(11,16);
+    return `<span class="mono t1 w6 ls06 c-pos ml2" title="live intraday snapshot at ${o.intraday_as_of}; risk windows are the last settled close">live · ${t} ET</span>`;
+  }
+  return asOfBadge(o && (o.session_date || o.as_of));
+}
 function _fmtSnapTime(snap){
   if (!snap) return "—";
   return snap.toLocaleString("en-US", {timeZone:"America/New_York",
@@ -2362,7 +2372,7 @@ function renderStressPanel(){
   const b = S.book; if (!b || !b.stress) return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS</div><div class="mono t1 c-3">book.json not published</div></div>`;
   const money = v => "$" + fmt(Math.round(Math.abs(v)));
   const rows = b.stress.map(sc => `<tr title="${(sc.method || "").replace(/"/g, "'")}"><td class="c-2">${sc.label}</td><td class="num c-neg">−${money(sc.loss)}</td><td class="num c-neg w6">${(sc.share_nav * 100).toFixed(1)}%</td></tr>`).join("");
-  return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS · <span class="c-3">fixed · dollars and share of NAV ${money(b.nav)}</span></div>
+  return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS · <span class="c-3">fixed · dollars and share of NAV ${money(b.nav)}</span>${intradayBadge(b)}</div>
     <table class="stress-table"><tr><th>SCENARIO</th><th class="num">LOSS</th><th class="num">OF NAV</th></tr>${rows}</table>
     <div class="mono t1 c-3 mt1">index shocks through each holding's ${b.definitions ? b.definitions.window_sessions : 126}-session beta to the shocked index; thesis shocks from registry exposures · ${b.stress_note || "descriptive"}</div>
   </div>`;
@@ -2678,7 +2688,7 @@ function renderBookPanel(){
     ${cell("EFFECTIVE THESES · SIZING FIGURE", `${P.effective_theses != null ? P.effective_theses : "—"}`, `1/Σw² over the registry exposure of the invested sleeve · this is the figure used for sizing`)}
     ${cell("EFFECTIVE BETS · CORRELATION", `${P.effective_bets != null ? P.effective_bets : "—"}`, `exponential entropy of the equity correlation eigenvalues · ${P.effective_bets_note || ""}`)}
   </div>`;
-  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">positions from data/holdings.json (${b.source && b.source.holdings_as_of ? "holdings as of " + b.source.holdings_as_of : "the only holdings source"}) · analytics through ${b.as_of}</span>${asOfBadge(b.session_date)}</h3>
+  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">positions from data/holdings.json (${b.source && b.source.holdings_as_of ? "holdings as of " + b.source.holdings_as_of : "the only holdings source"}) · ${b.intraday ? "values live; risk windows through " + b.as_of : "analytics through " + b.as_of}</span>${intradayBadge(b)}</h3>
     <div class="mono t1 c-3 mb2">NAV ${money(b.nav)} = equity ${money(b.equity)} + cash ${money(b.cash)} · invested ${p1(b.invested_share)} · window ${b.window ? b.window.start + " → " + b.window.end : ""} · ${b.note || ""}${(b.warnings || []).length ? ` · <span class="c-warn">${b.warnings.join("; ")}</span>` : ""}</div>
     <div class="tbl-scroll"><table class="book-table">
       <tr><th>TICKER</th><th class="num">NAV %</th><th class="num">EQ %</th><th class="num">SHARES</th><th class="num">COST</th><th class="num">PRICE</th><th class="num">VALUE</th><th class="num">UNREAL.</th><th class="num">vs COST</th><th class="num">VOL</th><th class="num">β SPY</th><th class="num">β SMH</th><th class="num">RISK SHARE</th><th class="num">DD 1Y</th><th class="num">vs MA200</th><th class="num">RSI</th><th>THESIS</th></tr>
@@ -2767,7 +2777,7 @@ function renderSleevesPanel(){
     return `<tr class="sleeve-group"><td colspan="6" class="mono t1 w6 c-2">${g.label.toUpperCase()}${g.theses.length ? ` <span class="c-3 w4">· registry ${g.theses.map(thesisLabel).join(", ")}</span>` : ""}</td></tr>${rows}`;
   }).join("");
   const rest = b.sleeves.filter(s_ => !(b.sleeve_groups || []).some(g => g.etfs.some(e => e.ticker === s_.ticker) || g.names.some(n => n.ticker === s_.ticker)));
-  return `<div class="rcc-card sleeves-panel"><h3>${(b.sleeves_heading || "exposures the book lacks, at the level where the system has evidence").toUpperCase()} · <span class="c-3 w5">sleeves grouped by thesis · correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions</span>${asOfBadge(b.session_date)}</h3>
+  return `<div class="rcc-card sleeves-panel"><h3>${(b.sleeves_heading || "exposures the book lacks, at the level where the system has evidence").toUpperCase()} · <span class="c-3 w5">sleeves grouped by thesis · correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions</span>${intradayBadge(b)}</h3>
     <div class="tbl-scroll"><table class="sleeves-table"><tr><th>SLEEVE</th><th>NAME</th><th>KIND</th><th>CORRELATION TO THE BOOK</th><th class="num">ρ</th><th class="num">n</th></tr>${groups}${rest.length ? `<tr class="sleeve-group"><td colspan="6" class="mono t1 w6 c-2">OTHER SLEEVES · <span class="c-3 w4">ascending</span></td></tr>${rest.map(sleeveRow).join("")}` : ""}</table></div>
     <div class="chart-meta">${b.sleeves_note || ""} · screen names pass the quality bar (fundamental ≥ ${qb.fundamental}, visibility ≥ ${qb.visibility}, the shelf's bar) and carry a registry thesis; held names excluded · book series: constant current equity weights · sorted ascending within each group</div>
   </div>`;
@@ -3203,7 +3213,7 @@ function renderBondsSleeveMenu(){
 function renderBondsConditional(){
   const cm = S.bondsStates && S.bondsStates.book_integration && S.bondsStates.book_integration.conditional_message; if (!cm) return "";
   const tn = cm.top_name || {};
-  return `<div class="rcc-card"><h3>ADDING A SLEEVE TO THIS BOOK · <span class="c-3 w5">the marginal effect on volatility and stress loss, at the book's current concentration</span></h3>
+  return `<div class="rcc-card"><h3>ADDING A SLEEVE TO THIS BOOK · <span class="c-3 w5">the marginal effect on volatility and stress loss, at the book's current concentration</span>${intradayBadge(S.bondsStates)}</h3>
     ${cm.fires ? `<div class="mono t1 c-warn w5">${cm.message || ""}</div>` : `<div class="mono t1 c-2">Top-name risk share ${tn.risk_share==null?"—":(tn.risk_share*100).toFixed(0)+"%"} (below 40%): diversification effects are not concentration-limited.</div>`}
     <div class="chart-meta">${cm.note || ""}</div></div>`;
 }
@@ -3213,7 +3223,7 @@ function renderBondsWholeStress(){
   const eq = (w.equity_scenarios || []).map(s => `<tr><td class="c-2">${s.label||s.id}</td><td class="num c-neg">${s.share_nav==null?"—":(s.share_nav*100).toFixed(1)+"%"}</td></tr>`).join("");
   const fi = (w.fixed_income && w.fixed_income.sleeves || []).map(r => `<tr><td class="mono t2 c-1 w6">${r.ticker}</td><td class="num c-neg">${r.rate_up_100bp==null?"—":(r.rate_up_100bp*100).toFixed(1)+"%"}</td><td class="num c-pos">${r.rate_down_100bp==null?"—":"+"+(r.rate_down_100bp*100).toFixed(1)+"%"}</td><td class="num c-neg">${r.spread_widen_return==null?"—":(r.spread_widen_return*100).toFixed(1)+"%"}</td></tr>`).join("");
   const sp = w.fixed_income && w.fixed_income.spread_shock || {};
-  return `<div class="rcc-card"><h3>WHOLE-PORTFOLIO STRESS · <span class="c-3 w5">the equity book's scenarios beside each sleeve's rate and spread sensitivity — one portfolio</span></h3>
+  return `<div class="rcc-card"><h3>WHOLE-PORTFOLIO STRESS · <span class="c-3 w5">the equity book's scenarios beside each sleeve's rate and spread sensitivity — one portfolio</span>${intradayBadge(S.bondsStates)}</h3>
     <div class="book-grid">
       <div><div class="fx-head mono t1 c-3">EQUITY BOOK (actual losses, share of NAV)</div>
         <table class="stress-table"><tr><th>SCENARIO</th><th class="num">OF NAV</th></tr>${eq}</table></div>
