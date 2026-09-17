@@ -268,6 +268,40 @@ def q_real_nominal(realnom: dict) -> dict:
     return out
 
 
+# ── 3.4 the rates regime, as a state not a forecast (DIAGNOSTIC) ────────────
+def rates_regime(cfg: dict, curve: dict, credit: dict) -> dict:
+    """A combined curve-plus-credit state (the fixed-income analogue of the equity regime
+    index), pre-registered and frozen in config. A diagnostic lens: gated DIAGNOSTIC, it
+    drives no sizing until the Phase 6 retirement test passes."""
+    rc = cfg["rates_regime"]
+    cs = curve.get("state")
+    ig, hy = credit.get("ig", {}).get("state"), credit.get("hy", {}).get("state")
+    stressed = (ig == "stressed") or (hy == "stressed")
+    if stressed:
+        state, basis = "defense", "credit is stressed"
+    elif cs == "inverted":
+        state, basis = "duration", "curve is inverted (an association with past rate declines, not a prediction)"
+    elif cs in ("normal", "steep"):
+        state, basis = "carry", f"curve is {cs} and credit is not stressed"
+    else:
+        state, basis = "mixed", f"curve is {cs}, credit IG {ig}/HY {hy}"
+    return {
+        "label": rc["label"],                    # "DIAGNOSTIC" — the referee enforces this
+        "state": state,
+        "basis": basis,
+        "favors": {"carry": "normal/steep curve, non-stressed credit",
+                   "duration": "inverted curve (association, not prediction)",
+                   "defense": "stressed credit"}[state] if state in ("carry", "duration", "defense") else "no single lean",
+        "inputs": {"curve_state": cs, "credit_ig_state": ig, "credit_hy_state": hy},
+        "logic": rc["logic"],
+        "registration": rc["registration"],
+        "gate": rc["gate"],
+        "frozen_at": rc.get("frozen_at"),
+        "note": ("Diagnostic lens, not a forecast. Gated DIAGNOSTIC: it drives no sizing until the "
+                 "pre-registered retirement test passes (Phase 6). Do not execute on this value."),
+    }
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build() -> dict:
     cfg = bc.load_state_config()
@@ -279,6 +313,7 @@ def build() -> dict:
     sm = load_sleeve_metrics()
     alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit),
              "real_vs_nominal": q_real_nominal(realnom)}
+    rregime = rates_regime(cfg, curve, credit)
 
     session = str(through.date())
     return {
@@ -292,6 +327,7 @@ def build() -> dict:
         "credit": credit,
         "real_nominal": realnom,
         "allocation_questions": alloc,
+        "rates_regime": rregime,
         "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction.",
     }
 
@@ -307,6 +343,8 @@ def main() -> int:
     cr = payload["credit"]
     log(f"  credit IG: {cr['ig']['oas_bps']}bp (pctile {cr['ig']['pctile_10y']}) → {cr['ig']['state']!r} · "
         f"HY: {cr['hy']['oas_bps']}bp (pctile {cr['hy']['pctile_10y']}) → {cr['hy']['state']!r}")
+    rr = payload["rates_regime"]
+    log(f"  rates-regime [{rr['label']}]: {rr['state']!r} ({rr['basis']})")
     return 0
 
 

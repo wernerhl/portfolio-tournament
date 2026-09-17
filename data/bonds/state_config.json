@@ -24,5 +24,17 @@
     ]
   },
   "maturities": ["us03m", "us02y", "us05y", "us10y", "us30y"],
-  "maturity_labels": { "us03m": "3m", "us02y": "2y", "us05y": "5y", "us10y": "10y", "us30y": "30y" }
+  "maturity_labels": { "us03m": "3m", "us02y": "2y", "us05y": "5y", "us10y": "10y", "us30y": "30y" },
+  "rates_regime": {
+    "label": "DIAGNOSTIC",
+    "frozen_at": "2026-09-16",
+    "registration": "reports/bonds_retirement_registration_2026-09-16.md — rates-regime state vs static duration",
+    "logic": [
+      { "state": "defense", "when": "HY or IG credit state is stressed" },
+      { "state": "duration", "when": "curve state is inverted", "note": "inverted curves have historically preceded rate declines — an association, not a prediction" },
+      { "state": "carry", "when": "curve state is normal or steep and credit is not stressed" },
+      { "state": "mixed", "when": "none of the above" }
+    ],
+    "gate": "Gated as DIAGNOSTIC until the pre-registered fixed-income retirement test (rates-regime state vs static duration) passes on the method of the regime retirement test. Drives no sizing. Do not execute on this value."
+  }
 }

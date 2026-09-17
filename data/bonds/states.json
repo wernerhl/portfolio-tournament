@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-15",
   "as_of": "2026-09-16",
-  "computed_at": "2026-09-16T22:24:33-06:00",
+  "computed_at": "2026-09-16T22:25:14-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-15",
@@ -201,6 +201,40 @@
       "note": "Descriptive; decides only which carries better at the breakeven, not an inflation forecast.",
       "real_10y_unavailable": "DFII10 not yet in the store (pending FRED fetch); the read uses the breakeven identity only"
     }
+  },
+  "rates_regime": {
+    "label": "DIAGNOSTIC",
+    "state": "carry",
+    "basis": "curve is normal and credit is not stressed",
+    "favors": "normal/steep curve, non-stressed credit",
+    "inputs": {
+      "curve_state": "normal",
+      "credit_ig_state": "normal",
+      "credit_hy_state": "tight"
+    },
+    "logic": [
+      {
+        "state": "defense",
+        "when": "HY or IG credit state is stressed"
+      },
+      {
+        "state": "duration",
+        "when": "curve state is inverted",
+        "note": "inverted curves have historically preceded rate declines \u2014 an association, not a prediction"
+      },
+      {
+        "state": "carry",
+        "when": "curve state is normal or steep and credit is not stressed"
+      },
+      {
+        "state": "mixed",
+        "when": "none of the above"
+      }
+    ],
+    "registration": "reports/bonds_retirement_registration_2026-09-16.md \u2014 rates-regime state vs static duration",
+    "gate": "Gated as DIAGNOSTIC until the pre-registered fixed-income retirement test (rates-regime state vs static duration) passes on the method of the regime retirement test. Drives no sizing. Do not execute on this value.",
+    "frozen_at": "2026-09-16",
+    "note": "Diagnostic lens, not a forecast. Gated DIAGNOSTIC: it drives no sizing until the pre-registered retirement test passes (Phase 6). Do not execute on this value."
   },
   "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction."
 }
