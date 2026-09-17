@@ -1,8 +1,20 @@
 {
-  "cadence": "daily",
-  "session_date": "2026-09-15",
+  "cadence": "intraday",
+  "mode": "intraday",
+  "intraday": true,
+  "intraday_as_of": "2026-09-17T15:52:24-04:00",
+  "intraday_priced": [
+    "ANET",
+    "AVGO",
+    "BMNR",
+    "GEV",
+    "GOOG",
+    "MU",
+    "NVDA"
+  ],
+  "session_date": "2026-09-16",
   "as_of": "2026-09-14",
-  "computed_at": "2026-09-16T15:05:46-04:00",
+  "computed_at": "2026-09-17T15:52:24-04:00",
   "source": {
     "holdings": "data/holdings.json",
     "holdings_as_of": "2026-09-16",
@@ -10,7 +22,7 @@
     "prices": "data/source/prices_daily.parquet",
     "indices": "data/source/sector_etfs.parquet (SPY, SMH, sector ETFs); TLT from vol_indicators.parquet",
     "registry": "data/thesis_registry.json v4",
-    "screen_universe": "sibling:/Users/whl/portfolio-screener/data/scored_universe.csv"
+    "screen_universe": "data/screen/scored_universe.csv:/home/runner/work/portfolio-tournament/portfolio-tournament/data/screen/scored_universe.csv"
   },
   "definitions": {
     "window_sessions": 126,
@@ -27,26 +39,27 @@
     "end": "2026-09-14",
     "n_sessions": 126
   },
-  "nav": 222182.32,
-  "equity": 147654.64,
+  "nav": 228067.53,
+  "equity": 153539.85,
   "cash": 74527.68,
-  "invested_share": 0.6646,
-  "cash_share": 0.3354,
+  "invested_share": 0.6732,
+  "cash_share": 0.3268,
   "positions": [
     {
       "ticker": "MU",
       "shares": 50.0,
       "cost_basis": 910.0,
-      "price": 924.030029,
-      "value": 46201.501465,
+      "price": 979.48999,
+      "value": 48974.499512,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 5457,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.207944,
-      "share_equity": 0.312902,
-      "return_vs_cost": 0.015418,
-      "unrealized": 701.501465,
+      "share_nav": 0.214737,
+      "share_equity": 0.318969,
+      "return_vs_cost": 0.076363,
+      "unrealized": 3474.499512,
       "vol_ann": 0.947724,
       "beta_spy": {
         "beta": 3.564506,
@@ -60,28 +73,29 @@
         "r2": 0.653426,
         "n_obs": 124
       },
-      "drawdown_1y": -0.238579,
+      "drawdown_1y": -0.192879,
       "peak_1y_date": "2026-06-25",
       "ma200": 621.737029,
-      "ma200_dist": 0.486207,
+      "ma200_dist": 0.575409,
       "rsi14": 44.25017,
       "insufficient_history": false,
-      "risk_share": 0.574764
+      "risk_share": 0.581743
     },
     {
       "ticker": "GEV",
       "shares": 25.0,
       "cost_basis": 914.0,
-      "price": 874.76001,
-      "value": 21869.000244,
+      "price": 925.73999,
+      "value": 23143.499756,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 617,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.098428,
-      "share_equity": 0.148109,
-      "return_vs_cost": -0.042932,
-      "unrealized": -980.999756,
+      "share_nav": 0.101477,
+      "share_equity": 0.150733,
+      "return_vs_cost": 0.012845,
+      "unrealized": 293.499756,
       "vol_ann": 0.536755,
       "beta_spy": {
         "beta": 2.011216,
@@ -95,28 +109,29 @@
         "r2": 0.42835,
         "n_obs": 124
       },
-      "drawdown_1y": -0.255435,
+      "drawdown_1y": -0.212042,
       "peak_1y_date": "2026-06-30",
       "ma200": 893.175685,
-      "ma200_dist": -0.020618,
+      "ma200_dist": 0.036459,
       "rsi14": 35.437294,
       "insufficient_history": false,
-      "risk_share": 0.119671
+      "risk_share": 0.12063
     },
     {
       "ticker": "NVDA",
       "shares": 100.1509,
       "cost_basis": 86.82,
-      "price": 210.960007,
-      "value": 21127.834536,
+      "price": 219.839996,
+      "value": 22017.173489,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 5457,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.095092,
-      "share_equity": 0.14309,
-      "return_vs_cost": 1.429855,
-      "unrealized": 12432.733398,
+      "share_nav": 0.096538,
+      "share_equity": 0.143397,
+      "return_vs_cost": 1.532135,
+      "unrealized": 13322.072351,
       "vol_ann": 0.403252,
       "beta_spy": {
         "beta": 1.907321,
@@ -130,28 +145,29 @@
         "r2": 0.422668,
         "n_obs": 124
       },
-      "drawdown_1y": -0.105116,
+      "drawdown_1y": -0.067447,
       "peak_1y_date": "2026-05-14",
       "ma200": 197.43211,
-      "ma200_dist": 0.068519,
+      "ma200_dist": 0.113497,
       "rsi14": 47.702838,
       "insufficient_history": false,
-      "risk_share": 0.072927
+      "risk_share": 0.072025
     },
     {
       "ticker": "ANET",
       "shares": 100.0,
       "cost_basis": 160.0,
-      "price": 187.809998,
-      "value": 18780.999756,
+      "price": 200.039993,
+      "value": 20003.999329,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 3085,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.08453,
-      "share_equity": 0.127195,
-      "return_vs_cost": 0.173812,
-      "unrealized": 2780.999756,
+      "share_nav": 0.087711,
+      "share_equity": 0.130285,
+      "return_vs_cost": 0.25025,
+      "unrealized": 4003.999329,
       "vol_ann": 0.586014,
       "beta_spy": {
         "beta": 2.069817,
@@ -165,28 +181,29 @@
         "r2": 0.302471,
         "n_obs": 124
       },
-      "drawdown_1y": -0.107791,
+      "drawdown_1y": -0.049691,
       "peak_1y_date": "2026-08-12",
       "ma200": 153.3376,
-      "ma200_dist": 0.224814,
+      "ma200_dist": 0.304572,
       "rsi14": 49.113554,
       "insufficient_history": false,
-      "risk_share": 0.102826
+      "risk_share": 0.104329
     },
     {
       "ticker": "GOOG",
       "shares": 50.0,
       "cost_basis": 326.81,
-      "price": 345.709991,
-      "value": 17285.499573,
+      "price": 343.809998,
+      "value": 17190.499878,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 5457,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.077799,
-      "share_equity": 0.117067,
-      "return_vs_cost": 0.057832,
-      "unrealized": 944.999573,
+      "share_nav": 0.075375,
+      "share_equity": 0.111961,
+      "return_vs_cost": 0.052018,
+      "unrealized": 849.999878,
       "vol_ann": 0.356182,
       "beta_spy": {
         "beta": 1.502474,
@@ -200,28 +217,29 @@
         "r2": 0.052479,
         "n_obs": 124
       },
-      "drawdown_1y": -0.133646,
+      "drawdown_1y": -0.138407,
       "peak_1y_date": "2026-05-13",
       "ma200": 335.557337,
-      "ma200_dist": 0.030256,
+      "ma200_dist": 0.024594,
       "rsi14": 53.248025,
       "insufficient_history": false,
-      "risk_share": 0.020906
+      "risk_share": 0.019217
     },
     {
       "ticker": "AVGO",
       "shares": 50.0,
       "cost_basis": 326.75,
-      "price": 344.720001,
-      "value": 17236.000061,
+      "price": 348.609985,
+      "value": 17430.499268,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 4301,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.077576,
-      "share_equity": 0.116732,
-      "return_vs_cost": 0.054996,
-      "unrealized": 898.500061,
+      "share_nav": 0.076427,
+      "share_equity": 0.113524,
+      "return_vs_cost": 0.066901,
+      "unrealized": 1092.999268,
       "vol_ann": 0.480934,
       "beta_spy": {
         "beta": 2.025397,
@@ -235,28 +253,29 @@
         "r2": 0.492304,
         "n_obs": 124
       },
-      "drawdown_1y": -0.284175,
+      "drawdown_1y": -0.276097,
       "peak_1y_date": "2026-06-02",
       "ma200": 369.760549,
-      "ma200_dist": -0.067721,
+      "ma200_dist": -0.057201,
       "rsi14": 35.447068,
       "insufficient_history": false,
-      "risk_share": 0.08225
+      "risk_share": 0.078857
     },
     {
       "ticker": "BMNR",
       "shares": 200.0702,
       "cost_basis": 39.05,
-      "price": 25.76,
-      "value": 5153.808398,
+      "price": 23.889999,
+      "value": 4779.676956,
       "priced_at": "2026-09-14",
+      "price_source": "intraday",
       "history_sessions": 319,
       "status": "ok",
       "excluded_from_analytics": false,
-      "share_nav": 0.023196,
-      "share_equity": 0.034904,
-      "return_vs_cost": -0.340333,
-      "unrealized": -2658.932912,
+      "share_nav": 0.020957,
+      "share_equity": 0.03113,
+      "return_vs_cost": -0.38822,
+      "unrealized": -3033.064354,
       "vol_ann": 0.775619,
       "beta_spy": {
         "beta": 3.135371,
@@ -270,33 +289,33 @@
         "r2": 0.164791,
         "n_obs": 124
       },
-      "drawdown_1y": -0.592414,
+      "drawdown_1y": -0.622002,
       "peak_1y_date": "2025-10-06",
       "ma200": 22.244275,
-      "ma200_dist": 0.158051,
+      "ma200_dist": 0.073984,
       "rsi14": 59.38501,
       "insufficient_history": false,
-      "risk_share": 0.026656
+      "risk_share": 0.023199
     }
   ],
   "unpriced": [],
   "portfolio": {
-    "vol_ann_with_cash": 0.3149,
-    "vol_ann_equity": 0.4739,
-    "vol_ann_equity_60": 0.471,
-    "beta_spy_with_cash": 1.6423,
-    "beta_spy_equity": 2.4712,
-    "beta_spy_equity_regression": 2.4712,
-    "beta_spy_equity_regression_r2": 0.5182,
-    "beta_smh_with_cash": 0.6193,
-    "beta_smh_equity": 0.9319,
-    "beta_smh_equity_regression": 0.9319,
+    "vol_ann_with_cash": 0.3222,
+    "vol_ann_equity": 0.4786,
+    "vol_ann_equity_60": 0.4769,
+    "beta_spy_with_cash": 1.6689,
+    "beta_spy_equity": 2.479,
+    "beta_spy_equity_regression": 2.479,
+    "beta_spy_equity_regression_r2": 0.5113,
+    "beta_smh_with_cash": 0.6331,
+    "beta_smh_equity": 0.9405,
+    "beta_smh_equity_regression": 0.9405,
     "beta_definition": "\u03a3 w \u03b2 over position betas; with cash: w over NAV (cash at beta 0); equity sleeve: w over equity; the constant-weight sleeve regression is the cross-check",
-    "effective_theses": 1.3,
+    "effective_theses": 1.29,
     "thesis_exposure": {
-      "ai_infra": 0.8707,
-      "unclassified": 0.0944,
-      "speculative_crypto": 0.0349
+      "ai_infra": 0.875,
+      "unclassified": 0.0939,
+      "speculative_crypto": 0.0311
     },
     "effective_bets": 5.13,
     "effective_bets_eigenvalues": [
@@ -311,7 +330,7 @@
     "effective_bets_note": "calm-period correlations understate co-movement in declines; the thesis figure is the one used for sizing",
     "sizing_figure": "effective_theses",
     "risk_decomposition_n_obs": 124,
-    "vol_from_covariance_with_cash": 0.3149
+    "vol_from_covariance_with_cash": 0.3222
   },
   "stress": [
     {
@@ -320,45 +339,45 @@
       "index": "SMH",
       "shock": -0.3,
       "method": "\u03a3 value_i \u00d7 \u03b2_i(SMH, 126-session OLS) \u00d7 shock; cash unchanged",
-      "loss": -41279.91,
-      "share_nav": -0.1858,
-      "share_equity": -0.2796,
+      "loss": -43320.24,
+      "share_nav": -0.1899,
+      "share_equity": -0.2821,
       "covered_equity_share": 1.0,
       "positions": [
         {
           "ticker": "MU",
           "beta": 1.6596,
-          "loss": -23002.53
+          "loss": -24383.14
         },
         {
           "ticker": "GEV",
           "beta": 0.761,
-          "loss": -4992.79
+          "loss": -5283.77
         },
         {
           "ticker": "NVDA",
           "beta": 0.5679,
-          "loss": -3599.74
+          "loss": -3751.26
         },
         {
           "ticker": "ANET",
           "beta": 0.6982,
-          "loss": -3933.76
+          "loss": -4189.93
         },
         {
           "ticker": "GOOG",
           "beta": 0.1768,
-          "loss": -916.61
+          "loss": -911.58
         },
         {
           "ticker": "AVGO",
           "beta": 0.731,
-          "loss": -3779.88
+          "loss": -3822.53
         },
         {
           "ticker": "BMNR",
           "beta": 0.6821,
-          "loss": -1054.59
+          "loss": -978.03
         }
       ]
     },
@@ -368,45 +387,45 @@
       "index": "SPY",
       "shock": -0.2,
       "method": "\u03a3 value_i \u00d7 \u03b2_i(SPY, 126-session OLS) \u00d7 shock; cash unchanged",
-      "loss": -72975.89,
-      "share_nav": -0.3285,
-      "share_equity": -0.4942,
+      "loss": -76126.58,
+      "share_nav": -0.3338,
+      "share_equity": -0.4958,
       "covered_equity_share": 1.0,
       "positions": [
         {
           "ticker": "MU",
           "beta": 3.5645,
-          "loss": -32937.1
+          "loss": -34913.98
         },
         {
           "ticker": "GEV",
           "beta": 2.0112,
-          "loss": -8796.66
+          "loss": -9309.31
         },
         {
           "ticker": "NVDA",
           "beta": 1.9073,
-          "loss": -8059.51
+          "loss": -8398.76
         },
         {
           "ticker": "ANET",
           "beta": 2.0698,
-          "loss": -7774.65
+          "loss": -8280.92
         },
         {
           "ticker": "GOOG",
           "beta": 1.5025,
-          "loss": -5194.2
+          "loss": -5165.66
         },
         {
           "ticker": "AVGO",
           "beta": 2.0254,
-          "loss": -6981.95
+          "loss": -7060.74
         },
         {
           "ticker": "BMNR",
           "beta": 3.1354,
-          "loss": -3231.82
+          "loss": -2997.21
         }
       ]
     },
@@ -416,45 +435,45 @@
       "index": "SPY",
       "shock": -0.34,
       "method": "\u03a3 value_i \u00d7 \u03b2_i(SPY, 126-session OLS) \u00d7 shock; cash unchanged",
-      "loss": -124059.02,
-      "share_nav": -0.5584,
-      "share_equity": -0.8402,
+      "loss": -129415.19,
+      "share_nav": -0.5674,
+      "share_equity": -0.8429,
       "covered_equity_share": 1.0,
       "positions": [
         {
           "ticker": "MU",
           "beta": 3.5645,
-          "loss": -55993.08
+          "loss": -59353.76
         },
         {
           "ticker": "GEV",
           "beta": 2.0112,
-          "loss": -14954.31
+          "loss": -15825.83
         },
         {
           "ticker": "NVDA",
           "beta": 1.9073,
-          "loss": -13701.17
+          "loss": -14277.89
         },
         {
           "ticker": "ANET",
           "beta": 2.0698,
-          "loss": -13216.9
+          "loss": -14077.57
         },
         {
           "ticker": "GOOG",
           "beta": 1.5025,
-          "loss": -8830.15
+          "loss": -8781.62
         },
         {
           "ticker": "AVGO",
           "beta": 2.0254,
-          "loss": -11869.31
+          "loss": -12003.25
         },
         {
           "ticker": "BMNR",
           "beta": 3.1354,
-          "loss": -5494.1
+          "loss": -5095.26
         }
       ]
     },
@@ -463,39 +482,39 @@
       "label": "AI infrastructure basket \u221230%",
       "shock": -0.3,
       "method": "\u03a3 value_i \u00d7 registry membership weight in ai_infra \u00d7 \u221230%",
-      "loss": -38570.28,
-      "share_nav": -0.1736,
-      "share_equity": -0.2612,
+      "loss": -40303.69,
+      "share_nav": -0.1767,
+      "share_equity": -0.2625,
       "positions": [
         {
           "ticker": "MU",
           "exposure_weight": 1.0,
-          "loss": -13860.45
+          "loss": -14692.35
         },
         {
           "ticker": "GEV",
           "exposure_weight": 0.6,
-          "loss": -3936.42
+          "loss": -4165.83
         },
         {
           "ticker": "NVDA",
           "exposure_weight": 1.0,
-          "loss": -6338.35
+          "loss": -6605.15
         },
         {
           "ticker": "ANET",
           "exposure_weight": 1.0,
-          "loss": -5634.3
+          "loss": -6001.2
         },
         {
           "ticker": "GOOG",
           "exposure_weight": 0.7,
-          "loss": -3629.95
+          "loss": -3610.0
         },
         {
           "ticker": "AVGO",
           "exposure_weight": 1.0,
-          "loss": -5170.8
+          "loss": -5229.15
         }
       ]
     },
@@ -504,14 +523,14 @@
       "label": "Memory \u221240%",
       "shock": -0.4,
       "method": "\u03a3 value_i \u00d7 \u221240% over ['MU'] (registry sub-thesis 'memory' (ai_infra members with sub: memory))",
-      "loss": -18480.6,
-      "share_nav": -0.0832,
-      "share_equity": -0.1252,
+      "loss": -19589.8,
+      "share_nav": -0.0859,
+      "share_equity": -0.1276,
       "positions": [
         {
           "ticker": "MU",
           "exposure_weight": 1.0,
-          "loss": -18480.6
+          "loss": -19589.8
         }
       ]
     },
@@ -520,14 +539,14 @@
       "label": "BMNR to zero",
       "shock": -1.0,
       "method": "the BMNR position's full market value",
-      "loss": -5153.81,
-      "share_nav": -0.0232,
-      "share_equity": -0.0349,
+      "loss": -4779.68,
+      "share_nav": -0.021,
+      "share_equity": -0.0311,
       "positions": [
         {
           "ticker": "BMNR",
           "exposure_weight": 1.0,
-          "loss": -5153.81
+          "loss": -4779.68
         }
       ]
     }
@@ -539,7 +558,7 @@
       "label": "Consumer staples",
       "kind": "etf",
       "group": null,
-      "corr": -0.4384,
+      "corr": -0.4404,
       "n_obs": 124
     },
     {
@@ -547,7 +566,7 @@
       "label": "Energy",
       "kind": "etf",
       "group": null,
-      "corr": -0.2816,
+      "corr": -0.2791,
       "n_obs": 124
     },
     {
@@ -555,7 +574,7 @@
       "label": "Utilities",
       "kind": "etf",
       "group": null,
-      "corr": -0.0294,
+      "corr": -0.0288,
       "n_obs": 124
     },
     {
@@ -563,7 +582,7 @@
       "label": "Financials",
       "kind": "etf",
       "group": null,
-      "corr": -0.022,
+      "corr": -0.0261,
       "n_obs": 124
     },
     {
@@ -571,7 +590,7 @@
       "label": "AI infrastructure",
       "kind": "screen_name",
       "group": "ai_infra",
-      "corr": 0.148,
+      "corr": 0.1446,
       "n_obs": 124,
       "screen_composite": 47.1,
       "fundamental": 18.0,
@@ -582,7 +601,7 @@
       "label": "Long Treasuries",
       "kind": "etf",
       "group": null,
-      "corr": 0.2363,
+      "corr": 0.2337,
       "n_obs": 124
     },
     {
@@ -590,7 +609,7 @@
       "label": "Gold",
       "kind": "etf",
       "group": null,
-      "corr": 0.4158,
+      "corr": 0.4126,
       "n_obs": 124
     },
     {
@@ -598,7 +617,7 @@
       "label": "Small caps",
       "kind": "etf",
       "group": null,
-      "corr": 0.6565,
+      "corr": 0.6535,
       "n_obs": 124
     },
     {
@@ -606,7 +625,7 @@
       "label": "AI infrastructure",
       "kind": "screen_name",
       "group": "ai_infra",
-      "corr": 0.6715,
+      "corr": 0.6716,
       "n_obs": 124,
       "screen_composite": 54.0,
       "fundamental": 20.5,
@@ -617,7 +636,7 @@
       "label": "AI infrastructure",
       "kind": "screen_name",
       "group": "ai_infra",
-      "corr": 0.7126,
+      "corr": 0.7123,
       "n_obs": 124,
       "screen_composite": 47.7,
       "fundamental": 18.0,
@@ -628,7 +647,7 @@
       "label": "AI infrastructure",
       "kind": "screen_name",
       "group": "ai_infra",
-      "corr": 0.7762,
+      "corr": 0.7746,
       "n_obs": 124,
       "screen_composite": 58.0,
       "fundamental": 24.0,
@@ -649,7 +668,7 @@
           "label": "Consumer staples",
           "kind": "etf",
           "group": null,
-          "corr": -0.4384,
+          "corr": -0.4404,
           "n_obs": 124
         },
         {
@@ -657,7 +676,7 @@
           "label": "Utilities",
           "kind": "etf",
           "group": null,
-          "corr": -0.0294,
+          "corr": -0.0288,
           "n_obs": 124
         }
       ],
@@ -676,7 +695,7 @@
           "label": "Energy",
           "kind": "etf",
           "group": null,
-          "corr": -0.2816,
+          "corr": -0.2791,
           "n_obs": 124
         },
         {
@@ -684,7 +703,7 @@
           "label": "Gold",
           "kind": "etf",
           "group": null,
-          "corr": 0.4158,
+          "corr": 0.4126,
           "n_obs": 124
         }
       ],
@@ -703,7 +722,7 @@
           "label": "Financials",
           "kind": "etf",
           "group": null,
-          "corr": -0.022,
+          "corr": -0.0261,
           "n_obs": 124
         }
       ],
@@ -720,7 +739,7 @@
           "label": "Long Treasuries",
           "kind": "etf",
           "group": null,
-          "corr": 0.2363,
+          "corr": 0.2337,
           "n_obs": 124
         },
         {
@@ -728,7 +747,7 @@
           "label": "Gold",
           "kind": "etf",
           "group": null,
-          "corr": 0.4158,
+          "corr": 0.4126,
           "n_obs": 124
         }
       ],
@@ -742,7 +761,8 @@
     "visibility": 15.0
   },
   "warnings": [
-    "price store ends 2026-09-14, before the last completed session 2026-09-15; analytics computed through 2026-09-14"
+    "price store ends 2026-09-14, before the last completed session 2026-09-16; analytics computed through 2026-09-14",
+    "intraday snapshot: position values, NAV and stress are at the live tape; volatility, beta, risk shares and correlations are the last settled close's 126-session windows (through 2026-09-14)"
   ],
   "note": "descriptive; no rule drives this book; nothing here is a recommendation"
 }
