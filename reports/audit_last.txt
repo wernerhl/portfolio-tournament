@@ -1,9 +1,44 @@
-last trading session: 2026-09-16
-Traceback (most recent call last):
-  File "/home/runner/work/portfolio-tournament/portfolio-tournament/scripts/audit_nightly.py", line 305, in <module>
-    sys.exit(main(troot,sroot))
-             ^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/portfolio-tournament/portfolio-tournament/scripts/audit_nightly.py", line 244, in main
-    if c and abs(c.get('active',0)-(c.get('cash_eff',0)+c.get('alloc_eff',0)+c.get('selection',0)))>1e-4:
-                                    ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-TypeError: unsupported operand type(s) for +: 'NoneType' and 'NoneType'
+last trading session: 2026-09-18
+[HIGH    ] tournament:freshness         alert_state.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         comparators.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         factor_exposure.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         indicator_series.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         regime_daily.csv: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         regime_daily_published.csv: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         regime_indicators.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         regime_v2_daily.csv: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         regime_v4_daily.csv: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:dead_columns      regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_15_20_elastic_net', 'p_15_40_logistic_pc', 'p_15_60_logistic_pc']
+[HIGH    ] tournament:freshness         thesis_daily.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         ticker_indicators.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         ticker_signals.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         tournament.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         v4_delta_attribution.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         vol_close_canonical.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] tournament:freshness         vol_regime.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] screener:freshness           reconciliation.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] screener:freshness           scores.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] screener:freshness           status.json: max date 2026-09-15 is 3 sessions-old vs last session 2026-09-18
+[HIGH    ] xfile:vol_single_source      intraday vix 15.44 vs canonical 17.2
+[HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
+[HIGH    ] governance:coverage          5_werner: unclassified share 17% > 15%
+[HIGH    ] governance:review_overdue    visibility override AMZN review_by 2026-08-13 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override ANET review_by 2026-08-18 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override AVGO review_by 2026-09-17 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override ETN review_by 2026-08-14 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override GD review_by 2026-08-12 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override MSFT review_by 2026-08-12 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override NVDA review_by 2026-09-09 passed (decay should be active)
+[HIGH    ] governance:review_overdue    visibility override VRT review_by 2026-08-12 passed (decay should be active)
+[HIGH    ] screener:stale               session_date 2026-09-15 vs last session 2026-09-18
+[INFO    ] tournament:freshness         loco_cv_results.csv: no date axis found (static config?)
+[INFO    ] tournament:freshness         ml_indicator_weights.csv: no date axis found (static config?)
+[INFO    ] tournament:freshness         pca_loadings.csv: no date axis found (static config?)
+[INFO    ] tournament:freshness         pca_variance_explained.csv: no date axis found (static config?)
+[INFO    ] tournament:freshness         regime_v3_correlation.csv: no date axis found (static config?)
+[INFO    ] tournament:freshness         scored_universe.csv: no date axis found (static config?)
+[INFO    ] screener:freshness           scored_universe.csv: no date axis found (static config?)
+[INFO    ] screener:freshness           watchlist_top30.csv: no date axis found (static config?)
+[INFO    ] book:export                  no brokerage export on record (holdings_export.json absent); holdings.json source: brokerage positions, 2026-09-16 (manual transcription; replaced by CSV ingestion in Phase 2)
+
+41 findings; 0 CRITICAL

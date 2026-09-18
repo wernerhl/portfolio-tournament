@@ -1,17 +1,28 @@
 {
- "last_attempt": "2026-09-15T20:05:16-04:00",
+ "last_attempt": "2026-09-17T19:59:42-04:00",
  "last_success": "2026-09-15T20:05:16-04:00",
- "failure_reason": null,
- "session_date": "2026-09-15",
+ "failure_reason": "FRESHNESS tournament.json: max date 2026-09-15 < last session 2026-09-17; FRESHNESS thesis_daily.json: max date 2026-09-15 < last session 2026-09-17",
+ "session_date": "2026-09-17",
  "forced_publish_reason": null,
  "audit": {
-  "ran_at": "2026-09-16T00:10:10+00:00",
-  "scope": "tournament",
-  "n_findings": 0,
+  "ran_at": "2026-09-18T00:07:56+00:00",
+  "scope": "all",
+  "n_findings": 41,
   "critical": [],
   "critical_other_repo": [],
-  "xfile": [],
-  "high": [],
+  "xfile": [
+   "HIGH:xfile:vol_single_source"
+  ],
+  "high": [
+   "governance:coverage",
+   "governance:review_overdue",
+   "nullguard",
+   "screener:freshness",
+   "screener:stale",
+   "tournament:dead_columns",
+   "tournament:freshness",
+   "xfile:vol_single_source"
+  ],
   "report": "reports/audit_last.txt"
  }
 }
