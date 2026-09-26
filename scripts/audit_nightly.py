@@ -319,6 +319,81 @@ def main(troot, sroot, today=None):
             if hits: add('CRITICAL','bond:language',f'{bf} contains prohibited word(s) {hits} (order §9.9)')
             for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
                 if tok in blob: add('CRITICAL','bond:directive',f'{bf} contains a buy/sell directive ({tok!r})')
+    # ---------- the options lens (order 26-Sept, Phase 6) ----------
+    # The chain vintage of the session must exist, be pulled inside 15:30–16:00 ET on a trading
+    # day (a backfill is flagged and reported, never silently accepted), be immutable once written
+    # (per-file sha256 recorded at write time and re-checked here), carry live bid-ask quotes on
+    # at least 70% of front-expiry strikes for each held name (else the name's options column
+    # reads `impaired`), every computed ATM implied volatility must lie in [0.05, 3.0], every held
+    # name must have a next-earnings date, and no served options file may carry the provider's IV
+    # field, a directive, or the words edge/alpha.
+    oroot=os.path.join(troot,'options'); vroot=os.path.join(oroot,'vintages')
+    held_=set()
+    if os.path.exists(hp_):
+        held_={str(h.get('ticker','')).upper() for h in json.load(open(hp_)).get('holdings',[]) if (h.get('shares') or 0)>0}
+    if os.path.isdir(vroot):
+        vints=sorted(d for d in os.listdir(vroot) if len(d)==10 and os.path.isdir(os.path.join(vroot,d)))
+        if not vints or vints[-1]<ls.isoformat():
+            add('HIGH','options:vintage_missing',f'no chain vintage for the last session {ls} (latest: {vints[-1] if vints else "none"})')
+        if vints:
+            vd=os.path.join(vroot,vints[-1]); mp=os.path.join(vd,'_meta.json')
+            meta=json.load(open(mp)) if os.path.exists(mp) else {}
+            kind=str(meta.get('snapshot_kind','')); pulled=str(meta.get('pulled_at',''))
+            pd_=to_date(pulled[:10]) if pulled else None
+            hm=(int(pulled[11:13]),int(pulled[14:16])) if len(pulled)>=16 else None
+            if kind=='scheduled':
+                if not pd_ or not is_trading_day(pd_) or not hm or not ((15,30)<=hm<(16,0)):
+                    add('CRITICAL','options:snapshot_window',f'vintage {vints[-1]} pulled at {pulled or "unknown"} — outside 15:30–16:00 ET on a trading day (after-hours pulls are prohibited)')
+            elif kind=='backfill':
+                add('INFO','options:snapshot_backfill',f'vintage {vints[-1]} is a flagged backfill pulled {pulled[:16]} (post-close quotes as retained by the provider), not a 15:45 snapshot')
+            else:
+                add('HIGH','options:snapshot_kind',f'vintage {vints[-1]} has no snapshot_kind in _meta.json')
+            tk_meta=meta.get('tickers',{})
+            try:
+                import hashlib
+                for tk,m in tk_meta.items():
+                    fp=os.path.join(vd,f'{tk}.parquet')
+                    if not os.path.exists(fp): add('HIGH','options:vintage_file',f'{vints[-1]}/{tk}.parquet recorded in _meta but absent'); continue
+                    if m.get('sha256') and hashlib.sha256(open(fp,'rb').read()).hexdigest()!=m['sha256']:
+                        add('CRITICAL','options:immutable',f'{vints[-1]}/{tk}.parquet differs from the sha256 recorded at write time — a vintage was rewritten')
+            except Exception as e:
+                add('MEDIUM','options:immutable',f'immutability check could not run ({type(e).__name__})')
+            for tk in sorted(held_):
+                m=tk_meta.get(tk)
+                if not m: add('HIGH','options:held_missing',f'held name {tk} absent from vintage {vints[-1]}'); continue
+                sh=m.get('front_live_quote_share')
+                if sh is None or sh<0.70: add('HIGH','options:live_quotes',f'{tk}: {"no" if sh is None else f"{sh*100:.0f}% of"} front-expiry strikes carry live bid-ask quotes (<70%) — the options column reads impaired')
+            try:
+                import pandas as _pd
+                for tk in list(tk_meta)[:60]:
+                    fp=os.path.join(vd,f'{tk}.parquet')
+                    if os.path.exists(fp) and 'impliedVolatility' in _pd.read_parquet(fp,columns=None).columns:
+                        add('CRITICAL','options:provider_iv',f'{vints[-1]}/{tk}.parquet carries the provider impliedVolatility field — must never be stored'); break
+            except Exception as e:
+                add('INFO','options:provider_iv',f'parquet column check skipped ({type(e).__name__})')
+    lp_=os.path.join(oroot,'lens.json')
+    if os.path.exists(lp_):
+        lj=json.load(open(lp_)); bad=[]
+        for tk,n in (lj.get('names') or {}).items():
+            vp_=(n.get('volatility') or {})
+            for k in ('iv30','iv90'):
+                v=vp_.get(k)
+                if v is not None and not (0.05<=float(v)<=3.0): bad.append(f'{tk}:{k}={v}')
+        if bad: add('CRITICAL','options:iv_range',f'ATM implied volatility outside [0.05, 3.0]: {bad[:6]}')
+        if 'impliedVolatility' in open(lp_).read(): add('CRITICAL','options:provider_iv','lens.json mentions the provider impliedVolatility field')
+    ep_=os.path.join(oroot,'earnings_reactions.json')
+    if os.path.exists(ep_) and held_:
+        ej=json.load(open(ep_)).get('names',{})
+        noe=[tk for tk in sorted(held_) if not ((ej.get(tk) or {}).get('next') or {}).get('date')]
+        if noe: add('HIGH','options:next_earnings',f'held names without a next-earnings date: {noe}')
+    for of in ('options/lens.json','options/earnings_reactions.json','options/hedges.json'):
+        op_=os.path.join(troot,of)
+        if os.path.exists(op_):
+            blob=open(op_).read().lower()
+            hits=[w for w in ('edge','alpha') if re.search(r'\b'+w+r'\b',blob)]
+            if hits: add('CRITICAL','options:language',f'{of} contains prohibited word(s) {hits} (order §9.8)')
+            for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
+                if tok in blob: add('CRITICAL','options:directive',f'{of} contains a buy/sell directive ({tok!r})')
     # visibility review dates (screener)
     vp=os.path.join(sroot,'visibility_registry.json')
     if os.path.exists(vp):
