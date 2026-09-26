@@ -38,26 +38,35 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
-        run: pip install yfinance fredapi pandas numpy scipy pyarrow
+        run: pip install yfinance fredapi pandas numpy scipy pyarrow lxml   # lxml: the options lens's earnings-date scrape
 
       - name: Decide (the late schedule retries only a rejected close run)
         id: decide
         run: |
           python - <<'EOF' >> "$GITHUB_OUTPUT"
           import json, os
-          from datetime import datetime, timezone
-          late = datetime.now(timezone.utc).hour < 12          # the 01:30 UTC schedule (and a late manual run)
+          # The late schedule is identified by the cron that fired, NOT the wall clock: GitHub
+          # delivers the 22:00 UTC close cron up to ~2.5 h late, so from 22-Sept its runs landed
+          # after midnight UTC, were misread as the 01:30 retry, and skipped ("no retry needed")
+          # for ten sessions while the served files went stale. A dispatch always runs.
+          late = os.environ.get("GITHUB_SCHEDULE", "") == "30 1 * * 2-6"
           st = {}
           try: st = json.load(open("data/status.json"))
           except Exception: pass
           fr = str(st.get("failure_reason") or "")
-          rejected_for_bars = ("bar_session_mismatch" in fr) or ("PRICE_STORE_SESSION" in fr) or ("BAR_SESSION_MISMATCH" in fr)
+          # A missing close bar surfaces downstream as the validator's FRESHNESS rejection of
+          # tournament.json (compute_nav's assertion is only a warning inside the pipeline), so
+          # that symptom must also arm the retry — it never did, which is why the 01:30 retry
+          # never fired after the 17/18-Sept bar rejections.
+          rejected_for_bars = (("bar_session_mismatch" in fr) or ("PRICE_STORE_SESSION" in fr) or ("BAR_SESSION_MISMATCH" in fr)
+                               or ("FRESHNESS tournament.json" in fr))
           run = (not late) or rejected_for_bars or os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
           print(f"run={'true' if run else 'false'}")
           print(f"reason={'close run' if not late else ('retry after bar rejection' if rejected_for_bars else 'no retry needed (last run published)')}")
           EOF
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_SCHEDULE: ${{ github.event.schedule }}
 
       - name: Run the nightly pipeline
         id: pipeline
