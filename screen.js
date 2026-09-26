@@ -16,6 +16,18 @@ const pnl = n => n >= 0 ? 'pos' : n < 0 ? 'neg' : 'neut';
 const scoreCls = s => s >= 55 ? 'c-pos' : s >= 45 ? 'c-warn' : s >= 35 ? 'c-2' : 'c-neg';
 const penCls = (v, red) => v == null ? 'c-3' : v < red ? 'c-neg' : v < 0 ? 'c-warn' : 'c-3';
 
+// options lens (order 26-Sept-2026, 3.1): the board's third column — volatility state and the event line
+const OPT_CLS = {cheap: 'c-pos', rich: 'c-warn', mixed: 'c-2'}, OPT_GL = {cheap: '◯', rich: '●', mixed: '◐'};
+function optionsCell(tk){
+  const o = SC.optionsLens && SC.optionsLens.names && SC.optionsLens.names[tk]; if (!o) return '<span class="c-3">—</span>';
+  const v = o.volatility || {}, e = o.event || {};
+  const soon = e.days_to != null && e.days_to >= 0 && e.days_to <= 30;
+  const st = o.impaired ? '<span class="c-warn w6" title="fewer than 70% of front-expiry strikes carry live bid-ask quotes">IMPAIRED</span>'
+                        : `<span class="${OPT_CLS[v.state] || 'c-3'} w6" title="IV30 ${v.iv30 != null ? (v.iv30 * 100).toFixed(1) + '%' : '—'} vs RV21 ${v.rv21 != null ? (v.rv21 * 100).toFixed(1) + '%' : '—'} / RV63 ${v.rv63 != null ? (v.rv63 * 100).toFixed(1) + '%' : '—'}">${OPT_GL[v.state] || ''} ${v.state || '—'}</span>`;
+  const ev = e.next_earnings ? ` <span class="${soon ? 'c-warn' : 'c-3'}" title="earnings ${e.next_earnings}${e.implied_move != null ? '; market prices ±' + (e.implied_move * 100).toFixed(1) + '%' : ''}${e.history && e.history.median_abs != null ? '; median past reaction ' + (e.history.median_abs * 100).toFixed(1) + '%' : ''}">${soon ? '◎ ' : ''}${e.days_to != null && e.days_to >= 0 ? e.days_to + 'd' : e.next_earnings}${e.implied_move != null ? ' ±' + (e.implied_move * 100).toFixed(1) + '%' : ''}</span>` : '';
+  return st + ev;
+}
+
 const sbar = r => `<span class="sbar" style="--f:${r.fundamental ?? 0};--t:${r.technical ?? 0};--v:${r.visibility ?? 0}"><span class="bg-cat-2"></span><span class="bg-cat-7"></span><span class="bg-cat-3"></span></span><span class="t1 c-3 nowrap">F${r.fundamental} T${r.technical} V${r.visibility}</span>`;
 const legend = full => `<div class="legend">
   <span><span class="sw bg-cat-2"></span>Fundamental</span>
@@ -72,7 +84,7 @@ function renderWatchlist(W, U){
   if (!W.length) return `<div class="lbtable">${head}<div class="note">No board data</div></div>`;
   return `<div class="lbtable">${head}
   <div class="tbl-scroll"><table><thead><tr>
-    ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}${th('watch', 'entry_level', 'LEVEL', 1)}${th('watch', null, 'GAP', 1)}${th('watch', 'category', 'CAT')}
+    ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}${th('watch', 'entry_level', 'LEVEL', 1)}${th('watch', null, 'GAP', 1)}${th('watch', 'category', 'CAT')}${th('watch', null, 'OPTIONS')}
   </tr></thead><tbody>
     ${rows.map(r => {
       const gap = r.entry_level && r.current_price ? ((r.entry_level / r.current_price - 1) * 100) : 0;
@@ -92,6 +104,7 @@ function renderWatchlist(W, U){
       <td class="num c-info">$${fmtD(r.entry_level)}</td>
       <td class="num ${gapCls}">${gap.toFixed(1)}%</td>
       <td>${badge(r.category)}</td>
+      <td class="t1 nowrap">${optionsCell(r.ticker)}</td>
     </tr>`; }).join('')}
   </tbody></table></div>
   ${legend(true)}
@@ -246,7 +259,7 @@ function render(){
 }
 
 async function init(){
-  await loadFiles(['screen', 'screenStatus', 'visReg', 'reconciliation', 'universeMeta'], SC);
+  await loadFiles(['screen', 'screenStatus', 'visReg', 'reconciliation', 'universeMeta', 'optionsLens'], SC);
   SC.data = SC.screen; SC.status = SC.screenStatus; SC.recon = SC.reconciliation;
   render();
 }

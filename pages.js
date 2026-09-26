@@ -87,12 +87,13 @@ const PAGES = {
   },
   book: {
     title: "THE BOOK", sub: () => `${S.book ? "analytics through " + S.book.as_of : ""} · positions from data/holdings.json, the only holdings source · every panel descriptive`,
-    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger"],
+    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges"],
     compose(){
       const strip = renderStatusStrip();
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE BOOK</h2>${strip}${renderBookPanel()}</div>`;
-      h += `<div class="tier tier-2"><h2 class="tier-title">SIZING, STRESS AND SLEEVES</h2>${renderPostureCard()}<div class="rcc-card">${renderStressPanel()}</div>${renderSleevesPanel()}</div>`;
+      h += `<div class="tier tier-2"><h2 class="tier-title">SIZING, STRESS AND SLEEVES</h2>${renderEventBoard()}${renderPostureCard()}<div class="rcc-card">${renderStressPanel()}</div>${renderSleevesPanel()}</div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">POSITIONS</h2>${renderPositionsList()}</div>`;
+      h += `<div class="tier tier-1"><h2 class="tier-title">THE HEDGE SELECTOR</h2>${renderHedgeSelector()}</div>`;
       return h;
     },
   },
@@ -109,7 +110,7 @@ const PAGES = {
   },
   tournament: {
     title: "THE TOURNAMENT", sub: () => `${updatedStr()} · 4 algorithmic tiers + Werner · monthly rescore + regime overlay · net of costs`,
-    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime"],
+    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges"],
     compose(){
       const lb = renderLeaderboardBlock(); this._allSeries = lb.allSeries;
       let h = `<div class="tier tier-1"><h2 class="tier-title">LEADERBOARD</h2>${lb.html}</div>`;

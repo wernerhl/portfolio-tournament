@@ -1275,6 +1275,52 @@ function tradeContext(s){
   if (d.ma200_dist != null && Math.abs(d.ma200_dist) < 5) bits.push("at 200-DMA");
   return bits.join(" · ");
 }
+// ── Options lens (order 26-Sept-2026, Phase 3): the third column of every stock card ──
+// What the options market prices about the name and, for held names, the structure the
+// hedge selector ranks first. Descriptive; no directional implication anywhere.
+function optLens(tk){ return (S.optionsLens && S.optionsLens.names && S.optionsLens.names[tk]) || null; }
+function optPct(x, d){ return x == null ? "—" : (x * 100).toFixed(d == null ? 1 : d) + "%"; }
+const OPT_STATE_CLS = {cheap:"c-pos", rich:"c-warn", mixed:"c-2"};
+const OPT_GLYPH = {cheap:"◯", rich:"●", mixed:"◐"};   // hollow = cheap, filled = rich, half = mixed
+function optEventText(o){
+  const e = o && o.event; if (!e) return "";
+  if (!e.next_earnings) return "no earnings date listed";
+  const h = e.history || {}; const l8 = h.last8 || {};
+  const when = e.days_to == null ? "" : e.days_to < 0 ? " (past)" : ` (${e.days_to}d, ${e.sessions_to} sessions)`;
+  const parts = [`earnings ${e.next_earnings}${when}`];
+  parts.push(e.implied_move != null ? `market prices ±${optPct(e.implied_move)}${e.expiry_after ? " from the " + e.expiry_after + " expiry" : ""}` : `implied move n/a${e.implied_move_reason ? " (" + e.implied_move_reason + ")" : ""}`);
+  if (h.median_abs != null) parts.push(`median past reaction ${optPct(h.median_abs)} over ${h.n}`);
+  if (h.n_exceeding_implied != null) parts.push(`${h.n_exceeding_implied} of ${h.n} exceeded`);
+  if (l8.n_exceeding_implied != null) parts.push(`${l8.n_exceeding_implied} of last ${l8.n} exceeded`);
+  return parts.join("; ");
+}
+function optionsRowHtml(tk, isPos){
+  const o = optLens(tk);
+  if (!o) return `<div class="ts-row"><div class="ts-label">Options</div><div class="ts-sub c-3">no chain vintage for this name</div><div class="ts-val"><span class="c-3">—</span></div><div class="ts-sub"></div></div>`;
+  const v = o.volatility || {}, t = o.term_structure || {}, sk = o.skew || {}, g = o.dealer_gamma || {};
+  const pill = o.impaired ? `<span class="c-warn w6" title="fewer than 70% of front-expiry strikes carry live bid-ask quotes">IMPAIRED</span>`
+                          : `<span class="${OPT_STATE_CLS[v.state] || "c-3"} w6">${OPT_GLYPH[v.state] || ""} ${(v.state || "—").toUpperCase()}</span>`;
+  const ivLine = `IV30 <span class="c-1">${optPct(v.iv30)}</span> · RV21 ${optPct(v.rv21)} · RV63 ${optPct(v.rv63)}${t.inverted ? ` · <span class="c-warn">term inverted</span>${t.reason ? ` <span class="c-3">(${t.reason})</span>` : ""}` : ""}`;
+  const skewLine = sk.skew != null ? `skew ${(sk.skew * 100).toFixed(1)} pts (10% OTM put − call IV${sk.rr25 != null ? `; 25Δ RR ${(sk.rr25 * 100).toFixed(1)}` : ""})` : "skew n/a";
+  let hedge = "";
+  const hp = isPos && S.optionsHedges && S.optionsHedges.positions && S.optionsHedges.positions[tk];
+  if (hp && hp.tenors && hp.tenors.length){
+    const ten = hp.tenors[0]; const top = (ten.structures || []).find(s => s.rank === 1);
+    if (top) hedge = `<div class="mono t1 c-3 mt1">structure ranked first, ${ten.expiry} (${ten.tenor.replace("_", " ")}): <span class="c-2">${top.label}</span>, ${top.net_kind} $${Math.abs(top.net_per_share).toFixed(2)}/sh (${fmtMoney(Math.abs(top.net_on_position))} on the position) · <span class="c-warn">${S.optionsHedges.label}</span></div>`;
+  }
+  const gamma = `<details class="mt1"><summary class="mono t1 c-3 ptr ls05">dealer gamma (descriptive, assumption-flagged)</summary><div class="mono t1 c-3 mt1">net gamma per 1% move ${g.per_1pct != null ? fmtMoney(g.per_1pct) : "—"} · flip level ${g.flip_level != null ? "$" + g.flip_level : "—"} · convention: ${g.convention || "dealers long calls, short puts"}. ${g.caveat || ""}</div></details>`;
+  return `<div class="ts-row">
+      <div class="ts-label">Options</div>
+      <div class="ts-sub">${ivLine}</div>
+      <div class="ts-val">${pill}</div>
+      <div class="ts-sub">${optEventText(o)} · ${skewLine}</div>
+    </div>${hedge}${gamma}`;
+}
+function optEventLine(tk){   // 3.3: the event line for held names when a release falls within 10 sessions
+  const o = optLens(tk); const e = o && o.event;
+  if (!e || !e.next_earnings || e.sessions_to == null || e.sessions_to < 0 || e.sessions_to > 10) return "";
+  return `<div class="mono t1 c-warn mt1">◎ ${optEventText(o)}</div>`;
+}
 function twoScoreBar(value, max, color){
   const pct = Math.max(0, Math.min(100, value / max * 100));
   return `<div class="ts-bar">
@@ -1305,6 +1351,7 @@ function renderTwoScore(tk){
       <div class="ts-val"><span class="${cc(div.color)}">${div.icon}</span> <span class="t1 c-3">no entry strength in position mode</span></div>
       <div class="ts-sub">${tradeContext(s)}</div>
     </div>
+    ${optionsRowHtml(tk, true)}
     <div class="ts-divergence ${cc(div.color)} ${cc(div.color,'bl')}">${div.icon} ${div.text} <span class="c-3">· ${s.label || "mechanical rulebook; expectancy not validated"}</span></div>
   </div>`;
 
@@ -1321,6 +1368,7 @@ function renderTwoScore(tk){
       <div class="ts-val"><span class="${cc(tradeColor(trade))}">${sig}</span> · ${trade}<span class="ts-of">/100</span></div>
       <div class="ts-sub">${note ? '<span class="c-warn">' + note + '</span>' : tradeContext(s)}</div>
     </div>
+    ${optionsRowHtml(tk, false)}
     <div class="ts-divergence ${cc(div.color)} ${cc(div.color,'bl')}">
       ${div.icon} ${div.text}
     </div>
@@ -1908,13 +1956,21 @@ function scannerRows(){
     // quad order: actionable buys + exits at the top, holds at the bottom
     const quadOrder = ({clean:9, exit:8, trim:7, watch:6, momo:5, hedge:4,
                         wait:3, monitor:2, hold:1, avoid:0})[div.cls] ?? 0;
+    // options lens (3.2): the third dimension — volatility state by marker, a ring for a release inside 30 days
+    const o = optLens(tk); const ov = (o && o.volatility) || {}; const oe = (o && o.event) || {};
+    const optState = o ? (o.impaired ? "impaired" : ov.state) : null;
+    const optDays = oe.days_to != null ? oe.days_to : null;
+    const optRing = optDays != null && optDays >= 0 && optDays <= 30;
+    const optOrder = ({cheap:0, mixed:1, rich:2, impaired:3})[optState] ?? 9;
     rows.push({tk, quality, qPct, rank, trade, sig, divCls:div.cls,
                divColor:div.color, divIcon:div.icon, quadOrder,
-               mode:s.mode, note:s.trade_now_note});
+               mode:s.mode, note:s.trade_now_note,
+               optState, optDays, optRing, optOrder, optImp: oe.implied_move});
   }
   return rows;
 }
 function scannerFilterFn(filter){
+  if (filter === "earnings")  return r => r.optRing;
   if (filter === "clean")     return r => r.divCls === "clean";
   if (filter === "watch")     return r => r.divCls === "watch";
   if (filter === "exit")      return r => r.divCls === "exit" || r.divCls === "trim";
@@ -1927,6 +1983,7 @@ function scannerSortFn(sortKey, dir){
   if (sortKey === "tk")      return (a,b) => mult * a.tk.localeCompare(b.tk);
   if (sortKey === "quality") return (a,b) => mult * (a.quality - b.quality);
   if (sortKey === "trade")   return (a,b) => mult * ((a.trade ?? -1) - (b.trade ?? -1));
+  if (sortKey === "opt")     return (a,b) => (mult * ((a.optOrder ?? 9) - (b.optOrder ?? 9))) || ((a.optDays ?? 999) - (b.optDays ?? 999));
   // quad (default): divergence-quadrant ordering first, then quality desc
   return (a,b) => (mult * (a.quadOrder - b.quadOrder))
                 || (b.quality - a.quality);
@@ -1946,6 +2003,7 @@ function renderScanner(){
     {k:"exit",      lbl:`▽ Below a rulebook level (${rows0.filter(r=>r.divCls==="exit"||r.divCls==="trim").length})`},
     {k:"quality",   lbl:`Top quality (${rows0.filter(r=>r.quality>=38).length})`},
     {k:"positions", lbl:`Owned (${rows0.filter(r=>r.mode==="position").length})`},
+    {k:"earnings",  lbl:`◎ Earnings ≤30d (${rows0.filter(r=>r.optRing).length})`},
   ];
 
   const tradeColorFor = t => tradeColor(t);
@@ -1969,6 +2027,7 @@ function renderScanner(){
       </td>
       <td class="val">${r.trade == null ? `<span class="${cc(r.divColor)}">${r.sig.length > 22 ? r.sig.substring(0,20) + "…" : r.sig}</span>` : `<span class="${cc(tradeColorFor(r.trade))}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}`}</td>
       <td class="flag ${cc(r.divColor)}">${r.divIcon} ${r.divCls}</td>
+      <td class="opt" title="${r.optState ? `options: volatility ${r.optState}${r.optDays != null ? "; earnings in " + r.optDays + " days" : ""}${r.optImp != null ? "; market prices ±" + (r.optImp * 100).toFixed(1) + "%" : ""}` : "no chain vintage"}">${r.optState ? `<span class="${OPT_STATE_CLS[r.optState] || "c-warn"} w6">${OPT_GLYPH[r.optState] || "◌"}</span> <span class="c-3">${r.optState}</span>` : `<span class="c-3">—</span>`}${r.optRing ? ` <span class="c-warn" title="earnings release inside 30 days">◎ ${r.optDays}d</span>` : ""}</td>
     </tr>`;
   }
 
@@ -1990,6 +2049,7 @@ function renderScanner(){
         <th class="${sortCls("trade")}"   data-scsort="trade">SETUP READING</th>
         <th class="num"></th>
         <th class="${sortCls("quad")}"    data-scsort="quad">FLAG</th>
+        <th class="${sortCls("opt")}"     data-scsort="opt" title="options: ◯ volatility cheap · ● rich · ◐ mixed · ◎ earnings inside 30 days">OPTIONS</th>
       </tr></thead>
       <tbody>${body}</tbody>
     </table>
@@ -2014,7 +2074,7 @@ function sigVerb(s){ return (s||"HOLD").split(/[\s—]+/)[0].toUpperCase(); }
 function renderSignalBox(tk){
   const sig = S.signals && S.signals.signals && S.signals.signals[tk];
   if (!sig) return "";
-  if (sig.mode === "position") return renderPositionBox(sig);
+  if (sig.mode === "position") return renderPositionBox(sig, tk);
   return renderEntryBox(sig);
 }
 
@@ -2097,7 +2157,7 @@ const POS_STATE = {
   no_price_history:     {cls: "sig-2",    icon: "·"},
 };
 function sigLabelLine(sig){ return `<div class="sig-label mono t1 c-3 mt2">${sig.label || "mechanical rulebook; expectancy not validated"}</div>`; }
-function renderPositionBox(sig){
+function renderPositionBox(sig, tk){
   const p = sig.position || {}, s = sig.stops || {};
   const st = POS_STATE[sig.state] || POS_STATE.within_rules;
   const money = v => v == null ? "—" : "$" + fmt(Math.round(Math.abs(v)));
@@ -2125,6 +2185,7 @@ function renderPositionBox(sig){
       <div class="mono t1 w5 c-3">POSITION MODE</div>
     </div>
     <p class="c-1 lh16 x30 sig-observation">${sig.observation || ""}</p>
+    ${optEventLine(tk)}
     <div class="gap2 mb2 x29">
       ${cell("COST", "$" + (+p.cost_basis).toFixed(2), `${p.shares} shares`, "c-2")}
       ${cell("PRICE", "$" + (+p.current_price).toFixed(2), money(p.position_value))}
@@ -3241,4 +3302,48 @@ function renderBondsRegistrationCard(){
     <div class="mono t1 c-2">Rates-regime vs static duration and a constant-maturity ladder · a carry rule (highest yield-per-duration sleeve) vs equal-weight · credit-timing (add HY when spreads are wide, reduce when tight) vs static credit.</div>
     <div class="mono t1 c-3 mt1">Paired difference on common resampled paths (60-session blocks, 1,000 resamples), point-in-time yields and spreads, costs at one third of quoted bid-ask width. The rates-regime state (bonds page) is gated DIAGNOSTIC and drives no sizing until Test 1 passes; adoption is a separate written decision.</div>
     <div class="chart-meta">registration: ${rr.registration || "reports/bonds_retirement_registration_2026-09-16.md"}</div></div>`;
+}
+
+// ── Options lens: the event board (3.4) and the hedge selector (Phase 4), book page ──────
+function renderEventBoard(){
+  const L = S.optionsLens; if (!L || !L.names) return "";
+  const b = S.book || {}; const pos = {}; (b.positions || []).forEach(p => { pos[p.ticker] = p; });
+  const rows = Object.entries(L.names)
+    .filter(([tk, o]) => (o.roles || []).includes("held") && o.event && o.event.days_to != null && o.event.days_to >= 0 && o.event.days_to <= 45)
+    .sort((a, b) => a[1].event.days_to - b[1].event.days_to)
+    .map(([tk, o]) => { const e = o.event, h = e.history || {}, l8 = h.last8 || {}; const p = pos[tk] || {};
+      const dollars = (e.implied_move != null && p.value != null) ? e.implied_move * p.value : null;
+      return `<tr><td class="mono t2 c-1 w6">${tk}</td><td class="c-2">${e.next_earnings} <span class="c-3">(${e.days_to}d, ${e.time_of_day ? e.time_of_day.replace("_", " ") : ""})</span></td>
+        <td class="num c-1 w6">${e.implied_move != null ? "±" + optPct(e.implied_move) : "—"}</td><td class="num c-2">${dollars != null ? "±" + fmtMoney(dollars) : "—"}</td>
+        <td class="num c-2">${optPct(h.median_abs)}</td><td class="num c-3">${optPct(h.max_abs)}</td>
+        <td class="num c-2">${l8.n_exceeding_implied != null ? `${l8.n_exceeding_implied} of ${l8.n}` : "—"}</td>
+        <td class="num c-1">${p.risk_share != null ? (p.risk_share * 100).toFixed(0) + "%" : "—"}</td></tr>`; }).join("");
+  return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${asOfBadge(L.session_date)}</h3>
+    ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>RELEASE</th><th class="num">IMPLIED MOVE</th><th class="num">ON THE POSITION</th><th class="num">MEDIAN PAST</th><th class="num">MAX PAST</th><th class="num">LAST 8 EXCEEDED</th><th class="num">SHARE OF BOOK RISK</th></tr>${rows}</table></div>`
+           : `<div class="mono t1 c-3">no held name reports inside 45 days</div>`}
+    <div class="chart-meta">implied move: the first expiry after the release, total variance minus the back-month base over the non-event sessions (lens definitions) · past reactions: close before the release to close after · descriptive; no directional implication</div></div>`;
+}
+
+function renderHedgeSelector(){
+  const H = S.optionsHedges; if (!H || !H.positions) return "";
+  const money = v => v == null ? "—" : (v < 0 ? "−" : "") + fmtMoney(Math.abs(v));
+  const cards = Object.entries(H.positions).map(([tk, p]) => {
+    const ctx = `spot $${p.spot} · ${p.shares} shares · risk share ${p.risk_share != null ? (p.risk_share * 100).toFixed(0) + "%" : "—"} · volatility ${p.volatility_state || "—"}${p.term_inverted ? " · term inverted" : ""}${p.next_earnings ? " · earnings " + p.next_earnings : ""}${p.implied_move != null ? " (market prices ±" + optPct(p.implied_move) + ")" : ""}${p.embedded_gain != null ? " · " + (p.embedded_gain >= 0 ? "+" : "") + (p.embedded_gain * 100).toFixed(0) + "% on cost" : ""}${p.impaired ? ' · <span class="c-warn">quotes impaired</span>' : ""}`;
+    const tenors = (p.tenors || []).map(t => {
+      const rows = (t.structures || []).map(s => { const sp = (s.stress || []).find(x => x.id === "spy_-20") || {}; const sm = (s.stress || []).find(x => x.id === "smh_-30") || {}; const s34 = (s.stress || []).find(x => x.id === "spy_-34") || {};
+        const st = x => x.book_share_nav_with_structure != null ? (x.book_share_nav_with_structure * 100).toFixed(1) + "%" : "—";
+        return `<tr class="${s.excluded ? "dim" : ""}"><td class="num c-3">${s.rank ?? "×"}</td><td class="c-2">${s.label}${s.quote_flags && s.quote_flags.includes("last") ? ' <span class="c-3 t1" title="a leg priced at the last trade, no live bid-ask">(last)</span>' : ""}</td>
+          <td class="num ${s.net_kind === "credit" ? "c-pos" : "c-warn"}">${s.net_kind} $${Math.abs(s.net_per_share).toFixed(2)}</td><td class="num c-2">${money(s.net_on_position)}</td>
+          <td class="num c-2">${s.floor != null ? "$" + s.floor : "—"}${s.floor_note ? ' <span class="c-3" title="' + s.floor_note + '">*</span>' : ""}</td><td class="num c-2">${s.cap != null ? "$" + s.cap : "—"}</td><td class="num c-3">$${s.breakeven}</td><td class="num c-3">${s.delta_change_per_share != null ? (s.delta_change_per_share >= 0 ? "+" : "") + s.delta_change_per_share.toFixed(2) : "—"}</td>
+          <td class="num c-2" title="book loss, share of NAV, with the structure in place: SMH −30 / SPY −20 / SPY −34">${st(sm)} / ${st(sp)} / ${st(s34)}</td>
+          <td class="c-3 t1">${(s.ranked_by || []).join("; ")}</td><td class="c-warn t1 w6" title="${s.diagnostic}">DIAGNOSTIC</td></tr>`; }).join("");
+      const un = ((t.structures || [])[0] || {}).stress || []; const u = x => { const r = un.find(y => y.id === x); return r && r.book_share_nav_unhedged != null ? (r.book_share_nav_unhedged * 100).toFixed(1) + "%" : "—"; };
+      return `<div class="mt2"><div class="mono t1 w6 c-2">${t.tenor.replace("_", " ").toUpperCase()} · ${t.expiry} (${t.days}d)${t.earnings_inside ? ' · <span class="c-warn">earnings inside the tenor</span>' : ""} · unhedged book loss SMH −30 / SPY −20 / SPY −34: ${u("smh_-30")} / ${u("spy_-20")} / ${u("spy_-34")}</div>
+        <div class="tbl-scroll"><table class="th-table"><tr><th>#</th><th>STRUCTURE</th><th class="num">NET / SH</th><th class="num">ON POSITION</th><th class="num">FLOOR</th><th class="num">CAP</th><th class="num">BREAKEVEN</th><th class="num">Δ</th><th class="num">BOOK LOSS WITH STRUCTURE</th><th>RANKED BY</th><th></th></tr>${rows}</table></div></div>`; }).join("");
+    return `<details class="mt2" open><summary class="mono t2 w7 c-1 ptr">${tk} <span class="mono t1 w5 c-3">· ${ctx}</span></summary>${p.embedded_gain_note ? `<div class="mono t1 c-3 mt1">${p.embedded_gain_note}</div>` : ""}${tenors}</details>`;
+  }).join("");
+  return `<div class="rcc-card"><h3>THE HEDGE SELECTOR <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">four structures priced and ranked on the live chain for each held name, at the first expiry beyond earnings and at about 90 days</span>${asOfBadge(H.session_date)}</h3>
+    <div class="mono t1 c-warn">${H.label}</div>
+    ${cards}
+    <div class="chart-meta">${H.pricing} · ${H.stress_method} · selection rules fixed in data/options/hedge_rules.json (${(H.rules || []).length} rules, pre-registered) · ${H.note}</div></div>`;
 }

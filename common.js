@@ -35,6 +35,9 @@ const FILES = {
   // fixed-income module (order 16-Sept-2026)
   bondsStates:["data/bonds/states.json","json"], bondsMetrics:["data/bonds/sleeve_metrics.json","json"],
   bondsUniverse:["data/bonds/sleeve_universe.json","json"],
+  // options lens (order 26-Sept-2026)
+  optionsLens:["data/options/lens.json","json"], optionsHedges:["data/options/hedges.json","json"],
+  earningsRx:["data/options/earnings_reactions.json","json"],
 };
 async function loadFiles(keys, into){
   const target = into || S;
