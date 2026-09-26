@@ -1,0 +1,57 @@
+name: Options snapshot (15:45 ET)
+
+# Order 26-Sept-2026, item 1.2: the daily option-chain vintage, pulled ONCE at about 15:45 ET on
+# trading days for every held name, the screen board's top 40 and SPY/QQQ/SMH, written
+# immutably to data/options/vintages/YYYY-MM-DD/. After-hours pulls are prohibited, so the
+# job itself only writes inside 15:30–16:00 ET on a trading day; outside it, or when the
+# session's vintage already exists, it is a no-op. GitHub delivers scheduled runs late (the
+# 22:00 UTC nightly cron has landed up to 2.5 h late), so several crons are spread across the
+# window in both EDT and EST — the first to land inside the window writes, the rest skip.
+#
+# Source data only: the nightly computes lens.json from the vintage and deploys.
+
+on:
+  schedule:
+    - cron: '32 19 * * 1-5'   # 15:32 EDT
+    - cron: '40 19 * * 1-5'   # 15:40 EDT
+    - cron: '48 19 * * 1-5'   # 15:48 EDT
+    - cron: '55 19 * * 1-5'   # 15:55 EDT
+    - cron: '32 20 * * 1-5'   # 15:32 EST
+    - cron: '40 20 * * 1-5'   # 15:40 EST
+    - cron: '48 20 * * 1-5'   # 15:48 EST
+    - cron: '55 20 * * 1-5'   # 15:55 EST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: options-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install yfinance pandas numpy scipy pyarrow lxml
+
+      - name: Snapshot chains (writes only inside 15:30–16:00 ET on a trading day; never rewrites a vintage)
+        run: python scripts/options/snapshot_chains.py
+
+      - name: Earnings dates and reaction history (weekly refresh per name)
+        continue-on-error: true
+        run: python scripts/options/build_earnings_reactions.py
+
+      - name: Commit the vintage
+        run: |
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/options/vintages data/options/earnings_reactions.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "🧾 options vintage $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase --strategy-option=ours origin main || true
+          git push
