@@ -1,0 +1,28 @@
+{
+  "as_of": "2026-09-26",
+  "frozen": true,
+  "frozen_at": "2026-09-26",
+  "label": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
+  "structures": [
+    { "id": "put_10", "label": "Protective put, 10% OTM", "legs": [{ "cp": "p", "moneyness": 0.90, "side": "buy" }] },
+    { "id": "put_15", "label": "Protective put, 15% OTM", "legs": [{ "cp": "p", "moneyness": 0.85, "side": "buy" }] },
+    { "id": "put_spread_10_20", "label": "Put spread, 10/20%", "legs": [{ "cp": "p", "moneyness": 0.90, "side": "buy" }, { "cp": "p", "moneyness": 0.80, "side": "sell" }] },
+    { "id": "collar_15_10", "label": "Collar, 15% put / 10% call", "legs": [{ "cp": "p", "moneyness": 0.85, "side": "buy" }, { "cp": "c", "moneyness": 1.10, "side": "sell" }] },
+    { "id": "covered_call_10", "label": "Covered call, 10% OTM", "legs": [{ "cp": "c", "moneyness": 1.10, "side": "sell" }] }
+  ],
+  "tenors": [
+    { "id": "after_earnings", "rule": "the first expiry beyond the next earnings release (the first expiry at or beyond 30 days when no release is listed)" },
+    { "id": "about_90d", "rule": "the expiry nearest 90 calendar days" }
+  ],
+  "selection_rules": [
+    { "n": 1, "when": "position risk share above 40 percent", "rank_first": ["collar_15_10"], "note": "regardless of volatility state" },
+    { "n": 2, "when": "volatility state cheap", "rank_first": ["put_10", "put_spread_10_20", "put_15"], "note": "protection is cheap relative to realized" },
+    { "n": 3, "when": "volatility state rich and no earnings inside the tenor", "rank_first": ["covered_call_10"] },
+    { "n": 4, "when": "calls richer than puts at matched distance (negative put-minus-call skew)", "rank_first": ["collar_15_10"], "note": "the rich leg is sold and the cheap leg bought" },
+    { "n": 5, "when": "earnings inside the tenor and term structure inverted", "exclude": ["covered_call_10"], "note": "no naked premium selling ranked; collar or put only" },
+    { "n": 6, "when": "embedded gain over 50 percent on cost", "note": "structures that avoid a sale rank above a trim when they achieve the same stress reduction; the tax consideration is stated in words, no tax computation" }
+  ],
+  "pricing": "each leg at the chain's price_used (bid-ask mid where both are positive, else last, flagged); per share and on the position (shares × per-share; contracts = shares/100 noted)",
+  "stress": "the book's loss in the three standing index scenarios (book.json) with the structure in place: the position's stressed price is spot × (1 + β_index × shock), the structure's payoff at that price less its net premium replaces the position's unhedged loss",
+  "note": "descriptive; every row carries the DIAGNOSTIC label; nothing here is a recommendation or an order"
+}

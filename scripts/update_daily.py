@@ -38,6 +38,9 @@ scripts = [
     "bonds/fetch_sleeves.py",      # fixed-income module: sleeve prices + distribution yields (canonical provider)
     "bonds/build_sleeve_metrics.py", # FI 1.3: per-sleeve yield, duration, yield/duration, vol, 1y return, corr to book
     "bonds/compute_bonds.py",      # FI 2/3/4: curve/credit/breakeven states, allocation reads, book integration, whole-portfolio stress
+    "options/build_earnings_reactions.py",  # options lens 1.3: per-name earnings dates + six-year reaction history (weekly refresh)
+    "options/compute_lens.py",     # options lens 2: per-stock features from the session's 15:45 chain vintage → data/options/lens.json
+    "options/hedge_selector.py",   # options lens 4: the hedge selector for held names (DIAGNOSTIC) → data/options/hedges.json
     "compute_factor_exposure.py",  # P3.3: per-name factor betas → book + tiers
     "build_ticker_data.py",
     "build_indicator_series.py",
