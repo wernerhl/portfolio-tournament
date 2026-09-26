@@ -50,6 +50,12 @@ def tickers_of_interest() -> list[str]:
     if rp.exists():
         reg = json.load(open(rp))
         out |= set(reg["theses"].get("ai_infra", {}).get("members", {}).keys())
+    # options lens (order 26-Sept-2026, item 1.3): per-name earnings dates for every analyzed
+    # name — the screen board's top 40 joins the held names and the register's tickers.
+    sp = DATA / "screen" / "scores.json"
+    if sp.exists():
+        w = json.load(open(sp)).get("watchlist", [])
+        out |= {str(r["ticker"]).upper() for r in w if r.get("on_board_as") != "held"}
     return sorted(out)
 
 
