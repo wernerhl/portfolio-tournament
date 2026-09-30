@@ -81,6 +81,11 @@ jobs:
         continue-on-error: true
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          # Order 30-Sept: the brief's narrative model (B2; the template is used when unset) and the
+          # SEC's required declared contact for EDGAR access (E1/E2; the ownership jobs exit 3 without it).
+          # Both are repository settings; neither is ever printed.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: python scripts/update_daily.py
 
       - name: Referee (one sweep over data/ and data/screen/)

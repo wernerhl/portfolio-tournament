@@ -49,6 +49,11 @@ scripts = [
     "build_event_calendar.py",     # A2 (order 30-Sept): scheduled macro events with impact levels (official schedules; earnings preserved)
     "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh) + the cluster detector
     "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
+    # Order 30-Sept-2026 — read served data only, so they run last, before the referee:
+    "compute_goals.py",            # D1/D2: the house goal in reais at the settled rate; the claims register's progress
+    "fetch_news.py",               # B4: two-tier news (primary sources first), bodies never stored
+    "ownership/insiders.py",       # E1: Form 4 open-market purchases, routine/opportunistic, clusters (needs SEC_USER_AGENT; exits 3 without it)
+    "daily_brief.py",              # B1–B3: the colour by rule, the narrative under the validator, the append-only log
 ]
 
 # ─────────────────────────────────────────────────────────────────────
