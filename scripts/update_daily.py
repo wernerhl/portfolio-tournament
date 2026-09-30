@@ -31,7 +31,9 @@ scripts = [
     "score_universe.py",           # scoring view 1 (tournament): technical + fundamental, nightly (selection stays monthly)
     "screen/build_json.py",        # scoring view 2 (the screen): 4-factor board, vintages, tripwires (relocated, 6.1)
     "screen/reconcile_views.py",   # 6.3: rank correlation of the two views and the ten largest divergences
-    "compute_nav.py",              # tier NAVs (closes OF the session or a rejection), action log
+    "compute_nav.py",              # tier NAVs (closes OF the session or a rejection), action log; backfills a missed session first (T1); corridor label (T3)
+    "compute_twins.py",            # T4 (audit order 30-Sept): the continuous twins 1c–4c — daily evaluation, banded execution; trades and spells logged
+    "tournament_audit.py",         # T2: what the tournament does, recomputed nightly for the tournament page (retention, cash gaps, spells, the label)
     "compute_signals.py",          # signals: position mode for held names, setup readings otherwise
     "compute_book.py",             # 1.3/1.5/1.6/5: book analytics, stress, sleeves
     "compute_comparators.py",      # 1.4/4: the C3 rules and every rule translated to the book's beta
@@ -55,6 +57,7 @@ scripts = [
     "ownership/insiders.py",       # E1: Form 4 open-market purchases, routine/opportunistic, clusters (needs SEC_USER_AGENT; exits 3 without it)
     "ownership/holders_13f.py",    # E2: 13F context for the held names (weekly: skips while its as_of is under 7 days old; same gate)
     "daily_brief.py",              # B1–B3: the colour by rule, the narrative under the validator, the append-only log
+    ["mistakes_ledger.py", "from-trades", "--write"],   # T6: operator decisions from the export-based ledger and their +20/+60 outcomes
 ]
 
 # ─────────────────────────────────────────────────────────────────────
@@ -101,7 +104,9 @@ FORCE_REASON, NOW_ET = _run_guard()
 
 for script in ([] if "--validate-only" in sys.argv else scripts):   # [8.2] test hook
     print(f"\n{'='*60}\nRunning {script}\n{'='*60}")
-    rc = subprocess.call([sys.executable, str(HERE / script)])
+    # an entry may be a script name or [script, arg, ...] (audit order 30-Sept: the ledger's subcommand)
+    cmd = [sys.executable, str(HERE / script)] if isinstance(script, str) else [sys.executable, str(HERE / script[0]), *script[1:]]
+    rc = subprocess.call(cmd)
     if rc != 0:
         print(f"WARNING: {script} exited with code {rc}", file=sys.stderr)
 
