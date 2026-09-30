@@ -1,23 +1,30 @@
 {
- "last_attempt": "2026-09-29T01:43:12+00:00",
+ "last_attempt": "2026-09-30T01:15:33+00:00",
  "last_success": "2026-09-15T20:05:16-04:00",
- "failure_reason": "audit: tournament:freshness",
+ "failure_reason": "audit: screener:freshness, tournament:freshness",
  "session_date": "2026-09-18",
  "forced_publish_reason": null,
  "audit": {
-  "ran_at": "2026-09-29T01:43:12+00:00",
+  "ran_at": "2026-09-30T01:15:33+00:00",
   "scope": "all",
-  "n_findings": 23,
+  "n_findings": 45,
   "critical": [
+   "screener:freshness",
    "tournament:freshness"
   ],
   "critical_other_repo": [],
-  "xfile": [],
+  "xfile": [
+   "HIGH:xfile:vol_single_source"
+  ],
   "high": [
+   "bond:sleeve_stale",
+   "governance:coverage",
    "governance:review_overdue",
+   "nullguard",
    "options:vintage_missing",
+   "screener:stale",
    "tournament:dead_columns",
-   "tournament:gaps"
+   "xfile:vol_single_source"
   ],
   "report": "reports/audit_last.txt"
  }
