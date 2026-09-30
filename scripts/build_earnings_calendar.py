@@ -104,11 +104,21 @@ def main() -> int:
             ev["history"] = (cur.get("history") or []) + [{"date": cur["date"], "retrieved_at": cur.get("retrieved_at"), "replaced": retrieved}]
             events.remove(cur)
         events.append(ev); upcoming[tk] = ev; changed.append(f"{tk} {nxt}" + (f" (was {cur['date']})" if cur else ""))
+    # Order 30-Sept A2: every event carries an impact level (held-name earnings are high — the
+    # book's binary exposures), and the cluster detector runs after the earnings refresh so a
+    # high-impact macro release on a held name's release date is flagged.
+    from build_event_calendar import detect_clusters, held_tickers
+    held = held_tickers()
+    for e in events:
+        if e.get("type") == "EARNINGS":
+            e["impact"] = "high" if str(e.get("ticker", "")).upper() in held else "medium"
     events.sort(key=lambda e: (e["date"], e["type"], e.get("label", "")))
     cal["events"] = events
+    cal["held_names"] = sorted(held)
+    cal["clusters"] = detect_clusters(events, held)
     cal["earnings_note"] = ("EARNINGS events: provider earnings calendar per ticker for the held names, the register's claim "
-                            "tickers and the ai_infra members; one upcoming entry per ticker, refreshed weekly; "
-                            "written by scripts/build_earnings_calendar.py")
+                            "tickers, the ai_infra members and the screen board's top 40; one upcoming entry per ticker, "
+                            "refreshed weekly; written by scripts/build_earnings_calendar.py")
     with open(CAL, "w") as f:
         json.dump(cal, f, indent=2)
     log(f"{len(tks)} tickers · added/changed {len(changed)} · kept {len(kept)} · failed {len(failed)}")

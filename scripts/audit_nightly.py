@@ -416,6 +416,15 @@ def main(troot, sroot, today=None):
     if not any(t=='CPI' for d,t in types): add('HIGH','calendar:anchor','no CPI entry in September')
     noprov=[e for e in sept if not e.get('source_url')]
     if noprov: add('MEDIUM','calendar:provenance',f'{len(noprov)} Sept entries lack source_url')
+    # Order 30-Sept A2: the agencies' anchors and the cluster detector. Anchors asserted here as
+    # well as in the builder, so a regressed file (not only a failed build) is caught.
+    have={(str(e.get('date')),e.get('type')) for e in ev}
+    for d,t in [('2026-09-30','PCE'),('2026-10-02','NFP'),('2026-10-14','CPI'),('2026-10-15','PPI'),
+                ('2026-10-28','FOMC'),('2026-10-29','PCE'),('2026-11-03','ELECTION')]:
+        if (d,t) not in have: add('HIGH','calendar:anchor',f'{t} anchor {d} missing (order 30-Sept A2)')
+    noimp=[e for e in ev if str(e.get('date',''))>='2026-09-30' and e.get('impact') not in ('high','medium','low')]
+    if noimp: add('HIGH','calendar:impact',f'{len(noimp)} upcoming entries lack an impact level (first: {noimp[0].get("date")} {noimp[0].get("type")})')
+    if isinstance(cal,dict) and 'clusters' not in cal: add('HIGH','calendar:clusters','event_calendar.json carries no cluster detection (A2)')
     # ---------- screener ----------
     sc=json.load(open(os.path.join(sroot,'scores.json'))); w=sc.get('watchlist',[])
     if w:

@@ -46,7 +46,8 @@ scripts = [
     "build_indicator_series.py",
     "compute_intraday.py",         # best-effort; OK to fail (yfinance flake)
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
-    "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh)
+    "build_event_calendar.py",     # A2 (order 30-Sept): scheduled macro events with impact levels (official schedules; earnings preserved)
+    "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh) + the cluster detector
     "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
 ]
 
