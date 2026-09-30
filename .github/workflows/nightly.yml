@@ -18,7 +18,7 @@ name: Nightly
 on:
   schedule:
     - cron: '0 22 * * 1-5'
-    - cron: '30 1 * * 2-6'
+    - cron: '0 8 * * 2-6'    # 04:00 ET morning publish (lands 04:00–07:00 ET with GitHub's delay, before the open) when the evening run found no close bar
   workflow_dispatch:
 
 permissions:
@@ -49,20 +49,24 @@ jobs:
           # delivers the 22:00 UTC close cron up to ~2.5 h late, so from 22-Sept its runs landed
           # after midnight UTC, were misread as the 01:30 retry, and skipped ("no retry needed")
           # for ten sessions while the served files went stale. A dispatch always runs.
-          late = os.environ.get("GITHUB_SCHEDULE", "") == "30 1 * * 2-6"
+          import sys
+          sys.path.insert(0, "scripts")
+          from trading_calendar import last_completed_session
+          late = os.environ.get("GITHUB_SCHEDULE", "") == "0 8 * * 2-6"
           st = {}
           try: st = json.load(open("data/status.json"))
           except Exception: pass
-          fr = str(st.get("failure_reason") or "")
-          # A missing close bar surfaces downstream as the validator's FRESHNESS rejection of
-          # tournament.json (compute_nav's assertion is only a warning inside the pipeline), so
-          # that symptom must also arm the retry — it never did, which is why the 01:30 retry
-          # never fired after the 17/18-Sept bar rejections.
-          rejected_for_bars = (("bar_session_mismatch" in fr) or ("PRICE_STORE_SESSION" in fr) or ("BAR_SESSION_MISMATCH" in fr)
-                               or ("FRESHNESS tournament.json" in fr))
-          run = (not late) or rejected_for_bars or os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+          # The morning run publishes whenever the last completed session has not been
+          # published — judged from the last SUCCESS date, never from failure_reason text
+          # (the referee overwrites that text with its own "audit: …" line, which is why the
+          # earlier text-matched retry never armed). The provider's daily close bar has been
+          # arriving hours after the close (none at 21:14 ET on 29-Sept), so the evening run
+          # may reject; the morning run finds the bar and publishes before the open.
+          last_ok = str(st.get("last_success") or "")[:10]
+          needs_publish = (not last_ok) or (last_ok < last_completed_session())
+          run = (not late) or needs_publish or os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
           print(f"run={'true' if run else 'false'}")
-          print(f"reason={'close run' if not late else ('retry after bar rejection' if rejected_for_bars else 'no retry needed (last run published)')}")
+          print(f"reason={'close run' if not late else ('morning publish: last success ' + (last_ok or 'none') + ' < last completed session ' + last_completed_session() if needs_publish else 'no morning run needed (last session published)')}")
           EOF
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}

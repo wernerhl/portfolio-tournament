@@ -3,23 +3,26 @@ name: Options snapshot (15:45 ET)
 # Order 26-Sept-2026, item 1.2: the daily option-chain vintage, pulled ONCE at about 15:45 ET on
 # trading days for every held name, the screen board's top 40 and SPY/QQQ/SMH, written
 # immutably to data/options/vintages/YYYY-MM-DD/. After-hours pulls are prohibited, so the
-# job itself only writes inside 15:30–16:00 ET on a trading day; outside it, or when the
-# session's vintage already exists, it is a no-op. GitHub delivers scheduled runs late (the
-# 22:00 UTC nightly cron has landed up to 2.5 h late), so several crons are spread across the
-# window in both EDT and EST — the first to land inside the window writes, the rest skip.
+# snapshot step only writes inside 15:30–16:00 ET on a trading day.
+#
+# GitHub delivers this repository's scheduled runs 1–5 hours late (every cron on 28/29-Sept
+# landed at 19:00–20:40 ET, all no-ops). A fixed-minute cron cannot hit a 30-minute window,
+# so the job is scheduled EARLY, from 09:00 ET on, and SLEEPS until 15:44 ET before pulling;
+# a run that lands after the window is a no-op. The concurrency group serializes the waiting
+# runs: the first to reach 15:44 ET pulls, the rest find the vintage written and skip.
 #
 # Source data only: the nightly computes lens.json from the vintage and deploys.
 
 on:
   schedule:
-    - cron: '32 19 * * 1-5'   # 15:32 EDT
-    - cron: '40 19 * * 1-5'   # 15:40 EDT
-    - cron: '48 19 * * 1-5'   # 15:48 EDT
-    - cron: '55 19 * * 1-5'   # 15:55 EDT
-    - cron: '32 20 * * 1-5'   # 15:32 EST
-    - cron: '40 20 * * 1-5'   # 15:40 EST
-    - cron: '48 20 * * 1-5'   # 15:48 EST
-    - cron: '55 20 * * 1-5'   # 15:55 EST
+    - cron: '0 13 * * 1-5'    # 09:00 EDT / 08:00 EST — early starters that sleep until 15:44 ET
+    - cron: '0 14 * * 1-5'
+    - cron: '0 15 * * 1-5'
+    - cron: '0 16 * * 1-5'
+    - cron: '0 17 * * 1-5'
+    - cron: '0 18 * * 1-5'
+    - cron: '0 19 * * 1-5'    # 15:00 EDT / 14:00 EST
+    - cron: '30 19 * * 1-5'   # 15:30 EDT
   workflow_dispatch:
 
 permissions:
@@ -32,6 +35,7 @@ concurrency:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,14 +44,41 @@ jobs:
       - name: Install deps
         run: pip install yfinance pandas numpy scipy pyarrow lxml
 
+      - name: Wait for 15:44 ET (a late-delivered schedule still lands inside the window)
+        id: wait
+        run: |
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import os, sys, time
+          sys.path.insert(0, "scripts")
+          from trading_calendar import now_et, is_trading_day
+          n = now_et()
+          if not is_trading_day(n.strftime("%Y-%m-%d")):
+              print("go=false"); print(f"why=market closed ({n:%Y-%m-%d})"); sys.exit(0)
+          if os.path.isdir(f"data/options/vintages/{n:%Y-%m-%d}") and os.path.exists(f"data/options/vintages/{n:%Y-%m-%d}/_meta.json"):
+              print("go=false"); print("why=today's vintage already exists"); sys.exit(0)
+          target = n.replace(hour=15, minute=44, second=0, microsecond=0)
+          wait = (target - n).total_seconds()
+          if wait > 5.6 * 3600:
+              print("go=false"); print(f"why=landed {wait/3600:.1f} h before the pull time, beyond the sleep cap"); sys.exit(0)
+          if wait > 0:
+              print(f"::notice::landed {n:%H:%M} ET; sleeping {wait/60:.0f} min until 15:44 ET", file=sys.stderr)
+              time.sleep(wait)
+          print("go=true"); print(f"why=at {now_et():%H:%M} ET (the snapshot step enforces the 15:30–16:00 window)")
+          EOF
+      - name: Report
+        run: echo "go=${{ steps.wait.outputs.go }} — ${{ steps.wait.outputs.why }}"
+
       - name: Snapshot chains (writes only inside 15:30–16:00 ET on a trading day; never rewrites a vintage)
+        if: steps.wait.outputs.go == 'true'
         run: python scripts/options/snapshot_chains.py
 
       - name: Earnings dates and reaction history (weekly refresh per name)
+        if: steps.wait.outputs.go == 'true'
         continue-on-error: true
         run: python scripts/options/build_earnings_reactions.py
 
       - name: Commit the vintage
+        if: steps.wait.outputs.go == 'true'
         run: |
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
