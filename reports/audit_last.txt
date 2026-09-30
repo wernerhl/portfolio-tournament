@@ -1,28 +1,7 @@
 last trading session: 2026-09-30
 [CRITICAL] tournament:freshness         alert_state.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         comparators.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         factor_exposure.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         indicator_series.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         regime_daily.csv: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         regime_daily_published.csv: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         regime_indicators.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         regime_v2_daily.csv: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         regime_v4_daily.csv: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         thesis_daily.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         ticker_indicators.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         ticker_signals.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         tournament.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         v4_delta_attribution.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         vol_close_canonical.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] tournament:freshness         vol_regime.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] screener:freshness           reconciliation.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] screener:freshness           scores.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
-[CRITICAL] screener:freshness           status.json: max date 2026-09-15 is 11 sessions-old vs last session 2026-09-30
+[HIGH    ] tournament:gaps              regime_daily_published.csv: missing trading days in recent window [datetime.date(2026, 9, 16), datetime.date(2026, 9, 17), datetime.date(2026, 9, 18), datetime.date(2026, 9, 21), datetime.date(2026, 9, 22), datetime.date(2026, 9, 23)]
 [HIGH    ] tournament:dead_columns      regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_15_20_elastic_net', 'p_15_40_logistic_pc', 'p_15_60_logistic_pc']
-[HIGH    ] xfile:vol_single_source      intraday vix 16.03 vs canonical 17.2
-[HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
-[HIGH    ] governance:coverage          5_werner: unclassified share 17% > 15%
-[HIGH    ] bond:sleeve_stale            sleeve_metrics.json session_date 2026-09-16 is 10 sessions old (>5)
 [HIGH    ] options:vintage_missing      no chain vintage for the last session 2026-09-30 (latest: 2026-09-25)
 [HIGH    ] governance:review_overdue    visibility override AMZN review_by 2026-08-13 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override ANET review_by 2026-08-18 passed (decay should be active)
@@ -33,7 +12,6 @@ last trading session: 2026-09-30
 [HIGH    ] governance:review_overdue    visibility override NVDA review_by 2026-09-09 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override ORCL review_by 2026-09-23 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override VRT review_by 2026-08-12 passed (decay should be active)
-[HIGH    ] screener:stale               session_date 2026-09-15 vs last session 2026-09-30
 [INFO    ] tournament:freshness         loco_cv_results.csv: no date axis found (static config?)
 [INFO    ] tournament:freshness         ml_indicator_weights.csv: no date axis found (static config?)
 [INFO    ] tournament:freshness         pca_loadings.csv: no date axis found (static config?)
@@ -45,4 +23,4 @@ last trading session: 2026-09-30
 [INFO    ] book:export                  no brokerage export on record (holdings_export.json absent); holdings.json source: brokerage positions, 2026-09-16 (manual transcription; replaced by CSV ingestion in Phase 2)
 [INFO    ] options:snapshot_backfill    vintage 2026-09-25 is a flagged backfill pulled 2026-09-26T13:16 (post-close quotes as retained by the provider), not a 15:45 snapshot
 
-45 findings; 19 CRITICAL
+23 findings; 1 CRITICAL
