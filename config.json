@@ -12,7 +12,7 @@
     "cash_formula": "min(0.85, 0.15 + R * 0.70)",
     "benchmark": "SPY",
     "hedging": "moderate",
-    "holdings_source": "data/holdings.json — the only holdings source from 2026-09-09 (dashboard order P3.1); ticker, shares, cost basis, acquisition date, cash"
+    "holdings_source": "data/holdings.json \u2014 the only holdings source from 2026-09-09 (dashboard order P3.1); ticker, shares, cost basis, acquisition date, cash"
   },
   "system_settings": {
     "inception_capital_per_tier": 100000,
@@ -29,7 +29,7 @@
       ],
       "not_applied": [
         "SPY/QQQ buy-and-hold (no trades)",
-        "SSO synthetic 1.5x (proxy, no cost — labelled)"
+        "SSO synthetic 1.5x (proxy, no cost \u2014 labelled)"
       ]
     },
     "phase1_data_dir": "data/source",
@@ -119,6 +119,22 @@
         "rs6m": 2
       },
       "hedging": "none_until_crisis"
+    }
+  },
+  "continuous_rules": {
+    "_note": "Audit order 30-Sept-2026 4.1: the twins' execution rule. compute_twins.py reads rules_file; any parameter present here must equal the file's or the run is refused.",
+    "rules_file": "data/tournament/continuous_rules.json",
+    "k_buffer_multiple": 2,
+    "score_margin_delta": 2.0,
+    "cash_gap_points": 5.0,
+    "drift_pct_of_target": 25,
+    "start_capital": 100000,
+    "cost_bps_one_way": 10,
+    "twins": {
+      "1c": "1_cap_pres",
+      "2c": "2_balanced",
+      "3c": "3_aggressive",
+      "4c": "4_tactical"
     }
   }
 }

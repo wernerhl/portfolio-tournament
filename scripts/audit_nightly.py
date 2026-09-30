@@ -158,6 +158,14 @@ def main(troot, sroot, today=None):
     audit_dir(troot,'tournament',ls); audit_dir(sroot,'screener',ls)   # 'screener' = the screen view's tree (data/screen after the merge)
 
     T=lambda n: json.load(open(os.path.join(troot,n)))
+    def _lang(path,label):
+        """the words edge and alpha appear nowhere; no buy/sell directive — CRITICAL (order 30-Sept §8.8)"""
+        if not os.path.exists(path): return
+        blob=open(path,encoding='utf-8').read().lower()
+        hits=[w for w in ('edge','alpha') if re.search(r'\b'+w+r'\b',blob)]
+        if hits: add('CRITICAL',f'{label}:language',f'{os.path.relpath(path,troot)} contains prohibited word(s) {hits}')
+        for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
+            if tok in blob: add('CRITICAL',f'{label}:directive',f'{os.path.relpath(path,troot)} contains a buy/sell directive ({tok!r})')
     # ---------- tournament identities ----------
     t=T('tournament.json'); h=t['history']; L=h[-1]
     # T1 (audit 30-Sept-2026): no missing session in the history — CRITICAL; backfilled rows are
@@ -205,13 +213,37 @@ def main(troot, sroot, today=None):
     if os.path.exists(twp_):
         tw_=json.load(open(twp_)); twd_=to_date(tw_.get('session_date') or '')
         if not twd_ or (twd_<ls and len(trading_days(twd_,ls))-1>1): add('HIGH','twins:stale',f'twins.json session_date {twd_} vs last session {ls}')
+        rp_=os.path.join(troot,'tournament','continuous_rules.json')
+        if os.path.exists(rp_):
+            import hashlib as _hr
+            if tw_.get('rules_sha256') and tw_['rules_sha256']!=_hr.sha256(open(rp_,'rb').read()).hexdigest():
+                add('HIGH','twins:rules_changed','twins.json was computed under a different continuous_rules.json (re-register the rules)')
         for tid_,w_ in (tw_.get('twins') or {}).items():
-            hist_=w_.get('nav_history') or []
-            if hist_:
-                l_=hist_[-1]; g_=abs(float(l_.get('target_cash_pct') or 0)-float(l_.get('actual_cash_pct') or 0))
-                if g_>5.0+1e-6: add('HIGH','twins:cash_gap',f'{tid_}: cash gap {g_:.1f} points after execution (the rule executes beyond 5)')
-            if w_.get('parent') not in L['tiers'] and w_.get('parent_tier') not in L['tiers']: add('HIGH','twins:parent',f'{tid_}: parent tier not in the tournament')
+            hist_=w_.get('history') or w_.get('nav_history') or []
+            l_=hist_[-1] if hist_ else w_
+            g_=abs(float(l_.get('target_cash_pct') or 0)-float(l_.get('actual_cash_pct') or 0))
+            if g_>5.0+1e-6: add('HIGH','twins:cash_gap',f'{tid_}: cash gap {g_:.1f} points after execution (the rule executes beyond 5)')
+            par_=w_.get('parent_tier') or w_.get('parent')
+            if par_ not in L['tiers']: add('HIGH','twins:parent',f'{tid_}: parent tier {par_} not in the tournament')
+            eq_=sum(float(p_.get('value') or 0) for p_ in (w_.get('positions') or [])); cash_=float(w_.get('cash') or 0)
+            if w_.get('nav') and abs(eq_+cash_-float(w_['nav']))>1: add('CRITICAL','identity:nav',f'{tid_}: equity+cash={eq_+cash_:.0f} != nav={w_["nav"]:.0f}')
+            K_=w_.get('K')
+            if K_ and (w_.get('n_positions') or 0)>K_: add('HIGH','twins:positions',f'{tid_}: {w_.get("n_positions")} positions > K={K_}')
         _lang(twp_,'twins')
+        sp_=os.path.join(troot,'tournament','twins_state.json')
+        if os.path.exists(sp_):
+            st_=json.load(open(sp_))
+            if str(st_.get('last_session') or st_.get('session_date') or '')[:10]!=str(tw_.get('session_date'))[:10]: add('HIGH','twins:state',f'twins_state.json session {st_.get("last_session") or st_.get("session_date")} != twins.json {tw_.get("session_date")}')
+    trp_=os.path.join(troot,'tournament','trades.jsonl')
+    if os.path.exists(trp_):
+        ids2_=[]
+        try:
+            for ln_ in open(trp_,encoding='utf-8'):
+                ln_=ln_.strip()
+                if ln_: ids2_.append(json.loads(ln_).get('trade_id'))
+        except Exception as e:
+            add('CRITICAL','logs:parse',f'trades.jsonl unreadable ({e})')
+        if len(ids2_)!=len(set(ids2_)): add('CRITICAL','logs:duplicate','trades.jsonl carries duplicate trade ids')
     for lf_ in ('tournament/trades.jsonl','tournament/spells.jsonl'):
         lp2_=os.path.join(troot,lf_)
         if os.path.exists(lp2_): _lang(lp2_,'logs') if '_lang' in dir() else None
@@ -510,14 +542,7 @@ def main(troot, sroot, today=None):
             for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
                 if tok in blob: add('CRITICAL','options:directive',f'{of} contains a buy/sell directive ({tok!r})')
     # ---------- the daily brief, the goals, the news feed, realized gains, ownership (order 30-Sept) ----------
-    def _lang(path,label):
-        """the words edge and alpha appear nowhere; no buy/sell directive — CRITICAL (order §8.8)"""
-        if not os.path.exists(path): return
-        blob=open(path,encoding='utf-8').read().lower()
-        hits=[w for w in ('edge','alpha') if re.search(r'\b'+w+r'\b',blob)]
-        if hits: add('CRITICAL',f'{label}:language',f'{os.path.relpath(path,troot)} contains prohibited word(s) {hits}')
-        for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
-            if tok in blob: add('CRITICAL',f'{label}:directive',f'{os.path.relpath(path,troot)} contains a buy/sell directive ({tok!r})')
+    # (_lang, the language/directive scan, is defined at the top of main — it is used by the tournament block too)
     # the brief: append-only log with hashes; one entry for the last session; text under the validator's rules
     lgp=os.path.join(troot,'daily_log.jsonl'); rlp=os.path.join(troot,'brief_rules.json'); bfp=os.path.join(troot,'brief_facts.json')
     if os.path.exists(lgp):

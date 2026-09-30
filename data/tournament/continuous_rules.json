@@ -1,0 +1,29 @@
+{
+  "cadence": "static",
+  "as_of": "2026-09-30",
+  "frozen_at": "2026-09-30",
+  "order": "30 September 2026 — Continuous Selection, Trade Logs (items 4.1–4.3)",
+  "k_buffer_multiple": 2,
+  "score_margin_delta": 2.0,
+  "score_margin_scale": "tier_composite points on a 0–50 scale (tier_tech 0–25 + fund_score 0–25), as computed by scripts/select_tiers.py",
+  "cash_gap_points": 5.0,
+  "drift_pct_of_target": 25,
+  "start_capital": 100000,
+  "cost_bps_one_way": 10,
+  "cost_model": "half-spread 3 bps + impact 7 bps = 10 bps one-way (C1, order 9-Sept), charged per SESSION as compute_nav does: 10 bps × one-way turnover, where one-way turnover = 0.5 × Σ|w_after − w_before| over every name and the cash sleeve on the pre-trade NAV of the session; levied once from cash and allocated pro rata by traded value to the session's trade rows (cost_basis on each row). A swap of A for B of value x costs 10 bps × x; a cash-funded buy of x costs 10 bps × x.",
+  "twins": {
+    "1c": "1_cap_pres",
+    "2c": "2_balanced",
+    "3c": "3_aggressive",
+    "4c": "4_tactical"
+  },
+  "reason_codes": ["SEED", "RANK_ENTRY", "RANK_EXIT", "REGIME_CASH", "DRIFT", "RECONSTITUTION"],
+  "reason_codes_note": "SEED is added to the order's five codes: a twin's first session buys the top K from all cash (and the monthly tiers' inception row of 2026-05-20 is logged as SEED by the backfill). A displacement by score margin is logged as RANK_EXIT (the displaced name) plus RANK_ENTRY (the entrant), with the margin in `detail`.",
+  "rules_text": {
+    "4.1": "Design: daily evaluation, banded execution. Rank buffer. A name enters when its composite rank is within the tier's top K and a slot is open or it displaces the weakest holding by a score margin δ; a held name exits only when its rank falls below 2K. K is the tier's position count; δ and the 2K buffer are in configuration. Regime cash. Executed daily when the gap between target and actual cash exceeds 5 points, using the corrected hysteresis label. Weight drift. A position is resized when its weight deviates from target by more than 25 percent of target. No other exit rules are added; the Trade-Now stops remain unvalidated and do not trade.",
+    "4.2": "Add four twins, 1c to 4c, identical to tiers 1 to 4 in universe, scores, targets, and costs, differing only in the execution rule of 4.1, all starting from the same date with the same capital. The monthly tiers stay as controls.",
+    "4.3": "Per-tier logs. data/tournament/trades.jsonl: every trade, every tier: session, tier, ticker, action, shares, price, cost, reason code (RANK_ENTRY, RANK_EXIT, REGIME_CASH, DRIFT, RECONSTITUTION), the ticker's composite, Business Quality and Trade-Now scores and ranks at decision, the regime reading and label. data/tournament/spells.jsonl: every holding spell with entry and exit trades, exit reason, and excess return against SPY and against the name's thesis basket, computed at exit and at 20 and 60 sessions after exit."
+  },
+  "acceptance": "Twins 1c to 4c running with trade and spell logs populated from their first session; monthly tiers unchanged.",
+  "label": "descriptive record of a rule-driven paper tournament; nothing here is a recommendation to trade"
+}

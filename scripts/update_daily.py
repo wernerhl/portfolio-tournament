@@ -32,9 +32,10 @@ scripts = [
     "screen/build_json.py",        # scoring view 2 (the screen): 4-factor board, vintages, tripwires (relocated, 6.1)
     "screen/reconcile_views.py",   # 6.3: rank correlation of the two views and the ten largest divergences
     "compute_nav.py",              # tier NAVs (closes OF the session or a rejection), action log; backfills a missed session first (T1); corridor label (T3)
-    "compute_twins.py",            # T4 (audit order 30-Sept): the continuous twins 1c–4c — daily evaluation, banded execution; trades and spells logged
     "tournament_audit.py",         # T2: what the tournament does, recomputed nightly for the tournament page (retention, cash gaps, spells, the label)
     "compute_signals.py",          # signals: position mode for held names, setup readings otherwise
+    "backfill_tier_logs.py",       # T4 (audit order 30-Sept, 4.3): the monthly tiers' trades and spells (idempotent; new reconstitutions, +20/+60 follow-ups)
+    "compute_twins.py",            # T4: the continuous twins 1c–4c — daily evaluation, banded execution; trades and spells logged (after signals: the session's Trade-Now at decision)
     "compute_book.py",             # 1.3/1.5/1.6/5: book analytics, stress, sleeves
     "compute_comparators.py",      # 1.4/4: the C3 rules and every rule translated to the book's beta
     "bonds/fetch_sleeves.py",      # fixed-income module: sleeve prices + distribution yields (canonical provider)
@@ -393,6 +394,8 @@ SERVED_CADENCE = {
     "comparators.json": "daily",                                               # P2.2 (dashboard order 9-Sept)
     "factor_exposure.json": "daily",                                           # P3.3 (dashboard order 9-Sept)
     "book.json": "daily",                                                      # 1.3 (order 16-Sept)
+    "tournament/audit.json": "daily", "tournament/twins.json": "daily",       # T2 / T4 (audit order 30-Sept)
+    "tournament/continuous_rules.json": "static",
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",
