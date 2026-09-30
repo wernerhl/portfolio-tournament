@@ -1,0 +1,723 @@
+{
+ "cadence": "intraday",
+ "as_of": "2026-09-29",
+ "fetched_at": "2026-09-30T04:27:50-04:00",
+ "window_hours": 24,
+ "stored_days": 7,
+ "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
+ "universe": {
+  "held": [
+   "GEV",
+   "NVDA",
+   "AVGO",
+   "GOOG",
+   "BMNR"
+  ],
+  "top40": [
+   "AVGO",
+   "LMT",
+   "GOOG",
+   "GEV",
+   "NVDA",
+   "TSM",
+   "RTX",
+   "EXPE",
+   "NOC",
+   "PATH",
+   "ADBE",
+   "FDS",
+   "AMP",
+   "AXP",
+   "DASH",
+   "GDDY",
+   "CPAY",
+   "AMZN",
+   "UBER",
+   "CINF",
+   "TROW",
+   "APO",
+   "NFLX",
+   "CSCO",
+   "CEG",
+   "MS",
+   "NXPI",
+   "INCY",
+   "MAS",
+   "ADSK",
+   "BLK",
+   "ORCL",
+   "BR",
+   "ABNB",
+   "OXY",
+   "VRT",
+   "SCHW",
+   "MCO",
+   "CBOE",
+   "SPGI"
+  ]
+ },
+ "sources_status": {
+  "fed_press": "ok n=4 (parsed 20)",
+  "fed_speeches": "ok n=5 (parsed 15)",
+  "bea": "ok n=0 (parsed 48)",
+  "bea_release_day": "skipped: primary feed ok",
+  "bls_release_day": "ok n=1 (constructed 1)",
+  "census": "ok n=0 (parsed 18)",
+  "dol": "ok n=1 (parsed 10)",
+  "edgar": "skipped: SEC_USER_AGENT not set",
+  "ir_avgo": "ok n=0 (parsed 10)",
+  "ir_nvda": "ok n=2 (parsed 20)",
+  "ir_gev": "ok n=3 (parsed 20)",
+  "ir_goog": "skipped: no feed found (checked 2026-09-30)",
+  "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
+  "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
+  "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
+  "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=1 (parsed 10)",
+  "yahoo_headlines:BMNR": "ok n=8 (parsed 10)"
+ },
+ "excluded": {
+  "vocabulary_rule": 0,
+  "directive_rule": 1,
+  "irrelevant": 36,
+  "out_of_window": 137,
+  "unparseable": 0
+ },
+ "counts": {
+  "items": 37,
+  "tier1": 16,
+  "tier2": 21,
+  "last24h": 20
+ },
+ "items": [
+  {
+   "id": "115b15ad70ffc721f00760c3118c1b485f3d9605",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "History Says Broadcom Stock's Best Season Starts Now. It Has Risen in 13 Straight Fourth Quarters.",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.fool.com/investing/2026/09/30/history-says-broadcom-stock-s-best-season-starts-now-it-has-risen-in-13-straight-fourth-quarters/",
+   "timestamp": "2026-09-30T03:58:01-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "80c280815bbcfe505f579f0432231c52e02dba9a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "These 3 AI Stocks Are Poised to Be Big Winners from Amazon's Choice to Block Meta's Muse",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.fool.com/investing/2026/09/30/these-3-ai-stocks-are-poised-to-be-big-winners-fro/",
+   "timestamp": "2026-09-30T03:50:00-04:00",
+   "tickers": [
+    "AMZN"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about AMZN",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d48b2c89b443db8bc7a44348b57ca7fbd78b8bc7",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Oracle's 8% Bond Yields Are an Oracle Problem, Not an AI Problem",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.fool.com/investing/2026/09/30/oracles-8-bond-yields-are-an-oracle-problem-not-an/",
+   "timestamp": "2026-09-30T02:39:00-04:00",
+   "tickers": [
+    "ORCL"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about ORCL",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia (NVDA) Ships an AI Safety Platform After Huang Called Rival Warnings Odd",
+   "source": "Insider Monkey",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-ships-ai-safety-063441658.html",
+   "timestamp": "2026-09-30T02:34:41-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Insider Monkey · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "30ea2fc08baf671b5caac5ed18afdae6aee58a0f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Zacks Investment Ideas feature highlights: Advanced Micro Devices, Micron, Nebius, Alphabet, Meta Platform and Apple",
+   "source": "Zacks",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/zacks-investment-ideas-feature-highlights-061700846.html",
+   "timestamp": "2026-09-30T02:17:00-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Zacks · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "608e96dfbaf485e2cb131a114c190b094a938355",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova (GEV) Gains As Market Dips: What You Should Know",
+   "source": "Zacks",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-gev-gains-market-210003190.html",
+   "timestamp": "2026-09-29T17:00:03-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Zacks · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "How GE Vernova Has Jumped Into the Lead in the Nuclear Race",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.barrons.com/articles/ge-vernova-stock-hitachi-nuclear-energy-10815e0a?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-09-29T16:55:00-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1478a16716375972c4ed5730b455c47f1276eb07",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Agencies publish resolution plan feedback letters for 15 banking organizations",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260929a.htm",
+   "timestamp": "2026-09-29T16:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "aa1ac57f54e7cd23e70d9b8598b5f3a478a25ae2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Waller, Payments in the Age of AI Agents",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/waller20260928a.htm",
+   "timestamp": "2026-09-29T15:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9c768864efcd6fcada154bdc0daefaf66df35044",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Stock Jumps Nearly 3.2% as $16.7 Billion AI Engine Faces Margin Test",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/technology/ai/articles/broadcom-stock-jumps-nearly-3-184641753.html",
+   "timestamp": "2026-09-29T14:46:41-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cdbf6d8623e87effd5c365455dae3a03c55d3614",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Reflecting On Processors and Graphics Chips Stocks’ Q2 Earnings: Broadcom (NASDAQ:AVGO)",
+   "source": "StockStory",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/reflecting-processors-graphics-chips-stocks-184002453.html",
+   "timestamp": "2026-09-29T14:40:02-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · StockStory · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "973ff1a4124a816614038a100a24ba0bd868353f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine Continues to Load Up on Ethereum, Now Owns 4.9% of all ETH in Circulation. Is BMNR Stock a Buy?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.fool.com/investing/2026/09/29/bitmine-continues-to-load-up-on-ethereum-now-owns-4-9-of-all-eth-in-circulation-is-bmnr-stock-a-buy/",
+   "timestamp": "2026-09-29T13:20:01-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "96198714a74b17c20cfbe4d8cc9e0e93ad4417f2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Barr, Economic Conditions and Monetary Policy",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/barr20260929a.htm",
+   "timestamp": "2026-09-29T12:40:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "15941f2780d8bfeb7048eeef10cfa4567765e485",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Bowman, Opening Remarks",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20260929a.htm",
+   "timestamp": "2026-09-29T11:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ac722e3df3199e807ac78537d4bd39e54f845502",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Dan Ives: Physical AI is the 'holy grail' for Nvidia",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/dan-ives-physical-ai-is-the-holy-grail-for-nvidia-143722023.html",
+   "timestamp": "2026-09-29T10:37:22-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "36740379333a8d93fad3667bc61e561c5ece421a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "BLS release: Job Openings and Labor Turnover (July 2026)",
+   "source": "BLS (release page)",
+   "source_id": "bls_release_day",
+   "url": "https://www.bls.gov/news.release/jolts.nr0.htm#2026-09-29",
+   "timestamp": "2026-09-29T10:00:00-04:00",
+   "tickers": [],
+   "topics": [
+    "JOLTS"
+   ],
+   "summary": "scheduled release at 10:00 ET; print not fetched",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "90d6db0d639bd65db9201551ecc0222f42c84b71",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Tenova, in collaboration with GE Vernova, to supply the World’s Largest EAF to Nippon Steel’s Yawata Works",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/tenova-collaboration-ge-vernova-supply-worlds-largest-eaf-nippon-steels-yawata-works",
+   "timestamp": "2026-09-29T09:35:53-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "01d241e7576a5cad02629f973dfc223dc43f9fc3",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Tom Lee’s BitMine Now Holds 6M ETH—Inside His Viral $250K Ethereum Scenario",
+   "source": "CCN",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.ccn.com/news/crypto/tom-lees-firm-holds-6m-ethereum-250k-scenario-discussed/",
+   "timestamp": "2026-09-29T06:17:15-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CCN · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a8fa347e802217ccdeabf8fbd12ce94e8e2c2ebf",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia is trading like an oil stock — and taking advantage of the moment",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/technology/article/nvidia-is-trading-like-an-oil-stock--and-taking-advantage-of-the-moment-100000909.html",
+   "timestamp": "2026-09-29T06:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "61f153c7fd0ab691c12210a1110853bac3fe5a00",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia's cash machine and cheaper stock make the case for historic buyback: Chart of the Day",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/nvidias-cash-machine-and-cheaper-stock-make-the-case-for-historic-buyback-chart-of-the-day-090000518.html",
+   "timestamp": "2026-09-29T05:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9a5c7b0060228e161163831941a046be90fa260a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova (GEV) Has a $176 Billion Backlog. Can It Turn Demand Into Durable Growth?",
+   "source": "Insider Monkey",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/energy/articles/ge-vernova-gev-176-billion-012212886.html",
+   "timestamp": "2026-09-28T21:22:12-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Insider Monkey · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bf4aa7636b710d798710adae53cb64e9f484351a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Tom Lee's Bitmine Buys Another $46 Million in Ethereum",
+   "source": "Coinage Coop",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.coinage.media/2026/tom-lees-bitmine-buys-another-46-million-worth-of-ethereum",
+   "timestamp": "2026-09-28T17:17:00-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Coinage Coop · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "279aa2af0206797a4ffb788106bd2e30d734dd6c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Cook, An Update on AI and the Economy",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/cook20260928a.htm",
+   "timestamp": "2026-09-28T13:25:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "181116a10d01c44e7231031850a361acb571609a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why GE Vernova (GEV) Is Back In The Spotlight",
+   "source": "Simply Wall St.",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/why-ge-vernova-gev-back-160845740.html",
+   "timestamp": "2026-09-28T12:08:45-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Simply Wall St. · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "94610716f157ac4b5150b4fb6bd8d7b1e99e9234",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "BitMine’s Ethereum Stack Crosses 6M, While Strategy Taps MSTR Sales To Buy BTC And STRC",
+   "source": "Stocktwits",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://stocktwits.com/news-articles/markets/cryptocurrency/bitmine-ethereum-stack-crosses-6-m-while-strategy-taps-mstr-sales-to-buy-btc-strc/cZMSy20RBQM",
+   "timestamp": "2026-09-28T11:25:46-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Stocktwits · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ca2f42fd173c9bd280f3ff57d1bc3f70849ab0a0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NRC issues first U.S. construction permit for a BWRX-300 small modular reactor at Tennessee Valley Authority’s Clinch River site",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/nrc-issues-first-us-construction-permit-bwrx-300-small-modular-reactor-tva-clinch-river",
+   "timestamp": "2026-09-28T11:02:40-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d34b2155decb470b653b9205d57416cf519e5306",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine’s Ethereum Holdings Surpass Six Million Tokens",
+   "source": "CryptoProwl",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.cryptoprowl.com/releases/bitmines-ethereum-holdings-surpass-six-million-tokens-7154",
+   "timestamp": "2026-09-28T10:04:00-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CryptoProwl · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3655c43fba0167a42f809408509ea7c9c18240d3",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Tom Lee's Bitmine Buys Another $47M of ETH, Taking It to 4.9% of Ethereum Supply",
+   "source": "decrypt",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://decrypt.co/379418/tom-lees-bitmine-buys-another-47m-of-eth-taking-it-to-4-9-of-ethereum-supply",
+   "timestamp": "2026-09-28T09:27:40-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · decrypt · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e09b43228cba68ccc5a9420e06148bb5ed036bdf",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA Announces a $150 Billion Share Repurchase Authorization Increase",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-announces-a-150-billion-share-repurchase-authorization-increase",
+   "timestamp": "2026-09-28T07:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "932d5648738ca211c26c887ae70a09866517952a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA Launches Open Agent Safety Platform to Secure Agents From Testing to Deployment",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/open-agent-safety-platform",
+   "timestamp": "2026-09-28T05:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9df6db617ac05ad1d80caef66363c8a0fba4822c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "How MAVAN is Becoming Bitmine’s $357M Revenue Engine",
+   "source": "CoinGape",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://coingape.com/block-of-fame/pulse/how-mavan-is-becoming-bitmines-357m-revenue-engine/",
+   "timestamp": "2026-09-28T03:09:22-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CoinGape · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5a0ccfacc36b1ea631401f47416e5a1f662573a5",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces approval of application by Peoples Bancorp Inc.",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260925a.htm",
+   "timestamp": "2026-09-25T16:30:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Orders on Banking Applications · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a09909ffdb688fe7097caca6a9a9fd36d7a9de2a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board requests public comment on two proposals related to establishing a regulatory framework for Board-supervised payment stablecoin issuers under the GENIUS Act",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260924a.htm",
+   "timestamp": "2026-09-24T14:30:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4369d45eef224b5a56d71efe4bdf898914b6b491",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board issues enforcement action with former employee of Sandy Spring Bank",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260924a.htm",
+   "timestamp": "2026-09-24T11:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "31ce3e0d3db8c77daa10d8307c3060c91ad924a6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Unemployment Insurance Weekly Claims Report",
+   "source": "Department of Labor release",
+   "source_id": "dol",
+   "url": "http://www.dol.gov/newsroom/releases/eta/eta20260924",
+   "timestamp": "2026-09-24T08:00:00-04:00",
+   "tickers": [],
+   "topics": [
+    "CLAIMS"
+   ],
+   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d8e4ec431c8592eb4746b083192476cb43d2b9c6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Barr, A Long-Term View on the Costs of Shelter",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/barr20260923a.htm",
+   "timestamp": "2026-09-23T10:05:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "87557d1e816c0e7f1f8e9cda05e3ccf8adde77e8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova advances asset longevity for Egypt’s power sector with Rotor Life Extension services",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-advances-asset-longevity-egypts-power-sector-rotor-life-extension",
+   "timestamp": "2026-09-23T05:27:57-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  }
+ ],
+ "per_name": {
+  "GEV": [
+   "608e96dfbaf485e2cb131a114c190b094a938355",
+   "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0",
+   "90d6db0d639bd65db9201551ecc0222f42c84b71",
+   "9a5c7b0060228e161163831941a046be90fa260a",
+   "181116a10d01c44e7231031850a361acb571609a"
+  ],
+  "NVDA": [
+   "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
+   "ac722e3df3199e807ac78537d4bd39e54f845502",
+   "a8fa347e802217ccdeabf8fbd12ce94e8e2c2ebf",
+   "61f153c7fd0ab691c12210a1110853bac3fe5a00",
+   "e09b43228cba68ccc5a9420e06148bb5ed036bdf"
+  ],
+  "AVGO": [
+   "115b15ad70ffc721f00760c3118c1b485f3d9605",
+   "9c768864efcd6fcada154bdc0daefaf66df35044",
+   "cdbf6d8623e87effd5c365455dae3a03c55d3614"
+  ],
+  "GOOG": [
+   "30ea2fc08baf671b5caac5ed18afdae6aee58a0f"
+  ],
+  "BMNR": [
+   "973ff1a4124a816614038a100a24ba0bd868353f",
+   "01d241e7576a5cad02629f973dfc223dc43f9fc3",
+   "bf4aa7636b710d798710adae53cb64e9f484351a",
+   "94610716f157ac4b5150b4fb6bd8d7b1e99e9234",
+   "d34b2155decb470b653b9205d57416cf519e5306"
+  ]
+ },
+ "last24h": [
+  "1478a16716375972c4ed5730b455c47f1276eb07",
+  "aa1ac57f54e7cd23e70d9b8598b5f3a478a25ae2",
+  "96198714a74b17c20cfbe4d8cc9e0e93ad4417f2",
+  "15941f2780d8bfeb7048eeef10cfa4567765e485",
+  "36740379333a8d93fad3667bc61e561c5ece421a",
+  "90d6db0d639bd65db9201551ecc0222f42c84b71",
+  "115b15ad70ffc721f00760c3118c1b485f3d9605",
+  "80c280815bbcfe505f579f0432231c52e02dba9a",
+  "d48b2c89b443db8bc7a44348b57ca7fbd78b8bc7",
+  "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
+  "30ea2fc08baf671b5caac5ed18afdae6aee58a0f",
+  "608e96dfbaf485e2cb131a114c190b094a938355",
+  "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0",
+  "9c768864efcd6fcada154bdc0daefaf66df35044",
+  "cdbf6d8623e87effd5c365455dae3a03c55d3614",
+  "973ff1a4124a816614038a100a24ba0bd868353f",
+  "ac722e3df3199e807ac78537d4bd39e54f845502",
+  "01d241e7576a5cad02629f973dfc223dc43f9fc3",
+  "a8fa347e802217ccdeabf8fbd12ce94e8e2c2ebf",
+  "61f153c7fd0ab691c12210a1110853bac3fe5a00"
+ ]
+}

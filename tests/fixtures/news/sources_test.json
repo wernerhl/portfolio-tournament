@@ -1,0 +1,39 @@
+{
+ "cadence": "static", "as_of": "2026-09-30", "note": "test registry mirroring data/news_sources.json with fixture-backed ids",
+ "rule": "primary sources first: Tier 1 = the issuer's own release; Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
+ "topic_keywords": {
+  "FOMC": ["FOMC", "Federal Open Market Committee", "federal funds"],
+  "PCE": ["Personal Income and Outlays", "PCE"],
+  "GDP": ["Gross Domestic Product", "GDP"],
+  "CPI": ["Consumer Price Index", "CPI"],
+  "PPI": ["Producer Price Index", "PPI"],
+  "NFP": ["Employment Situation", "payroll"],
+  "JOLTS": ["Job Openings", "JOLTS"],
+  "RETAIL": ["Retail"],
+  "CLAIMS": ["Unemployment Insurance Weekly Claims", "initial claims"],
+  "TRADE": ["International Trade"]
+ },
+ "aliases": {"NVDA": ["NVIDIA", "Nvidia"], "AVGO": ["Broadcom"], "GOOG": ["Alphabet", "Google"], "GEV": ["GE Vernova", "Vernova"], "MU": ["Micron"], "ANET": ["Arista"], "BMNR": ["BitMine", "Bitmine"]},
+ "sources": [
+  {"id": "fed_press", "tier": 1, "kind": "rss", "url": "https://www.federalreserve.gov/feeds/press_all.xml", "label": "Federal Reserve Board press release", "keep_without_topic": true, "status": "ok"},
+  {"id": "bea", "tier": 1, "kind": "rss", "url": "https://apps.bea.gov/rss/rss.xml", "label": "BEA release", "keep_without_topic": false, "status": "ok"},
+  {"id": "bea_release_day", "tier": 1, "kind": "bea_release_day", "url": null, "fallback_for": "bea", "label": "BEA (release page)", "headline_prefix": "BEA release", "status": "ok",
+   "release_pages": {"GDP": {"name": "Gross Domestic Product", "url": "https://www.bea.gov/data/gdp/gross-domestic-product", "time_et": "08:30", "reference_lag_months": 1}}},
+  {"id": "bls_release_day", "tier": 1, "kind": "bls_release_day", "url": null, "label": "BLS (release page)", "headline_prefix": "BLS release", "status": "ok",
+   "release_pages": {
+    "CPI": {"name": "Consumer Price Index", "url": "https://www.bls.gov/news.release/cpi.nr0.htm", "time_et": "08:30", "reference_lag_months": 1},
+    "NFP": {"name": "Employment Situation", "url": "https://www.bls.gov/news.release/empsit.nr0.htm", "time_et": "08:30", "reference_lag_months": 1},
+    "PPI": {"name": "Producer Price Index", "url": "https://www.bls.gov/news.release/ppi.nr0.htm", "time_et": "08:30", "reference_lag_months": 1},
+    "JOLTS": {"name": "Job Openings and Labor Turnover", "url": "https://www.bls.gov/news.release/jolts.nr0.htm", "time_et": "10:00", "reference_lag_months": 2}}},
+  {"id": "census", "tier": 1, "kind": "rss", "url": "https://www.census.gov/economic-indicators/indicator.xml", "label": "Census Bureau economic indicator", "keep_without_topic": false, "status": "ok"},
+  {"id": "dol", "tier": 1, "kind": "rss", "url": "https://www.dol.gov/rss/releases.xml", "label": "Department of Labor release", "keep_without_topic": false, "status": "ok"},
+  {"id": "edgar", "tier": 1, "kind": "edgar_submissions", "url": "https://data.sec.gov/submissions/CIK{cik:010d}.json", "ticker_map_url": "https://www.sec.gov/files/company_tickers.json", "label": "SEC EDGAR filing", "forms": ["8-K", "8-K/A", "10-Q", "10-Q/A", "10-K", "10-K/A", "4", "4/A"], "user_agent_env": "SEC_USER_AGENT", "status": "ok"},
+  {"id": "ir_avgo", "tier": 1, "kind": "rss", "ticker": "AVGO", "url": "https://investors.broadcom.com/rss/news-releases.xml", "label": "Broadcom investor relations", "status": "ok"},
+  {"id": "ir_nvda", "tier": 1, "kind": "rss", "ticker": "NVDA", "url": "https://nvidianews.nvidia.com/cats/press_release.xml", "label": "NVIDIA investor relations", "status": "ok"},
+  {"id": "ir_gev", "tier": 1, "kind": "rss", "ticker": "GEV", "url": "https://www.gevernova.com/news/subscribe/all/rss.xml", "label": "GE Vernova investor relations", "status": "ok"},
+  {"id": "ir_anet_atom", "tier": 1, "kind": "atom", "ticker": "ANET", "url": "https://investors.arista.com/feed.atom", "label": "Arista investor relations", "status": "ok"},
+  {"id": "ir_goog", "tier": 1, "kind": "rss", "ticker": "GOOG", "url": null, "label": "Alphabet investor relations", "status": "no feed found (checked 2026-09-30)"},
+  {"id": "ir_bmnr", "tier": 1, "kind": "rss", "ticker": "BMNR", "url": null, "label": "BitMine investor relations", "status": "no feed found (checked 2026-09-30)"},
+  {"id": "yahoo_headlines", "tier": 2, "kind": "yahoo_ticker", "url": "https://finance.yahoo.com/quote/{ticker}/news/", "label": "Yahoo Finance headline feed (secondary)", "status": "ok"}
+ ]
+}
