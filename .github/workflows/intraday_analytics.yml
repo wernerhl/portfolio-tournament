@@ -54,13 +54,15 @@ jobs:
           python scripts/compute_book.py --intraday
           python scripts/bonds/build_sleeve_metrics.py --intraday
           python scripts/bonds/compute_bonds.py --intraday
+          python scripts/compute_goals.py --intraday          # D1 (order 30-Sept): the house goal at the live USDBRL rate
+          python scripts/fetch_news.py                        # B4 (order 30-Sept): the news panel's 24-hour window, every 2 hours
 
       - name: Commit
         if: steps.gate.outputs.go == 'true'
         run: |
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
-          git add data/book.json data/bonds/states.json data/bonds/sleeve_metrics.json
+          git add data/book.json data/bonds/states.json data/bonds/sleeve_metrics.json data/goals.json data/news.json
           git diff --cached --quiet || git commit -m "📈 intraday analytics $(date -u +%Y-%m-%dT%H:%MZ)"
           git pull --rebase --strategy-option=ours origin main || true
           git push
