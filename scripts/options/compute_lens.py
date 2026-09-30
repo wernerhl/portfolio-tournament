@@ -18,9 +18,11 @@ Definitions (also written into the file):
   * FRONT = the expiry nearest 30 calendar days, BACK = nearest 90 (the order's "nearest
     expiries"); the calendar-interpolated 30/90-day values are recorded beside them;
   * state: cheap if IV30 < RV21 and IV30 < RV63; rich if above both; mixed otherwise;
-  * event-implied move: with E1 the first expiry after the release and n its sessions to
-    expiry, sqrt( IV_E1² n/252 − IV_back² (n−1)/252 ) — total variance minus base variance
-    at the back-month IV over the non-event sessions;
+  * event-implied move (order 30-Sept, C1, the bracketing method): with PRE the last expiry
+    before the release and POST the first expiry after it, event variance = post total
+    variance − pre total variance − base variance at the pre-expiry IV over the non-event
+    sessions between them; without a pre-event expiry, the post-event expiry against a later
+    expiry free of a further release (forward variance as the base), flagged as a fallback;
   * skew = IV(put, K = 0.9 spot) − IV(call, K = 1.1 spot) at the front expiry, strikes
     interpolated; the 25-delta risk reversal is recorded beside it;
   * dealer gamma under the convention dealers are long calls, short puts.
@@ -186,24 +188,80 @@ def name_lens(tk: str, df: pd.DataFrame, meta_tk: dict, session: str, closes: pd
         ed = pd.Timestamp(ev_date)
         event["days_to"] = int((ed - sess).days)
         event["sessions_to"] = oc.sessions_between(sess, ed) if ed > sess else 0
-        after = [e for e in expiries if (pd.Timestamp(e) > ed) or (tod == "before_open" and pd.Timestamp(e) >= ed)]
-        e1 = after[0] if after else None
-        event["expiry_after"] = e1
-        if e1 and iv_back is not None:
-            iv_e1, _ = atm.get(e1, (None, None))
-            n1 = oc.sessions_to_expiry(session, e1)
-            if iv_e1 is not None and n1 >= 1:
-                ev_var = iv_e1 ** 2 * n1 / 252.0 - iv_back ** 2 * max(0, n1 - 1) / 252.0
+        # Order 30-Sept C1 — the bracketing method. The 26-Sept specification subtracted base
+        # variance at the BACK-month IV from the first post-event expiry, which collapses toward
+        # zero whenever the event is weeks away or the back month carries term premium (GEV read
+        # 2.9%, NVDA 2.2%). Correct method: the last expiry BEFORE the release (contains no event)
+        # and the first expiry AFTER it (contains it); event variance = post total variance − pre
+        # total variance − base variance at the pre-expiry IV over the non-event sessions between
+        # the two expiries. An expiry on the release date expires at the close: it precedes an
+        # after-close release and contains a before-open one. Without a pre-event expiry, the
+        # fallback compares the post-event expiry with a later expiry that contains no further
+        # release (forward variance between them = the base per session), and is flagged.
+        live = [e for e in expiries if oc.sessions_to_expiry(session, e) >= 1]
+        after = [e for e in live if (pd.Timestamp(e) > ed) or (tod == "before_open" and pd.Timestamp(e) >= ed)]
+        before = [e for e in live if (pd.Timestamp(e) < ed) or (tod == "after_close" and pd.Timestamp(e) == ed)]
+        e_post = after[0] if after else None
+        e_pre = before[-1] if before else None
+        event["expiry_after"] = e_post
+        event["expiry_before"] = e_pre
+        event["fallback"] = False
+        if e_post is None:
+            event["implied_move_reason"] = "no listed expiry after the release"
+        else:
+            iv_post, _ = atm.get(e_post, (None, None))
+            n_post = oc.sessions_to_expiry(session, e_post)
+            if iv_post is None or n_post < 1:
+                event["implied_move_reason"] = "no ATM IV at the first expiry after the release"
+            elif e_pre is not None and atm.get(e_pre, (None, None))[0] is not None:
+                iv_pre, _ = atm.get(e_pre, (None, None))
+                n_pre = oc.sessions_to_expiry(session, e_pre)
+                non_event = max(0, n_post - n_pre - 1)
+                v_post = iv_post ** 2 * n_post / 252.0
+                v_pre = iv_pre ** 2 * n_pre / 252.0
+                ev_var = v_post - v_pre - iv_pre ** 2 * non_event / 252.0
+                event.update({"iv_post": r4(iv_post), "sessions_to_post": n_post, "iv_pre": r4(iv_pre), "sessions_to_pre": n_pre,
+                              "non_event_sessions": non_event, "event_variance": r4(ev_var, 6),
+                              "method": "bracketing: post total variance − pre total variance − IV_pre²·(non-event sessions)/252; "
+                                        "pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session"})
                 if ev_var > 0:
                     event["implied_move"] = float(np.sqrt(ev_var))
                 else:
-                    event["implied_move_reason"] = "event variance not positive (E1 IV at or below the back-month base)"
-                event.update({"iv_e1": iv_e1, "sessions_to_e1": n1, "base_iv_back": iv_back,
-                              "method": "sqrt(IV_E1²·n/252 − IV_back²·(n−1)/252), n = sessions strictly after the snapshot session"})
+                    event["implied_move_reason"] = "event variance not positive under the bracketing method (the pre-expiry's variance and base exceed the post-expiry's)"
             else:
-                event["implied_move_reason"] = "no ATM IV at the first expiry after the release"
-        elif e1 is None:
-            event["implied_move_reason"] = "no listed expiry after the release"
+                # fallback: forward variance between the post-event expiry and a later expiry that
+                # contains no further release (the next release is assumed no sooner than 80
+                # calendar days after this one); prefer a reference at least five sessions later.
+                cutoff = ed + pd.Timedelta(days=80)
+                refs = [e for e in live if pd.Timestamp(e) > pd.Timestamp(e_post) and pd.Timestamp(e) <= cutoff and atm.get(e, (None, None))[0] is not None]
+                far = [e for e in refs if oc.sessions_to_expiry(session, e) - n_post >= 5]
+                e_ref = far[0] if far else (refs[-1] if refs else None)
+                event["fallback"] = True
+                event["fallback_reason"] = ("no listed expiry before the release" if e_pre is None else "no ATM IV at the expiry before the release")
+                if e_ref is None:
+                    event["implied_move_reason"] = "fallback impossible: no later expiry free of a further release with an ATM IV"
+                else:
+                    iv_ref, _ = atm.get(e_ref, (None, None))
+                    n_ref = oc.sessions_to_expiry(session, e_ref)
+                    v_post = iv_post ** 2 * n_post / 252.0
+                    v_ref = iv_ref ** 2 * n_ref / 252.0
+                    base = (v_ref - v_post) / max(1, n_ref - n_post)          # forward variance per session
+                    ev_var = v_post - base * max(0, n_post - 1)
+                    event.update({"iv_post": r4(iv_post), "sessions_to_post": n_post, "reference_expiry": e_ref, "iv_reference": r4(iv_ref),
+                                  "sessions_to_reference": n_ref, "base_variance_per_session": r4(base, 6), "event_variance": r4(ev_var, 6),
+                                  "method": "fallback (no pre-event expiry): base per session = forward variance between the post-event expiry and a "
+                                            "later expiry free of a further release; event variance = post total variance − base·(sessions to post − 1)"})
+                    if base <= 0:
+                        event["implied_move_reason"] = "fallback base not positive (the reference expiry's total variance is below the post-event expiry's)"
+                    elif ev_var > 0:
+                        event["implied_move"] = float(np.sqrt(ev_var))
+                    else:
+                        event["implied_move_reason"] = "event variance not positive under the fallback"
+            # the superseded 26-Sept figure, kept beside the new one for the transition
+            if iv_back is not None and iv_post is not None and n_post >= 1:
+                old = iv_post ** 2 * n_post / 252.0 - iv_back ** 2 * max(0, n_post - 1) / 252.0
+                event["superseded_26sept_method"] = {"implied_move": r4(float(np.sqrt(old))) if old > 0 else None, "base_iv_back": r4(iv_back),
+                                                     "method": "sqrt(IV_E1²·n/252 − IV_back²·(n−1)/252) — replaced 30-Sept (C1)"}
     # historical reaction distribution
     hx = (earn or {}).get("history") or []
     st = (earn or {}).get("stats") or {}
@@ -327,7 +385,10 @@ def build(session: str | None = None) -> dict:
             "tenors": "FRONT = expiry nearest 30 calendar days, BACK = nearest 90 (the order's 'nearest expiries'); calendar-interpolated values recorded beside them",
             "realized_vol": "std (ddof=1) of daily log returns × √252 over 21 and 63 sessions",
             "state": "cheap if IV30 < RV21 and RV63; rich if above both; mixed otherwise",
-            "event_move": "sqrt(IV_E1²·n/252 − IV_back²·(n−1)/252): total variance to the first expiry after the release minus base variance at the back-month IV over the non-event sessions",
+            "event_move": ("bracketing (order 30-Sept, C1): with PRE the last expiry before the release and POST the first after it, "
+                           "event variance = IV_post²·n_post/252 − IV_pre²·n_pre/252 − IV_pre²·(n_post − n_pre − 1)/252, the move its square root; "
+                           "an expiry on the release date precedes an after-close release and contains a before-open one; without a pre-event expiry the "
+                           "fallback takes the base per session from the forward variance between POST and a later expiry free of a further release, flagged"),
             "skew": "IV(put, 0.9·spot) − IV(call, 1.1·spot) at the front expiry, interpolated in strike; 25-delta risk reversal beside it",
             "dealer_gamma": "Σ sign·Γ·OI·100·S²·1% over expiries within 90 days, dealers long calls / short puts — descriptive, not validated",
         },

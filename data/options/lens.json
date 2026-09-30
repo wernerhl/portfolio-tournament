@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-25",
   "as_of": "2026-09-30",
-  "computed_at": "2026-09-30T04:13:16-04:00",
+  "computed_at": "2026-09-30T04:17:22-04:00",
   "snapshot_kind": "backfill",
   "pulled_at": "2026-09-26T13:16:51-04:00",
   "risk_free": 0.041100000000000005,
@@ -14,7 +14,7 @@
     "tenors": "FRONT = expiry nearest 30 calendar days, BACK = nearest 90 (the order's 'nearest expiries'); calendar-interpolated values recorded beside them",
     "realized_vol": "std (ddof=1) of daily log returns \u00d7 \u221a252 over 21 and 63 sessions",
     "state": "cheap if IV30 < RV21 and RV63; rich if above both; mixed otherwise",
-    "event_move": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252): total variance to the first expiry after the release minus base variance at the back-month IV over the non-event sessions",
+    "event_move": "bracketing (order 30-Sept, C1): with PRE the last expiry before the release and POST the first after it, event variance = IV_post\u00b2\u00b7n_post/252 \u2212 IV_pre\u00b2\u00b7n_pre/252 \u2212 IV_pre\u00b2\u00b7(n_post \u2212 n_pre \u2212 1)/252, the move its square root; an expiry on the release date precedes an after-close release and contains a before-open one; without a pre-event expiry the fallback takes the base per session from the forward variance between POST and a later expiry free of a further release, flagged",
     "skew": "IV(put, 0.9\u00b7spot) \u2212 IV(call, 1.1\u00b7spot) at the front expiry, interpolated in strike; 25-delta risk reversal beside it",
     "dealer_gamma": "\u03a3 sign\u00b7\u0393\u00b7OI\u00b7100\u00b7S\u00b2\u00b71% over expiries within 90 days, dealers long calls / short puts \u2014 descriptive, not validated"
   },
@@ -69,28 +69,38 @@
         "days_to": 75,
         "sessions_to": 52,
         "expiry_after": "2026-12-18",
-        "implied_move": 0.025893745966090634,
+        "implied_move": 0.06980246604545583,
         "implied_move_reason": null,
-        "iv_e1": 0.41105047402894607,
-        "sessions_to_e1": 59,
-        "base_iv_back": 0.41105047402894607,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-11-20",
+        "fallback": false,
+        "iv_post": 0.4111,
+        "sessions_to_post": 59,
+        "iv_pre": 0.3882,
+        "sessions_to_pre": 40,
+        "non_event_sessions": 18,
+        "event_variance": 0.004872,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0259,
+          "base_iv_back": 0.4111,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0644,
           "median_abs": 0.0561,
           "max_abs": 0.1679,
           "max_date": "2022-09-15",
-          "n_exceeding_implied": 16,
-          "share_exceeding_implied": 0.6667,
+          "n_exceeding_implied": 9,
+          "share_exceeding_implied": 0.375,
           "last8": {
             "n": 8,
             "median_abs": 0.0604,
             "mean_abs": 0.0638,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": -0.0302
+        "event_premium": 0.0137
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -290,28 +300,38 @@
         "days_to": 63,
         "sessions_to": 44,
         "expiry_after": "2026-12-18",
-        "implied_move": 0.0288962888365542,
+        "implied_move": 0.084455843281734,
         "implied_move_reason": null,
-        "iv_e1": 0.4587143644452874,
-        "sessions_to_e1": 59,
-        "base_iv_back": 0.4587143644452874,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-11-20",
+        "fallback": false,
+        "iv_post": 0.4587,
+        "sessions_to_post": 59,
+        "iv_pre": 0.4279,
+        "sessions_to_pre": 40,
+        "non_event_sessions": 18,
+        "event_variance": 0.007133,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0289,
+          "base_iv_back": 0.4587,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0485,
           "median_abs": 0.0337,
           "max_abs": 0.1549,
           "max_date": "2021-11-23",
-          "n_exceeding_implied": 13,
-          "share_exceeding_implied": 0.5417,
+          "n_exceeding_implied": 6,
+          "share_exceeding_implied": 0.25,
           "last8": {
             "n": 8,
             "median_abs": 0.0383,
             "mean_abs": 0.045,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0048
+        "event_premium": 0.0508
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -505,28 +525,38 @@
         "days_to": 39,
         "sessions_to": 27,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.05065784604130276,
+        "implied_move": 0.10842717427105707,
         "implied_move_reason": null,
-        "iv_e1": 0.5197130259331627,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.5103387109750411,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.5197,
+        "sessions_to_post": 40,
+        "iv_pre": 0.4484,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.011756,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0507,
+          "base_iv_back": 0.5103,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0829,
           "median_abs": 0.0611,
           "max_abs": 0.2039,
           "max_date": "2021-11-01",
-          "n_exceeding_implied": 15,
-          "share_exceeding_implied": 0.625,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.0676,
             "mean_abs": 0.0829,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0105
+        "event_premium": 0.0473
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -710,28 +740,38 @@
         "days_to": 35,
         "sessions_to": 25,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.01818471036554563,
+        "implied_move": 0.05125898710949264,
         "implied_move_reason": null,
-        "iv_e1": 0.29787950482614,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.2981118223198152,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.2979,
+        "sessions_to_post": 40,
+        "iv_pre": 0.2721,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.002627,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0182,
+          "base_iv_back": 0.2981,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0373,
           "median_abs": 0.0335,
           "max_abs": 0.0928,
           "max_date": "2022-04-29",
-          "n_exceeding_implied": 17,
-          "share_exceeding_implied": 0.7083,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.0288,
             "mean_abs": 0.0315,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0153
+        "event_premium": 0.0177
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -877,12 +917,22 @@
         "days_to": 39,
         "sessions_to": 27,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.040211851336833596,
+        "implied_move": 0.051561698112780434,
         "implied_move_reason": null,
-        "iv_e1": 0.3795909419246847,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.3705882051719803,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.3796,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3614,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.002659,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0402,
+          "base_iv_back": 0.3706,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0321,
@@ -898,7 +948,7 @@
             "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0144
+        "event_premium": 0.0257
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -1089,28 +1139,38 @@
         "days_to": 38,
         "sessions_to": 26,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.03668853384160281,
+        "implied_move": 0.08590603480794319,
         "implied_move_reason": null,
-        "iv_e1": 0.43819205753078083,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.43386418013693406,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.4382,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3863,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.00738,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0367,
+          "base_iv_back": 0.4339,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0335,
           "median_abs": 0.0275,
           "max_abs": 0.1119,
           "max_date": "2026-02-05",
-          "n_exceeding_implied": 6,
-          "share_exceeding_implied": 0.25,
+          "n_exceeding_implied": 1,
+          "share_exceeding_implied": 0.0417,
           "last8": {
             "n": 8,
             "median_abs": 0.0306,
             "mean_abs": 0.0381,
-            "n_exceeding_implied": 2
+            "n_exceeding_implied": 1
           }
         },
-        "event_premium": 0.0092
+        "event_premium": 0.0584
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -1305,28 +1365,38 @@
         "days_to": 75,
         "sessions_to": 52,
         "expiry_after": "2026-12-18",
-        "implied_move": 0.025818437844219385,
+        "implied_move": 0.09745563465106835,
         "implied_move_reason": null,
-        "iv_e1": 0.40985499465589637,
-        "sessions_to_e1": 59,
-        "base_iv_back": 0.40985499465589637,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-11-20",
+        "fallback": false,
+        "iv_post": 0.4099,
+        "sessions_to_post": 59,
+        "iv_pre": 0.36,
+        "sessions_to_pre": 40,
+        "non_event_sessions": 18,
+        "event_variance": 0.009498,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0258,
+          "base_iv_back": 0.4099,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0625,
           "median_abs": 0.049,
           "max_abs": 0.2443,
           "max_date": "2024-12-12",
-          "n_exceeding_implied": 17,
-          "share_exceeding_implied": 0.7083,
+          "n_exceeding_implied": 5,
+          "share_exceeding_implied": 0.2083,
           "last8": {
             "n": 8,
             "median_abs": 0.0902,
             "mean_abs": 0.0988,
-            "n_exceeding_implied": 8
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": -0.0232
+        "event_premium": 0.0485
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -1547,28 +1617,38 @@
         "days_to": 28,
         "sessions_to": 20,
         "expiry_after": "2026-10-23",
-        "implied_move": 0.03347064980600694,
+        "implied_move": 0.0458578958898405,
         "implied_move_reason": null,
-        "iv_e1": 0.2874627013582067,
-        "sessions_to_e1": 20,
-        "base_iv_back": 0.2685619035801409,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.2875,
+        "sessions_to_post": 20,
+        "iv_pre": 0.2431,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 4,
+        "event_variance": 0.002103,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0335,
+          "base_iv_back": 0.2686,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0389,
           "median_abs": 0.0339,
           "max_abs": 0.1054,
           "max_date": "2023-01-27",
-          "n_exceeding_implied": 12,
-          "share_exceeding_implied": 0.5,
+          "n_exceeding_implied": 7,
+          "share_exceeding_implied": 0.2917,
           "last8": {
             "n": 8,
             "median_abs": 0.0275,
             "mean_abs": 0.0315,
-            "n_exceeding_implied": 3
+            "n_exceeding_implied": 1
           }
         },
-        "event_premium": -0.0004
+        "event_premium": 0.0119
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -1768,12 +1848,22 @@
         "days_to": 19,
         "sessions_to": 13,
         "expiry_after": "2026-10-16",
-        "implied_move": 0.053342811632523385,
+        "implied_move": 0.05322715035032452,
         "implied_move_reason": null,
-        "iv_e1": 0.35030063419673424,
-        "sessions_to_e1": 15,
-        "base_iv_back": 0.2832973217888218,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-09",
+        "fallback": false,
+        "iv_post": 0.3503,
+        "sessions_to_post": 15,
+        "iv_pre": 0.2837,
+        "sessions_to_pre": 10,
+        "non_event_sessions": 4,
+        "event_variance": 0.002833,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0533,
+          "base_iv_back": 0.2833,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 17,
           "mean_abs": 0.0323,
@@ -1789,7 +1879,7 @@
             "n_exceeding_implied": 3
           }
         },
-        "event_premium": 0.0231
+        "event_premium": 0.023
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -1982,12 +2072,22 @@
         "days_to": 56,
         "sessions_to": 40,
         "expiry_after": "2027-01-15",
-        "implied_move": 0.04887936454715394,
+        "implied_move": 0.12075200840035014,
         "implied_move_reason": null,
-        "iv_e1": 0.7759358570078212,
-        "sessions_to_e1": 77,
-        "base_iv_back": 0.7759358570078212,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-11-20",
+        "fallback": false,
+        "iv_post": 0.7759,
+        "sessions_to_post": 77,
+        "iv_pre": 0.7494,
+        "sessions_to_pre": 40,
+        "non_event_sessions": 36,
+        "event_variance": 0.014581,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0489,
+          "base_iv_back": 0.7759,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 4,
           "mean_abs": 0.0783,
@@ -2003,7 +2103,7 @@
             "n_exceeding_implied": 1
           }
         },
-        "event_premium": 0.0058
+        "event_premium": 0.0777
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -2194,28 +2294,38 @@
         "days_to": 31,
         "sessions_to": 21,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.0459296320416347,
+        "implied_move": 0.0671783769034101,
         "implied_move_reason": null,
-        "iv_e1": 0.34834280029327397,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.3329012490667327,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3483,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3087,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.004513,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0459,
+          "base_iv_back": 0.3329,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0433,
           "median_abs": 0.0424,
           "max_abs": 0.1265,
           "max_date": "2022-10-24",
-          "n_exceeding_implied": 9,
-          "share_exceeding_implied": 0.375,
+          "n_exceeding_implied": 3,
+          "share_exceeding_implied": 0.125,
           "last8": {
             "n": 8,
             "median_abs": 0.0583,
             "mean_abs": 0.0548,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0036
+        "event_premium": 0.0248
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -2352,28 +2462,38 @@
         "days_to": 27,
         "sessions_to": 19,
         "expiry_after": "2026-10-23",
-        "implied_move": 0.016708912422717537,
+        "implied_move": 0.03859702042674439,
         "implied_move_reason": null,
-        "iv_e1": 0.36889229100959975,
-        "sessions_to_e1": 20,
-        "base_iv_back": 0.3735515981571892,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3689,
+        "sessions_to_post": 20,
+        "iv_pre": 0.3514,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 4,
+        "event_variance": 0.00149,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0167,
+          "base_iv_back": 0.3736,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0349,
           "median_abs": 0.0324,
           "max_abs": 0.079,
           "max_date": "2023-10-19",
-          "n_exceeding_implied": 18,
-          "share_exceeding_implied": 0.75,
+          "n_exceeding_implied": 10,
+          "share_exceeding_implied": 0.4167,
           "last8": {
             "n": 8,
             "median_abs": 0.0384,
             "mean_abs": 0.0357,
-            "n_exceeding_implied": 6
+            "n_exceeding_implied": 4
           }
         },
-        "event_premium": -0.0157
+        "event_premium": 0.0062
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -2564,28 +2684,38 @@
         "days_to": 31,
         "sessions_to": 21,
         "expiry_after": "2026-10-30",
-        "implied_move": 0.032826973308320934,
+        "implied_move": 0.07105750043100584,
         "implied_move_reason": null,
-        "iv_e1": 0.4411856538730016,
-        "sessions_to_e1": 25,
-        "base_iv_back": 0.4375386537726422,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-23",
+        "fallback": false,
+        "iv_post": 0.4412,
+        "sessions_to_post": 25,
+        "iv_pre": 0.387,
+        "sessions_to_pre": 20,
+        "non_event_sessions": 4,
+        "event_variance": 0.005049,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0328,
+          "base_iv_back": 0.4375,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.041,
           "median_abs": 0.0333,
           "max_abs": 0.1253,
           "max_date": "2024-10-28",
-          "n_exceeding_implied": 13,
-          "share_exceeding_implied": 0.5417,
+          "n_exceeding_implied": 6,
+          "share_exceeding_implied": 0.25,
           "last8": {
             "n": 8,
             "median_abs": 0.0669,
             "mean_abs": 0.0655,
-            "n_exceeding_implied": 6
+            "n_exceeding_implied": 4
           }
         },
-        "event_premium": -0.0005
+        "event_premium": 0.0378
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -2785,28 +2915,38 @@
         "days_to": 45,
         "sessions_to": 31,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.048019701292214674,
+        "implied_move": 0.07287363357750526,
         "implied_move_reason": null,
-        "iv_e1": 0.4430133164906037,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.4317331569041759,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.443,
+        "sessions_to_post": 40,
+        "iv_pre": 0.4086,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.005311,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.048,
+          "base_iv_back": 0.4317,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 19,
           "mean_abs": 0.0516,
           "median_abs": 0.0471,
           "max_abs": 0.1692,
           "max_date": "2024-02-27",
-          "n_exceeding_implied": 9,
-          "share_exceeding_implied": 0.4737,
+          "n_exceeding_implied": 3,
+          "share_exceeding_implied": 0.1579,
           "last8": {
             "n": 8,
             "median_abs": 0.0232,
             "mean_abs": 0.0465,
-            "n_exceeding_implied": 3
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0009
+        "event_premium": 0.0257
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -3006,28 +3146,38 @@
         "days_to": 41,
         "sessions_to": 29,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.06861329704324085,
+        "implied_move": 0.1162071332228639,
         "implied_move_reason": null,
-        "iv_e1": 0.5296102650106733,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.5072075287179526,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.5296,
+        "sessions_to_post": 40,
+        "iv_pre": 0.4477,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.013504,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0686,
+          "base_iv_back": 0.5072,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0916,
           "median_abs": 0.0761,
           "max_abs": 0.1884,
           "max_date": "2023-11-02",
-          "n_exceeding_implied": 13,
-          "share_exceeding_implied": 0.5417,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.0685,
             "mean_abs": 0.0869,
-            "n_exceeding_implied": 4
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0074
+        "event_premium": 0.0401
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -3220,28 +3370,40 @@
         "days_to": 5,
         "sessions_to": 3,
         "expiry_after": "2026-10-16",
-        "implied_move": 0.07235882382388659,
+        "implied_move": 0.10955331156922772,
         "implied_move_reason": null,
-        "iv_e1": 0.5675080722866532,
-        "sessions_to_e1": 15,
-        "base_iv_back": 0.500825014821493,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": null,
+        "fallback": true,
+        "fallback_reason": "no listed expiry before the release",
+        "iv_post": 0.5675,
+        "sessions_to_post": 15,
+        "reference_expiry": "2026-11-20",
+        "iv_reference": 0.4488,
+        "sessions_to_reference": 40,
+        "base_variance_per_session": 0.000512,
+        "event_variance": 0.012002,
+        "method": "fallback (no pre-event expiry): base per session = forward variance between the post-event expiry and a later expiry free of a further release; event variance = post total variance \u2212 base\u00b7(sessions to post \u2212 1)",
+        "superseded_26sept_method": {
+          "implied_move": 0.0724,
+          "base_iv_back": 0.5008,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 23,
           "mean_abs": 0.0458,
           "median_abs": 0.0414,
           "max_abs": 0.1036,
           "max_date": "2025-09-18",
-          "n_exceeding_implied": 5,
-          "share_exceeding_implied": 0.2174,
+          "n_exceeding_implied": 0,
+          "share_exceeding_implied": 0.0,
           "last8": {
             "n": 8,
             "median_abs": 0.0558,
             "mean_abs": 0.0558,
-            "n_exceeding_implied": 2
+            "n_exceeding_implied": 0
           }
         },
-        "event_premium": 0.0309
+        "event_premium": 0.0681
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -3399,12 +3561,22 @@
         "days_to": 34,
         "sessions_to": 24,
         "expiry_after": "2026-10-30",
-        "implied_move": 0.09154107897947662,
+        "implied_move": 0.08716665409942329,
         "implied_move_reason": null,
-        "iv_e1": 0.5494004661147665,
-        "sessions_to_e1": 25,
-        "base_iv_back": 0.4758466130975978,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-23",
+        "fallback": false,
+        "iv_post": 0.5494,
+        "sessions_to_post": 25,
+        "iv_pre": 0.4844,
+        "sessions_to_pre": 20,
+        "non_event_sessions": 4,
+        "event_variance": 0.007598,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0915,
+          "base_iv_back": 0.4758,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0702,
@@ -3420,7 +3592,7 @@
             "n_exceeding_implied": 4
           }
         },
-        "event_premium": 0.0215
+        "event_premium": 0.0171
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -3596,28 +3768,38 @@
         "days_to": 33,
         "sessions_to": 23,
         "expiry_after": "2026-10-30",
-        "implied_move": 0.028984989993501773,
+        "implied_move": 0.0686678299645397,
         "implied_move_reason": null,
-        "iv_e1": 0.4743405599884255,
-        "sessions_to_e1": 25,
-        "base_iv_back": 0.4749237439110897,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-23",
+        "fallback": false,
+        "iv_post": 0.4743,
+        "sessions_to_post": 25,
+        "iv_pre": 0.43,
+        "sessions_to_pre": 20,
+        "non_event_sessions": 4,
+        "event_variance": 0.004715,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.029,
+          "base_iv_back": 0.4749,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 10,
           "mean_abs": 0.0542,
           "median_abs": 0.029,
           "max_abs": 0.1458,
           "max_date": "2025-07-23",
-          "n_exceeding_implied": 5,
-          "share_exceeding_implied": 0.5,
+          "n_exceeding_implied": 3,
+          "share_exceeding_implied": 0.3,
           "last8": {
             "n": 8,
             "median_abs": 0.029,
             "mean_abs": 0.0604,
-            "n_exceeding_implied": 4
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": -0.0
+        "event_premium": 0.0397
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -3812,20 +3994,30 @@
         "days_to": 33,
         "sessions_to": 23,
         "expiry_after": "2026-10-30",
-        "implied_move": 0.04373316401198926,
+        "implied_move": 0.06668631708518039,
         "implied_move_reason": null,
-        "iv_e1": 0.35312757855366095,
-        "sessions_to_e1": 25,
-        "base_iv_back": 0.33137997956056253,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-23",
+        "fallback": false,
+        "iv_post": 0.3531,
+        "sessions_to_post": 25,
+        "iv_pre": 0.2884,
+        "sessions_to_pre": 20,
+        "non_event_sessions": 4,
+        "event_variance": 0.004447,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0437,
+          "base_iv_back": 0.3314,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0503,
           "median_abs": 0.0493,
           "max_abs": 0.0997,
           "max_date": "2026-04-29",
-          "n_exceeding_implied": 13,
-          "share_exceeding_implied": 0.5417,
+          "n_exceeding_implied": 10,
+          "share_exceeding_implied": 0.4167,
           "last8": {
             "n": 8,
             "median_abs": 0.0268,
@@ -3833,7 +4025,7 @@
             "n_exceeding_implied": 3
           }
         },
-        "event_premium": -0.0056
+        "event_premium": 0.0174
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -4024,28 +4216,38 @@
         "days_to": 18,
         "sessions_to": 12,
         "expiry_after": "2026-10-16",
-        "implied_move": 0.032872611071403955,
+        "implied_move": 0.04714417266628439,
         "implied_move_reason": null,
-        "iv_e1": 0.34203066508962343,
-        "sessions_to_e1": 15,
-        "base_iv_back": 0.3254075775244355,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-09",
+        "fallback": false,
+        "iv_post": 0.342,
+        "sessions_to_post": 15,
+        "iv_pre": 0.2921,
+        "sessions_to_pre": 10,
+        "non_event_sessions": 4,
+        "event_variance": 0.002223,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0329,
+          "base_iv_back": 0.3254,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0271,
           "median_abs": 0.0215,
           "max_abs": 0.09,
           "max_date": "2026-07-14",
-          "n_exceeding_implied": 6,
-          "share_exceeding_implied": 0.25,
+          "n_exceeding_implied": 4,
+          "share_exceeding_implied": 0.1667,
           "last8": {
             "n": 8,
             "median_abs": 0.0198,
             "mean_abs": 0.0331,
-            "n_exceeding_implied": 3
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0114
+        "event_premium": 0.0257
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -4245,20 +4447,30 @@
         "days_to": 32,
         "sessions_to": 22,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.034518831579112216,
+        "implied_move": 0.0365487845319358,
         "implied_move_reason": null,
-        "iv_e1": 0.41763331728118613,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.41375184484111327,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.4176,
+        "sessions_to_post": 40,
+        "iv_pre": 0.4126,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.001336,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0345,
+          "base_iv_back": 0.4138,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0475,
           "median_abs": 0.0424,
           "max_abs": 0.1204,
           "max_date": "2024-10-29",
-          "n_exceeding_implied": 14,
-          "share_exceeding_implied": 0.5833,
+          "n_exceeding_implied": 13,
+          "share_exceeding_implied": 0.5417,
           "last8": {
             "n": 8,
             "median_abs": 0.0805,
@@ -4266,7 +4478,7 @@
             "n_exceeding_implied": 5
           }
         },
-        "event_premium": -0.0078
+        "event_premium": -0.0058
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -4410,20 +4622,30 @@
         "days_to": 25,
         "sessions_to": 17,
         "expiry_after": "2026-10-23",
-        "implied_move": 0.011907039171553524,
+        "implied_move": 0.02397709211452816,
         "implied_move_reason": null,
-        "iv_e1": 0.2751168081833819,
-        "sessions_to_e1": 20,
-        "base_iv_back": 0.27891304174734255,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.2751,
+        "sessions_to_post": 20,
+        "iv_pre": 0.2684,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 4,
+        "event_variance": 0.000575,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0119,
+          "base_iv_back": 0.2789,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0437,
           "median_abs": 0.0352,
           "max_abs": 0.118,
           "max_date": "2021-10-26",
-          "n_exceeding_implied": 19,
-          "share_exceeding_implied": 0.7917,
+          "n_exceeding_implied": 17,
+          "share_exceeding_implied": 0.7083,
           "last8": {
             "n": 8,
             "median_abs": 0.0537,
@@ -4431,7 +4653,7 @@
             "n_exceeding_implied": 7
           }
         },
-        "event_premium": -0.0233
+        "event_premium": -0.0113
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -4624,28 +4846,38 @@
         "days_to": 34,
         "sessions_to": 24,
         "expiry_after": "2026-11-20",
-        "implied_move": null,
-        "implied_move_reason": "event variance not positive (E1 IV at or below the back-month base)",
-        "iv_e1": 0.3193297765277122,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.34117433768521477,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "implied_move": 0.06833785810067967,
+        "implied_move_reason": null,
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3193,
+        "sessions_to_post": 40,
+        "iv_pre": 0.2728,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.00467,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": null,
+          "base_iv_back": 0.3412,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0387,
           "median_abs": 0.0354,
           "max_abs": 0.1109,
           "max_date": "2026-07-29",
-          "n_exceeding_implied": null,
-          "share_exceeding_implied": null,
+          "n_exceeding_implied": 4,
+          "share_exceeding_implied": 0.1667,
           "last8": {
             "n": 8,
             "median_abs": 0.0417,
             "mean_abs": 0.0552,
-            "n_exceeding_implied": null
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": null
+        "event_premium": 0.0329
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -4784,28 +5016,38 @@
         "days_to": 26,
         "sessions_to": 18,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.03716785073029506,
+        "implied_move": 0.059416230679998,
         "implied_move_reason": null,
-        "iv_e1": 0.27730850121886097,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.26447214063434743,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.2773,
+        "sessions_to_post": 40,
+        "iv_pre": 0.2368,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.00353,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0372,
+          "base_iv_back": 0.2645,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0256,
           "median_abs": 0.0198,
           "max_abs": 0.0794,
           "max_date": "2024-02-13",
-          "n_exceeding_implied": 7,
-          "share_exceeding_implied": 0.2917,
+          "n_exceeding_implied": 2,
+          "share_exceeding_implied": 0.0833,
           "last8": {
             "n": 8,
             "median_abs": 0.0323,
             "mean_abs": 0.0311,
-            "n_exceeding_implied": 4
+            "n_exceeding_implied": 1
           }
         },
-        "event_premium": 0.0174
+        "event_premium": 0.0397
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -4949,28 +5191,38 @@
         "days_to": 5,
         "sessions_to": 3,
         "expiry_after": "2026-10-02",
-        "implied_move": 0.07784665209576741,
+        "implied_move": 0.08742674348137909,
         "implied_move_reason": null,
-        "iv_e1": 0.7610445224988974,
-        "sessions_to_e1": 5,
-        "base_iv_back": 0.584978271607795,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-09-28",
+        "fallback": false,
+        "iv_post": 0.761,
+        "sessions_to_post": 5,
+        "iv_pre": 0.4924,
+        "sessions_to_pre": 1,
+        "non_event_sessions": 3,
+        "event_variance": 0.007643,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0778,
+          "base_iv_back": 0.585,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.067,
           "median_abs": 0.0525,
           "max_abs": 0.1618,
           "max_date": "2024-12-18",
-          "n_exceeding_implied": 8,
-          "share_exceeding_implied": 0.3333,
+          "n_exceeding_implied": 6,
+          "share_exceeding_implied": 0.25,
           "last8": {
             "n": 8,
             "median_abs": 0.0913,
             "mean_abs": 0.0906,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 4
           }
         },
-        "event_premium": 0.0254
+        "event_premium": 0.035
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -5191,28 +5443,38 @@
         "days_to": 25,
         "sessions_to": 17,
         "expiry_after": "2026-10-23",
-        "implied_move": 0.06668767609016664,
+        "implied_move": 0.0912152267719093,
         "implied_move_reason": null,
-        "iv_e1": 0.43401737950720376,
-        "sessions_to_e1": 20,
-        "base_iv_back": 0.3732302581534581,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.434,
+        "sessions_to_post": 20,
+        "iv_pre": 0.2965,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 4,
+        "event_variance": 0.00832,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0667,
+          "base_iv_back": 0.3732,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.095,
           "median_abs": 0.0844,
           "max_abs": 0.3512,
           "max_date": "2022-04-19",
-          "n_exceeding_implied": 17,
-          "share_exceeding_implied": 0.7083,
+          "n_exceeding_implied": 10,
+          "share_exceeding_implied": 0.4167,
           "last8": {
             "n": 8,
             "median_abs": 0.0848,
             "mean_abs": 0.0708,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 4
           }
         },
-        "event_premium": -0.0177
+        "event_premium": 0.0069
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -5398,28 +5660,38 @@
         "days_to": 25,
         "sessions_to": 17,
         "expiry_after": "2026-11-20",
-        "implied_move": null,
-        "implied_move_reason": "event variance not positive (E1 IV at or below the back-month base)",
-        "iv_e1": 0.2975937977104189,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.556823959246489,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "implied_move": 0.04206477094382187,
+        "implied_move_reason": null,
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.2976,
+        "sessions_to_post": 40,
+        "iv_pre": 0.2818,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.001769,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": null,
+          "base_iv_back": 0.5568,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0368,
           "median_abs": 0.0241,
           "max_abs": 0.1266,
           "max_date": "2025-04-22",
-          "n_exceeding_implied": null,
-          "share_exceeding_implied": null,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.0246,
             "mean_abs": 0.0452,
-            "n_exceeding_implied": null
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": null
+        "event_premium": 0.018
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -5595,28 +5867,38 @@
         "days_to": 53,
         "sessions_to": 37,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.021950932706852794,
+        "implied_move": 0.07609909562482121,
         "implied_move_reason": null,
-        "iv_e1": 0.3556294980690087,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.35581142539791,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.3556,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3038,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.005791,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.022,
+          "base_iv_back": 0.3558,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0605,
           "median_abs": 0.0459,
           "max_abs": 0.2437,
           "max_date": "2023-05-24",
-          "n_exceeding_implied": 17,
-          "share_exceeding_implied": 0.7083,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.032,
             "mean_abs": 0.0402,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0239
+        "event_premium": 0.0302
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -5837,28 +6119,38 @@
         "days_to": 31,
         "sessions_to": 21,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.03421982778901009,
+        "implied_move": 0.07882198489208687,
         "implied_move_reason": null,
-        "iv_e1": 0.46253773741098547,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.46028294515622237,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.4625,
+        "sessions_to_post": 40,
+        "iv_pre": 0.4234,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.006213,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0342,
+          "base_iv_back": 0.4603,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0382,
           "median_abs": 0.03,
           "max_abs": 0.2555,
           "max_date": "2026-04-28",
-          "n_exceeding_implied": 10,
-          "share_exceeding_implied": 0.4167,
+          "n_exceeding_implied": 1,
+          "share_exceeding_implied": 0.0417,
           "last8": {
             "n": 8,
             "median_abs": 0.0484,
             "mean_abs": 0.0679,
-            "n_exceeding_implied": 6
+            "n_exceeding_implied": 1
           }
         },
-        "event_premium": 0.0042
+        "event_premium": 0.0488
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -6025,28 +6317,38 @@
         "days_to": 76,
         "sessions_to": 53,
         "expiry_after": "2026-12-18",
-        "implied_move": 0.035147067478535673,
+        "implied_move": 0.1171116272122916,
         "implied_move_reason": null,
-        "iv_e1": 0.5579423991684653,
-        "sessions_to_e1": 59,
-        "base_iv_back": 0.5579423991684653,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-11-20",
+        "fallback": false,
+        "iv_post": 0.5579,
+        "sessions_to_post": 59,
+        "iv_pre": 0.507,
+        "sessions_to_pre": 40,
+        "non_event_sessions": 18,
+        "event_variance": 0.013715,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0351,
+          "base_iv_back": 0.5579,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0841,
           "median_abs": 0.076,
           "max_abs": 0.3595,
           "max_date": "2025-09-09",
-          "n_exceeding_implied": 15,
-          "share_exceeding_implied": 0.625,
+          "n_exceeding_implied": 7,
+          "share_exceeding_implied": 0.2917,
           "last8": {
             "n": 8,
             "median_abs": 0.0885,
             "mean_abs": 0.1116,
-            "n_exceeding_implied": 6
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0409
+        "event_premium": 0.0411
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -6253,28 +6555,38 @@
         "days_to": 68,
         "sessions_to": 47,
         "expiry_after": "2026-12-18",
-        "implied_move": 0.040313808215750875,
+        "implied_move": 0.16912276681069668,
         "implied_move_reason": null,
-        "iv_e1": 0.6399618656449769,
-        "sessions_to_e1": 59,
-        "base_iv_back": 0.6399618656449769,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-11-20",
+        "fallback": false,
+        "iv_post": 0.64,
+        "sessions_to_post": 59,
+        "iv_pre": 0.5407,
+        "sessions_to_pre": 40,
+        "non_event_sessions": 18,
+        "event_variance": 0.028603,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0403,
+          "base_iv_back": 0.64,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 22,
           "mean_abs": 0.1205,
           "median_abs": 0.1041,
           "max_abs": 0.3404,
           "max_date": "2024-05-29",
-          "n_exceeding_implied": 17,
-          "share_exceeding_implied": 0.7727,
+          "n_exceeding_implied": 5,
+          "share_exceeding_implied": 0.2273,
           "last8": {
             "n": 8,
             "median_abs": 0.0703,
             "mean_abs": 0.0947,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 1
           }
         },
-        "event_premium": -0.0638
+        "event_premium": 0.065
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -6472,28 +6784,38 @@
         "days_to": 53,
         "sessions_to": 37,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.06276861544360224,
+        "implied_move": 0.16094407041500414,
         "implied_move_reason": null,
-        "iv_e1": 0.6655873855309256,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.6549106054042912,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.6656,
+        "sessions_to_post": 40,
+        "iv_pre": 0.5357,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.025903,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0628,
+          "base_iv_back": 0.6549,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.1399,
           "median_abs": 0.105,
           "max_abs": 0.4527,
           "max_date": "2024-01-30",
-          "n_exceeding_implied": 16,
-          "share_exceeding_implied": 0.6667,
+          "n_exceeding_implied": 10,
+          "share_exceeding_implied": 0.4167,
           "last8": {
             "n": 8,
             "median_abs": 0.086,
             "mean_abs": 0.0935,
-            "n_exceeding_implied": 6
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0422
+        "event_premium": 0.056
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -6642,28 +6964,38 @@
         "days_to": 47,
         "sessions_to": 33,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.03703372211215669,
+        "implied_move": 0.07520783831379291,
         "implied_move_reason": null,
-        "iv_e1": 0.4450827431046902,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.44081302483975937,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.4451,
+        "sessions_to_post": 40,
+        "iv_pre": 0.4082,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.005656,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.037,
+          "base_iv_back": 0.4408,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0565,
           "median_abs": 0.0478,
           "max_abs": 0.1718,
           "max_date": "2022-04-27",
-          "n_exceeding_implied": 15,
-          "share_exceeding_implied": 0.625,
+          "n_exceeding_implied": 7,
+          "share_exceeding_implied": 0.2917,
           "last8": {
             "n": 8,
             "median_abs": 0.0505,
             "mean_abs": 0.052,
-            "n_exceeding_implied": 5
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": -0.0107
+        "event_premium": 0.0275
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -6800,20 +7132,30 @@
         "days_to": 32,
         "sessions_to": 22,
         "expiry_after": "2026-10-30",
-        "implied_move": 0.09169684044628096,
+        "implied_move": 0.09846382299753513,
         "implied_move_reason": null,
-        "iv_e1": 0.504680030613833,
-        "sessions_to_e1": 25,
-        "base_iv_back": 0.42074606724524416,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-23",
+        "fallback": false,
+        "iv_post": 0.5047,
+        "sessions_to_post": 25,
+        "iv_pre": 0.4044,
+        "sessions_to_pre": 20,
+        "non_event_sessions": 4,
+        "event_variance": 0.009695,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0917,
+          "base_iv_back": 0.4207,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0821,
           "median_abs": 0.0755,
           "max_abs": 0.2459,
           "max_date": "2022-02-01",
-          "n_exceeding_implied": 9,
-          "share_exceeding_implied": 0.375,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.0588,
@@ -6821,7 +7163,7 @@
             "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0162
+        "event_premium": 0.023
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -7292,20 +7634,30 @@
         "days_to": 41,
         "sessions_to": 29,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.065789420740367,
+        "implied_move": 0.0887915653789008,
         "implied_move_reason": null,
-        "iv_e1": 0.37779130002546074,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.34412029012288725,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3778,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3089,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.007884,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0658,
+          "base_iv_back": 0.3441,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0535,
           "median_abs": 0.0467,
           "max_abs": 0.1679,
           "max_date": "2024-02-08",
-          "n_exceeding_implied": 5,
-          "share_exceeding_implied": 0.2083,
+          "n_exceeding_implied": 4,
+          "share_exceeding_implied": 0.1667,
           "last8": {
             "n": 8,
             "median_abs": 0.055,
@@ -7313,7 +7665,7 @@
             "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0191
+        "event_premium": 0.0421
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -7459,20 +7811,30 @@
         "days_to": 25,
         "sessions_to": 17,
         "expiry_after": "2026-10-23",
-        "implied_move": 0.04749146549580482,
+        "implied_move": 0.05477219094072059,
         "implied_move_reason": null,
-        "iv_e1": 0.3062115868934716,
-        "sessions_to_e1": 20,
-        "base_iv_back": 0.2622714560618925,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3062,
+        "sessions_to_post": 20,
+        "iv_pre": 0.2427,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 4,
+        "event_variance": 0.003,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0475,
+          "base_iv_back": 0.2623,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0408,
           "median_abs": 0.0299,
           "max_abs": 0.1022,
           "max_date": "2023-07-25",
-          "n_exceeding_implied": 8,
-          "share_exceeding_implied": 0.3333,
+          "n_exceeding_implied": 7,
+          "share_exceeding_implied": 0.2917,
           "last8": {
             "n": 8,
             "median_abs": 0.0404,
@@ -7480,7 +7842,7 @@
             "n_exceeding_implied": 3
           }
         },
-        "event_premium": 0.0176
+        "event_premium": 0.0248
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -8224,28 +8586,38 @@
         "days_to": 25,
         "sessions_to": 17,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.04312295367255325,
+        "implied_move": 0.05852527133777534,
         "implied_move_reason": null,
-        "iv_e1": 0.33946956735034206,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.3258506431753174,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3395,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3099,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.003425,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0431,
+          "base_iv_back": 0.3259,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.033,
           "median_abs": 0.0266,
           "max_abs": 0.0675,
           "max_date": "2022-01-28",
-          "n_exceeding_implied": 10,
-          "share_exceeding_implied": 0.4167,
+          "n_exceeding_implied": 4,
+          "share_exceeding_implied": 0.1667,
           "last8": {
             "n": 8,
             "median_abs": 0.0229,
             "mean_abs": 0.0307,
-            "n_exceeding_implied": 3
+            "n_exceeding_implied": 1
           }
         },
-        "event_premium": 0.0165
+        "event_premium": 0.0319
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -8403,20 +8775,30 @@
         "days_to": 33,
         "sessions_to": 23,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.05734750561043056,
+        "implied_move": 0.08814219654688915,
         "implied_move_reason": null,
-        "iv_e1": 0.38362007000258314,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.36012151622990857,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.3836,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3174,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.007769,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0573,
+          "base_iv_back": 0.3601,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0406,
           "median_abs": 0.0374,
           "max_abs": 0.1195,
           "max_date": "2025-07-23",
-          "n_exceeding_implied": 4,
-          "share_exceeding_implied": 0.1667,
+          "n_exceeding_implied": 2,
+          "share_exceeding_implied": 0.0833,
           "last8": {
             "n": 8,
             "median_abs": 0.0307,
@@ -8424,7 +8806,7 @@
             "n_exceeding_implied": 2
           }
         },
-        "event_premium": 0.0199
+        "event_premium": 0.0507
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -8591,28 +8973,38 @@
         "days_to": 35,
         "sessions_to": 25,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.027613915754073178,
+        "implied_move": 0.05313395073786259,
         "implied_move_reason": null,
-        "iv_e1": 0.27543092515796513,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.2699634656588096,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.2754,
+        "sessions_to_post": 40,
+        "iv_pre": 0.2441,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 24,
+        "event_variance": 0.002823,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0276,
+          "base_iv_back": 0.27,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0331,
           "median_abs": 0.0337,
           "max_abs": 0.0827,
           "max_date": "2023-07-28",
-          "n_exceeding_implied": 13,
-          "share_exceeding_implied": 0.5417,
+          "n_exceeding_implied": 4,
+          "share_exceeding_implied": 0.1667,
           "last8": {
             "n": 8,
             "median_abs": 0.032,
             "mean_abs": 0.033,
-            "n_exceeding_implied": 4
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": -0.0061
+        "event_premium": 0.0194
       },
       "skew": {
         "expiry": "2026-10-16",
@@ -8772,28 +9164,38 @@
         "days_to": 20,
         "sessions_to": 14,
         "expiry_after": "2026-10-16",
-        "implied_move": null,
-        "implied_move_reason": "event variance not positive (E1 IV at or below the back-month base)",
-        "iv_e1": 0.32028810655501155,
-        "sessions_to_e1": 15,
-        "base_iv_back": 0.3346311062084162,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "implied_move": 0.03976080207950191,
+        "implied_move_reason": null,
+        "expiry_before": "2026-10-09",
+        "fallback": false,
+        "iv_post": 0.3203,
+        "sessions_to_post": 15,
+        "iv_pre": 0.2854,
+        "sessions_to_pre": 10,
+        "non_event_sessions": 4,
+        "event_variance": 0.001581,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": null,
+          "base_iv_back": 0.3346,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0387,
           "median_abs": 0.0354,
           "max_abs": 0.0979,
           "max_date": "2024-10-17",
-          "n_exceeding_implied": null,
-          "share_exceeding_implied": null,
+          "n_exceeding_implied": 9,
+          "share_exceeding_implied": 0.375,
           "last8": {
             "n": 8,
             "median_abs": 0.0326,
             "mean_abs": 0.0357,
-            "n_exceeding_implied": null
+            "n_exceeding_implied": 2
           }
         },
-        "event_premium": null
+        "event_premium": 0.0044
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -8993,28 +9395,38 @@
         "days_to": 39,
         "sessions_to": 27,
         "expiry_after": "2026-11-20",
-        "implied_move": 0.029300453018688322,
+        "implied_move": 0.07347583236880083,
         "implied_move_reason": null,
-        "iv_e1": 0.3721798708381355,
-        "sessions_to_e1": 40,
-        "base_iv_back": 0.3694891858663295,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "expiry_before": "2026-10-30",
+        "fallback": false,
+        "iv_post": 0.3722,
+        "sessions_to_post": 40,
+        "iv_pre": 0.3274,
+        "sessions_to_pre": 25,
+        "non_event_sessions": 14,
+        "event_variance": 0.005399,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": 0.0293,
+          "base_iv_back": 0.3695,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0648,
           "median_abs": 0.0561,
           "max_abs": 0.189,
           "max_date": "2022-08-02",
-          "n_exceeding_implied": 21,
-          "share_exceeding_implied": 0.875,
+          "n_exceeding_implied": 8,
+          "share_exceeding_implied": 0.3333,
           "last8": {
             "n": 8,
             "median_abs": 0.0522,
             "mean_abs": 0.0545,
-            "n_exceeding_implied": 6
+            "n_exceeding_implied": 3
           }
         },
-        "event_premium": -0.0268
+        "event_premium": 0.0174
       },
       "skew": {
         "expiry": "2026-10-23",
@@ -9200,28 +9612,38 @@
         "days_to": 26,
         "sessions_to": 18,
         "expiry_after": "2026-10-23",
-        "implied_move": null,
-        "implied_move_reason": "event variance not positive (E1 IV at or below the back-month base)",
-        "iv_e1": 0.5360463296918934,
-        "sessions_to_e1": 20,
-        "base_iv_back": 0.5803638465334129,
-        "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252), n = sessions strictly after the snapshot session",
+        "implied_move": 0.04059888122664096,
+        "implied_move_reason": null,
+        "expiry_before": "2026-10-16",
+        "fallback": false,
+        "iv_post": 0.536,
+        "sessions_to_post": 20,
+        "iv_pre": 0.5297,
+        "sessions_to_pre": 15,
+        "non_event_sessions": 4,
+        "event_variance": 0.001648,
+        "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
+        "superseded_26sept_method": {
+          "implied_move": null,
+          "base_iv_back": 0.5804,
+          "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
+        },
         "history": {
           "n": 24,
           "mean_abs": 0.0848,
           "median_abs": 0.0418,
           "max_abs": 0.3674,
           "max_date": "2022-02-23",
-          "n_exceeding_implied": null,
-          "share_exceeding_implied": null,
+          "n_exceeding_implied": 13,
+          "share_exceeding_implied": 0.5417,
           "last8": {
             "n": 8,
             "median_abs": 0.0613,
             "mean_abs": 0.0862,
-            "n_exceeding_implied": null
+            "n_exceeding_implied": 4
           }
         },
-        "event_premium": null
+        "event_premium": -0.0012
       },
       "skew": {
         "expiry": "2026-10-23",

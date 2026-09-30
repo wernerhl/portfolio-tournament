@@ -3321,7 +3321,7 @@ function renderEventBoard(){
   return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${asOfBadge(L.session_date)}</h3>
     ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>RELEASE</th><th class="num">IMPLIED MOVE</th><th class="num">ON THE POSITION</th><th class="num">MEDIAN PAST</th><th class="num">MAX PAST</th><th class="num">LAST 8 EXCEEDED</th><th class="num">SHARE OF BOOK RISK</th></tr>${rows}</table></div>`
            : `<div class="mono t1 c-3">no held name reports inside 45 days</div>`}
-    <div class="chart-meta">implied move: the first expiry after the release, total variance minus the back-month base over the non-event sessions (lens definitions) · past reactions: close before the release to close after · descriptive; no directional implication</div></div>`;
+    <div class="chart-meta">implied move: bracketing method — the last expiry before the release against the first after it, event variance = post total variance − pre total variance − the pre-expiry base over the non-event sessions (fallback without a pre-event expiry flagged; lens definitions) · past reactions: close before the release to close after · descriptive; no directional implication</div></div>`;
 }
 
 function renderHedgeSelector(){
