@@ -589,6 +589,14 @@ def ingest(inbox: Path | None, positions: Path | None = None, transactions: Path
             return IngestResult(None, None, [], [f"inbox not found: {inbox}"])
         files = sorted({p.resolve() for p in Path(inbox).iterdir() if p.is_file() and p.suffix.lower() == ".csv"},
                        key=lambda p: p.name)
+        # Order 30-Sept C4: a realized gain/loss export in the same inbox belongs to
+        # ingest_realized_gains.py (its Symbol + Quantity columns would otherwise read as a second
+        # positions file and make the inbox ambiguous). Lazy import: no circular dependency.
+        try:
+            from ingest_realized_gains import sniff_header as _rg_sniff
+            files = [p for p in files if _rg_sniff(read_csv_rows(p.read_bytes())) is None]
+        except ImportError:
+            pass
     parsed = [parse_file(p, cash_names) for p in files]
     problems: list[str] = []
     pos_files = [p for p in parsed if p.kind == "positions"]
