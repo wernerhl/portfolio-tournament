@@ -1,0 +1,707 @@
+{
+ "cadence": "on_change",
+ "as_of": "2026-09-30",
+ "computed_at": "2026-09-30T05:33:54-04:00",
+ "registration": "reports/c6_registration_continuous_vs_monthly_2026-09-30.md",
+ "inputs": {
+  "equity_curves": "data/backtest_equity_curves.csv",
+  "window": [
+   "2010-02-02",
+   "2026-05-21"
+  ],
+  "n_sessions": 4101
+ },
+ "bootstrap": {
+  "resamples": 1000,
+  "block_days": 60,
+  "ci": 0.9,
+  "seed": 20260930,
+  "rule": {
+   "return_per_vol_interval_above_zero": true,
+   "max_drawdown_interval_not_below_zero": true,
+   "turnover_ratio_max": 3.0
+  }
+ },
+ "candidate_rules": {
+  "R1_interval": "90% paired interval of \u0394(return/vol) above zero; drawdown not worse; turnover under 3\u00d7 the control's",
+  "R2_probability": "paired-resample probability of \u0394(return/vol) > 0 at least 0.80; drawdown not worse; turnover under 3\u00d7",
+  "R3_composite": "R2, or the 90% interval of \u0394(max drawdown) above zero with the probability of \u0394(return/vol) > 0 at least 0.50; turnover under 3\u00d7"
+ },
+ "registered_rule": "R1_interval",
+ "power": {
+  "R1_interval": {
+   "pairs_discriminated": 0,
+   "of": 6
+  },
+  "R2_probability": {
+   "pairs_discriminated": 2,
+   "of": 6
+  },
+  "R3_composite": {
+   "pairs_discriminated": 2,
+   "of": 6
+  }
+ },
+ "monthly_vs_monthly": {
+  "1_cap_pres_vs_2_balanced": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.0580414467247292,
+     "max_dd": -0.10939805221815835,
+     "ann_return": 0.06903757158470394,
+     "ann_vol": 0.0652503470430355
+    },
+    "control": {
+     "ret_per_vol": 1.1516042534919897,
+     "max_dd": -0.16984170178265,
+     "ann_return": 0.11664952293125957,
+     "ann_vol": 0.10129306363496422
+    }
+   },
+   "delta_return_per_vol": {
+    "point": -0.09356280676726048,
+    "ci90": [
+     -0.35810339264873625,
+     0.17915210879217774
+    ],
+    "p_positive": 0.27
+   },
+   "delta_max_drawdown": {
+    "point": 0.060443649564491664,
+    "ci90": [
+     0.011808112010859224,
+     0.13547359194102995
+    ],
+    "p_positive": 0.981
+   },
+   "turnover": {
+    "challenger": 3.98,
+    "control": 4.676,
+    "ratio": 0.8511548331907614
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "1_cap_pres_vs_3_aggressive": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.0580414467247292,
+     "max_dd": -0.10939805221815835,
+     "ann_return": 0.06903757158470394,
+     "ann_vol": 0.0652503470430355
+    },
+    "control": {
+     "ret_per_vol": 1.3017214603034033,
+     "max_dd": -0.24324907731408252,
+     "ann_return": 0.19975916614880537,
+     "ann_vol": 0.15345768833083984
+    }
+   },
+   "delta_return_per_vol": {
+    "point": -0.24368001357867408,
+    "ci90": [
+     -0.5418789783578287,
+     0.04364428220229017
+    ],
+    "p_positive": 0.088
+   },
+   "delta_max_drawdown": {
+    "point": 0.13385102509592417,
+    "ci90": [
+     0.04810203067647442,
+     0.20374879965058237
+    ],
+    "p_positive": 0.998
+   },
+   "turnover": {
+    "challenger": 3.98,
+    "control": 4.997,
+    "ratio": 0.7964778867320392
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "1_cap_pres_vs_4_tactical": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.0580414467247292,
+     "max_dd": -0.10939805221815835,
+     "ann_return": 0.06903757158470394,
+     "ann_vol": 0.0652503470430355
+    },
+    "control": {
+     "ret_per_vol": 1.3521700964115424,
+     "max_dd": -0.18950527141185503,
+     "ann_return": 0.16194029191970696,
+     "ann_vol": 0.11976325489631247
+    }
+   },
+   "delta_return_per_vol": {
+    "point": -0.2941286496868132,
+    "ci90": [
+     -0.6036851934171489,
+     0.018080072405527024
+    ],
+    "p_positive": 0.059
+   },
+   "delta_max_drawdown": {
+    "point": 0.08010721919369668,
+    "ci90": [
+     0.019821778451913664,
+     0.12980525664319986
+    ],
+    "p_positive": 0.985
+   },
+   "turnover": {
+    "challenger": 3.98,
+    "control": 4.933,
+    "ratio": 0.8068112710318265
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "2_balanced_vs_1_cap_pres": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.1516042534919897,
+     "max_dd": -0.16984170178265,
+     "ann_return": 0.11664952293125957,
+     "ann_vol": 0.10129306363496422
+    },
+    "control": {
+     "ret_per_vol": 1.0580414467247292,
+     "max_dd": -0.10939805221815835,
+     "ann_return": 0.06903757158470394,
+     "ann_vol": 0.0652503470430355
+    }
+   },
+   "delta_return_per_vol": {
+    "point": 0.09356280676726048,
+    "ci90": [
+     -0.18335055539863046,
+     0.3704304786331979
+    ],
+    "p_positive": 0.706
+   },
+   "delta_max_drawdown": {
+    "point": -0.060443649564491664,
+    "ci90": [
+     -0.12928154993480256,
+     -0.016245161085496607
+    ],
+    "p_positive": 0.018
+   },
+   "turnover": {
+    "challenger": 4.676,
+    "control": 3.98,
+    "ratio": 1.1748743718592964
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "2_balanced_vs_3_aggressive": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.1516042534919897,
+     "max_dd": -0.16984170178265,
+     "ann_return": 0.11664952293125957,
+     "ann_vol": 0.10129306363496422
+    },
+    "control": {
+     "ret_per_vol": 1.3017214603034033,
+     "max_dd": -0.24324907731408252,
+     "ann_return": 0.19975916614880537,
+     "ann_vol": 0.15345768833083984
+    }
+   },
+   "delta_return_per_vol": {
+    "point": -0.1501172068114136,
+    "ci90": [
+     -0.32466991163435593,
+     0.016358066538977187
+    ],
+    "p_positive": 0.071
+   },
+   "delta_max_drawdown": {
+    "point": 0.0734073755314325,
+    "ci90": [
+     -0.00013914403913075764,
+     0.10654770866496151
+    ],
+    "p_positive": 0.949
+   },
+   "turnover": {
+    "challenger": 4.676,
+    "control": 4.997,
+    "ratio": 0.9357614568741245
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "2_balanced_vs_4_tactical": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.1516042534919897,
+     "max_dd": -0.16984170178265,
+     "ann_return": 0.11664952293125957,
+     "ann_vol": 0.10129306363496422
+    },
+    "control": {
+     "ret_per_vol": 1.3521700964115424,
+     "max_dd": -0.18950527141185503,
+     "ann_return": 0.16194029191970696,
+     "ann_vol": 0.11976325489631247
+    }
+   },
+   "delta_return_per_vol": {
+    "point": -0.2005658429195527,
+    "ci90": [
+     -0.4033169736463052,
+     0.004615959775263721
+    ],
+    "p_positive": 0.052
+   },
+   "delta_max_drawdown": {
+    "point": 0.019663569629205013,
+    "ci90": [
+     -0.05327864492714284,
+     0.05229356743891071
+    ],
+    "p_positive": 0.549
+   },
+   "turnover": {
+    "challenger": 4.676,
+    "control": 4.933,
+    "ratio": 0.9479018852625178
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "3_aggressive_vs_1_cap_pres": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.3017214603034033,
+     "max_dd": -0.24324907731408252,
+     "ann_return": 0.19975916614880537,
+     "ann_vol": 0.15345768833083984
+    },
+    "control": {
+     "ret_per_vol": 1.0580414467247292,
+     "max_dd": -0.10939805221815835,
+     "ann_return": 0.06903757158470394,
+     "ann_vol": 0.0652503470430355
+    }
+   },
+   "delta_return_per_vol": {
+    "point": 0.24368001357867408,
+    "ci90": [
+     -0.06391441284332862,
+     0.5674393311077425
+    ],
+    "p_positive": 0.906
+   },
+   "delta_max_drawdown": {
+    "point": -0.13385102509592417,
+    "ci90": [
+     -0.20100672382206547,
+     -0.04958696366929615
+    ],
+    "p_positive": 0.005
+   },
+   "turnover": {
+    "challenger": 4.997,
+    "control": 3.98,
+    "ratio": 1.2555276381909548
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "3_aggressive_vs_2_balanced": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.3017214603034033,
+     "max_dd": -0.24324907731408252,
+     "ann_return": 0.19975916614880537,
+     "ann_vol": 0.15345768833083984
+    },
+    "control": {
+     "ret_per_vol": 1.1516042534919897,
+     "max_dd": -0.16984170178265,
+     "ann_return": 0.11664952293125957,
+     "ann_vol": 0.10129306363496422
+    }
+   },
+   "delta_return_per_vol": {
+    "point": 0.1501172068114136,
+    "ci90": [
+     -0.02337814959515304,
+     0.3400439661462773
+    ],
+    "p_positive": 0.927
+   },
+   "delta_max_drawdown": {
+    "point": -0.0734073755314325,
+    "ci90": [
+     -0.1041767926589453,
+     0.0005890156959625514
+    ],
+    "p_positive": 0.053
+   },
+   "turnover": {
+    "challenger": 4.997,
+    "control": 4.676,
+    "ratio": 1.0686484174508126
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": true,
+    "R3_composite": true
+   },
+   "rule_prefers_challenger": false
+  },
+  "3_aggressive_vs_4_tactical": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.3017214603034033,
+     "max_dd": -0.24324907731408252,
+     "ann_return": 0.19975916614880537,
+     "ann_vol": 0.15345768833083984
+    },
+    "control": {
+     "ret_per_vol": 1.3521700964115424,
+     "max_dd": -0.18950527141185503,
+     "ann_return": 0.16194029191970696,
+     "ann_vol": 0.11976325489631247
+    }
+   },
+   "delta_return_per_vol": {
+    "point": -0.0504486361081391,
+    "ci90": [
+     -0.23957433157903077,
+     0.13968682261937468
+    ],
+    "p_positive": 0.324
+   },
+   "delta_max_drawdown": {
+    "point": -0.05374380590222749,
+    "ci90": [
+     -0.12541314481168356,
+     0.013332642180541643
+    ],
+    "p_positive": 0.119
+   },
+   "turnover": {
+    "challenger": 4.997,
+    "control": 4.933,
+    "ratio": 1.0129738495844314
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "4_tactical_vs_1_cap_pres": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.3521700964115424,
+     "max_dd": -0.18950527141185503,
+     "ann_return": 0.16194029191970696,
+     "ann_vol": 0.11976325489631247
+    },
+    "control": {
+     "ret_per_vol": 1.0580414467247292,
+     "max_dd": -0.10939805221815835,
+     "ann_return": 0.06903757158470394,
+     "ann_vol": 0.0652503470430355
+    }
+   },
+   "delta_return_per_vol": {
+    "point": 0.2941286496868132,
+    "ci90": [
+     -0.012030257455937124,
+     0.6079394803946973
+    ],
+    "p_positive": 0.938
+   },
+   "delta_max_drawdown": {
+    "point": -0.08010721919369668,
+    "ci90": [
+     -0.12542886604618406,
+     -0.01818238033226967
+    ],
+    "p_positive": 0.015
+   },
+   "turnover": {
+    "challenger": 4.933,
+    "control": 3.98,
+    "ratio": 1.2394472361809046
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  },
+  "4_tactical_vs_2_balanced": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.3521700964115424,
+     "max_dd": -0.18950527141185503,
+     "ann_return": 0.16194029191970696,
+     "ann_vol": 0.11976325489631247
+    },
+    "control": {
+     "ret_per_vol": 1.1516042534919897,
+     "max_dd": -0.16984170178265,
+     "ann_return": 0.11664952293125957,
+     "ann_vol": 0.10129306363496422
+    }
+   },
+   "delta_return_per_vol": {
+    "point": 0.2005658429195527,
+    "ci90": [
+     -0.001068823061549128,
+     0.4026084878705311
+    ],
+    "p_positive": 0.948
+   },
+   "delta_max_drawdown": {
+    "point": -0.019663569629205013,
+    "ci90": [
+     -0.054704719443079766,
+     0.06228305524101716
+    ],
+    "p_positive": 0.486
+   },
+   "turnover": {
+    "challenger": 4.933,
+    "control": 4.676,
+    "ratio": 1.0549615055603079
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": true,
+    "R3_composite": true
+   },
+   "rule_prefers_challenger": false
+  },
+  "4_tactical_vs_3_aggressive": {
+   "point": {
+    "challenger": {
+     "ret_per_vol": 1.3521700964115424,
+     "max_dd": -0.18950527141185503,
+     "ann_return": 0.16194029191970696,
+     "ann_vol": 0.11976325489631247
+    },
+    "control": {
+     "ret_per_vol": 1.3017214603034033,
+     "max_dd": -0.24324907731408252,
+     "ann_return": 0.19975916614880537,
+     "ann_vol": 0.15345768833083984
+    }
+   },
+   "delta_return_per_vol": {
+    "point": 0.0504486361081391,
+    "ci90": [
+     -0.14879946348808645,
+     0.2492011778932511
+    ],
+    "p_positive": 0.64
+   },
+   "delta_max_drawdown": {
+    "point": 0.05374380590222749,
+    "ci90": [
+     -0.014525952706348606,
+     0.12937645466823508
+    ],
+    "p_positive": 0.885
+   },
+   "turnover": {
+    "challenger": 4.933,
+    "control": 4.997,
+    "ratio": 0.9871923153892336
+   },
+   "rules": {
+    "R1_interval": false,
+    "R2_probability": false,
+    "R3_composite": false
+   },
+   "rule_prefers_challenger": false
+  }
+ },
+ "pairs_unordered": {
+  "1_cap_pres | 2_balanced": {
+   "delta_rpv_ci90_a_minus_b": [
+    -0.35810339264873625,
+    0.17915210879217774
+   ],
+   "p_rpv_a_over_b": 0.27,
+   "delta_dd_ci90_a_minus_b": [
+    0.011808112010859224,
+    0.13547359194102995
+   ],
+   "R1": {
+    "a": false,
+    "b": false
+   },
+   "R2": {
+    "a": false,
+    "b": false
+   },
+   "R3": {
+    "a": false,
+    "b": false
+   }
+  },
+  "1_cap_pres | 3_aggressive": {
+   "delta_rpv_ci90_a_minus_b": [
+    -0.5418789783578287,
+    0.04364428220229017
+   ],
+   "p_rpv_a_over_b": 0.088,
+   "delta_dd_ci90_a_minus_b": [
+    0.04810203067647442,
+    0.20374879965058237
+   ],
+   "R1": {
+    "a": false,
+    "b": false
+   },
+   "R2": {
+    "a": false,
+    "b": false
+   },
+   "R3": {
+    "a": false,
+    "b": false
+   }
+  },
+  "1_cap_pres | 4_tactical": {
+   "delta_rpv_ci90_a_minus_b": [
+    -0.6036851934171489,
+    0.018080072405527024
+   ],
+   "p_rpv_a_over_b": 0.059,
+   "delta_dd_ci90_a_minus_b": [
+    0.019821778451913664,
+    0.12980525664319986
+   ],
+   "R1": {
+    "a": false,
+    "b": false
+   },
+   "R2": {
+    "a": false,
+    "b": false
+   },
+   "R3": {
+    "a": false,
+    "b": false
+   }
+  },
+  "2_balanced | 3_aggressive": {
+   "delta_rpv_ci90_a_minus_b": [
+    -0.32466991163435593,
+    0.016358066538977187
+   ],
+   "p_rpv_a_over_b": 0.071,
+   "delta_dd_ci90_a_minus_b": [
+    -0.00013914403913075764,
+    0.10654770866496151
+   ],
+   "R1": {
+    "a": false,
+    "b": false
+   },
+   "R2": {
+    "a": false,
+    "b": true
+   },
+   "R3": {
+    "a": false,
+    "b": true
+   }
+  },
+  "2_balanced | 4_tactical": {
+   "delta_rpv_ci90_a_minus_b": [
+    -0.4033169736463052,
+    0.004615959775263721
+   ],
+   "p_rpv_a_over_b": 0.052,
+   "delta_dd_ci90_a_minus_b": [
+    -0.05327864492714284,
+    0.05229356743891071
+   ],
+   "R1": {
+    "a": false,
+    "b": false
+   },
+   "R2": {
+    "a": false,
+    "b": true
+   },
+   "R3": {
+    "a": false,
+    "b": true
+   }
+  },
+  "3_aggressive | 4_tactical": {
+   "delta_rpv_ci90_a_minus_b": [
+    -0.23957433157903077,
+    0.13968682261937468
+   ],
+   "p_rpv_a_over_b": 0.324,
+   "delta_dd_ci90_a_minus_b": [
+    -0.12541314481168356,
+    0.013332642180541643
+   ],
+   "R1": {
+    "a": false,
+    "b": false
+   },
+   "R2": {
+    "a": false,
+    "b": false
+   },
+   "R3": {
+    "a": false,
+    "b": false
+   }
+  }
+ },
+ "n_pairs": 6,
+ "verdict": "the registered interval rule (R1) discriminates in 0 of 6 pairs of monthly tiers: it lacks power and must be revised by a new registration before the real comparison runs; the probability rule (R2) discriminates in 2, the composite (R3) in 2",
+ "real_comparison": "not run: the banded-continuous backtest is registered, not built; the twins accrue out-of-sample evidence meanwhile",
+ "note": "a check of the rules' power on the controls; no contestant is judged here"
+}
