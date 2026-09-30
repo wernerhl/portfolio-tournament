@@ -128,7 +128,16 @@ def audit_dir(root, label, last_sess):
                 if missing: add('HIGH',f'{label}:gaps',f'{name}: missing trading days in recent window {missing[:6]}')
             # consecutive identical numeric rows (frozen-computation symptom)
             ISO=re.compile(r'calibrated|equal_weight|elastic',re.I)   # isotonic/step-mapped columns hold constant by design
-            empties=[c for c in rows[0] if c!=datecol and all(str(r.get(c,'')).strip()=='' for r in rows[-5:])
+            # Order 30-Sept C3 (tournament:dead_columns resolved): regime_v4_daily.csv's model-winner
+            # columns (*_logistic_pc, *_elastic_net) are written ONLY by the monthly regime_v4_ml run and
+            # are empty by design on every nightly row after it (the nightly scorer preserves, never
+            # produces, them — score_regime_v4_daily.py). The generic "empty for the last 5 rows" test
+            # therefore fired every day between monthly runs; the specific v4:monthly_columns check below
+            # (populated through the monthly model's train_end, else HIGH) is the assertion that can
+            # actually be satisfied, so those columns are exempt from the generic test here.
+            MONTHLY=re.compile(r'_logistic_pc$|_elastic_net$')
+            empties=[c for c in rows[0] if c!=datecol and not (name=='regime_v4_daily.csv' and MONTHLY.search(c))
+                     and all(str(r.get(c,'')).strip()=='' for r in rows[-5:])
                      and sum(1 for r in rows[:-5] if str(r.get(c,'')).strip()!='')>0.5*max(1,len(rows[:-5]))]
             if empties: add('HIGH',f'{label}:dead_columns',f'{name}: columns empty for last 5+ rows but populated earlier: {empties[:6]}')
             numcols=[c for c in rows[0] if c!=datecol and not ISO.search(c) and re.match(r'^-?\d+(\.\d+)?([eE]-?\d+)?$',str(rows[-1].get(c,'')))]
@@ -256,8 +265,12 @@ def main(troot, sroot, today=None):
     # ---------- the book (order 16-Sept 2.3) ----------
     # holdings.json is the only holdings source; the ingestion job (2.1) writes it from the brokerage
     # export and records the export's own positions and cash in holdings_export.json. Three checks:
-    #   holdings older than 20 sessions            → HIGH   (a book nobody has re-exported)
+    #   holdings older than 5 sessions             → HIGH   (order 30-Sept C3: 20 was too loose for an
+    #                                                        operator who trades weekly)
     #   served ⊄ export or export ⊄ served         → CRITICAL (the served book is not the account)
+    #   book.json tickers ≠ holdings.json tickers  → CRITICAL (order 30-Sept C3: the analytics must be
+    #                                                        the book that is held — the 16-Sept book
+    #                                                        reported MU at 60% of risk after its sale)
     #   cash off the export by more than 1 percent → HIGH
     # Until an export is on record the set and cash checks report INFO, never a finding.
     hp_=os.path.join(troot,'holdings.json')
@@ -266,8 +279,19 @@ def main(troot, sroot, today=None):
         if not hd: add('HIGH','book:holdings_date','holdings.json: no as_of date')
         else:
             hage=len(trading_days(hd,ls))-1 if hd<=ls else 0
-            if hage>20: add('HIGH','book:holdings_age',f'holdings.json as_of {hd} is {hage} sessions old (>20): re-export the account')
+            if hage>5: add('HIGH','book:holdings_age',f'holdings.json as_of {hd} is {hage} sessions old (>5): confirm or re-export the account')
         served={str(h.get('ticker','')).upper() for h in hj.get('holdings',[]) if (h.get('shares') or 0)>0}
+        bp_=os.path.join(troot,'book.json')
+        if os.path.exists(bp_):
+            try:
+                bj=json.load(open(bp_))
+                booked={str(p.get('ticker','')).upper() for p in bj.get('positions',[]) if (p.get('shares') or 0)>0}
+                if booked!=served:
+                    add('CRITICAL','book:holdings_mismatch',f'book.json tickers {sorted(booked)} != holdings.json tickers {sorted(served)} — the analytics are not the held book')
+            except Exception as e:
+                add('CRITICAL','book:holdings_mismatch',f'book.json unreadable for the holdings equality check ({type(e).__name__})')
+        else:
+            add('HIGH','book:holdings_mismatch','book.json absent — the holdings equality check cannot run')
         ep_=os.path.join(troot,'holdings_export.json')
         if os.path.exists(ep_):
             ex=json.load(open(ep_))
