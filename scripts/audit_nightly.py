@@ -24,9 +24,12 @@ HOLIDAYS = {date(2026,1,1),date(2026,1,19),date(2026,2,16),date(2026,4,3),date(2
             date(2027,6,18),date(2027,7,5),date(2027,9,6),date(2027,11,25),date(2027,12,24)}
 def is_trading_day(d): return d.weekday()<5 and d not in HOLIDAYS
 def last_session(today=None):
-    d = today or date.today()
     from datetime import timezone
     now_et = datetime.now(timezone.utc) - timedelta(hours=4)
+    # The calendar is the ET calendar: on a runner (UTC) after 20:00 ET, date.today() is
+    # already tomorrow, which made the sweep judge every file against a session that had
+    # not happened (29-Sept run at 22:36 ET reported "last session 2026-09-30").
+    d = today or now_et.date()
     if not is_trading_day(d) or (d==now_et.date() and (now_et.hour,now_et.minute)<(16,15)): d -= timedelta(days=1)
     while not is_trading_day(d): d -= timedelta(days=1)
     return d

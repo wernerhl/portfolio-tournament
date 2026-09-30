@@ -526,7 +526,10 @@ CLOSED_BY = "Closed automatically by scripts/signal_alerts.py."
 def fresh_state(snap: dict) -> dict:
     lab = snap["served_label"]
     return {
-        "cadence": "daily",
+        # alerts bookkeeping: rewritten after each publish, changes only when an alert opens or
+        # closes — declared on_change so the referee's freshness sweep exempts it (a "daily"
+        # declaration deadlocked the publish it depends on, 29-Sept)
+        "cadence": "on_change",
         "session_date": snap["session"],
         "as_of": snap["as_of"],
         "updated": None,
