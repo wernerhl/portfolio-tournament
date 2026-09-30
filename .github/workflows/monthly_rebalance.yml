@@ -30,10 +30,15 @@ jobs:
           python scripts/regime_v4_ml.py   # monthly v4 recalibration (writes v4_scoring_params.json knots)
           python scripts/compute_thesis_backtest.py   # B5: thesis attribution over full backtest
 
+      - name: Monthly review (audit order 30-Sept, section 5 / T7 — the month just ended, from the ledgers; generated once, never edited)
+        continue-on-error: true
+        run: python scripts/monthly_review.py || [ $? -eq 2 ]   # 2 = a review for that month already exists; nothing written
+
       - name: Commit
         run: |
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
-          git add data/
+          git add data/ reports/reviews/
           git diff --cached --quiet || git commit -m "🔄 Rebalance $(date -u +%Y-%m)"
+          git pull --rebase --strategy-option=ours origin main || true
           git push
