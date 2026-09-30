@@ -114,10 +114,12 @@ const PAGES = {
   },
   tournament: {
     title: "THE TOURNAMENT", sub: () => `${updatedStr()} · 4 algorithmic tiers + Werner · monthly rescore + regime overlay · net of costs`,
-    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges"],
+    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges","tournamentAudit","twins","trades","spells","c6Power"],
     compose(){
       const lb = renderLeaderboardBlock(); this._allSeries = lb.allSeries;
       let h = `<div class="tier tier-1"><h2 class="tier-title">LEADERBOARD</h2>${lb.html}</div>`;
+      // audit order 30-Sept: what the tournament does (retention, cash gaps, spells with the effective sample), the continuous twins
+      h += `<div class="tier tier-2"><h2 class="tier-title">WHAT THE TOURNAMENT DOES · AUDIT</h2>${renderSelectionAudit()}${renderTwinsCard()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">THESES</h2>${renderTreemapCard()}${renderThesisExposure()}${renderThesisAttribution()}</div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">SIGNALS</h2>${d3("SCANNER", renderScanner())}</div>`;
       return h;
@@ -145,11 +147,18 @@ const PAGES = {
   },
   system: {
     title: "SYSTEM", sub: () => "audit history · no-publish count · the action log · the universe",
-    loads: ["config","status","actions","regimePub","eventCal","tournament","holdingsFile","regime","universeMeta","auditLast","dailyLog","briefRules"],
+    loads: ["config","status","actions","regimePub","eventCal","tournament","holdingsFile","regime","universeMeta","auditLast","dailyLog","briefRules","reviews"],
     compose(){
       let h = `<div class="tier tier-1"><h2 class="tier-title">PIPELINE</h2>${renderStatusStrip()}${renderSystemPanel()}</div>`;
-      h += `<div class="tier tier-2"><h2 class="tier-title">RECORDS</h2>${renderBriefHistory()}${renderActionLog()}${renderUniverseCard()}</div>`;
+      h += `<div class="tier tier-2"><h2 class="tier-title">RECORDS</h2>${renderBriefHistory()}${renderReviewsCard()}${renderActionLog()}${renderUniverseCard()}</div>`;
       return h;
+    },
+  },
+  mistakes: {
+    title: "THE MISTAKES LEDGER", sub: () => "one entry per error by anyone in the loop — the system, the agent, the operator, the advisory model · append-only · never edited",
+    loads: ["config","status","mistakes"],
+    compose(){
+      return `<div class="tier tier-1"><h2 class="tier-title">THE LEDGER</h2>${renderStatusStrip()}${renderMistakesLedger()}</div>`;
     },
   },
 };

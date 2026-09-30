@@ -2410,6 +2410,7 @@ function renderTierDetail(tid){
       monthly turnover (last rebalance): <strong class="c-2">${(S.holdings.turnover[tid]*100).toFixed(0)}%</strong>
     </div>`;
   }
+  if (typeof renderTierLogs === "function") h += renderTierLogs(tid);   // audit order 30-Sept (4.3): trades and spells, newest first
   return h;
 }
 
@@ -2884,8 +2885,12 @@ function renderLeaderboardBlock(){
     const periodBench = applyPeriod(allSeries.bench[benchTid] || [], S.period);
     tmMap[tid] = tierMetrics(periodSer, periodBench);
   });
+  // Audit order 30-Sept (4.4 / T3): the operator tier is NOT COMPARABLE until it is rebuilt from the
+  // brokerage transactions export — it never enters the ranking or the leader banner.
+  const wc = S.tournament && S.tournament.werner_comparable;
+  const werNotComparable = !!(wc && wc.comparable === false);
   let leader = null, leaderRet = -Infinity;
-  Object.entries(tmMap).forEach(([tid, m]) => { if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; } });
+  Object.entries(tmMap).forEach(([tid, m]) => { if (werNotComparable && tid === "5_werner") return; if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; } });
 
   let h = "";
   // ---- Leader banner ----
@@ -2925,11 +2930,12 @@ function renderLeaderboardBlock(){
     const cell = cs.per_state && cs.per_state[currentState];
     return cell || null;
   };
-  const sorted = Object.entries(tmMap).filter(([_,m]) => m != null).sort((a,b) => {
+  const sorted = Object.entries(tmMap).filter(([tid,m]) => m != null && !(werNotComparable && tid === "5_werner")).sort((a,b) => {
     if (!condMode) return (b[1].total - a[1].total);
     const ca = condFor(a[0]); const cb = condFor(b[0]);
     return ((cb && cb.shrunk_ann_return) || -9e9) - ((ca && ca.shrunk_ann_return) || -9e9);
   });
+  if (werNotComparable && tmMap["5_werner"]) sorted.push(["5_werner", tmMap["5_werner"]]);   // shown last, unranked
 
   const toggleHtml = `<span class="cond-toggle">
     <button class="${!condMode ? "on" : ""}" data-cond-mode="off">UNCONDITIONAL</button>
@@ -2967,12 +2973,14 @@ function renderLeaderboardBlock(){
     const navVal = liveTier ? liveTier.nav : null;
     const nPos = liveTier ? liveTier.n_positions : null;
     const open = (S.expanded === tid);
-    h += `<tr class="tier-row ${open?"open":""}" data-tid="${tid}">
-      <td class="rank ${i===0?"first":""}">${i+1}</td>
+    const notComp = werNotComparable && tid === "5_werner";
+    const wcLast = notComp && wc.series && wc.series.length ? wc.series[wc.series.length - 1] : null;
+    h += `<tr class="tier-row ${open?"open":""} ${notComp ? "dim" : ""}" data-tid="${tid}">
+      <td class="rank ${i===0 && !notComp?"first":""}">${notComp ? "—" : i+1}</td>
       <td>
         <span class="tier-dot ${cc(t.color,'bg')}"></span>
-        <span class="tier-name">${t.short}</span>
-        <div class="tier-desc">${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}</div>
+        <span class="tier-name">${t.short}</span>${notComp ? ' <span class="mono t1 w6 r1 x2 c-warn">NOT COMPARABLE</span>' : ""}
+        <div class="tier-desc">${notComp ? `excluded from the ranking: ${(wc.comparable_reason || "").substring(0, 120)}… · re-seed ${(wc.reseed_events || []).map(e => e.date + " " + (e.step_pct >= 0 ? "+" : "") + e.step_pct + "%").join(", ") || "—"} · comparable series (step excluded) $${wcLast ? fmt(wcLast.nav_comparable) : "—"}` : `${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}`}</div>
       </td>
       <td class="num" title="${(() => { const cr = S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.tiers && S.tournament.cost_restatement.tiers[tid]; return cr ? `pre-cost $${fmt(cr.nav_pre_cost_last)} · restated net (spread+impact model) $${fmt(cr.nav_net_restated_last)} · cumulative cost charged ${cr.cumulative_cost_flat_pct}% (flat, as published) vs ${cr.cumulative_cost_model_pct}% (model) · one-way turnover ${cr.turnover_one_way_total} over ${cr.n_rebalances} rebalances` : "net of costs"; })()}">${navVal ? "$"+fmt(navVal) : "—"}</td>
       <td class="num ${pnlc(m.total)}"><span data-tween="tot-${tid}" data-val="${m.total}" data-fmt="p">${fmtP(m.total)}</span>${(() => {
@@ -3522,4 +3530,96 @@ function renderOwnershipBlock(tk){   // each held name's card: 13F context only 
   return `<div class="name-block"><div class="mono t1 w6 c-3 ls12 mb1">INSTITUTIONAL OWNERSHIP · CONTEXT ONLY</div>
     ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>HOLDER</th><th class="num">SHARES</th><th class="num">CHANGE ON THE QUARTER</th><th class="num">VALUE</th><th>DATES</th></tr>${rows}</table></div>` : '<div class="mono t1 c-2">no holder on record</div>'}
     <div class="mono t1 c-3 mt1">${escText30(n.caption || "")}${nw ? `<br>new positions among funds above $1 billion: ${nw}` : ""}${ex ? `<br>full exits among funds above $1 billion: ${ex}` : ""} · no signal, no score</div></div>`;
+}
+
+// ═══ Tournament Audit and Execution Order (30-Sept-2026): the mistakes ledger (T6), the selection audit
+//     (T2/T3), the operator tier's not-comparable row (T3), the continuous twins and their logs (T4), the
+//     monthly reviews (T7). Every panel is descriptive. ═══════════════════════════════════════════════
+function renderMistakesLedger(){
+  const L = Array.isArray(S.mistakes) ? S.mistakes : [];
+  if (!L.length) return `<div class="rcc-card"><h3>THE MISTAKES LEDGER</h3><div class="mono t1 c-3">data/mistakes.jsonl has no entries</div></div>`;
+  const byId = {}; L.forEach(e => { byId[e.entry_id] = e; });
+  const whoCls = w => w === "system" ? "c-neg" : w === "advisor" ? "c-warn" : w === "operator" ? "c-info" : "c-2";
+  const kindTag = k => k && k !== "failure" ? `<span class="tier-tag mono t1 w6 c-3">${escText30(k)}</span> ` : "";
+  const ordered = L.slice().sort((a, b) => String(b.found || "").localeCompare(String(a.found || "")) || String(b.logged_at || "").localeCompare(String(a.logged_at || "")));
+  const newest = ordered.length ? ordered[0].found : null;
+  const rows = ordered.map(e => `<tr>
+      <td class="mono t1 c-3">${e.found || ""}</td>
+      <td class="mono t1 w6 ${whoCls(e.who)}">${escText30(e.who)}</td>
+      <td class="serif t1 c-1">${kindTag(e.kind)}${escText30(e.error)}${e.refers_to ? ` <span class="mono t1 c-3">· refers to ${escText30(e.refers_to)}</span>` : ""}${e.stated_reason ? `<div class="mono t1 c-3">stated reason: ${escText30(e.stated_reason)}</div>` : ""}</td>
+      <td class="c-2 t1">${escText30(e.detected_by)}</td>
+      <td class="c-2 t1">${escText30(e.cost)}${e.horizon ? ` <span class="mono c-3">(+${e.horizon} sessions)</span>` : ""}</td>
+      <td class="c-2 t1">${escText30(e.fix)}</td>
+      <td class="mono t1 c-3">${escText30(e.referee_check)}</td>
+      <td class="mono t1 c-3" title="${escText30(e.entry_sha256)}">${String(e.entry_sha256 || "").slice(0, 8)}</td></tr>`).join("");
+  const counts = L.reduce((a, e) => { a[e.who] = (a[e.who] || 0) + 1; return a; }, {});
+  return `<div class="rcc-card"><h3>THE MISTAKES LEDGER · <span class="c-3 w5">${L.length} entries · ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(" · ")} · newest first</span><span class="mono t1 w5 ls06 c-3 ml2">latest entry ${newest || "—"}</span></h3>
+    <div class="tbl-scroll"><table class="th-table mistakes-table"><tr><th>FOUND</th><th>WHO</th><th>WHAT WAS WRONG</th><th>DETECTED BY</th><th>WHAT IT COST</th><th>THE FIX</th><th>REFEREE CHECK</th><th>HASH</th></tr>${rows}</table></div>
+    <div class="chart-meta">append-only: no entry is ever edited, a correction is a new entry referencing the old, and the referee raises CRITICAL when an entry no longer matches its hash · operator decisions enter from the brokerage transactions export with the stated reason at the time and, 20 and 60 sessions later, the outcome against not trading · a lesson becomes a rule only through a registration and a prospective test</div></div>`;
+}
+function renderSelectionAudit(){   // tournament page: what the tournament does (T2), the noise indicator (T3)
+  const A = S.tournamentAudit; if (!A) return "";
+  const T = ["1_cap_pres", "2_balanced", "3_aggressive", "4_tactical"];
+  const short = tid => (tierSpec(tid) || {}).short || tid;
+  const pct = (v, nd = 0) => v == null ? "—" : (v * 100).toFixed(nd) + "%";
+  const dates = (A.retention[T[0]] || []).map(x => x.date);
+  const retRows = T.map(tid => `<tr><td class="mono t1 c-1 w6">${short(tid)}</td>${(A.retention[tid] || []).map(x => `<td class="num ${x.retention < 0.5 ? "c-warn" : "c-2"}">${x.kept}/${x.of}</td>`).join("")}<td class="num c-3">${A.intra_month_trades[tid]}</td></tr>`).join("");
+  const sp = A.spells.per_tier;
+  const spRows = T.map(tid => { const p = sp[tid]; const w = p.wilson_95 || [];
+    return `<tr><td class="mono t1 c-1 w6">${short(tid)}</td><td class="num">${p.n_spells}</td><td class="num c-1">${pct(p.share_beat_spy)}</td><td class="num c-3">[${pct(w[0])}, ${pct(w[1])}]</td><td class="num ${p.mean_excess >= 0 ? "c-pos" : "c-neg"}">${p.mean_excess == null ? "—" : (p.mean_excess >= 0 ? "+" : "") + (p.mean_excess * 100).toFixed(1) + "%"}</td><td class="num c-warn w6">${p.effective_sample_decision_dates}</td><td class="num c-3">${pct(p.store_variant.share_beat_spy)}</td></tr>`; }).join("");
+  const g = A.cash_gap; const gapRows = T.map(tid => `<tr><td class="mono t1 c-1 w6">${short(tid)}</td><td class="num">${g[tid].mean_abs_points}</td><td class="num">${g[tid].max_abs_points} <span class="c-3">(${g[tid].max_on})</span></td><td class="num">${g[tid].sessions_over_5_points} of ${g[tid].n_sessions}</td><td class="num">${g[tid]["on_2026-06-03"]}</td></tr>`).join("");
+  const r = A.regime_label; const o = A.operator_tier;
+  return `<div class="rcc-card"><h3>SELECTION AUDIT · <span class="c-3 w5">monthly batch reconstitution on ${(A.reconstitutions[T[0]] || []).length} dates; zero trades between them; the cash target recomputed daily and executed monthly</span>${asOfBadge(A.session_date)}</h3>
+    <div class="goal-grid">
+      <div><div class="fx-head mono t1 c-3">NAME RETENTION PER RECONSTITUTION · kept / previous N — the noise indicator</div>
+        <div class="tbl-scroll"><table class="th-table"><tr><th>TIER</th>${dates.map(d => `<th class="num">${d.slice(5)}</th>`).join("")}<th class="num">INTRA-MONTH TRADES</th></tr>${retRows}</table></div>
+        <div class="mono t1 c-3 mt1">a ranking that replaces most of its top names every month is dominated by noise, consistent with the measured information ratio near zero</div></div>
+      <div><div class="fx-head mono t1 c-3">HOLDING SPELLS (${A.spells.n_spells}) · share that beat SPY over the same window</div>
+        <div class="tbl-scroll"><table class="th-table"><tr><th>TIER</th><th class="num">SPELLS</th><th class="num">BEAT SPY</th><th class="num">WILSON 95%</th><th class="num">MEAN EXCESS</th><th class="num">DECISION DATES</th><th class="num">STORE VARIANT</th></tr>${spRows}</table></div>
+        <div class="mono t1 c-3 mt1">${escText30(A.spells.note)}</div></div>
+    </div>
+    <div class="goal-grid mt2">
+      <div><div class="fx-head mono t1 c-3">CASH GAP · target minus actual, points</div>
+        <div class="tbl-scroll"><table class="th-table"><tr><th>TIER</th><th class="num">MEAN |GAP|</th><th class="num">MAX</th><th class="num">SESSIONS > 5</th><th class="num">3 JUNE</th></tr>${gapRows}</table></div></div>
+      <div><div class="fx-head mono t1 c-3">LABEL, SHARE CLASSES, THE OPERATOR TIER</div>
+        <div class="mono t1 c-2 lh17">regime label changes as published: <strong class="c-1">${r.label_changes_published}</strong> (${Object.entries(r.changes_by_month || {}).map(([k, v]) => k + " " + v).join(", ")}); entries into ELEVATED below the corridor's 0.32: <strong class="c-warn">${(r.entries_below_corridor_0_32 || []).length}</strong> (${(r.entries_below_corridor_0_32 || []).map(f => f.date.slice(5) + " at " + f.R).join(", ")}); the corridor over the same history: ${r.corridor_label_changes_same_history} changes · in force from ${escText30(r.corridor_in_force_from)}</div>
+        <div class="mono t1 c-2 lh17 mt1">share classes held together: ${(A.share_classes_held_together || []).length ? A.share_classes_held_together.map(d => `${short(d.tier)} ${d.classes.join(" + ")} (${d.issuer}) ${d.combined_weight_pct}%`).join("; ") + " — collapsed at the next reconstitution" : "none"}</div>
+        <div class="mono t1 c-2 lh17 mt1">operator tier: NAV $${fmt(o["nav_2026-09-15"])} on 2026-09-15 → $${fmt(o["nav_2026-09-29"])} on 2026-09-29 (${o["step_2026-09-15_to_29_pct"] != null ? (o["step_2026-09-15_to_29_pct"] >= 0 ? "+" : "") + o["step_2026-09-15_to_29_pct"].toFixed(1) + "%" : "—"}, a re-seed artifact, not a return) · <span class="c-warn">not comparable</span> until rebuilt from the brokerage transactions export</div>
+        <div class="mono t1 c-3 mt1">sessions backfilled under the as-published convention: ${(A.backfilled_sessions || []).length}; missing now: ${(A.missing_sessions_now || []).length}</div></div>
+    </div>
+    <div class="chart-meta">${escText30(A.spells.convention)} · report: reports/tournament_audit_2026-09-30.md · ${escText30(A.note)}</div></div>`;
+}
+function renderTwinsCard(){   // tournament page: the continuous twins, a live contest (T4)
+  const W = S.twins; if (!W || !W.twins) return `<div class="rcc-card"><h3>CONTINUOUS TWINS · LIVE CONTEST</h3><div class="mono t1 c-3">data/tournament/twins.json not published yet (the twins start with their first nightly)</div></div>`;
+  const live = S.tournament && S.tournament.history && S.tournament.history.length ? S.tournament.history[S.tournament.history.length - 1] : null;
+  const rows = Object.entries(W.twins).map(([id, w]) => { const hist = w.nav_history || []; const last = hist[hist.length - 1] || {}; const first = hist[0] || {};
+    const parent = w.parent || w.parent_tier; const pnav = live && parent && live.tiers[parent] ? live.tiers[parent].nav : null;
+    const tr = w.trades_by_reason || {}; const gap = (last.target_cash_pct != null && last.actual_cash_pct != null) ? (last.target_cash_pct - last.actual_cash_pct) : null;
+    return `<tr><td class="mono t2 c-1 w6">${escText30(id)}</td><td class="c-3 t1">${(tierSpec(parent) || {}).short || parent}</td><td class="num">$${fmt(last.nav)}</td><td class="num ${first.nav && last.nav >= first.nav ? "c-pos" : "c-neg"}">${first.nav ? ((last.nav / first.nav - 1) * 100).toFixed(2) + "%" : "—"}</td><td class="num c-3">${pnav ? "$" + fmt(pnav) : "—"}</td><td class="num">${last.n_positions != null ? last.n_positions : "—"}</td><td class="num ${gap != null && Math.abs(gap) > 5 ? "c-warn" : "c-2"}">${last.actual_cash_pct != null ? last.actual_cash_pct.toFixed(1) + "% vs " + last.target_cash_pct.toFixed(1) + "%" : "—"}</td><td class="mono t1 c-3">${Object.entries(tr).map(([k, v]) => k + " " + v).join(" · ") || "—"}</td></tr>`; }).join("");
+  return `<div class="rcc-card"><h3>CONTINUOUS TWINS · LIVE CONTEST · <span class="c-3 w5">1c–4c: the same universe, scores, targets and costs as tiers 1–4, differing only in execution — evaluated daily, traded on bands (rank buffer, regime cash beyond 5 points, weight drift beyond 25 percent of target) · the monthly tiers stay as controls</span>${asOfBadge(W.session_date)}</h3>
+    <div class="tbl-scroll"><table class="th-table"><tr><th>TWIN</th><th>PARENT</th><th class="num">NAV</th><th class="num">SINCE START</th><th class="num">PARENT NAV</th><th class="num">N</th><th class="num">CASH ACTUAL vs TARGET</th><th>TRADES BY REASON</th></tr>${rows}</table></div>
+    <div class="chart-meta">started ${escText30(W.start_date || "")} with the same capital · rules: data/tournament/continuous_rules.json · trades and spells: data/tournament/trades.jsonl, spells.jsonl (per tier, newest first, in each tier's detail) · replacement of the monthly tiers only after the registered C6 comparison${S.c6Power ? " · power check: " + escText30(S.c6Power.verdict) : ""}</div></div>`;
+}
+function renderTierLogs(tid){   // in a tier's detail: its trades and spells, newest first (T4)
+  const T = Array.isArray(S.trades) ? S.trades.filter(t => t.tier === tid) : [];
+  const SP = Array.isArray(S.spells) ? S.spells.filter(s => s.tier === tid) : [];
+  if (!T.length && !SP.length) return "";
+  const money = v => v == null ? "—" : "$" + fmt(Math.round(v));
+  const tRows = T.slice().sort((a, b) => String(b.session).localeCompare(String(a.session)) || String(b.trade_id).localeCompare(String(a.trade_id))).slice(0, 40).map(t => `<tr><td class="mono t1 c-3">${t.session}</td><td class="mono t1 c-1 w6">${escText30(t.ticker)}</td><td class="${t.action === "buy" ? "c-pos" : "c-neg"}">${t.action}</td><td class="num">${t.shares == null ? "—" : (+t.shares).toFixed(2)}</td><td class="num">${t.price == null ? "—" : "$" + (+t.price).toFixed(2)}</td><td class="num">${money(t.value)}</td><td class="num c-3">${t.cost == null ? "—" : "$" + (+t.cost).toFixed(2)}</td><td class="mono t1 c-2">${escText30(t.reason)}</td><td class="num c-3">${t.tier_rank != null ? "#" + t.tier_rank : "—"}${t.tier_composite != null ? " · " + (+t.tier_composite).toFixed(1) : ""}</td><td class="num c-3">${t.bq_score != null ? (+t.bq_score).toFixed(1) : "—"} / ${t.tn_score != null ? (+t.tn_score).toFixed(0) : "—"}</td><td class="mono t1 c-3">${t.regime_label || ""}${t.regime_R != null ? " " + (+t.regime_R).toFixed(2) : ""}</td></tr>`).join("");
+  // spells: the latest event per spell id
+  const latest = {}; SP.forEach(s => { const k = s.spell_id; if (!latest[k] || String(s.logged_at) >= String(latest[k].logged_at)) latest[k] = Object.assign({}, latest[k] || {}, s); });
+  const fu = {}; SP.forEach(s => { if (s.event === "followup_20" || s.event === "followup_60") (fu[s.spell_id] = fu[s.spell_id] || {})[s.horizon] = s; });
+  const pct = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%</span>`;
+  const sRows = Object.values(latest).sort((a, b) => String(b.exit_session || b.entry_session).localeCompare(String(a.exit_session || a.entry_session))).slice(0, 40).map(s => { const f = fu[s.spell_id] || {};
+    return `<tr><td class="mono t1 c-1 w6">${escText30(s.ticker)}</td><td class="mono t1 c-3">${s.entry_session}</td><td class="mono t1 c-3">${s.exit_session || '<span class="c-warn">open</span>'}</td><td class="mono t1 c-2">${escText30(s.exit_reason || "")}</td><td class="num">${pct(s.return)}</td><td class="num">${pct(s.excess_vs_spy)}</td><td class="num">${pct(s.excess_vs_basket)}<span class="c-3 t1"> ${escText30(s.basket_thesis || "")}</span></td><td class="num">${f[20] ? pct(f[20].excess_vs_spy) : "—"}</td><td class="num">${f[60] ? pct(f[60].excess_vs_spy) : "—"}</td><td class="num c-3">${s.scores_at_entry && s.scores_at_entry.tier_rank != null ? "#" + s.scores_at_entry.tier_rank : "—"}</td></tr>`; }).join("");
+  return `<div class="mt3"><div class="mono t1 w6 c-3 ls12 mb1">TRADES · newest first (${T.length})</div>
+    ${tRows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>SESSION</th><th>NAME</th><th>ACTION</th><th class="num">SHARES</th><th class="num">PRICE</th><th class="num">VALUE</th><th class="num">COST</th><th>REASON</th><th class="num">TIER RANK · SCORE</th><th class="num">BQ / TRADE-NOW</th><th>REGIME</th></tr>${tRows}</table></div>` : '<div class="mono t1 c-3">no trade logged</div>'}
+    <div class="mono t1 w6 c-3 ls12 mb1 mt2">SPELLS · newest first (${Object.keys(latest).length})</div>
+    ${sRows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>ENTRY</th><th>EXIT</th><th>EXIT REASON</th><th class="num">RETURN</th><th class="num">vs SPY</th><th class="num">vs THESIS BASKET</th><th class="num">+20 vs SPY</th><th class="num">+60 vs SPY</th><th class="num">RANK AT ENTRY</th></tr>${sRows}</table></div>` : '<div class="mono t1 c-3">no spell logged</div>'}</div>`;
+}
+function renderReviewsCard(){   // system page: the monthly reviews (T7), generated and never edited
+  const R = Array.isArray(S.reviews) ? S.reviews : []; if (!R.length) return "";
+  const rows = R.slice().reverse().map(r => `<tr><td class="mono t1 c-1 w6">${escText30(r.month)}</td><td class="c-2 t1"><a href="${escText30(r.file)}" target="_blank" rel="noopener">${escText30(r.file)}</a></td><td class="mono t1 c-3">${String(r.generated_at || "").slice(0, 16)}</td><td class="mono t1 c-3">${r.effective_samples ? escText30(JSON.stringify(r.effective_samples)) : ""}</td><td class="mono t1 c-3" title="${escText30(r.sha256)}">${String(r.sha256 || "").slice(0, 8)}</td></tr>`).join("");
+  return `<div class="rcc-card"><h3>MONTHLY REVIEWS · <span class="c-3 w5">generated from the ledgers each month, stored, never edited · findings stated with the effective sample size (decision dates, not spells) and a date-block bootstrap interval · a lesson becomes a rule only through a registration and a prospective test</span>${asOfBadge(R[R.length - 1].generated_at)}</h3>
+    <div class="tbl-scroll"><table class="th-table"><tr><th>MONTH</th><th>REPORT</th><th>GENERATED</th><th>EFFECTIVE SAMPLES</th><th>HASH</th></tr>${rows}</table></div></div>`;
 }

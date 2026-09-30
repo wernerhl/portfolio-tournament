@@ -42,6 +42,10 @@ const FILES = {
   dailyLog:["data/daily_log.jsonl","jsonl"], briefFacts:["data/brief_facts.json","json"], briefRules:["data/brief_rules.json","json"],
   news:["data/news.json","json"], goals:["data/goals.json","json"], claimsReg:["data/claims_register.json","json"],
   gains:["data/realized_gains.json","json"], insiders:["data/ownership/insiders.json","json"], holders13f:["data/ownership/holders_13f.json","json"],
+  // the tournament audit, the mistakes ledger, the twins and their logs, the reviews (audit order 30-Sept-2026)
+  mistakes:["data/mistakes.jsonl","jsonl"], tournamentAudit:["data/tournament/audit.json","json"], twins:["data/tournament/twins.json","json"],
+  trades:["data/tournament/trades.jsonl","jsonl"], spells:["data/tournament/spells.jsonl","jsonl"], reviews:["data/tournament/reviews.jsonl","jsonl"],
+  c6Power:["data/tournament/c6_power_check.json","json"],
 };
 async function loadFiles(keys, into){
   const target = into || S;
@@ -61,7 +65,7 @@ async function loadFiles(keys, into){
 
 // The navigation strip: seven pages and the guide; the current page marked.
 const NAV = [["index.html","Home"],["book.html","Book"],["bonds.html","Bonds"],["screen.html","Screen"],["tournament.html","Tournament"],
-             ["evidence.html","Evidence"],["register.html","Register"],["system.html","System"],["guide.html","Guide"]];
+             ["evidence.html","Evidence"],["register.html","Register"],["mistakes.html","Mistakes"],["system.html","System"],["guide.html","Guide"]];
 function renderNav(page){
   return `<nav class="site-nav" aria-label="Pages">${NAV.map(([href, label]) => {
     const key = href.replace(".html", "").replace("index", "home");
