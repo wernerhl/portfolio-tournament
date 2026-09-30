@@ -1,0 +1,40 @@
+{
+  "cadence": "static",
+  "as_of": "2026-09-30",
+  "frozen_at": "2026-09-30T05:00:00-04:00",
+  "frozen_by": "Execution Order of 30 September 2026, item B1 — pre-registered colour rules",
+  "note": "The colour describes the state of the session; it is not a forecast. Every rule is evaluated mechanically from served data, never by a model; the entry stores the list of rules that fired.",
+  "precedence": ["RED", "YELLOW", "GREEN"],
+  "rules": [
+    {"id": "R1", "color": "RED", "text": "regime label elevated or higher", "params": {"labels": ["ELEVATED", "HIGH RISK", "CRISIS"]}},
+    {"id": "R2", "color": "RED", "text": "shock active"},
+    {"id": "R3", "color": "RED", "text": "S&P 500 down more than 2 percent on the day", "params": {"threshold_pct": -2.0}},
+    {"id": "R4", "color": "RED", "text": "VIX up more than 20 percent on the day", "params": {"threshold_pct": 20.0}},
+    {"id": "R5", "color": "RED", "text": "book down more than 3 percent on the day", "params": {"threshold_pct": -3.0}},
+    {"id": "R6", "color": "RED", "text": "a held name closes below its Chandelier level and its 200-day average on the same day", "params": {"chandelier_lookback": 22, "atr_multiple": 3.0, "ma_sessions": 200}},
+    {"id": "R7", "color": "RED", "text": "credit state stressed", "params": {"states": ["stressed"]}},
+    {"id": "Y1", "color": "YELLOW", "text": "complacency flag on"},
+    {"id": "Y2", "color": "YELLOW", "text": "a high-impact macro release or a held-name earnings release within the next two sessions", "params": {"sessions": 2, "impact": "high"}},
+    {"id": "Y3", "color": "YELLOW", "text": "regime index rising five sessions in a row", "params": {"sessions": 5}},
+    {"id": "Y4", "color": "YELLOW", "text": "10-year yield above 5 percent or up more than 15 basis points on the day", "params": {"level_pct": 5.0, "change_bp": 15.0}},
+    {"id": "Y5", "color": "YELLOW", "text": "book down 1.5 to 3 percent on the day", "params": {"from_pct": -3.0, "to_pct": -1.5}},
+    {"id": "Y6", "color": "YELLOW", "text": "a held name within 3 percent of its 200-day average", "params": {"band_pct": 3.0}}
+  ],
+  "definitions": {
+    "chandelier": "22-session high minus 3 × ATR(22) on the provider's OHLC bars; when OHLC is unavailable the true range falls back to the close-to-close range and the level is flagged. The rulebook's trailing level (peak × (1 − bracket)) is recorded beside it and is not the Chandelier level.",
+    "book_change": "Σ shares × (close − prior close) over the prior session's NAV, on the current holdings with cash unchanged",
+    "regime_index": "R_t from regime_daily.csv (the continuous revised series) for the rising streak; the published vintage's R and label beside it; the label thresholds are the NAV job's (0.30 / 0.50 / 0.70)",
+    "flags": "complacency and shock from intraday.json when it is reconciled to the session, else recomputed from the canonical closes by the same rules (SKEW > 140 and VIX < 17; VIX +15%, SPX −1.5%, term backwardation, duration-adjusted HY −1%)",
+    "within_two_sessions": "the two trading sessions after the brief's session; releases and held-name earnings dated on those sessions",
+    "next_events": "the next three calendar events of impact high or medium after the session",
+    "yield": "the latest 10-year constant-maturity yield in the FRED store on or before the session (FRED publishes with a lag; the date is stored)"
+  },
+  "narrative": {
+    "max_words": 40,
+    "model": "claude-sonnet-5-5",
+    "api_env": "ANTHROPIC_API_KEY",
+    "fallback": "template",
+    "forecast_words": ["will", "expect", "expects", "expected", "expecting", "likely", "unlikely", "forecast", "forecasts", "predict", "predicts", "should", "could", "may", "might", "going to", "outlook", "anticipate", "anticipates"],
+    "validator": "rejects the entry if any number in the text is absent from the payload after rounding, if it contains a forecast verb, if it names a security not in the payload, if it exceeds the word limit, or if it contains a directive or prohibited vocabulary; on rejection the template sentence is used and the rejection is logged"
+  }
+}
