@@ -53,6 +53,7 @@ scripts = [
     "compute_goals.py",            # D1/D2: the house goal in reais at the settled rate; the claims register's progress
     "fetch_news.py",               # B4: two-tier news (primary sources first), bodies never stored
     "ownership/insiders.py",       # E1: Form 4 open-market purchases, routine/opportunistic, clusters (needs SEC_USER_AGENT; exits 3 without it)
+    "ownership/holders_13f.py",    # E2: 13F context for the held names (weekly: skips while its as_of is under 7 days old; same gate)
     "daily_brief.py",              # B1–B3: the colour by rule, the narrative under the validator, the append-only log
 ]
 

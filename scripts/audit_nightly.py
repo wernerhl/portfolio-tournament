@@ -520,21 +520,34 @@ def main(troot, sroot, today=None):
     ip_=os.path.join(troot,'ownership','insiders.json')
     if os.path.exists(ip_):
         ij=json.load(open(ip_))
+        isd=to_date(ij.get('session_date') or '')
+        if not isd or (isd<ls and len(trading_days(isd,ls))-1>1): add('HIGH','insiders:stale',f'insiders.json session_date {isd} vs last session {ls}')
+        if 'cohen' not in json.dumps(ij.get('method') or {}).lower(): add('HIGH','insiders:method','insiders.json does not cite the Cohen, Malloy and Pomorski rule')
+        if 'enters no score' not in str((ij.get('signal_registration') or {}).get('status','')): add('CRITICAL','insiders:gate','insiders.json: the candidate signal is not marked "enters no score" (the E1 gate)')
         for tk,n in (ij.get('names') or {}).items():
             rows=(n.get('opportunistic_purchases_90d') or [])+(n.get('sales_shown') or [])
-            if any(r.get('classification') not in ('routine','opportunistic') for r in rows): add('HIGH','insiders:classification',f'{tk}: an insider transaction without a routine/opportunistic classification')
+            if any(r.get('classification')!='opportunistic' or not r.get('classification_basis') for r in rows): add('CRITICAL','insiders:classification',f'{tk}: a card row without the stated opportunistic classification and its basis')
+            cl=n.get('cluster') or {}
+            if cl and bool(cl.get('flag'))!=(int(cl.get('n_distinct_buyers_30d') or 0)>=3): add('CRITICAL','insiders:cluster',f'{tk}: cluster flag {cl.get("flag")} inconsistent with {cl.get("n_distinct_buyers_30d")} distinct buyers')
+            if (n.get('sales_shown') or []) and not (n.get('sales_cluster') or {}).get('flag'): add('CRITICAL','insiders:sales_rule',f'{tk}: sales shown without an opportunistic sales cluster')
+            if (n.get('sales_shown') or []) and n.get('sales_shown_label')!='sales are mostly compensation or diversification': add('HIGH','insiders:sales_label',f'{tk}: sales shown without the required label')
+        if (ij.get('history_coverage') or {}).get('complete') is False: add('HIGH','insiders:history',f'insider history incomplete: quarters missing {(ij.get("history_coverage") or {}).get("quarters_missing")}')
         _lang(ip_,'insiders')
     else:
-        add('INFO','insiders:missing','data/ownership/insiders.json absent (EDGAR access needs SEC_USER_AGENT)')
+        add('INFO','insiders:missing','data/ownership/insiders.json absent (EDGAR access needs the declared contact, SEC_USER_AGENT)')
     hp13=os.path.join(troot,'ownership','holders_13f.json')
     if os.path.exists(hp13):
         hj13=json.load(open(hp13))
+        h13d=to_date(hj13.get('as_of') or '')
+        if not h13d or (ls-h13d).days>10: add('HIGH','ownership:stale',f'holders_13f.json as_of {h13d} is more than 10 days old (weekly)')
         for tk,n in (hj13.get('names') or {}).items():
-            rows=(n.get('top_holders') or [])+(n.get('new_positions') or [])+(n.get('exits') or [])
-            if any(not r.get('as_of_quarter_end') or not r.get('disclosed') for r in rows): add('HIGH','ownership:dates',f'{tk}: a 13F figure without as-of quarter-end and disclosure date')
+            rows=(n.get('top_holders') or [])+(n.get('new_positions_over_1b') or [])+(n.get('full_exits_over_1b') or [])+(n.get('prior_holders_without_current_filing') or [])
+            if any(not r.get('as_of_quarter_end') or not r.get('disclosed') for r in rows): add('CRITICAL','ownership:dates',f'{tk}: a 13F figure without as-of quarter-end and disclosure date')
+            cap=str(n.get('caption') or '')
+            if rows and not (cap.startswith('positions as of ') and cap.endswith('; long positions only; no hedges shown.')): add('HIGH','ownership:caption',f'{tk}: 13F caption not in the required form')
         _lang(hp13,'ownership')
     else:
-        add('INFO','ownership:missing','data/ownership/holders_13f.json absent (EDGAR access needs SEC_USER_AGENT)')
+        add('INFO','ownership:missing','data/ownership/holders_13f.json absent (EDGAR access needs the declared contact, SEC_USER_AGENT)')
     # visibility review dates (screener)
     vp=os.path.join(sroot,'visibility_registry.json')
     if os.path.exists(vp):
