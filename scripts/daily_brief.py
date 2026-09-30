@@ -90,8 +90,21 @@ def sha(obj) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
 
 
-def regime_label(R: float) -> str:
-    return "LOW RISK" if R < 0.30 else "ELEVATED" if R < 0.50 else "HIGH RISK" if R < 0.70 else "CRISIS"
+def regime_label(R: float, prev_label: str | None = None) -> str:
+    """The corridor label (scripts/regime_label.py; audit 30-Sept T3) off the previous session's
+    published label — never re-derived from R alone."""
+    from regime_label import label_with_corridor
+    return label_with_corridor(R, prev_label)
+
+
+def previous_published_label(session: str) -> str | None:
+    """The tournament row's label for the last published session before `session`."""
+    try:
+        H = json.load(open(DATA / "tournament.json")).get("history", [])
+        before = [h for h in H if str(h.get("date", "")) < session]
+        return before[-1].get("regime") if before else None
+    except Exception:
+        return None
 
 
 # ── the facts payload (served data only) ─────────────────────────────────
@@ -189,9 +202,19 @@ def facts_payload(session: str, rules: dict) -> dict:
     pub = pd.read_csv(DATA / "regime_daily_published.csv"); pub["date"] = pub["date"].astype(str)
     prow = pub[pub["date"] == session]
     R_pub = float(prow["R_t_published"].iloc[0]) if len(prow) and pd.notna(prow["R_t_published"].iloc[0]) else None
-    regime = {"R": r2(R, 4), "label": regime_label(R) if R is not None else None, "series_date": rd["date"].iloc[-1] if len(rd) else None,
+    # the label: the tournament row's published label for the session when it exists (the
+    # corridor off its predecessor), else the corridor off the last published label
+    prev_lab = previous_published_label(session)
+    row_lab = None
+    try:
+        row_lab = next((h.get("regime") for h in json.load(open(DATA / "tournament.json")).get("history", []) if h.get("date") == session), None)
+    except Exception:
+        pass
+    label = row_lab or (regime_label(R, prev_lab) if R is not None else None)
+    regime = {"R": r2(R, 4), "label": label, "label_basis": "tournament row" if row_lab else "corridor off the previous published label",
+              "series_date": rd["date"].iloc[-1] if len(rd) else None,
               "prev_R": r2(float(rd["R_t"].iloc[-2]), 4) if len(rd) >= 2 else None, "rising_streak_sessions": streak,
-              "published_R": r2(R_pub, 4), "published_label": regime_label(R_pub) if R_pub is not None else None}
+              "published_R": r2(R_pub, 4), "published_label": (regime_label(R_pub, prev_lab) if R_pub is not None else None)}
     # flags: intraday.json when reconciled to the session, else recomputed by the same rules
     flags = {"complacency": None, "shock": None, "source": None, "complacency_reason": None, "shock_reasons": []}
     ip = DATA / "intraday.json"

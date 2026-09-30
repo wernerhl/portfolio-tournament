@@ -40,7 +40,29 @@ def select_for_tier(scored: pd.DataFrame, spec: dict) -> list[str]:
         ) / total_w * 25,
     )
     cand["tier_composite"] = cand["tier_tech"] + cand["fund_score"].fillna(cand["fund_score"].median())
-    picks = cand.nlargest(spec["n_holdings"], "tier_composite")["ticker"].tolist()
+    # Tournament audit 30-Sept-2026 (2.4 / T3): never two classes of one issuer in a tier — the
+    # universe is collapsed upstream (build_universe.py); this guard walks the ranking and skips a
+    # class whose issuer is already picked, filling the slot from the next rank.
+    issuer_of = {}
+    scp = DATA / "share_classes.json"
+    if scp.exists():
+        try:
+            for issuer, s in (json.load(open(scp)).get("issuers") or {}).items():
+                for c in s.get("classes", []):
+                    issuer_of[str(c).upper().replace(".", "-")] = issuer
+        except Exception:
+            issuer_of = {}
+    ranked = cand.sort_values("tier_composite", ascending=False)["ticker"].tolist()
+    picks, taken = [], set()
+    for tk in ranked:
+        iss = issuer_of.get(str(tk).upper().replace(".", "-"))
+        if iss and iss in taken:
+            continue
+        picks.append(tk)
+        if iss:
+            taken.add(iss)
+        if len(picks) >= spec["n_holdings"]:
+            break
     return picks
 
 

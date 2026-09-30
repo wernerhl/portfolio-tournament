@@ -82,6 +82,29 @@ def main() -> None:
     set_t = set(tourn)
     set_s = set(screen) | set(midcap)          # the screen view's universe = file ∪ midcap supplement
     union = sorted(set_t | set_s | set(held))
+    # Tournament audit 30-Sept-2026 (2.4 / T3): one issuer, one class. data/share_classes.json
+    # lists the dual-class issuers and the class kept (the more liquid one, measured once and
+    # recorded there); the other classes leave the union — unless the operator holds them,
+    # since every held name is always a member.
+    collapse = {"dropped": [], "kept": [], "source": "data/share_classes.json"}
+    scp = DATA / "share_classes.json"
+    if scp.exists():
+        sc = json.loads(scp.read_text())
+        for issuer, spec in (sc.get("issuers") or {}).items():
+            keep = norm(spec.get("keep", ""))
+            classes = [norm(c) for c in spec.get("classes", [])]
+            present = [c for c in classes if c in union]
+            if len(present) > 1:
+                # a class the operator holds is the one kept (every held name is a member), else the
+                # more liquid class recorded in share_classes.json
+                held_cls = [c for c in present if c in held]
+                keep = held_cls[0] if held_cls else keep
+                basis = "held by the operator" if held_cls else "the more liquid class"
+                for c in present:
+                    if c != keep:
+                        union.remove(c); collapse["dropped"].append({"issuer": issuer, "class": c, "kept": keep, "basis": basis})
+                collapse["kept"].append({"issuer": issuer, "class": keep, "basis": basis})
+    union = sorted(union)
 
     only_tournament = sorted(set_t - set_s)
     only_screener_or_midcap = sorted(set_s - set_t)
@@ -120,6 +143,7 @@ def main() -> None:
         "only_tournament": only_tournament,
         "only_screener_or_midcap": only_screener_or_midcap,
         "held_added": held_added,
+        "share_class_collapse": collapse,
         "sha256": sha,
         "output": "data/universe.txt",
     }

@@ -1,6 +1,6 @@
 {
  "cadence": "on_change",
- "as_of": "2026-09-16",
+ "as_of": "2026-09-30",
  "built_by": "scripts/build_universe.py (order 6.2, 2026-09-16)",
  "rule": "union of the tournament's canonical universe, the screen view's universe (historical file + config midcap_additions) and every held name in data/holdings.json; sorted, one ticker per line; consumed by both scoring views",
  "inputs": {
@@ -18,24 +18,62 @@
   },
   "holdings": {
    "path": "data/holdings.json",
-   "n": 7,
-   "as_of": "2026-09-16",
+   "n": 5,
+   "as_of": "2026-09-30",
    "tickers": [
-    "MU",
     "GEV",
     "NVDA",
-    "ANET",
-    "GOOG",
     "AVGO",
+    "GOOG",
     "BMNR"
    ]
   }
  },
  "screen_universe_size": 537,
- "union_size": 537,
+ "union_size": 534,
  "only_tournament": [],
  "only_screener_or_midcap": [],
  "held_added": [],
- "sha256": "7bb5fcca840d1d2901582f703f5561ac77fa44e9f0a0186e36a7a59e587ac63c",
+ "share_class_collapse": {
+  "dropped": [
+   {
+    "issuer": "Alphabet",
+    "class": "GOOGL",
+    "kept": "GOOG",
+    "basis": "held by the operator"
+   },
+   {
+    "issuer": "Fox Corporation",
+    "class": "FOX",
+    "kept": "FOXA",
+    "basis": "the more liquid class"
+   },
+   {
+    "issuer": "News Corp",
+    "class": "NWS",
+    "kept": "NWSA",
+    "basis": "the more liquid class"
+   }
+  ],
+  "kept": [
+   {
+    "issuer": "Alphabet",
+    "class": "GOOG",
+    "basis": "held by the operator"
+   },
+   {
+    "issuer": "Fox Corporation",
+    "class": "FOXA",
+    "basis": "the more liquid class"
+   },
+   {
+    "issuer": "News Corp",
+    "class": "NWSA",
+    "basis": "the more liquid class"
+   }
+  ],
+  "source": "data/share_classes.json"
+ },
+ "sha256": "eccd76016c78d12bd69c4545afe9704f28d1b80a5cf331598dab46e8aa999d1e",
  "output": "data/universe.txt"
 }

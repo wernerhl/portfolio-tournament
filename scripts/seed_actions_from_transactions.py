@@ -82,14 +82,17 @@ import ingest_brokerage as ib  # noqa: E402
 
 
 # ─── regime: the published vintage ───────────────────────────────────────────────────────
-def regime_label(R: float) -> str:
-    """Identical to scripts/compute_nav.py regime_label (edges 0.30 / 0.50 / 0.70)."""
-    return "LOW RISK" if R < 0.30 else "ELEVATED" if R < 0.50 else "HIGH RISK" if R < 0.70 else "CRISIS"
+def regime_label(R: float, prev_label: str | None = None) -> str:
+    """The corridor label (scripts/regime_label.py; tournament audit 30-Sept T3): a higher band
+    is entered at edge + 0.02 and left at edge − 0.02, off the previous published label."""
+    from regime_label import label_with_corridor
+    return label_with_corridor(R, prev_label)
 
 
 class PublishedVintage:
     """data/regime_daily_published.csv: date, R_t_published, no_publish_reason — the R the system
-    actually printed for each session (append-only, never recomputed)."""
+    actually printed for each session (append-only, never recomputed). Labels are the corridor
+    walked sequentially over the published values (a no-publish session carries no label)."""
 
     def __init__(self, path: Path):
         self.path = Path(path)
@@ -97,6 +100,15 @@ class PublishedVintage:
         with open(self.path, newline="") as f:
             for r in csv.DictReader(f):
                 self.rows[(r.get("date") or "").strip()[:10]] = r
+        self.labels: dict[str, str] = {}
+        prev = None
+        for d in sorted(self.rows):
+            v = (self.rows[d].get("R_t_published") or "").strip()
+            if not v:
+                continue
+            lab = regime_label(float(v), prev)
+            self.labels[d] = lab
+            prev = lab
 
     def lookup(self, session: str) -> tuple[float | None, str | None, str | None]:
         """(R_full, label, note)."""
@@ -108,7 +120,7 @@ class PublishedVintage:
             reason = (r.get("no_publish_reason") or "").strip() or "blank R_t_published"
             return None, None, f"no_publish_reason: {reason}"
         R = float(v)
-        return R, regime_label(R), None
+        return R, self.labels.get(session, regime_label(R)), None
 
 
 # ─── session mapping ─────────────────────────────────────────────────────────────────────
