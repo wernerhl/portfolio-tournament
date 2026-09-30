@@ -384,6 +384,17 @@ def main(troot, sroot, today=None):
                 if v is not None and not (0.05<=float(v)<=3.0): bad.append(f'{tk}:{k}={v}')
         if bad: add('CRITICAL','options:iv_range',f'ATM implied volatility outside [0.05, 3.0]: {bad[:6]}')
         if 'impliedVolatility' in open(lp_).read(): add('CRITICAL','options:provider_iv','lens.json mentions the provider impliedVolatility field')
+        # Order 30-Sept C2: every held name's lens spot date must be the last session (the GEV record
+        # carried "spot_source: 2026-09-25 close" on 30 September while the snapshot job was not running).
+        stale=[]
+        for tk in sorted(held_):
+            n=(lj.get('names') or {}).get(tk) or {}
+            sd_=to_date(str(n.get('spot_source') or '')[:10])
+            if sd_ is None or sd_!=ls: stale.append(f'{tk}: {n.get("spot_source") or "no spot"}')
+        if stale: add('HIGH','options:lens_spot_stale',f'held names whose lens spot is not the last session {ls}: {stale[:6]}')
+        # C1: the event-implied move must be computed by the bracketing method (or its flagged fallback)
+        meth=str((lj.get('definitions') or {}).get('event_move',''))
+        if 'bracketing' not in meth.lower(): add('HIGH','options:event_method','lens.json event_move definition is not the bracketing method (order 30-Sept C1)')
     ep_=os.path.join(oroot,'earnings_reactions.json')
     if os.path.exists(ep_) and held_:
         ej=json.load(open(ep_)).get('names',{})
