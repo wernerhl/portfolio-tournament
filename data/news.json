@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-09-29",
- "fetched_at": "2026-09-30T04:27:50-04:00",
+ "fetched_at": "2026-09-30T14:50:20-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,15 +57,15 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=4 (parsed 20)",
-  "fed_speeches": "ok n=5 (parsed 15)",
-  "bea": "ok n=0 (parsed 48)",
+  "fed_press": "ok n=5 (parsed 20)",
+  "fed_speeches": "ok n=4 (parsed 15)",
+  "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
-  "census": "ok n=0 (parsed 18)",
+  "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
   "edgar": "skipped: SEC_USER_AGENT not set",
-  "ir_avgo": "ok n=0 (parsed 10)",
+  "ir_avgo": "ok n=1 (parsed 10)",
   "ir_nvda": "ok n=2 (parsed 20)",
   "ir_gev": "ok n=3 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
@@ -73,25 +73,266 @@
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=1 (parsed 10)",
-  "yahoo_headlines:BMNR": "ok n=8 (parsed 10)"
+  "yahoo_headlines:NVDA": "ok n=3 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=1 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
+  "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
  },
  "excluded": {
-  "vocabulary_rule": 0,
+  "vocabulary_rule": 1,
   "directive_rule": 1,
   "irrelevant": 36,
-  "out_of_window": 137,
+  "out_of_window": 135,
   "unparseable": 0
  },
  "counts": {
-  "items": 37,
-  "tier1": 16,
-  "tier2": 21,
-  "last24h": 20
+  "items": 51,
+  "tier1": 20,
+  "tier2": 31,
+  "last24h": 24
  },
  "items": [
+  {
+   "id": "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google asks EU court to suspend order to share search data with AI rivals",
+   "source": "Investing.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/google-asks-eu-court-suspend-175843460.html",
+   "timestamp": "2026-09-30T13:58:43-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investing.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia, AMD Collaborator Teases Breakout To Record High. These Clues Bode Well.",
+   "source": "Investor's Business Daily",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.investors.com/research/breakout-stocks-technical-analysis/semtech-stock-teases-record-high-nvidia-amd-enter-buy-range/?src=A00220&yptr=yahoo",
+   "timestamp": "2026-09-30T13:53:09-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Stocks Slip as Data Centers Choose Faster Turbines",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-stocks-slip-data-174915714.html",
+   "timestamp": "2026-09-30T13:49:15-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cf2da6280da6d2d1e0a4b01639e95b8cb1c5471e",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia Supplier FormFactor’s Stock Surges After Deutsche Bank Says It’s a Buy",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.barrons.com/articles/nvidia-formfactor-stock-4aca02ed?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-09-30T13:49:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "debc6d880810d2bce76424591c3b21d90a6a8bb1",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "How Nvidia’s Big Win at Trump’s AI Lunch Will Help the Stock",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.barrons.com/articles/nvidia-stock-price-ai-trump-add8d2b3?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-09-30T13:23:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "13611b09d0b63dfc5a17a1c633a96ddf3a2b3ded",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why Is Alphabet (GOOGL) Signing A White House AI Safety Accord?",
+   "source": "Simply Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/why-alphabet-googl-signing-white-171625155.html",
+   "timestamp": "2026-09-30T13:16:25-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Simply Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "98948837bb9a86625c189a9ff1f3ef8a812b179b",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet Rallies 3% as Traders Weigh White House Safety Accord; Apple Gains 2.5%, Meta Platforms Treads Water",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/09/30/alphabet-rallies-3-as-traders-weigh-white-house-safety-accord-apple-gains-2-5-meta-platforms-treads-water/",
+   "timestamp": "2026-09-30T12:07:35-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a14d4baadfe04dbc00e8bc9d7338a8858cb78cc3",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet Stocks Jump 2% as Voluntary AI Accord Adds Audit Commitments",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-stocks-jump-2-voluntary-152031047.html",
+   "timestamp": "2026-09-30T11:20:31-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "214bbfabe8da23aca998619c432c6a669bade7eb",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom vs. NVIDIA: Which Technology Stock Is a Better Buy in 2026?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.fool.com/coverage/better-buy/2026/09/30/broadcom-vs-nvidia-which-technology-stock-is-a-better-buy-in-2026/",
+   "timestamp": "2026-09-30T09:19:01-04:00",
+   "tickers": [
+    "AVGO",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about AVGO, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "975ec4f2519a98482fd8462204820da26b6cbce9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board finalizes changes to enhance the transparency and public accountability of its stress test and reduce volatility in its stress test-related capital requirements",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260930a.htm",
+   "timestamp": "2026-09-30T09:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7f355e1357bbe552d08a0e2dbf4eca8d2028f8c9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Personal Income and Outlays, August 2026",
+   "source": "BEA release",
+   "source_id": "bea",
+   "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-august-2026",
+   "timestamp": "2026-09-30T08:31:00-04:00",
+   "tickers": [],
+   "topics": [
+    "PCE"
+   ],
+   "summary": "Tier 1 · BEA release · topics: PCE · next release October 29, 2026",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b6bc6a096eb423eb62c959590153d591b1304a9f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GDP, (Third Estimate), Industries, Corporate Profits, State GDP, and State Personal Income, 2nd Quarter 2026; State PCE, 2025",
+   "source": "BEA release",
+   "source_id": "bea",
+   "url": "https://www.bea.gov/news/2026/gdp-third-estimate-industries-corporate-profits-state-gdp-and-state-personal-income-2nd",
+   "timestamp": "2026-09-30T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "PCE",
+    "GDP"
+   ],
+   "summary": "Tier 1 · BEA release · topics: PCE, GDP · next release October 29, 2026",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5b834063e909716a40c5e7be83baa81be47507e8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Advance Retail Inventories",
+   "source": "Census Bureau economic indicator",
+   "source_id": "census",
+   "url": "https://www.census.gov/econ/indicators/index.html",
+   "timestamp": "2026-09-30T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "RETAIL",
+    "TRADE"
+   ],
+   "summary": "Tier 1 · Census Bureau economic indicator · topics: RETAIL",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Here is What to Know Beyond Why GE Vernova Inc. (GEV) is a Trending Stock",
+   "source": "Zacks",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/know-beyond-why-ge-vernova-120005281.html",
+   "timestamp": "2026-09-30T08:00:05-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Zacks · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova declares fourth quarter 2026 dividend",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-declares-fourth-quarter-2026-dividend",
+   "timestamp": "2026-09-30T07:30:06-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "115b15ad70ffc721f00760c3118c1b485f3d9605",
    "tier": 2,
@@ -354,6 +595,22 @@
    ],
    "topics": [],
    "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "21394707481cd02be1205b4f5871cd954af5bd8e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "AST Completes Singapore's First High-End FC-BGA Substrate Facility to Meet Growing AI Chip Demand",
+   "source": "Broadcom investor relations",
+   "source_id": "ir_avgo",
+   "url": "https://investors.broadcom.com/news-releases/news-release-details/ast-completes-singapores-first-high-end-fc-bga-substrate",
+   "timestamp": "2026-09-29T09:00:00-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · AVGO · Broadcom investor relations",
    "disclosure_lag_label": null
   },
   {
@@ -635,59 +892,35 @@
    ],
    "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "d8e4ec431c8592eb4746b083192476cb43d2b9c6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Barr, A Long-Term View on the Costs of Shelter",
-   "source": "Federal Reserve speech",
-   "source_id": "fed_speeches",
-   "url": "https://www.federalreserve.gov/newsevents/speech/barr20260923a.htm",
-   "timestamp": "2026-09-23T10:05:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "87557d1e816c0e7f1f8e9cda05e3ccf8adde77e8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova advances asset longevity for Egypt’s power sector with Rotor Life Extension services",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-advances-asset-longevity-egypts-power-sector-rotor-life-extension",
-   "timestamp": "2026-09-23T05:27:57-04:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
+   "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
+   "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
    "608e96dfbaf485e2cb131a114c190b094a938355",
-   "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0",
-   "90d6db0d639bd65db9201551ecc0222f42c84b71",
-   "9a5c7b0060228e161163831941a046be90fa260a",
-   "181116a10d01c44e7231031850a361acb571609a"
+   "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0"
   ],
   "NVDA": [
-   "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
-   "ac722e3df3199e807ac78537d4bd39e54f845502",
-   "a8fa347e802217ccdeabf8fbd12ce94e8e2c2ebf",
-   "61f153c7fd0ab691c12210a1110853bac3fe5a00",
-   "e09b43228cba68ccc5a9420e06148bb5ed036bdf"
+   "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
+   "cf2da6280da6d2d1e0a4b01639e95b8cb1c5471e",
+   "debc6d880810d2bce76424591c3b21d90a6a8bb1",
+   "214bbfabe8da23aca998619c432c6a669bade7eb",
+   "f61c569f36dc3c07ad0e6973f166ea3a214c3244"
   ],
   "AVGO": [
+   "214bbfabe8da23aca998619c432c6a669bade7eb",
    "115b15ad70ffc721f00760c3118c1b485f3d9605",
    "9c768864efcd6fcada154bdc0daefaf66df35044",
-   "cdbf6d8623e87effd5c365455dae3a03c55d3614"
+   "cdbf6d8623e87effd5c365455dae3a03c55d3614",
+   "21394707481cd02be1205b4f5871cd954af5bd8e"
   ],
   "GOOG": [
+   "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
+   "13611b09d0b63dfc5a17a1c633a96ddf3a2b3ded",
+   "98948837bb9a86625c189a9ff1f3ef8a812b179b",
+   "a14d4baadfe04dbc00e8bc9d7338a8858cb78cc3",
    "30ea2fc08baf671b5caac5ed18afdae6aee58a0f"
   ],
   "BMNR": [
@@ -699,25 +932,29 @@
   ]
  },
  "last24h": [
+  "975ec4f2519a98482fd8462204820da26b6cbce9",
+  "7f355e1357bbe552d08a0e2dbf4eca8d2028f8c9",
+  "b6bc6a096eb423eb62c959590153d591b1304a9f",
+  "5b834063e909716a40c5e7be83baa81be47507e8",
+  "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
   "1478a16716375972c4ed5730b455c47f1276eb07",
   "aa1ac57f54e7cd23e70d9b8598b5f3a478a25ae2",
-  "96198714a74b17c20cfbe4d8cc9e0e93ad4417f2",
-  "15941f2780d8bfeb7048eeef10cfa4567765e485",
-  "36740379333a8d93fad3667bc61e561c5ece421a",
-  "90d6db0d639bd65db9201551ecc0222f42c84b71",
+  "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
+  "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
+  "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
+  "cf2da6280da6d2d1e0a4b01639e95b8cb1c5471e",
+  "debc6d880810d2bce76424591c3b21d90a6a8bb1",
+  "13611b09d0b63dfc5a17a1c633a96ddf3a2b3ded",
+  "98948837bb9a86625c189a9ff1f3ef8a812b179b",
+  "a14d4baadfe04dbc00e8bc9d7338a8858cb78cc3",
+  "214bbfabe8da23aca998619c432c6a669bade7eb",
+  "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
   "115b15ad70ffc721f00760c3118c1b485f3d9605",
   "80c280815bbcfe505f579f0432231c52e02dba9a",
   "d48b2c89b443db8bc7a44348b57ca7fbd78b8bc7",
   "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
   "30ea2fc08baf671b5caac5ed18afdae6aee58a0f",
   "608e96dfbaf485e2cb131a114c190b094a938355",
-  "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0",
-  "9c768864efcd6fcada154bdc0daefaf66df35044",
-  "cdbf6d8623e87effd5c365455dae3a03c55d3614",
-  "973ff1a4124a816614038a100a24ba0bd868353f",
-  "ac722e3df3199e807ac78537d4bd39e54f845502",
-  "01d241e7576a5cad02629f973dfc223dc43f9fc3",
-  "a8fa347e802217ccdeabf8fbd12ce94e8e2c2ebf",
-  "61f153c7fd0ab691c12210a1110853bac3fe5a00"
+  "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0"
  ]
 }
