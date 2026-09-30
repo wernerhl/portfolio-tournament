@@ -432,6 +432,109 @@ def main(troot, sroot, today=None):
             if hits: add('CRITICAL','options:language',f'{of} contains prohibited word(s) {hits} (order §9.8)')
             for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
                 if tok in blob: add('CRITICAL','options:directive',f'{of} contains a buy/sell directive ({tok!r})')
+    # ---------- the daily brief, the goals, the news feed, realized gains, ownership (order 30-Sept) ----------
+    def _lang(path,label):
+        """the words edge and alpha appear nowhere; no buy/sell directive — CRITICAL (order §8.8)"""
+        if not os.path.exists(path): return
+        blob=open(path,encoding='utf-8').read().lower()
+        hits=[w for w in ('edge','alpha') if re.search(r'\b'+w+r'\b',blob)]
+        if hits: add('CRITICAL',f'{label}:language',f'{os.path.relpath(path,troot)} contains prohibited word(s) {hits}')
+        for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
+            if tok in blob: add('CRITICAL',f'{label}:directive',f'{os.path.relpath(path,troot)} contains a buy/sell directive ({tok!r})')
+    # the brief: append-only log with hashes; one entry for the last session; text under the validator's rules
+    lgp=os.path.join(troot,'daily_log.jsonl'); rlp=os.path.join(troot,'brief_rules.json'); bfp=os.path.join(troot,'brief_facts.json')
+    if os.path.exists(lgp):
+        import hashlib as _hl
+        entries=[]
+        try:
+            for ln in open(lgp,encoding='utf-8'):
+                ln=ln.strip()
+                if ln: entries.append(json.loads(ln))
+        except Exception as e:
+            add('CRITICAL','brief:parse',f'daily_log.jsonl unreadable ({e})'); entries=[]
+        ids={e.get('entry_id') for e in entries}
+        rules=json.load(open(rlp)) if os.path.exists(rlp) else {}
+        fw=[w for w in (rules.get('narrative') or {}).get('forecast_words',[])]
+        rules_sha=_hl.sha256(json.dumps(rules,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest() if rules else None
+        for e in entries:
+            body={k:v for k,v in e.items() if k!='entry_sha256'}
+            h=_hl.sha256(json.dumps(body,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+            if h!=e.get('entry_sha256'): add('CRITICAL','brief:edited',f'daily_log.jsonl entry {e.get("entry_id")} does not match its recorded hash — an entry was edited (the log is append-only)')
+            if e.get('supersedes') and e['supersedes'] not in ids: add('HIGH','brief:correction_ref',f'entry {e.get("entry_id")} supersedes an unknown entry {e["supersedes"]}')
+            if e.get('color') not in ('RED','YELLOW','GREEN'): add('CRITICAL','brief:color',f'entry {e.get("entry_id")} colour {e.get("color")!r}')
+            t=str(e.get('text') or ''); low=' '+re.sub(r'[^a-z0-9 %+.-]',' ',t.lower())+' '
+            if len(t.split())>int((rules.get('narrative') or {}).get('max_words',40)): add('CRITICAL','brief:length',f'entry {e.get("entry_id")} has {len(t.split())} words (>40)')
+            bad=[w for w in fw if re.search(r'(?<![a-z])'+re.escape(w)+r'(?![a-z])',low)]
+            if bad: add('CRITICAL','brief:forecast',f'entry {e.get("entry_id")} contains forecast word(s) {bad}')
+            if e.get('text_source') not in ('model','template'): add('HIGH','brief:source',f'entry {e.get("entry_id")} text_source {e.get("text_source")!r}')
+        if entries:
+            last=entries[-1]
+            if str(last.get('session'))<ls.isoformat(): add('HIGH','brief:missing',f'no brief entry for the last session {ls} (last: {last.get("session")})')
+            if rules_sha and last.get('rules_sha256') and last['rules_sha256']!=rules_sha:
+                add('HIGH','brief:rules_changed','brief_rules.json differs from the rules the latest entry was evaluated under (re-register the rules; the log records the old hash)')
+            if rules and not rules.get('frozen_at'): add('HIGH','brief:rules_unfrozen','brief_rules.json carries no frozen_at')
+            if os.path.exists(bfp):
+                bf=json.load(open(bfp))
+                if bf.get('entry_id')!=last.get('entry_id') or bf.get('payload_sha256')!=last.get('payload_sha256'):
+                    add('HIGH','brief:facts_mismatch','brief_facts.json does not carry the payload of the latest log entry')
+        else:
+            add('HIGH','brief:empty','daily_log.jsonl has no entries')
+        _lang(lgp,'brief')
+    else:
+        add('HIGH','brief:missing','data/daily_log.jsonl absent — the daily brief has not run')
+    # the goals: computed against the immutable claims register (pinned by its 18-Sept record)
+    gp=os.path.join(troot,'goals.json'); crp=os.path.join(troot,'claims_register.json')
+    if os.path.exists(crp):
+        cr=json.load(open(crp)); cl=[c for c in cr.get('claims',[]) if c.get('claim_id')=='claim-2026-09-18-1']
+        if not cl or abs(float(cl[0].get('start_value_usd',0))-229245.80)>1e-6 or abs(float(cl[0].get('target_annualized_return',0))-0.29)>1e-9 or int(cl[0].get('horizon_years',0))!=3 or str(cl[0].get('start_date'))!='2026-09-18':
+            add('CRITICAL','claims:record_changed','claims_register.json: the 18-Sept claim (account $229,245.80; 29 percent annualized; three years; start 2026-09-18) is not intact — the record is never edited')
+        cids=[c.get('claim_id') for c in cr.get('claims',[])]
+        if len(cids)!=len(set(cids)): add('CRITICAL','claims:duplicate_ids','claims_register.json has duplicate claim ids')
+        if os.path.exists(gp):
+            import hashlib as _hl2
+            gj=json.load(open(gp))
+            if gj.get('register_sha256')!=_hl2.sha256(json.dumps(cr,sort_keys=True).encode()).hexdigest():
+                add('HIGH','goals:register_stale','goals.json was computed against a different claims register')
+            hg=gj.get('house_goal') or {}
+            if not (hg.get('fx') or {}).get('rate'): add('HIGH','goals:fx_missing','goals.json carries no USDBRL rate')
+            for c in gj.get('claims',[]):
+                if c.get('annualized_caption') is None: add('HIGH','goals:caption','claims progress lacks the annualized-figures caption')
+            _lang(gp,'goals')
+        else:
+            add('HIGH','goals:missing','data/goals.json absent (compute_goals.py did not run)')
+    # the news feed: fresh, tiered, bodies never stored, clean vocabulary
+    np_=os.path.join(troot,'news.json')
+    if os.path.exists(np_):
+        nj=json.load(open(np_)); nd=to_date(nj.get('as_of') or '')
+        if not nd or (nd<ls and len(trading_days(nd,ls))-1>1): add('HIGH','news:stale',f'news.json as_of {nd} vs last session {ls}')
+        items=nj.get('items') or []
+        if any(k in it for it in items for k in ('body','content','article','description')): add('CRITICAL','news:body_stored','news.json stores article bodies/descriptions (never stored)')
+        if any(it.get('tier') not in (1,2) or not it.get('tier_label') for it in items): add('HIGH','news:tier','news.json items without a tier / tier label')
+        if any(it.get('tier')==2 and it.get('tier_label')!='secondary' for it in items): add('HIGH','news:tier','Tier-2 items must be labeled secondary')
+        _lang(np_,'news')
+    else:
+        add('HIGH','news:missing','data/news.json absent (fetch_news.py did not run)')
+    rgp=os.path.join(troot,'realized_gains.json')
+    if os.path.exists(rgp): _lang(rgp,'gains')
+    # ownership (E1/E2): classification stated on every purchase; as-of and disclosure dates on every 13F figure
+    ip_=os.path.join(troot,'ownership','insiders.json')
+    if os.path.exists(ip_):
+        ij=json.load(open(ip_))
+        for tk,n in (ij.get('names') or {}).items():
+            rows=(n.get('opportunistic_purchases_90d') or [])+(n.get('sales_shown') or [])
+            if any(r.get('classification') not in ('routine','opportunistic') for r in rows): add('HIGH','insiders:classification',f'{tk}: an insider transaction without a routine/opportunistic classification')
+        _lang(ip_,'insiders')
+    else:
+        add('INFO','insiders:missing','data/ownership/insiders.json absent (EDGAR access needs SEC_USER_AGENT)')
+    hp13=os.path.join(troot,'ownership','holders_13f.json')
+    if os.path.exists(hp13):
+        hj13=json.load(open(hp13))
+        for tk,n in (hj13.get('names') or {}).items():
+            rows=(n.get('top_holders') or [])+(n.get('new_positions') or [])+(n.get('exits') or [])
+            if any(not r.get('as_of_quarter_end') or not r.get('disclosed') for r in rows): add('HIGH','ownership:dates',f'{tk}: a 13F figure without as-of quarter-end and disclosure date')
+        _lang(hp13,'ownership')
+    else:
+        add('INFO','ownership:missing','data/ownership/holders_13f.json absent (EDGAR access needs SEC_USER_AGENT)')
     # visibility review dates (screener)
     vp=os.path.join(sroot,'visibility_registry.json')
     if os.path.exists(vp):
