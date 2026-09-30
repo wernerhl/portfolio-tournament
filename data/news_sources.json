@@ -1,0 +1,327 @@
+{
+ "cadence": "static",
+ "as_of": "2026-09-30",
+ "order": "Execution Order 30 Sept 2026, items B4 (news, primary sources first) and E3 (congressional and executive trades)",
+ "written_by": "scripts/fetch_news.py reads this registry; the list is frozen — a source is added or changed only by order",
+ "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
+ "rule_source": "the newsroom's founding principle (La Linterna, architecture of primary sources, February 2026): every story is generated from primary sources — official data, public records, government documents, direct statements of the actors, raw economic data; traditional media are an internal reference layer, seen but never cited or rewritten, stored as headlines only. Applied here as Tier 1 = the issuer's own release; Tier 2 = secondary headlines, shown but labeled",
+ "order_text": {
+  "B4": "News, primary sources first. Two tiers, stored as headline, source, URL, timestamp, tickers, and a system-written one-line summary; article bodies are never stored. Tier 1, primary: Federal Reserve press releases and speeches feed; BLS and BEA release pages on release days; SEC EDGAR filings feeds (8-K, 10-Q, 10-K, Form 4) for every held name and the top-40 board; company investor-relations press releases for held names. Tier 2, secondary and labeled as such: per-ticker headline feeds for held names. Relevance filter: held names, the board's top 40, and macro topics mapped to calendar event types. The news panel on the home page shows the last 24 hours, Tier 1 first; each held name's card shows its last five items.",
+  "E3": "Congressional and executive trades: not added as signals, scores, or panels. If a disclosed trade in a held name appears in the Tier 2 news feed it is shown there as news, labeled with its disclosure lag, and nowhere else."
+ },
+ "stored_fields": [
+  "headline (at most 200 characters)",
+  "source",
+  "url",
+  "timestamp (ISO 8601 with offset, ET)",
+  "tickers",
+  "topics",
+  "summary (system-written from structured fields)",
+  "disclosure_lag_label (E3, Tier 2 only)"
+ ],
+ "never_stored": [
+  "article bodies",
+  "the feed's own description / summary / content text",
+  "the provider's summary field"
+ ],
+ "language_rules": {
+  "vocabulary": "the referee's two prohibited words (scripts/audit_nightly.py, language check) never appear in a stored item; the check runs on the full serialized item and again on the whole file before it is written; violating items are counted under excluded.vocabulary_rule, not stored",
+  "directive": "no stored text carries a buy/sell directive — the referee's tokens plus the plain-English imperative forms listed as DIRECTIVE_PATTERNS in scripts/fetch_news.py; violating items are counted under excluded.directive_rule, not stored",
+  "trade_recommendation": "nothing in the feed recommends a trade; a disclosed congressional or executive trade is news with its disclosure lag labeled, never a signal"
+ },
+ "relevance": {
+  "held_names": "data/holdings.json, shares > 0",
+  "top40": "data/screen/scores.json watchlist rows with on_board_as == top40",
+  "macro": "topic keywords in the title mapped to calendar event types (topic_keywords); Federal Reserve items are kept regardless of topic, other macro items only with a topic",
+  "tier2": "a secondary headline is relevant only when it names a universe member (symbol as a whole word or a company-name phrase); the tickers stored are the members named"
+ },
+ "user_agent": "portfolio-tournament/1.0 (+https://github.com/wernerhl/portfolio-tournament)",
+ "window_hours": 24,
+ "stored_days": 7,
+ "topic_keywords": {
+  "FOMC": [
+   "FOMC",
+   "Federal Open Market Committee",
+   "federal funds"
+  ],
+  "PCE": [
+   "Personal Income and Outlays",
+   "PCE"
+  ],
+  "GDP": [
+   "Gross Domestic Product",
+   "GDP"
+  ],
+  "CPI": [
+   "Consumer Price Index",
+   "CPI"
+  ],
+  "PPI": [
+   "Producer Price Index",
+   "PPI"
+  ],
+  "NFP": [
+   "Employment Situation",
+   "payroll"
+  ],
+  "JOLTS": [
+   "Job Openings",
+   "JOLTS"
+  ],
+  "RETAIL": [
+   "Retail"
+  ],
+  "CLAIMS": [
+   "Unemployment Insurance Weekly Claims",
+   "initial claims"
+  ],
+  "TRADE": [
+   "International Trade"
+  ]
+ },
+ "aliases": {
+  "NVDA": [
+   "NVIDIA",
+   "Nvidia"
+  ],
+  "AVGO": [
+   "Broadcom"
+  ],
+  "GOOG": [
+   "Alphabet",
+   "Google"
+  ],
+  "GEV": [
+   "GE Vernova",
+   "Vernova"
+  ],
+  "MU": [
+   "Micron"
+  ],
+  "ANET": [
+   "Arista"
+  ],
+  "BMNR": [
+   "BitMine",
+   "Bitmine"
+  ]
+ },
+ "disclosure_lag_label": "disclosed trade — reports lag the trade by up to 45 days; shown as news only, no signal",
+ "sources": [
+  {
+   "id": "fed_press",
+   "tier": 1,
+   "kind": "rss",
+   "url": "https://www.federalreserve.gov/feeds/press_all.xml",
+   "label": "Federal Reserve Board press release",
+   "keep_without_topic": true,
+   "status": "ok",
+   "provenance": "issuer feed, RSS 2.0 (title, link, category, pubDate); verified 200 on 2026-09-30; every Fed press release is Tier 1 relevant"
+  },
+  {
+   "id": "fed_speeches",
+   "tier": 1,
+   "kind": "rss",
+   "url": "https://www.federalreserve.gov/feeds/speeches.xml",
+   "label": "Federal Reserve speech",
+   "keep_without_topic": true,
+   "status": "ok",
+   "provenance": "issuer feed, RSS 2.0; verified 200 on 2026-09-30; the description (venue line) is not stored"
+  },
+  {
+   "id": "bea",
+   "tier": 1,
+   "kind": "rss",
+   "url": "https://apps.bea.gov/rss/rss.xml",
+   "label": "BEA release",
+   "keep_without_topic": false,
+   "status": "ok",
+   "provenance": "issuer feed, RSS 2.0 with one item per release back to 2013; verified 200 on 2026-09-30; the description carries release text and is never stored; NextReleaseDate (structured) is used in the summary; kept only with a topic (PCE, GDP, TRADE)"
+  },
+  {
+   "id": "bea_release_day",
+   "tier": 1,
+   "kind": "bea_release_day",
+   "url": null,
+   "fallback_for": "bea",
+   "label": "BEA (release page)",
+   "headline_prefix": "BEA release",
+   "status": "ok",
+   "provenance": "fallback used only when the BEA feed fails: release-day items constructed from data/event_calendar.json event types GDP and PCE (none registered in the calendar as of 2026-09-30) and the release schedule; nothing fetched",
+   "release_pages": {
+    "GDP": {
+     "name": "Gross Domestic Product",
+     "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
+     "time_et": "08:30",
+     "reference_lag_months": 1
+    },
+    "PCE": {
+     "name": "Personal Income and Outlays",
+     "url": "https://www.bea.gov/data/income-saving/personal-income",
+     "time_et": "08:30",
+     "reference_lag_months": 1
+    }
+   }
+  },
+  {
+   "id": "bls_release_day",
+   "tier": 1,
+   "kind": "bls_release_day",
+   "url": null,
+   "label": "BLS (release page)",
+   "headline_prefix": "BLS release",
+   "status": "ok",
+   "provenance": "https://www.bls.gov/feed/bls_latest.rss returns 403 to automated clients (checked 2026-09-30), as do the release pages; on a release day (data/event_calendar.json, types CPI, NFP, PPI, JOLTS) a Tier 1 item is constructed from the schedule once the scheduled time has passed — headline 'BLS release: {release} ({reference month})', the live release-page URL with the release date as fragment, summary 'scheduled release at {time} ET; print not fetched'; nothing is fetched",
+   "release_pages": {
+    "CPI": {
+     "name": "Consumer Price Index",
+     "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+     "time_et": "08:30",
+     "reference_lag_months": 1
+    },
+    "NFP": {
+     "name": "Employment Situation",
+     "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+     "time_et": "08:30",
+     "reference_lag_months": 1
+    },
+    "PPI": {
+     "name": "Producer Price Index",
+     "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
+     "time_et": "08:30",
+     "reference_lag_months": 1
+    },
+    "JOLTS": {
+     "name": "Job Openings and Labor Turnover",
+     "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
+     "time_et": "10:00",
+     "reference_lag_months": 2
+    }
+   }
+  },
+  {
+   "id": "census",
+   "tier": 1,
+   "kind": "rss",
+   "url": "https://www.census.gov/economic-indicators/indicator.xml",
+   "label": "Census Bureau economic indicator",
+   "keep_without_topic": false,
+   "status": "ok",
+   "provenance": "issuer feed, RSS 2.0 (one item per indicator, link = indicator page); verified 200 on 2026-09-30; kept only with a topic — retail sales (RETAIL) and international trade (TRADE) release days"
+  },
+  {
+   "id": "dol",
+   "tier": 1,
+   "kind": "rss",
+   "url": "https://www.dol.gov/rss/releases.xml",
+   "label": "Department of Labor release",
+   "keep_without_topic": false,
+   "status": "ok",
+   "provenance": "issuer feed, RSS 2.0 (2-digit-year pubDate); verified 200 on 2026-09-30; kept only with a topic — weekly claims (CLAIMS)"
+  },
+  {
+   "id": "edgar",
+   "tier": 1,
+   "kind": "edgar_submissions",
+   "url": "https://data.sec.gov/submissions/CIK{cik:010d}.json",
+   "ticker_map_url": "https://www.sec.gov/files/company_tickers.json",
+   "archive_url": "https://www.sec.gov/Archives/edgar/data/{cik}/{accession without dashes}/{primaryDocument}",
+   "label": "SEC EDGAR filing",
+   "universe": "held names and the top-40 board",
+   "forms": [
+    "8-K",
+    "8-K/A",
+    "10-Q",
+    "10-Q/A",
+    "10-K",
+    "10-K/A",
+    "4",
+    "4/A"
+   ],
+   "user_agent_env": "SEC_USER_AGENT",
+   "rate_limit_per_second": 8,
+   "status": "ok",
+   "provenance": "issuer record (filings.recent: accessionNumber, filingDate, acceptanceDateTime, form, primaryDocument, primaryDocDescription); every EDGAR endpoint returns 403 unless the User-Agent declares a contact in the SEC's required form, read from the environment variable SEC_USER_AGENT (never hardcoded) — unset means the source is skipped and recorded as such; headline '{form} filed by {company}' (Form 4 spelled out), no body parsing; summary 'EDGAR {form} · filed {date} · {primaryDocDescription or form}'; timestamp = acceptanceDateTime, else noon ET of the filing date; sequential requests at most 8 per second"
+  },
+  {
+   "id": "ir_avgo",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "AVGO",
+   "url": "https://investors.broadcom.com/rss/news-releases.xml",
+   "label": "Broadcom investor relations",
+   "status": "ok",
+   "provenance": "issuer press-release feed (Q4 platform), RSS 2.0; verified 200 on 2026-09-30"
+  },
+  {
+   "id": "ir_nvda",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "NVDA",
+   "url": "https://nvidianews.nvidia.com/cats/press_release.xml",
+   "label": "NVIDIA investor relations",
+   "status": "ok",
+   "provenance": "issuer press-release feed found on the index page https://nvidianews.nvidia.com/rss (an HTML page listing feeds), category 'press_release'; verified 200 on 2026-09-30, 20 items, press releases only (/releases.xml and /rss.xml mix in blog posts and are not used)"
+  },
+  {
+   "id": "ir_gev",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "GEV",
+   "url": "https://www.gevernova.com/news/subscribe/all/rss.xml",
+   "label": "GE Vernova investor relations",
+   "status": "ok",
+   "provenance": "issuer press-release feed linked from https://www.gevernova.com/news/press-releases; verified 200 on 2026-09-30, 20 press releases (links under /news/press-releases/); the pubDate carries a line break before the zone, normalized at parse. Not used: /news/rss (404), /news/rss.xml (media-contact entries and feature articles), /rss.xml (investor events and leadership pages)"
+  },
+  {
+   "id": "ir_goog",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "GOOG",
+   "url": null,
+   "label": "Alphabet investor relations",
+   "status": "no feed found (checked 2026-09-30)",
+   "provenance": "https://abc.xyz/investor/ has no RSS link and no alternate feed element; press releases for GOOG come through EDGAR 8-K filings (Tier 1) and the Tier 2 headline feed"
+  },
+  {
+   "id": "ir_bmnr",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "BMNR",
+   "url": null,
+   "label": "BitMine investor relations",
+   "status": "no feed found (checked 2026-09-30)",
+   "provenance": "press releases are distributed through PR Newswire (https://bitminetech.io/investor-relations links them; the PR Newswire company page offers no organization feed); the GlobeNewswire keyword feed https://www.globenewswire.com/RssFeed/keyword/bitmine%20immersion/feedTitle/BitMine is stale (last item 2024-04-22) and is not used; filings come through EDGAR (Tier 1) and headlines through Tier 2"
+  },
+  {
+   "id": "ir_mu",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "MU",
+   "url": "https://investors.micron.com/rss/news-releases.xml",
+   "label": "Micron investor relations",
+   "status": "blocked: 403 to automated clients (checked 2026-09-30)",
+   "provenance": "Q4-platform feed; returns 403 to the declared User-Agent; skipped until it answers; filings come through EDGAR (Tier 1) and headlines through Tier 2"
+  },
+  {
+   "id": "ir_anet",
+   "tier": 1,
+   "kind": "rss",
+   "ticker": "ANET",
+   "url": "https://investors.arista.com/rss/news-releases.xml",
+   "label": "Arista investor relations",
+   "status": "blocked: 403 to automated clients (checked 2026-09-30)",
+   "provenance": "Q4-platform feed; returns 403 to the declared User-Agent; skipped until it answers; filings come through EDGAR (Tier 1) and headlines through Tier 2"
+  },
+  {
+   "id": "yahoo_headlines",
+   "tier": 2,
+   "kind": "yahoo_ticker",
+   "url": "https://finance.yahoo.com/quote/{ticker}/news/",
+   "label": "Yahoo Finance headline feed (secondary)",
+   "universe": "held names",
+   "status": "ok",
+   "provenance": "yfinance Ticker.news, verified 2026-09-30: content.title, content.pubDate (ISO Z), content.provider.displayName (stored as source), content.canonicalUrl.url or clickThroughUrl.url (stored as url); content.description and content.summary are never read; every item is labeled tier 2 / secondary; summary 'Tier 2 headline · {provider} · about {tickers}'; a headline is relevant only when it names a universe member"
+  }
+ ]
+}
