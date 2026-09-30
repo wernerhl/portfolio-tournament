@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-09-29",
- "fetched_at": "2026-09-30T14:50:20-04:00",
+ "as_of": "2026-09-30",
+ "fetched_at": "2026-09-30T19:29:45-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -58,7 +58,7 @@
  },
  "sources_status": {
   "fed_press": "ok n=5 (parsed 20)",
-  "fed_speeches": "ok n=4 (parsed 15)",
+  "fed_speeches": "ok n=5 (parsed 15)",
   "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
@@ -72,35 +72,83 @@
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GEV": "ok n=5 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=1 (parsed 10)",
   "yahoo_headlines:AVGO": "ok n=1 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=5 (parsed 10)",
   "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 1,
-  "directive_rule": 1,
-  "irrelevant": 36,
-  "out_of_window": 135,
+  "directive_rule": 0,
+  "irrelevant": 40,
+  "out_of_window": 131,
   "unparseable": 0
  },
  "counts": {
-  "items": 51,
-  "tier1": 20,
-  "tier2": 31,
-  "last24h": 24
+  "items": 58,
+  "tier1": 21,
+  "tier2": 37,
+  "last24h": 27
  },
  "items": [
   {
-   "id": "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
+   "id": "04680932e761ce4bb3e9f335a584f70121944102",
    "tier": 2,
    "tier_label": "secondary",
-   "headline": "Google asks EU court to suspend order to share search data with AI rivals",
+   "headline": "VIG Cannot Own Meta’s or Alphabet’s Dividends Until 2035 at the Earliest: The 10-Year Rule Written Into Its Index",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/etf/2026/09/30/vig-cannot-own-metas-or-alphabets-dividends-until-2035-at-the-earliest-the-10-year-rule-written-into-its-index/",
+   "timestamp": "2026-09-30T18:35:21-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c9ea7169cdca70f27aa560e1309b87b6143c869e",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google Unveils New AI Model Gemini 4 Argon, Sending Alphabet Stock Higher",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.barrons.com/articles/google-ai-gemini-4-argon-alphabet-stock-d3df631c?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-09-30T17:35:00-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google Stock Rises On Gemini 4 Argon Release After New AI Model Delays",
+   "source": "Investor's Business Daily",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.investors.com/news/technology/google-stock-rises-on-gemini-4-argon-release-after-new-ai-model-delays/?src=A00220&yptr=yahoo",
+   "timestamp": "2026-09-30T17:04:26-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investor's Business Daily · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "87f489c49538e82cbc8c2e47234bece5259a7348",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet stock slips on report of internal doubts over Gemini 4",
    "source": "Investing.com",
    "source_id": "yahoo_headlines:GOOG",
-   "url": "https://finance.yahoo.com/technology/ai/articles/google-asks-eu-court-suspend-175843460.html",
-   "timestamp": "2026-09-30T13:58:43-04:00",
+   "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-stock-slips-report-internal-203029696.html",
+   "timestamp": "2026-09-30T16:30:29-04:00",
    "tickers": [
     "GOOG"
    ],
@@ -116,12 +164,74 @@
    "source": "Investor's Business Daily",
    "source_id": "yahoo_headlines:NVDA",
    "url": "https://www.investors.com/research/breakout-stocks-technical-analysis/semtech-stock-teases-record-high-nvidia-amd-enter-buy-range/?src=A00220&yptr=yahoo",
-   "timestamp": "2026-09-30T13:53:09-04:00",
+   "timestamp": "2026-09-30T16:19:14-04:00",
    "tickers": [
     "NVDA"
    ],
    "topics": [],
    "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fea9a4b6bfb1358de0627932c86bdda03e88a486",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova (GEV) Secures NRC Permit For New Reactor Design",
+   "source": "Simply Wall St.",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/energy/articles/ge-vernova-gev-secures-nrc-201009594.html",
+   "timestamp": "2026-09-30T16:10:09-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Simply Wall St. · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3208241e531ffc00aa3f5f5d73b07a040ecb13a5",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "SCHD’s Rules Sold Broadcom in March 2024. The Stock Is Up About 183% Since, and SCHD Holders Missed the Run",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://247wallst.com/investing/etf/2026/09/30/schds-rules-sold-broadcom-in-march-2024-the-stock-is-up-about-183-since-and-schd-holders-missed-the-run/",
+   "timestamp": "2026-09-30T16:01:47-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5b13dd92b3e8254d991f6ba919e490e3656f4edc",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Cook, The Dual Mandate in Rural America",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/cook20260930a.htm",
+   "timestamp": "2026-09-30T15:25:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google asks EU court to suspend order to share search data with AI rivals",
+   "source": "Investing.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/google-asks-eu-court-suspend-175843460.html",
+   "timestamp": "2026-09-30T13:58:43-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investing.com · about GOOG",
    "disclosure_lag_label": null
   },
   {
@@ -896,11 +1006,11 @@
  ],
  "per_name": {
   "GEV": [
+   "fea9a4b6bfb1358de0627932c86bdda03e88a486",
    "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
    "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
    "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
-   "608e96dfbaf485e2cb131a114c190b094a938355",
-   "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0"
+   "608e96dfbaf485e2cb131a114c190b094a938355"
   ],
   "NVDA": [
    "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
@@ -910,18 +1020,18 @@
    "f61c569f36dc3c07ad0e6973f166ea3a214c3244"
   ],
   "AVGO": [
+   "3208241e531ffc00aa3f5f5d73b07a040ecb13a5",
    "214bbfabe8da23aca998619c432c6a669bade7eb",
    "115b15ad70ffc721f00760c3118c1b485f3d9605",
    "9c768864efcd6fcada154bdc0daefaf66df35044",
-   "cdbf6d8623e87effd5c365455dae3a03c55d3614",
-   "21394707481cd02be1205b4f5871cd954af5bd8e"
+   "cdbf6d8623e87effd5c365455dae3a03c55d3614"
   ],
   "GOOG": [
-   "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
-   "13611b09d0b63dfc5a17a1c633a96ddf3a2b3ded",
-   "98948837bb9a86625c189a9ff1f3ef8a812b179b",
-   "a14d4baadfe04dbc00e8bc9d7338a8858cb78cc3",
-   "30ea2fc08baf671b5caac5ed18afdae6aee58a0f"
+   "04680932e761ce4bb3e9f335a584f70121944102",
+   "c9ea7169cdca70f27aa560e1309b87b6143c869e",
+   "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
+   "87f489c49538e82cbc8c2e47234bece5259a7348",
+   "3497859a5603e636b9b4c7cc8a941fbb59e05a7c"
   ],
   "BMNR": [
    "973ff1a4124a816614038a100a24ba0bd868353f",
@@ -932,15 +1042,20 @@
   ]
  },
  "last24h": [
+  "5b13dd92b3e8254d991f6ba919e490e3656f4edc",
   "975ec4f2519a98482fd8462204820da26b6cbce9",
   "7f355e1357bbe552d08a0e2dbf4eca8d2028f8c9",
   "b6bc6a096eb423eb62c959590153d591b1304a9f",
   "5b834063e909716a40c5e7be83baa81be47507e8",
   "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
-  "1478a16716375972c4ed5730b455c47f1276eb07",
-  "aa1ac57f54e7cd23e70d9b8598b5f3a478a25ae2",
-  "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
+  "04680932e761ce4bb3e9f335a584f70121944102",
+  "c9ea7169cdca70f27aa560e1309b87b6143c869e",
+  "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
+  "87f489c49538e82cbc8c2e47234bece5259a7348",
   "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
+  "fea9a4b6bfb1358de0627932c86bdda03e88a486",
+  "3208241e531ffc00aa3f5f5d73b07a040ecb13a5",
+  "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
   "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
   "cf2da6280da6d2d1e0a4b01639e95b8cb1c5471e",
   "debc6d880810d2bce76424591c3b21d90a6a8bb1",
@@ -953,8 +1068,6 @@
   "80c280815bbcfe505f579f0432231c52e02dba9a",
   "d48b2c89b443db8bc7a44348b57ca7fbd78b8bc7",
   "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
-  "30ea2fc08baf671b5caac5ed18afdae6aee58a0f",
-  "608e96dfbaf485e2cb131a114c190b094a938355",
-  "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0"
+  "30ea2fc08baf671b5caac5ed18afdae6aee58a0f"
  ]
 }
