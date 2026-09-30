@@ -1,8 +1,8 @@
 {
   "cadence": "daily",
-  "session_date": "2026-09-15",
-  "as_of": "2026-09-14",
-  "computed_at": "2026-09-15T20:06:37-04:00",
+  "session_date": "2026-09-29",
+  "as_of": "2026-09-29",
+  "computed_at": "2026-09-29T22:47:23-04:00",
   "method": "per-name OLS, 252 sessions, daily simple returns; factors: market SPY, size IWM\u2212SPY, value IWD\u2212IWF, momentum MTUM\u2212SPY; portfolio exposure = weight-averaged beta (equity weights, names with betas only)",
   "label": "estimated, 252-session regression",
   "window_sessions": 252,
@@ -18,19 +18,20 @@
   "universe": [
     "AFL",
     "AMP",
+    "ANET",
     "AON",
     "APP",
     "ARM",
     "AVGO",
     "AXP",
     "BKNG",
+    "BMNR",
     "BX",
-    "CEG",
     "CRDO",
-    "ETN",
     "EXPE",
     "FISV",
     "FSLR",
+    "GEV",
     "GOOG",
     "GOOGL",
     "IDXX",
@@ -41,7 +42,6 @@
     "META",
     "MPWR",
     "MS",
-    "MSFT",
     "MU",
     "NTAP",
     "NVDA",
@@ -54,15 +54,13 @@
     "SNDK",
     "TPR",
     "TROW",
-    "TSM",
     "TXN",
     "UAL",
-    "VRT",
     "VST"
   ],
   "status_counts": {
     "ok": 0,
-    "partial_history": 43,
+    "partial_history": 41,
     "insufficient_history": 0
   },
   "names": {
@@ -74,16 +72,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.2516,
-        "size": -0.0593,
-        "value": 0.4829,
-        "momentum": -0.2149
+        "market": 0.229,
+        "size": -0.0257,
+        "value": 0.4637,
+        "momentum": -0.2142
       },
-      "intercept": -0.0001,
-      "intercept_bps_daily": -1.1144,
-      "r2": 0.2079,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0002,
+      "intercept_bps_daily": -1.8214,
+      "r2": 0.2091,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -98,20 +96,45 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.2038,
-        "size": 0.2639,
-        "value": 0.4393,
-        "momentum": -0.3498
+        "market": 1.2334,
+        "size": 0.2302,
+        "value": 0.4901,
+        "momentum": -0.3494
       },
-      "intercept": -0.0005,
-      "intercept_bps_daily": -4.6492,
-      "r2": 0.3112,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0008,
+      "intercept_bps_daily": -7.5515,
+      "r2": 0.3052,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-09-15",
       "missing_sessions": 2,
       "in_portfolios": [
         "1_cap_pres"
+      ]
+    },
+    "ANET": {
+      "ticker": "ANET",
+      "sector": "Technology",
+      "sector_source": "fundamentals_snapshot.parquet",
+      "n_obs": 250,
+      "window_sessions": 252,
+      "status": "partial_history",
+      "betas": {
+        "market": 1.2432,
+        "size": -0.3083,
+        "value": -0.4501,
+        "momentum": 1.0154
+      },
+      "intercept": 0.001,
+      "intercept_bps_daily": 9.982,
+      "r2": 0.3684,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
+      "history_start": "2014-06-06",
+      "missing_sessions": 2,
+      "in_portfolios": [
+        "book",
+        "5_werner"
       ]
     },
     "AON": {
@@ -122,16 +145,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.3446,
-        "size": 0.1144,
-        "value": 0.3365,
-        "momentum": -0.7216
+        "market": 0.3435,
+        "size": 0.1613,
+        "value": 0.3219,
+        "momentum": -0.7352
       },
-      "intercept": -0.0009,
-      "intercept_bps_daily": -8.9719,
-      "r2": 0.2602,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.001,
+      "intercept_bps_daily": -9.5801,
+      "r2": 0.2654,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -146,16 +169,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.9806,
-        "size": 1.0422,
-        "value": -1.9336,
-        "momentum": -0.3763
+        "market": 1.0292,
+        "size": 1.0938,
+        "value": -1.9314,
+        "momentum": -0.426
       },
-      "intercept": -0.0007,
-      "intercept_bps_daily": -7.4365,
-      "r2": 0.2233,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0018,
+      "intercept_bps_daily": -18.3878,
+      "r2": 0.2267,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2021-04-15",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -170,16 +193,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.9774,
-        "size": 0.6496,
-        "value": -0.7549,
-        "momentum": 1.2866
+        "market": 2.1676,
+        "size": 0.5275,
+        "value": -0.8043,
+        "momentum": 1.2946
       },
-      "intercept": 0.0019,
-      "intercept_bps_daily": 19.1476,
-      "r2": 0.4256,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0028,
+      "intercept_bps_daily": 28.3787,
+      "r2": 0.4348,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2023-09-14",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -194,16 +217,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.2629,
-        "size": -0.1463,
-        "value": -0.8887,
-        "momentum": 0.6898
+        "market": 1.2527,
+        "size": -0.0901,
+        "value": -0.9246,
+        "momentum": 0.6649
       },
-      "intercept": 0.0001,
-      "intercept_bps_daily": 0.9987,
-      "r2": 0.504,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0002,
+      "intercept_bps_daily": 2.2779,
+      "r2": 0.5119,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2009-08-06",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -222,16 +245,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.1496,
-        "size": 0.5634,
-        "value": 0.1589,
-        "momentum": -0.376
+        "market": 1.1883,
+        "size": 0.5142,
+        "value": 0.1902,
+        "momentum": -0.3764
       },
-      "intercept": -0.0008,
-      "intercept_bps_daily": -7.9214,
-      "r2": 0.3266,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0011,
+      "intercept_bps_daily": -10.6526,
+      "r2": 0.3256,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -246,22 +269,47 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.437,
-        "size": 0.0345,
-        "value": 0.1739,
-        "momentum": -0.8663
+        "market": 1.4407,
+        "size": 0.1391,
+        "value": 0.129,
+        "momentum": -0.9086
       },
       "intercept": -0.0015,
-      "intercept_bps_daily": -14.8175,
-      "r2": 0.25,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept_bps_daily": -15.4667,
+      "r2": 0.263,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
         "2_balanced",
         "3_aggressive",
         "4_tactical"
+      ]
+    },
+    "BMNR": {
+      "ticker": "BMNR",
+      "sector": null,
+      "sector_source": null,
+      "n_obs": 250,
+      "window_sessions": 252,
+      "status": "partial_history",
+      "betas": {
+        "market": 3.0535,
+        "size": 2.1146,
+        "value": -1.2071,
+        "momentum": -0.1692
+      },
+      "intercept": -0.0025,
+      "intercept_bps_daily": -24.9135,
+      "r2": 0.3736,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
+      "history_start": "2025-06-05",
+      "missing_sessions": 2,
+      "in_portfolios": [
+        "book",
+        "5_werner"
       ]
     },
     "BX": {
@@ -272,45 +320,20 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5913,
-        "size": 0.8256,
-        "value": 0.2316,
-        "momentum": -0.51
+        "market": 1.6558,
+        "size": 0.764,
+        "value": 0.2684,
+        "momentum": -0.5103
       },
       "intercept": -0.0024,
-      "intercept_bps_daily": -23.5658,
-      "r2": 0.3435,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept_bps_daily": -24.194,
+      "r2": 0.3498,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2007-06-22",
       "missing_sessions": 2,
       "in_portfolios": [
         "3_aggressive"
-      ]
-    },
-    "CEG": {
-      "ticker": "CEG",
-      "sector": "Utilities",
-      "sector_source": "ticker_indicators.json",
-      "n_obs": 250,
-      "window_sessions": 252,
-      "status": "partial_history",
-      "betas": {
-        "market": 0.7996,
-        "size": 0.6183,
-        "value": -0.2776,
-        "momentum": 0.4528
-      },
-      "intercept": -0.0005,
-      "intercept_bps_daily": -5.1378,
-      "r2": 0.1901,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
-      "history_start": "2022-01-19",
-      "missing_sessions": 2,
-      "in_portfolios": [
-        "book",
-        "5_werner"
       ]
     },
     "CRDO": {
@@ -321,46 +344,21 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.7495,
-        "size": 1.3333,
-        "value": -2.1819,
-        "momentum": 1.7485
+        "market": 0.8565,
+        "size": 1.1347,
+        "value": -2.172,
+        "momentum": 1.7536
       },
-      "intercept": 0.0021,
-      "intercept_bps_daily": 21.2928,
-      "r2": 0.4135,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.003,
+      "intercept_bps_daily": 29.507,
+      "r2": 0.4159,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2022-01-27",
       "missing_sessions": 2,
       "in_portfolios": [
         "3_aggressive",
         "4_tactical"
-      ]
-    },
-    "ETN": {
-      "ticker": "ETN",
-      "sector": "Industrials",
-      "sector_source": "ticker_indicators.json",
-      "n_obs": 250,
-      "window_sessions": 252,
-      "status": "partial_history",
-      "betas": {
-        "market": 1.2807,
-        "size": 0.162,
-        "value": 0.2308,
-        "momentum": 1.0056
-      },
-      "intercept": -0.0004,
-      "intercept_bps_daily": -3.9797,
-      "r2": 0.5449,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
-      "history_start": "2005-01-03",
-      "missing_sessions": 2,
-      "in_portfolios": [
-        "book",
-        "5_werner"
       ]
     },
     "EXPE": {
@@ -371,16 +369,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.4924,
-        "size": 0.4014,
-        "value": 0.0414,
-        "momentum": -0.94
+        "market": 1.4324,
+        "size": 0.5597,
+        "value": -0.013,
+        "momentum": -0.9686
       },
       "intercept": 0.0006,
-      "intercept_bps_daily": 5.6504,
-      "r2": 0.1667,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept_bps_daily": 5.8517,
+      "r2": 0.1703,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-07-21",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -395,16 +393,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.2619,
-        "size": 0.5986,
-        "value": 0.2378,
-        "momentum": -1.0749
+        "market": 1.2383,
+        "size": 0.6634,
+        "value": 0.2118,
+        "momentum": -1.0898
       },
-      "intercept": -0.0042,
-      "intercept_bps_daily": -41.8923,
-      "r2": 0.1309,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0041,
+      "intercept_bps_daily": -40.7437,
+      "r2": 0.1347,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 4,
       "in_portfolios": [
@@ -419,22 +417,47 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.6257,
-        "size": 0.372,
-        "value": 0.2729,
-        "momentum": 0.3745
+        "market": 1.7828,
+        "size": 0.3934,
+        "value": 0.3798,
+        "momentum": 0.3507
       },
-      "intercept": -0.0007,
-      "intercept_bps_daily": -7.4036,
-      "r2": 0.2067,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0018,
+      "intercept_bps_daily": -17.6493,
+      "r2": 0.216,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2006-11-17",
       "missing_sessions": 2,
       "in_portfolios": [
         "2_balanced",
         "3_aggressive",
         "4_tactical"
+      ]
+    },
+    "GEV": {
+      "ticker": "GEV",
+      "sector": "Industrials",
+      "sector_source": "fundamentals_snapshot.parquet",
+      "n_obs": 250,
+      "window_sessions": 252,
+      "status": "partial_history",
+      "betas": {
+        "market": 1.0991,
+        "size": 0.4004,
+        "value": -0.185,
+        "momentum": 1.1876
+      },
+      "intercept": 0.0014,
+      "intercept_bps_daily": 14.444,
+      "r2": 0.4157,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
+      "history_start": "2024-03-27",
+      "missing_sessions": 2,
+      "in_portfolios": [
+        "book",
+        "5_werner"
       ]
     },
     "GOOG": {
@@ -445,16 +468,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5758,
-        "size": -0.2668,
-        "value": -0.045,
-        "momentum": -0.3604
+        "market": 1.5679,
+        "size": -0.2425,
+        "value": -0.0489,
+        "momentum": -0.3713
       },
-      "intercept": 0.0006,
-      "intercept_bps_daily": 6.0654,
-      "r2": 0.3634,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0005,
+      "intercept_bps_daily": 4.6499,
+      "r2": 0.371,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -472,16 +495,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.6127,
-        "size": -0.2812,
-        "value": -0.0425,
-        "momentum": -0.3779
+        "market": 1.5963,
+        "size": -0.2531,
+        "value": -0.0492,
+        "momentum": -0.3873
       },
-      "intercept": 0.0006,
-      "intercept_bps_daily": 6.2735,
-      "r2": 0.3678,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0005,
+      "intercept_bps_daily": 4.9808,
+      "r2": 0.3726,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -496,16 +519,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.4467,
-        "size": 0.2543,
-        "value": 0.3938,
-        "momentum": -0.6165
+        "market": 1.3559,
+        "size": 0.234,
+        "value": 0.3428,
+        "momentum": -0.5957
       },
-      "intercept": -0.0019,
-      "intercept_bps_daily": -18.5896,
-      "r2": 0.287,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0013,
+      "intercept_bps_daily": -12.7683,
+      "r2": 0.2638,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -520,16 +543,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5451,
-        "size": -0.1674,
-        "value": 0.3088,
-        "momentum": -0.6903
+        "market": 1.4719,
+        "size": -0.1708,
+        "value": 0.2184,
+        "momentum": -0.6827
       },
-      "intercept": -0.0017,
-      "intercept_bps_daily": -16.8123,
-      "r2": 0.2371,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0009,
+      "intercept_bps_daily": -9.1942,
+      "r2": 0.2294,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -544,16 +567,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.9351,
-        "size": 0.7796,
-        "value": -1.0451,
-        "momentum": 1.4748
+        "market": 0.937,
+        "size": 0.6646,
+        "value": -1.0158,
+        "momentum": 1.5076
       },
-      "intercept": -0.001,
-      "intercept_bps_daily": -9.9452,
-      "r2": 0.1737,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0012,
+      "intercept_bps_daily": -12.2216,
+      "r2": 0.1743,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -568,16 +591,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.758,
-        "size": 0.2884,
-        "value": 0.3427,
-        "momentum": -0.5291
+        "market": 0.7279,
+        "size": 0.2872,
+        "value": 0.2971,
+        "momentum": -0.5212
       },
-      "intercept": 0.0012,
-      "intercept_bps_daily": 12.105,
-      "r2": 0.108,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0018,
+      "intercept_bps_daily": 17.9422,
+      "r2": 0.1031,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -595,16 +618,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.7313,
-        "size": 0.3909,
-        "value": -0.0222,
-        "momentum": -0.3711
+        "market": 0.7394,
+        "size": 0.4105,
+        "value": -0.0458,
+        "momentum": -0.3991
       },
-      "intercept": -0.0011,
-      "intercept_bps_daily": -11.3426,
-      "r2": 0.0873,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0013,
+      "intercept_bps_daily": -13.3532,
+      "r2": 0.0942,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -619,16 +642,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5028,
-        "size": -0.2809,
-        "value": -0.2733,
-        "momentum": -0.3912
+        "market": 1.5509,
+        "size": -0.382,
+        "value": -0.3198,
+        "momentum": -0.375
       },
-      "intercept": -0.0009,
-      "intercept_bps_daily": -9.4118,
-      "r2": 0.2511,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0004,
+      "intercept_bps_daily": -4.4349,
+      "r2": 0.2551,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2012-05-18",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -643,16 +666,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.8217,
-        "size": 0.4233,
-        "value": 0.2255,
-        "momentum": 1.3005
+        "market": 1.8068,
+        "size": 0.3883,
+        "value": 0.1803,
+        "momentum": 1.3161
       },
-      "intercept": 0.0003,
-      "intercept_bps_daily": 2.7115,
-      "r2": 0.5535,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0006,
+      "intercept_bps_daily": 5.9712,
+      "r2": 0.5473,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -667,45 +690,20 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.2807,
-        "size": 0.411,
-        "value": 0.0588,
-        "momentum": 0.0967
+        "market": 1.3215,
+        "size": 0.3833,
+        "value": 0.1022,
+        "momentum": 0.092
       },
-      "intercept": 0.0005,
-      "intercept_bps_daily": 4.9151,
-      "r2": 0.4381,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0001,
+      "intercept_bps_daily": 1.3332,
+      "r2": 0.4373,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
         "3_aggressive"
-      ]
-    },
-    "MSFT": {
-      "ticker": "MSFT",
-      "sector": "Technology",
-      "sector_source": "ticker_indicators.json",
-      "n_obs": 250,
-      "window_sessions": 252,
-      "status": "partial_history",
-      "betas": {
-        "market": 0.8115,
-        "size": -0.1112,
-        "value": -0.9358,
-        "momentum": -0.6789
-      },
-      "intercept": 0.0004,
-      "intercept_bps_daily": 4.2101,
-      "r2": 0.3788,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
-      "history_start": "2005-01-03",
-      "missing_sessions": 2,
-      "in_portfolios": [
-        "book",
-        "5_werner"
       ]
     },
     "MU": {
@@ -716,21 +714,23 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.9096,
-        "size": -0.2561,
-        "value": 0.1823,
-        "momentum": 2.8308
+        "market": 1.9428,
+        "size": -0.3259,
+        "value": 0.2041,
+        "momentum": 2.8333
       },
-      "intercept": 0.0069,
-      "intercept_bps_daily": 68.5774,
-      "r2": 0.6132,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0066,
+      "intercept_bps_daily": 66.1047,
+      "r2": 0.6211,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
+        "book",
         "3_aggressive",
-        "4_tactical"
+        "4_tactical",
+        "5_werner"
       ]
     },
     "NTAP": {
@@ -741,16 +741,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.2468,
-        "size": 0.0762,
-        "value": -0.0054,
-        "momentum": 0.0299
+        "market": 1.2194,
+        "size": -0.0186,
+        "value": 0.0035,
+        "momentum": 0.0581
       },
-      "intercept": 0.0011,
-      "intercept_bps_daily": 11.3019,
-      "r2": 0.1455,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0017,
+      "intercept_bps_daily": 17.4334,
+      "r2": 0.1394,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -766,16 +766,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.1855,
-        "size": -0.0153,
-        "value": -1.1954,
-        "momentum": 0.0746
+        "market": 1.1678,
+        "size": -0.0752,
+        "value": -1.1633,
+        "momentum": 0.0913
       },
-      "intercept": 0.0011,
-      "intercept_bps_daily": 11.2937,
-      "r2": 0.5912,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0012,
+      "intercept_bps_daily": 11.8281,
+      "r2": 0.5926,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -793,16 +793,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.6294,
-        "size": 0.223,
-        "value": 0.5845,
-        "momentum": 0.7839
+        "market": 1.688,
+        "size": 0.1575,
+        "value": 0.6093,
+        "momentum": 0.7922
       },
-      "intercept": -0.0011,
-      "intercept_bps_daily": -10.8264,
-      "r2": 0.3133,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.001,
+      "intercept_bps_daily": -10.1542,
+      "r2": 0.3177,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2010-08-06",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -817,16 +817,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5096,
-        "size": 0.9108,
-        "value": 0.1054,
-        "momentum": 1.3514
+        "market": 1.4105,
+        "size": 0.8692,
+        "value": 0.11,
+        "momentum": 1.4018
       },
-      "intercept": 0.0017,
-      "intercept_bps_daily": 16.6602,
-      "r2": 0.413,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.002,
+      "intercept_bps_daily": 19.5898,
+      "r2": 0.4106,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -841,16 +841,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.3888,
-        "size": 0.4308,
-        "value": -0.3046,
-        "momentum": -0.9766
+        "market": 1.3942,
+        "size": 0.4315,
+        "value": -0.3225,
+        "momentum": -0.9847
       },
-      "intercept": -0.0011,
-      "intercept_bps_daily": -10.5938,
-      "r2": 0.2285,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0008,
+      "intercept_bps_daily": -8.2643,
+      "r2": 0.2335,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2015-07-06",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -866,16 +866,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.9206,
-        "size": 0.6309,
-        "value": 0.6756,
-        "momentum": -0.0771
+        "market": 1.8528,
+        "size": 0.6539,
+        "value": 0.5965,
+        "momentum": -0.0836
       },
-      "intercept": -0.0025,
-      "intercept_bps_daily": -25.0911,
-      "r2": 0.2717,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0018,
+      "intercept_bps_daily": -18.3298,
+      "r2": 0.2483,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -890,16 +890,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5251,
-        "size": 0.5882,
-        "value": 0.5059,
-        "momentum": -0.1251
+        "market": 1.4444,
+        "size": 0.6504,
+        "value": 0.4162,
+        "momentum": -0.133
       },
-      "intercept": -0.0009,
-      "intercept_bps_daily": -8.6985,
-      "r2": 0.3165,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0004,
+      "intercept_bps_daily": -3.6395,
+      "r2": 0.3026,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -914,16 +914,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.9342,
-        "size": 0.2681,
-        "value": 0.6508,
-        "momentum": -0.0309
+        "market": 0.909,
+        "size": 0.2576,
+        "value": 0.6642,
+        "momentum": -0.0166
       },
       "intercept": -0.0005,
-      "intercept_bps_daily": -4.513,
-      "r2": 0.3942,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept_bps_daily": -5.2654,
+      "r2": 0.3994,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -938,16 +938,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 2.1056,
-        "size": 0.5413,
-        "value": -0.2442,
-        "momentum": 3.3131
+        "market": 2.0819,
+        "size": 0.5876,
+        "value": -0.2219,
+        "momentum": 3.2997
       },
-      "intercept": 0.0126,
-      "intercept_bps_daily": 126.3376,
-      "r2": 0.4693,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0118,
+      "intercept_bps_daily": 118.377,
+      "r2": 0.465,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2025-02-13",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -963,16 +963,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.5082,
-        "size": 0.6445,
-        "value": 0.6807,
-        "momentum": -0.1266
+        "market": 1.43,
+        "size": 0.6649,
+        "value": 0.6753,
+        "momentum": -0.1179
       },
-      "intercept": -0.0008,
-      "intercept_bps_daily": -8.0785,
-      "r2": 0.2346,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0007,
+      "intercept_bps_daily": -7.4456,
+      "r2": 0.227,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -987,45 +987,20 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.9987,
-        "size": 0.6294,
-        "value": 0.1193,
-        "momentum": -0.2811
+        "market": 1.0124,
+        "size": 0.6107,
+        "value": 0.1277,
+        "momentum": -0.2744
       },
-      "intercept": -0.0004,
-      "intercept_bps_daily": -4.2828,
-      "r2": 0.3481,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0003,
+      "intercept_bps_daily": -2.8317,
+      "r2": 0.3441,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
         "1_cap_pres"
-      ]
-    },
-    "TSM": {
-      "ticker": "TSM",
-      "sector": null,
-      "sector_source": null,
-      "n_obs": 250,
-      "window_sessions": 252,
-      "status": "partial_history",
-      "betas": {
-        "market": 1.3488,
-        "size": 0.3382,
-        "value": -0.6123,
-        "momentum": 0.7029
-      },
-      "intercept": 0.0017,
-      "intercept_bps_daily": 16.8814,
-      "r2": 0.6288,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
-      "history_start": "2024-08-07",
-      "missing_sessions": 2,
-      "in_portfolios": [
-        "book",
-        "5_werner"
       ]
     },
     "TXN": {
@@ -1036,16 +1011,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.4641,
-        "size": -0.1076,
-        "value": 0.9159,
-        "momentum": 0.9647
+        "market": 1.438,
+        "size": -0.125,
+        "value": 0.875,
+        "momentum": 0.9669
       },
-      "intercept": 0.0,
-      "intercept_bps_daily": 0.3972,
-      "r2": 0.3726,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": 0.0003,
+      "intercept_bps_daily": 2.7804,
+      "r2": 0.3674,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -1061,45 +1036,20 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 1.9522,
-        "size": 1.4265,
-        "value": 0.1331,
-        "momentum": -0.0771
+        "market": 1.9813,
+        "size": 1.4868,
+        "value": 0.0446,
+        "momentum": -0.1108
       },
-      "intercept": -0.0012,
-      "intercept_bps_daily": -12.3561,
-      "r2": 0.4299,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0004,
+      "intercept_bps_daily": -3.7855,
+      "r2": 0.4443,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2006-02-06",
       "missing_sessions": 2,
       "in_portfolios": [
         "1_cap_pres"
-      ]
-    },
-    "VRT": {
-      "ticker": "VRT",
-      "sector": "Industrials",
-      "sector_source": "ticker_indicators.json",
-      "n_obs": 250,
-      "window_sessions": 252,
-      "status": "partial_history",
-      "betas": {
-        "market": 1.7077,
-        "size": 0.4096,
-        "value": -0.2837,
-        "momentum": 1.4306
-      },
-      "intercept": 0.002,
-      "intercept_bps_daily": 19.6318,
-      "r2": 0.4436,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
-      "history_start": "2018-08-02",
-      "missing_sessions": 2,
-      "in_portfolios": [
-        "book",
-        "5_werner"
       ]
     },
     "VST": {
@@ -1110,16 +1060,16 @@
       "window_sessions": 252,
       "status": "partial_history",
       "betas": {
-        "market": 0.8204,
-        "size": 0.7158,
-        "value": -0.2388,
-        "momentum": 0.6674
+        "market": 0.8045,
+        "size": 0.7614,
+        "value": -0.1629,
+        "momentum": 0.6877
       },
-      "intercept": -0.0015,
-      "intercept_bps_daily": -14.6801,
-      "r2": 0.2434,
-      "window_start": "2025-09-12",
-      "window_end": "2026-09-10",
+      "intercept": -0.0017,
+      "intercept_bps_daily": -16.7011,
+      "r2": 0.2475,
+      "window_start": "2025-09-29",
+      "window_end": "2026-09-29",
       "history_start": "2016-10-05",
       "missing_sessions": 2,
       "in_portfolios": [
@@ -1130,181 +1080,178 @@
   "portfolios": {
     "book": {
       "exposure": {
-        "market": 1.2029,
-        "size": -0.013,
-        "value": -0.6838,
-        "momentum": 0.1127
+        "market": 1.5389,
+        "size": -0.0628,
+        "value": -0.3298,
+        "momentum": 1.2897
       },
       "covered_weight": 1.0,
       "excluded": [],
-      "n_names": 8,
-      "n_covered": 8,
-      "equity_value": 105952.0009,
+      "n_names": 7,
+      "n_covered": 7,
+      "equity_value": 160326.4113,
       "weights": {
-        "MSFT": 0.2385,
-        "NVDA": 0.1991,
-        "GOOG": 0.1631,
-        "AVGO": 0.1627,
-        "TSM": 0.0986,
-        "ETN": 0.0557,
-        "VRT": 0.0448,
-        "CEG": 0.0375
+        "MU": 0.3322,
+        "GEV": 0.1501,
+        "NVDA": 0.1419,
+        "ANET": 0.1265,
+        "AVGO": 0.1107,
+        "GOOG": 0.1052,
+        "BMNR": 0.0334
       },
       "source": "data/holdings.json",
       "priced_at": {
-        "AVGO": "2026-09-14",
-        "CEG": "2026-09-14",
-        "ETN": "2026-09-14",
-        "GOOG": "2026-09-14",
-        "MSFT": "2026-09-14",
-        "NVDA": "2026-09-14",
-        "TSM": "2026-09-14",
-        "VRT": "2026-09-14"
+        "MU": "2026-09-29",
+        "GEV": "2026-09-29",
+        "NVDA": "2026-09-29",
+        "ANET": "2026-09-29",
+        "GOOG": "2026-09-29",
+        "AVGO": "2026-09-29",
+        "BMNR": "2026-09-29"
       },
       "unpriced": []
     },
     "1_cap_pres": {
       "exposure": {
-        "market": 1.1015,
-        "size": 0.4266,
-        "value": 0.2277,
-        "momentum": -0.2036
+        "market": 1.0947,
+        "size": 0.4384,
+        "value": 0.2076,
+        "momentum": -0.1837
       },
       "covered_weight": 1.0,
       "excluded": [],
       "n_names": 12,
       "n_covered": 12,
-      "equity_value": 58781.03,
+      "equity_value": 58889.79,
       "weights": {
-        "UAL": 0.0869,
-        "PYPL": 0.0861,
-        "AMP": 0.0859,
-        "ISRG": 0.0855,
-        "VST": 0.0851,
-        "AFL": 0.0842,
-        "POWL": 0.0828,
-        "SNA": 0.0827,
-        "LLY": 0.0819,
-        "TROW": 0.0811,
-        "AON": 0.0797,
-        "IDXX": 0.078
+        "ISRG": 0.093,
+        "POWL": 0.0912,
+        "UAL": 0.0897,
+        "PYPL": 0.0857,
+        "LLY": 0.0851,
+        "VST": 0.085,
+        "AFL": 0.0816,
+        "IDXX": 0.0815,
+        "SNA": 0.0803,
+        "TROW": 0.0799,
+        "AMP": 0.0764,
+        "AON": 0.0705
       },
-      "source": "tournament.json:history[-1] (2026-09-15)"
+      "source": "tournament.json:history[-1] (2026-09-29)"
     },
     "2_balanced": {
       "exposure": {
-        "market": 1.3644,
-        "size": 0.2923,
-        "value": -0.055,
-        "momentum": -0.0239
+        "market": 1.3683,
+        "size": 0.2832,
+        "value": -0.0726,
+        "momentum": 0.0096
       },
       "covered_weight": 1.0,
       "excluded": [],
       "n_names": 20,
       "n_covered": 20,
-      "equity_value": 73053.53,
+      "equity_value": 73523.64,
       "weights": {
-        "META": 0.0575,
-        "APP": 0.0536,
-        "GOOGL": 0.0521,
-        "GOOG": 0.052,
-        "TXN": 0.0519,
-        "FSLR": 0.0518,
-        "PYPL": 0.0515,
-        "AXP": 0.0505,
-        "NXPI": 0.0504,
-        "RL": 0.05,
-        "KLAC": 0.0494,
-        "FISV": 0.0493,
-        "LLY": 0.049,
-        "NVDA": 0.0485,
-        "LVS": 0.0483,
-        "TPR": 0.0482,
-        "RCL": 0.048,
-        "MPWR": 0.0466,
-        "AVGO": 0.0466,
-        "BKNG": 0.0448
+        "META": 0.0634,
+        "KLAC": 0.0571,
+        "TXN": 0.0552,
+        "MPWR": 0.0549,
+        "NXPI": 0.0528,
+        "NVDA": 0.0519,
+        "RL": 0.0518,
+        "PYPL": 0.051,
+        "LLY": 0.0507,
+        "GOOGL": 0.0505,
+        "GOOG": 0.0504,
+        "RCL": 0.0487,
+        "APP": 0.0487,
+        "AVGO": 0.0477,
+        "AXP": 0.0468,
+        "TPR": 0.0464,
+        "FSLR": 0.044,
+        "FISV": 0.0436,
+        "LVS": 0.0434,
+        "BKNG": 0.0412
       },
-      "source": "tournament.json:history[-1] (2026-09-15)"
+      "source": "tournament.json:history[-1] (2026-09-29)"
     },
     "3_aggressive": {
       "exposure": {
-        "market": 1.4603,
-        "size": 0.2557,
-        "value": -0.1664,
-        "momentum": 0.545
+        "market": 1.4875,
+        "size": 0.2432,
+        "value": -0.2101,
+        "momentum": 0.6319
       },
       "covered_weight": 1.0,
       "excluded": [],
       "n_names": 15,
       "n_covered": 15,
-      "equity_value": 84711.13,
+      "equity_value": 87914.96,
       "weights": {
-        "GOOG": 0.0716,
-        "TXN": 0.0715,
-        "FSLR": 0.0714,
-        "NTAP": 0.0707,
-        "ARM": 0.07,
-        "SNDK": 0.0695,
-        "MU": 0.0681,
-        "LLY": 0.0675,
-        "MS": 0.0674,
-        "NVDA": 0.0668,
-        "EXPE": 0.0651,
-        "BX": 0.0646,
-        "AVGO": 0.0642,
-        "BKNG": 0.0617,
-        "CRDO": 0.05
+        "ARM": 0.0829,
+        "NTAP": 0.0757,
+        "MU": 0.0756,
+        "SNDK": 0.0746,
+        "TXN": 0.0737,
+        "NVDA": 0.0693,
+        "LLY": 0.0677,
+        "GOOG": 0.0674,
+        "AVGO": 0.0637,
+        "CRDO": 0.0617,
+        "MS": 0.0606,
+        "FSLR": 0.0588,
+        "EXPE": 0.058,
+        "BX": 0.0553,
+        "BKNG": 0.055
       },
-      "source": "tournament.json:history[-1] (2026-09-15)"
+      "source": "tournament.json:history[-1] (2026-09-29)"
     },
     "4_tactical": {
       "exposure": {
-        "market": 1.4127,
-        "size": 0.2504,
-        "value": -0.225,
-        "momentum": 0.9453
+        "market": 1.4273,
+        "size": 0.2483,
+        "value": -0.2708,
+        "momentum": 1.0338
       },
       "covered_weight": 1.0,
       "excluded": [],
       "n_names": 8,
       "n_covered": 8,
-      "equity_value": 82762.46,
+      "equity_value": 87511.4,
       "weights": {
-        "FSLR": 0.1364,
-        "NTAP": 0.1352,
-        "SNDK": 0.1329,
-        "MU": 0.1302,
-        "LLY": 0.1291,
-        "AVGO": 0.1227,
-        "BKNG": 0.1179,
-        "CRDO": 0.0956
+        "NTAP": 0.1421,
+        "MU": 0.142,
+        "SNDK": 0.14,
+        "LLY": 0.1271,
+        "AVGO": 0.1195,
+        "CRDO": 0.1158,
+        "FSLR": 0.1103,
+        "BKNG": 0.1032
       },
-      "source": "tournament.json:history[-1] (2026-09-15)"
+      "source": "tournament.json:history[-1] (2026-09-29)"
     },
     "5_werner": {
       "exposure": {
-        "market": 1.2029,
-        "size": -0.013,
-        "value": -0.6838,
-        "momentum": 0.1127
+        "market": 1.5389,
+        "size": -0.0628,
+        "value": -0.3298,
+        "momentum": 1.2897
       },
       "covered_weight": 1.0,
       "excluded": [],
-      "n_names": 8,
-      "n_covered": 8,
-      "equity_value": 105952.0,
+      "n_names": 7,
+      "n_covered": 7,
+      "equity_value": 160326.42,
       "weights": {
-        "MSFT": 0.2385,
-        "NVDA": 0.1991,
-        "GOOG": 0.1631,
-        "AVGO": 0.1627,
-        "TSM": 0.0986,
-        "ETN": 0.0557,
-        "VRT": 0.0448,
-        "CEG": 0.0375
+        "MU": 0.3322,
+        "GEV": 0.1501,
+        "NVDA": 0.1419,
+        "ANET": 0.1265,
+        "AVGO": 0.1107,
+        "GOOG": 0.1052,
+        "BMNR": 0.0334
       },
-      "source": "tournament.json:history[-1] (2026-09-15)"
+      "source": "tournament.json:history[-1] (2026-09-29)"
     }
   },
   "checks": {
@@ -1313,7 +1260,7 @@
         "market": 1.0,
         "size": 0.0,
         "value": 0.0,
-        "momentum": -0.0
+        "momentum": 0.0
       },
       "intercept": 0.0,
       "r2": 1.0,

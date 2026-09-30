@@ -1,9 +1,9 @@
 {
-  "updated": "2026-09-16T00:06:42.880200",
-  "as_of": "2026-09-15",
-  "session_date": "2026-09-15",
+  "updated": "2026-09-30T02:42:10.579970",
+  "as_of": "2026-09-29",
+  "session_date": "2026-09-29",
   "cadence": "daily",
-  "tradable_at": "2026-09-16",
+  "tradable_at": "2026-09-30",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -249,7 +249,67 @@
       "d": "2026-09-15",
       "state": "contango",
       "spread": -2.16,
-      "source": "yfinance"
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-16",
+      "state": "contango",
+      "spread": -2.02,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-17",
+      "state": "deep_contango",
+      "spread": -3.11,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-18",
+      "state": "deep_contango",
+      "spread": -3.43,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-21",
+      "state": "deep_contango",
+      "spread": -3.21,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-22",
+      "state": "deep_contango",
+      "spread": -3.4,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-23",
+      "state": "contango",
+      "spread": -2.93,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-24",
+      "state": "contango",
+      "spread": -2.76,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-25",
+      "state": "deep_contango",
+      "spread": -3.06,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-28",
+      "state": "contango",
+      "spread": -2.16,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-09-29",
+      "state": "contango",
+      "spread": -2.05,
+      "source": "cboe"
     }
   ],
   "backfill_note": "2026-07-20 onward recomputed from the repaired canonical closes (Cboe official history overlaid on vol_indicators); source recorded per day",
@@ -270,86 +330,87 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 6,
-  "spread": -2.16,
-  "delta_spread": 0.02,
-  "sigma_threshold": 0.453,
+  "state_age": 2,
+  "spread": -2.05,
+  "delta_spread": 0.11,
+  "sigma_threshold": 0.52,
   "trigger_fired": false,
   "entry": {
-    "current_entry_dspread": 0.41,
-    "state_mean_entry": -0.057,
-    "state_sigma_entry": 0.848,
-    "entry_zscore": 0.55,
+    "current_entry_dspread": 0.9,
+    "state_mean_entry": -0.088,
+    "state_sigma_entry": 0.847,
+    "entry_zscore": 1.17,
     "atypical_entry": false,
     "rule": "Atypical when |entry \u0394spread \u2212 state mean| > 2\u03c3. Caveat: pooled transition stats may not describe a shock-entered episode."
   },
   "dynamics": {
     "deep_contango": {
-      "n_episodes": 202,
+      "n_episodes": 216,
       "p25_sessions": 1,
       "median_sessions": 2,
       "p75_sessions": 4,
       "next_state_distribution": {
-        "contango": 199,
+        "contango": 213,
         "backwardation": 1,
         "flattening": 2
       },
-      "entry_dspread_mean": -0.5371287128712872,
-      "entry_dspread_sigma": 0.35406477366096273,
-      "entry_dspread_n": 202
+      "entry_dspread_mean": -0.5716666675496985,
+      "entry_dspread_sigma": 0.49538243782191066,
+      "entry_dspread_n": 216
     },
     "contango": {
-      "n_episodes": 379,
+      "n_episodes": 442,
       "p25_sessions": 1,
       "median_sessions": 3,
       "p75_sessions": 7,
       "next_state_distribution": {
-        "flattening": 168,
-        "deep_contango": 202,
-        "backwardation": 8
+        "flattening": 214,
+        "deep_contango": 215,
+        "backwardation": 12
       },
-      "entry_dspread_mean": -0.056781002638522454,
-      "entry_dspread_sigma": 0.8480588991088547,
-      "entry_dspread_n": 379
+      "entry_dspread_mean": -0.08823529636158664,
+      "entry_dspread_sigma": 0.8467960628152074,
+      "entry_dspread_n": 442
     },
     "flattening": {
-      "n_episodes": 228,
+      "n_episodes": 305,
       "p25_sessions": 1,
       "median_sessions": 2,
-      "p75_sessions": 3,
+      "p75_sessions": 4,
       "next_state_distribution": {
-        "contango": 174,
-        "backwardation": 54
+        "contango": 224,
+        "backwardation": 81
       },
-      "entry_dspread_mean": 0.3637719298245614,
-      "entry_dspread_sigma": 1.1752104622467556,
-      "entry_dspread_n": 228
+      "entry_dspread_mean": 0.2618688433287575,
+      "entry_dspread_sigma": 1.1754775389489651,
+      "entry_dspread_n": 305
     },
     "backwardation": {
-      "n_episodes": 63,
+      "n_episodes": 95,
       "p25_sessions": 1,
       "median_sessions": 1,
       "p75_sessions": 4,
       "next_state_distribution": {
-        "flattening": 58,
+        "flattening": 89,
+        "deep_contango": 1,
         "contango": 5
       },
-      "entry_dspread_mean": 1.9822222222222226,
-      "entry_dspread_sigma": 1.696847593707933,
-      "entry_dspread_n": 63
+      "entry_dspread_mean": 1.7403157412880346,
+      "entry_dspread_sigma": 1.5351959496429426,
+      "entry_dspread_n": 95
     }
   },
   "curve": {
-    "spot_vix": 17.2,
-    "vix1d": 17.14,
-    "vix3m": 19.36,
-    "spread_spot_3m": -2.16,
+    "spot_vix": 16.04,
+    "vix1d": 11.69,
+    "vix3m": 18.09,
+    "spread_spot_3m": -2.05,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-09-16",
+    "date": "2026-09-30",
     "types": [
-      "FOMC"
+      "EARNINGS"
     ],
     "sessions_away": 1
   },
@@ -357,23 +418,23 @@
   "conditioning": {
     "event_flag": false,
     "event_types": [],
-    "delta_2y_bps": -2.0,
+    "delta_2y_bps": -7.1,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
-    "front_end_repriced": false,
-    "held_close_proxy": 0.82,
-    "held_close": true
+    "front_end_repriced": true,
+    "held_close_proxy": 0.5,
+    "held_close": false
   },
   "attribution": {
     "primary_driver": "no_trigger",
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": null,
-      "breadth_delta_pp": null,
-      "breadth_holds": false,
-      "breadth_delta_sigma_1y_pp": 4.395,
-      "breadth_z": null,
+      "smh_1d_return": 0.011,
+      "breadth_delta_pp": 0.0,
+      "breadth_holds": true,
+      "breadth_delta_sigma_1y_pp": 4.338,
+      "breadth_z": 0.0,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -385,14 +446,14 @@
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-09-15",
+      "today_excluded_from_metrics": "2026-09-29",
       "all_triggers_reversion": {
-        "n": 644,
-        "n_reverted": 559,
-        "hit_rate": 0.8680124223602484,
+        "n": 798,
+        "n_reverted": 684,
+        "hit_rate": 0.8571428571428571,
         "wilson_95ci": [
-          0.8396743654043375,
-          0.8919859663804692
+          0.8311505838655268,
+          0.8797130081456633
         ],
         "horizon_sessions": 10,
         "threshold_sigma": 0.5,
@@ -400,75 +461,25 @@
         "small_n_caveat": null
       },
       "event_day_only_reversion": {
-        "n": 17,
-        "n_reverted": 14,
-        "hit_rate": 0.8235294117647058,
+        "n": 19,
+        "n_reverted": 16,
+        "hit_rate": 0.8421052631578947,
         "wilson_95ci": [
-          0.5897007098262422,
-          0.9380898628745101
+          0.6243407235682331,
+          0.9447962896007217
         ],
         "horizon_sessions": 10,
         "threshold_sigma": 0.5,
         "small_n": true,
         "small_n_caveat": "n < 30 \u2014 hit rate and CI are indicative only"
       },
-      "event_day_caveat": "event-day n = 17 \u2192 95% CI 58\u201393%; not yet evidence",
+      "event_day_caveat": "event-day n = 19 \u2192 95% CI 62\u201394%; not yet evidence",
       "note": "`all_triggers_reversion` measures all fired triggers with a fully elapsed N-session horizon \u2014 the right denominator for the spread-spike reversion question. `event_day_only_reversion` is the event-day subsample; by construction it has handful-per-year n."
     },
     "no_lookahead_passed": true,
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-09-15",
-      "state": "contango",
-      "spread": -2.84
-    },
-    {
-      "d": "2025-09-16",
-      "state": "contango",
-      "spread": -2.55
-    },
-    {
-      "d": "2025-09-17",
-      "state": "contango",
-      "spread": -2.72
-    },
-    {
-      "d": "2025-09-18",
-      "state": "contango",
-      "spread": -2.82
-    },
-    {
-      "d": "2025-09-19",
-      "state": "deep_contango",
-      "spread": -3.03
-    },
-    {
-      "d": "2025-09-22",
-      "state": "contango",
-      "spread": -2.85
-    },
-    {
-      "d": "2025-09-23",
-      "state": "contango",
-      "spread": -2.8
-    },
-    {
-      "d": "2025-09-24",
-      "state": "contango",
-      "spread": -2.96
-    },
-    {
-      "d": "2025-09-25",
-      "state": "contango",
-      "spread": -2.72
-    },
-    {
-      "d": "2025-09-26",
-      "state": "deep_contango",
-      "spread": -3.12
-    },
     {
       "d": "2025-09-29",
       "state": "contango",
@@ -1678,15 +1689,59 @@
       "d": "2026-09-15",
       "state": "contango",
       "spread": -2.16
+    },
+    {
+      "d": "2026-09-16",
+      "state": "contango",
+      "spread": -2.02
+    },
+    {
+      "d": "2026-09-17",
+      "state": "deep_contango",
+      "spread": -3.11
+    },
+    {
+      "d": "2026-09-18",
+      "state": "deep_contango",
+      "spread": -3.43
+    },
+    {
+      "d": "2026-09-21",
+      "state": "deep_contango",
+      "spread": -3.21
+    },
+    {
+      "d": "2026-09-22",
+      "state": "deep_contango",
+      "spread": -3.4
+    },
+    {
+      "d": "2026-09-23",
+      "state": "contango",
+      "spread": -2.93
+    },
+    {
+      "d": "2026-09-24",
+      "state": "contango",
+      "spread": -2.76
+    },
+    {
+      "d": "2026-09-25",
+      "state": "deep_contango",
+      "spread": -3.06
+    },
+    {
+      "d": "2026-09-28",
+      "state": "contango",
+      "spread": -2.16
+    },
+    {
+      "d": "2026-09-29",
+      "state": "contango",
+      "spread": -2.05
     }
   ],
   "past_spikes": [
-    {
-      "d": "2026-03-12",
-      "delta_spread": 1.08,
-      "state": "flattening",
-      "event": "TREASURY"
-    },
     {
       "d": "2026-03-20",
       "delta_spread": 0.83,
@@ -1798,6 +1853,12 @@
     {
       "d": "2026-09-14",
       "delta_spread": 0.58,
+      "state": "contango",
+      "event": null
+    },
+    {
+      "d": "2026-09-28",
+      "delta_spread": 0.9,
       "state": "contango",
       "event": null
     }

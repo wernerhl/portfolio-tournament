@@ -2,13 +2,13 @@
   "cadence": "daily",
   "session_date": "2026-09-29",
   "as_of": "2026-09-29",
-  "computed_at": "2026-09-29T19:59:34-04:00",
+  "computed_at": "2026-09-29T22:45:57-04:00",
   "history_years": 6,
   "reaction_rule": "close on the last session before the release to close on the first session after; after-close releases (provider stamp hour \u2265 12) react close(D)\u2192close(D+1), before-open releases close(D\u22121)\u2192close(D)",
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
-    "store_through": "2026-09-15",
-    "overlay": "provider daily closes merged in memory through 2026-09-29 (store ended 2026-09-15; missing in store: none)"
+    "store_through": "2026-09-29",
+    "overlay": null
   },
   "names": {
     "ADBE": {
@@ -7646,6 +7646,2462 @@
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
       "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "history_years": 6
+    },
+    "ABNB": {
+      "next": {
+        "date": "2026-11-05",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-11-05T15:00:00"
+      },
+      "history": [
+        {
+          "date": "2021-02-26",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-26",
+          "post_date": "2021-03-01",
+          "reaction": -0.04812
+        },
+        {
+          "date": "2021-05-14",
+          "time_of_day": "after_close",
+          "pre_date": "2021-05-14",
+          "post_date": "2021-05-17",
+          "reaction": -0.06161
+        },
+        {
+          "date": "2021-08-12",
+          "time_of_day": "after_close",
+          "pre_date": "2021-08-12",
+          "post_date": "2021-08-13",
+          "reaction": 0.01065
+        },
+        {
+          "date": "2021-11-04",
+          "time_of_day": "after_close",
+          "pre_date": "2021-11-04",
+          "post_date": "2021-11-05",
+          "reaction": 0.12984
+        },
+        {
+          "date": "2022-02-15",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-15",
+          "post_date": "2022-02-16",
+          "reaction": 0.03649
+        },
+        {
+          "date": "2022-05-03",
+          "time_of_day": "after_close",
+          "pre_date": "2022-05-03",
+          "post_date": "2022-05-04",
+          "reaction": 0.0771
+        },
+        {
+          "date": "2022-08-02",
+          "time_of_day": "after_close",
+          "pre_date": "2022-08-02",
+          "post_date": "2022-08-03",
+          "reaction": -0.01135
+        },
+        {
+          "date": "2022-11-01",
+          "time_of_day": "after_close",
+          "pre_date": "2022-11-01",
+          "post_date": "2022-11-02",
+          "reaction": -0.13425
+        },
+        {
+          "date": "2023-02-14",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-14",
+          "post_date": "2023-02-15",
+          "reaction": 0.13353
+        },
+        {
+          "date": "2023-05-09",
+          "time_of_day": "after_close",
+          "pre_date": "2023-05-09",
+          "post_date": "2023-05-10",
+          "reaction": -0.10923
+        },
+        {
+          "date": "2023-08-03",
+          "time_of_day": "after_close",
+          "pre_date": "2023-08-03",
+          "post_date": "2023-08-04",
+          "reaction": -0.00504
+        },
+        {
+          "date": "2023-11-01",
+          "time_of_day": "after_close",
+          "pre_date": "2023-11-01",
+          "post_date": "2023-11-02",
+          "reaction": -0.03323
+        },
+        {
+          "date": "2024-02-13",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-13",
+          "post_date": "2024-02-14",
+          "reaction": -0.01737
+        },
+        {
+          "date": "2024-05-08",
+          "time_of_day": "after_close",
+          "pre_date": "2024-05-08",
+          "post_date": "2024-05-09",
+          "reaction": -0.06871
+        },
+        {
+          "date": "2024-08-06",
+          "time_of_day": "after_close",
+          "pre_date": "2024-08-06",
+          "post_date": "2024-08-07",
+          "reaction": -0.13382
+        },
+        {
+          "date": "2024-11-07",
+          "time_of_day": "after_close",
+          "pre_date": "2024-11-07",
+          "post_date": "2024-11-08",
+          "reaction": -0.08658
+        },
+        {
+          "date": "2025-02-13",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-13",
+          "post_date": "2025-02-14",
+          "reaction": 0.1445
+        },
+        {
+          "date": "2025-05-01",
+          "time_of_day": "after_close",
+          "pre_date": "2025-05-01",
+          "post_date": "2025-05-02",
+          "reaction": 0.01008
+        },
+        {
+          "date": "2025-08-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-08-06",
+          "post_date": "2025-08-07",
+          "reaction": -0.08023
+        },
+        {
+          "date": "2025-11-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-11-06",
+          "post_date": "2025-11-07",
+          "reaction": 0.0029
+        },
+        {
+          "date": "2026-02-12",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-12",
+          "post_date": "2026-02-13",
+          "reaction": 0.04648
+        },
+        {
+          "date": "2026-05-07",
+          "time_of_day": "after_close",
+          "pre_date": "2026-05-07",
+          "post_date": "2026-05-08",
+          "reaction": 0.00733
+        },
+        {
+          "date": "2026-08-06",
+          "time_of_day": "after_close",
+          "pre_date": "2026-08-06",
+          "post_date": "2026-08-07",
+          "reaction": 0.17429
+        }
+      ],
+      "stats": {
+        "n": 23,
+        "mean_abs": 0.06794,
+        "median_abs": 0.06161,
+        "max_abs": 0.17429,
+        "max_date": "2026-08-06",
+        "n_last8": 8,
+        "median_abs_last8": 0.06335,
+        "mean_abs_last8": 0.06905
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "AMP": {
+      "next": {
+        "date": "2026-10-29",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-10-29T08:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-28",
+          "time_of_day": "after_close",
+          "pre_date": "2020-10-28",
+          "post_date": "2020-10-29",
+          "reaction": 0.01807
+        },
+        {
+          "date": "2021-01-27",
+          "time_of_day": "after_close",
+          "pre_date": "2021-01-27",
+          "post_date": "2021-01-28",
+          "reaction": 0.02581
+        },
+        {
+          "date": "2021-04-26",
+          "time_of_day": "after_close",
+          "pre_date": "2021-04-26",
+          "post_date": "2021-04-27",
+          "reaction": 0.03648
+        },
+        {
+          "date": "2021-07-26",
+          "time_of_day": "after_close",
+          "pre_date": "2021-07-26",
+          "post_date": "2021-07-27",
+          "reaction": -0.00637
+        },
+        {
+          "date": "2021-10-26",
+          "time_of_day": "after_close",
+          "pre_date": "2021-10-26",
+          "post_date": "2021-10-27",
+          "reaction": -0.00333
+        },
+        {
+          "date": "2022-01-26",
+          "time_of_day": "after_close",
+          "pre_date": "2022-01-26",
+          "post_date": "2022-01-27",
+          "reaction": 0.01647
+        },
+        {
+          "date": "2022-04-25",
+          "time_of_day": "after_close",
+          "pre_date": "2022-04-25",
+          "post_date": "2022-04-26",
+          "reaction": -0.05841
+        },
+        {
+          "date": "2022-07-26",
+          "time_of_day": "after_close",
+          "pre_date": "2022-07-26",
+          "post_date": "2022-07-27",
+          "reaction": 0.06184
+        },
+        {
+          "date": "2022-10-25",
+          "time_of_day": "after_close",
+          "pre_date": "2022-10-25",
+          "post_date": "2022-10-26",
+          "reaction": 0.05118
+        },
+        {
+          "date": "2023-01-25",
+          "time_of_day": "after_close",
+          "pre_date": "2023-01-25",
+          "post_date": "2023-01-26",
+          "reaction": 0.01268
+        },
+        {
+          "date": "2023-04-24",
+          "time_of_day": "after_close",
+          "pre_date": "2023-04-24",
+          "post_date": "2023-04-25",
+          "reaction": -0.07318
+        },
+        {
+          "date": "2023-07-26",
+          "time_of_day": "after_close",
+          "pre_date": "2023-07-26",
+          "post_date": "2023-07-27",
+          "reaction": -0.01687
+        },
+        {
+          "date": "2023-10-25",
+          "time_of_day": "after_close",
+          "pre_date": "2023-10-25",
+          "post_date": "2023-10-26",
+          "reaction": 0.02995
+        },
+        {
+          "date": "2024-01-24",
+          "time_of_day": "after_close",
+          "pre_date": "2024-01-24",
+          "post_date": "2024-01-25",
+          "reaction": 0.00493
+        },
+        {
+          "date": "2024-04-22",
+          "time_of_day": "after_close",
+          "pre_date": "2024-04-22",
+          "post_date": "2024-04-23",
+          "reaction": -0.03249
+        },
+        {
+          "date": "2024-07-24",
+          "time_of_day": "after_close",
+          "pre_date": "2024-07-24",
+          "post_date": "2024-07-25",
+          "reaction": 0.04106
+        },
+        {
+          "date": "2024-10-23",
+          "time_of_day": "after_close",
+          "pre_date": "2024-10-23",
+          "post_date": "2024-10-24",
+          "reaction": -0.03124
+        },
+        {
+          "date": "2025-01-29",
+          "time_of_day": "after_close",
+          "pre_date": "2025-01-29",
+          "post_date": "2025-01-30",
+          "reaction": -0.04745
+        },
+        {
+          "date": "2025-04-24",
+          "time_of_day": "before_open",
+          "pre_date": "2025-04-23",
+          "post_date": "2025-04-24",
+          "reaction": 0.00473
+        },
+        {
+          "date": "2025-07-24",
+          "time_of_day": "before_open",
+          "pre_date": "2025-07-23",
+          "post_date": "2025-07-24",
+          "reaction": -0.03699
+        },
+        {
+          "date": "2025-10-30",
+          "time_of_day": "before_open",
+          "pre_date": "2025-10-29",
+          "post_date": "2025-10-30",
+          "reaction": -0.05105
+        },
+        {
+          "date": "2026-01-29",
+          "time_of_day": "before_open",
+          "pre_date": "2026-01-28",
+          "post_date": "2026-01-29",
+          "reaction": 0.04341
+        },
+        {
+          "date": "2026-04-23",
+          "time_of_day": "after_close",
+          "pre_date": "2026-04-23",
+          "post_date": "2026-04-24",
+          "reaction": 0.00977
+        },
+        {
+          "date": "2026-07-23",
+          "time_of_day": "before_open",
+          "pre_date": "2026-07-22",
+          "post_date": "2026-07-23",
+          "reaction": -0.01274
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.03027,
+        "median_abs": 0.0306,
+        "max_abs": 0.07318,
+        "max_date": "2023-04-24",
+        "n_last8": 8,
+        "median_abs_last8": 0.03411,
+        "mean_abs_last8": 0.02967
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "AMZN": {
+      "next": {
+        "date": "2026-10-29",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-10-29T16:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-29",
+          "time_of_day": "after_close",
+          "pre_date": "2020-10-29",
+          "post_date": "2020-10-30",
+          "reaction": -0.05446
+        },
+        {
+          "date": "2021-02-02",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-02",
+          "post_date": "2021-02-03",
+          "reaction": -0.01996
+        },
+        {
+          "date": "2021-04-29",
+          "time_of_day": "after_close",
+          "pre_date": "2021-04-29",
+          "post_date": "2021-04-30",
+          "reaction": -0.00112
+        },
+        {
+          "date": "2021-07-29",
+          "time_of_day": "after_close",
+          "pre_date": "2021-07-29",
+          "post_date": "2021-07-30",
+          "reaction": -0.07565
+        },
+        {
+          "date": "2021-10-28",
+          "time_of_day": "after_close",
+          "pre_date": "2021-10-28",
+          "post_date": "2021-10-29",
+          "reaction": -0.02151
+        },
+        {
+          "date": "2022-02-03",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-03",
+          "post_date": "2022-02-04",
+          "reaction": 0.13536
+        },
+        {
+          "date": "2022-04-28",
+          "time_of_day": "after_close",
+          "pre_date": "2022-04-28",
+          "post_date": "2022-04-29",
+          "reaction": -0.14049
+        },
+        {
+          "date": "2022-07-28",
+          "time_of_day": "after_close",
+          "pre_date": "2022-07-28",
+          "post_date": "2022-07-29",
+          "reaction": 0.10361
+        },
+        {
+          "date": "2022-10-27",
+          "time_of_day": "after_close",
+          "pre_date": "2022-10-27",
+          "post_date": "2022-10-28",
+          "reaction": -0.06804
+        },
+        {
+          "date": "2023-02-02",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-02",
+          "post_date": "2023-02-03",
+          "reaction": -0.08431
+        },
+        {
+          "date": "2023-04-27",
+          "time_of_day": "after_close",
+          "pre_date": "2023-04-27",
+          "post_date": "2023-04-28",
+          "reaction": -0.03979
+        },
+        {
+          "date": "2023-08-03",
+          "time_of_day": "after_close",
+          "pre_date": "2023-08-03",
+          "post_date": "2023-08-04",
+          "reaction": 0.08269
+        },
+        {
+          "date": "2023-10-26",
+          "time_of_day": "after_close",
+          "pre_date": "2023-10-26",
+          "post_date": "2023-10-27",
+          "reaction": 0.06833
+        },
+        {
+          "date": "2024-02-01",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-01",
+          "post_date": "2024-02-02",
+          "reaction": 0.07867
+        },
+        {
+          "date": "2024-04-30",
+          "time_of_day": "after_close",
+          "pre_date": "2024-04-30",
+          "post_date": "2024-05-01",
+          "reaction": 0.02286
+        },
+        {
+          "date": "2024-08-01",
+          "time_of_day": "after_close",
+          "pre_date": "2024-08-01",
+          "post_date": "2024-08-02",
+          "reaction": -0.08785
+        },
+        {
+          "date": "2024-10-31",
+          "time_of_day": "after_close",
+          "pre_date": "2024-10-31",
+          "post_date": "2024-11-01",
+          "reaction": 0.06186
+        },
+        {
+          "date": "2025-02-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-06",
+          "post_date": "2025-02-07",
+          "reaction": -0.04053
+        },
+        {
+          "date": "2025-05-01",
+          "time_of_day": "after_close",
+          "pre_date": "2025-05-01",
+          "post_date": "2025-05-02",
+          "reaction": -0.00116
+        },
+        {
+          "date": "2025-07-31",
+          "time_of_day": "after_close",
+          "pre_date": "2025-07-31",
+          "post_date": "2025-08-01",
+          "reaction": -0.0827
+        },
+        {
+          "date": "2025-10-30",
+          "time_of_day": "after_close",
+          "pre_date": "2025-10-30",
+          "post_date": "2025-10-31",
+          "reaction": 0.09584
+        },
+        {
+          "date": "2026-02-05",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-05",
+          "post_date": "2026-02-06",
+          "reaction": -0.05555
+        },
+        {
+          "date": "2026-04-29",
+          "time_of_day": "after_close",
+          "pre_date": "2026-04-29",
+          "post_date": "2026-04-30",
+          "reaction": 0.00768
+        },
+        {
+          "date": "2026-07-30",
+          "time_of_day": "after_close",
+          "pre_date": "2026-07-30",
+          "post_date": "2026-07-31",
+          "reaction": 0.15321
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.06597,
+        "median_abs": 0.06818,
+        "max_abs": 0.15321,
+        "max_date": "2026-07-30",
+        "n_last8": 8,
+        "median_abs_last8": 0.05871,
+        "mean_abs_last8": 0.06232
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "BR": {
+      "next": {
+        "date": "2026-11-03",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-11-03T07:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-30",
+          "time_of_day": "before_open",
+          "pre_date": "2020-10-29",
+          "post_date": "2020-10-30",
+          "reaction": -0.00376
+        },
+        {
+          "date": "2021-02-02",
+          "time_of_day": "before_open",
+          "pre_date": "2021-02-01",
+          "post_date": "2021-02-02",
+          "reaction": 0.00294
+        },
+        {
+          "date": "2021-05-04",
+          "time_of_day": "before_open",
+          "pre_date": "2021-05-03",
+          "post_date": "2021-05-04",
+          "reaction": 0.018
+        },
+        {
+          "date": "2021-08-12",
+          "time_of_day": "before_open",
+          "pre_date": "2021-08-11",
+          "post_date": "2021-08-12",
+          "reaction": 0.00453
+        },
+        {
+          "date": "2021-11-03",
+          "time_of_day": "before_open",
+          "pre_date": "2021-11-02",
+          "post_date": "2021-11-03",
+          "reaction": -0.05032
+        },
+        {
+          "date": "2022-02-01",
+          "time_of_day": "before_open",
+          "pre_date": "2022-01-31",
+          "post_date": "2022-02-01",
+          "reaction": -0.03699
+        },
+        {
+          "date": "2022-05-03",
+          "time_of_day": "before_open",
+          "pre_date": "2022-05-02",
+          "post_date": "2022-05-03",
+          "reaction": 0.0222
+        },
+        {
+          "date": "2022-08-12",
+          "time_of_day": "before_open",
+          "pre_date": "2022-08-11",
+          "post_date": "2022-08-12",
+          "reaction": 0.07948
+        },
+        {
+          "date": "2022-11-02",
+          "time_of_day": "before_open",
+          "pre_date": "2022-11-01",
+          "post_date": "2022-11-02",
+          "reaction": -0.07935
+        },
+        {
+          "date": "2023-02-02",
+          "time_of_day": "before_open",
+          "pre_date": "2023-02-01",
+          "post_date": "2023-02-02",
+          "reaction": -0.00059
+        },
+        {
+          "date": "2023-05-02",
+          "time_of_day": "before_open",
+          "pre_date": "2023-05-01",
+          "post_date": "2023-05-02",
+          "reaction": 0.06298
+        },
+        {
+          "date": "2023-08-08",
+          "time_of_day": "before_open",
+          "pre_date": "2023-08-07",
+          "post_date": "2023-08-08",
+          "reaction": 0.06446
+        },
+        {
+          "date": "2023-11-02",
+          "time_of_day": "before_open",
+          "pre_date": "2023-11-01",
+          "post_date": "2023-11-02",
+          "reaction": 0.04855
+        },
+        {
+          "date": "2024-02-01",
+          "time_of_day": "before_open",
+          "pre_date": "2024-01-31",
+          "post_date": "2024-02-01",
+          "reaction": -0.01259
+        },
+        {
+          "date": "2024-05-08",
+          "time_of_day": "before_open",
+          "pre_date": "2024-05-07",
+          "post_date": "2024-05-08",
+          "reaction": -0.05413
+        },
+        {
+          "date": "2024-08-06",
+          "time_of_day": "before_open",
+          "pre_date": "2024-08-05",
+          "post_date": "2024-08-06",
+          "reaction": 0.0481
+        },
+        {
+          "date": "2024-11-05",
+          "time_of_day": "before_open",
+          "pre_date": "2024-11-04",
+          "post_date": "2024-11-05",
+          "reaction": 0.04131
+        },
+        {
+          "date": "2025-01-31",
+          "time_of_day": "before_open",
+          "pre_date": "2025-01-30",
+          "post_date": "2025-01-31",
+          "reaction": -0.00376
+        },
+        {
+          "date": "2025-05-01",
+          "time_of_day": "before_open",
+          "pre_date": "2025-04-30",
+          "post_date": "2025-05-01",
+          "reaction": -0.05936
+        },
+        {
+          "date": "2025-08-05",
+          "time_of_day": "before_open",
+          "pre_date": "2025-08-04",
+          "post_date": "2025-08-05",
+          "reaction": 0.0679
+        },
+        {
+          "date": "2025-11-04",
+          "time_of_day": "before_open",
+          "pre_date": "2025-11-03",
+          "post_date": "2025-11-04",
+          "reaction": 0.0076
+        },
+        {
+          "date": "2026-02-03",
+          "time_of_day": "before_open",
+          "pre_date": "2026-02-02",
+          "post_date": "2026-02-03",
+          "reaction": -0.06247
+        },
+        {
+          "date": "2026-04-30",
+          "time_of_day": "before_open",
+          "pre_date": "2026-04-29",
+          "post_date": "2026-04-30",
+          "reaction": -0.04212
+        },
+        {
+          "date": "2026-08-04",
+          "time_of_day": "before_open",
+          "pre_date": "2026-08-03",
+          "post_date": "2026-08-04",
+          "reaction": 0.07036
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.03933,
+        "median_abs": 0.04511,
+        "max_abs": 0.07948,
+        "max_date": "2022-08-12",
+        "n_last8": 8,
+        "median_abs_last8": 0.05074,
+        "mean_abs_last8": 0.04436
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "CBOE": {
+      "next": {
+        "date": "2026-10-30",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-10-30T08:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-30",
+          "time_of_day": "before_open",
+          "pre_date": "2020-10-29",
+          "post_date": "2020-10-30",
+          "reaction": 0.02613
+        },
+        {
+          "date": "2021-02-05",
+          "time_of_day": "before_open",
+          "pre_date": "2021-02-04",
+          "post_date": "2021-02-05",
+          "reaction": -0.05845
+        },
+        {
+          "date": "2021-04-30",
+          "time_of_day": "before_open",
+          "pre_date": "2021-04-29",
+          "post_date": "2021-04-30",
+          "reaction": 0.00997
+        },
+        {
+          "date": "2021-07-30",
+          "time_of_day": "before_open",
+          "pre_date": "2021-07-29",
+          "post_date": "2021-07-30",
+          "reaction": 0.02173
+        },
+        {
+          "date": "2021-10-29",
+          "time_of_day": "before_open",
+          "pre_date": "2021-10-28",
+          "post_date": "2021-10-29",
+          "reaction": 0.00587
+        },
+        {
+          "date": "2022-02-04",
+          "time_of_day": "before_open",
+          "pre_date": "2022-02-03",
+          "post_date": "2022-02-04",
+          "reaction": 0.0306
+        },
+        {
+          "date": "2022-04-29",
+          "time_of_day": "before_open",
+          "pre_date": "2022-04-28",
+          "post_date": "2022-04-29",
+          "reaction": -0.01987
+        },
+        {
+          "date": "2022-07-29",
+          "time_of_day": "before_open",
+          "pre_date": "2022-07-28",
+          "post_date": "2022-07-29",
+          "reaction": -0.01822
+        },
+        {
+          "date": "2022-11-04",
+          "time_of_day": "before_open",
+          "pre_date": "2022-11-03",
+          "post_date": "2022-11-04",
+          "reaction": 0.02722
+        },
+        {
+          "date": "2023-02-03",
+          "time_of_day": "before_open",
+          "pre_date": "2023-02-02",
+          "post_date": "2023-02-03",
+          "reaction": 0.02847
+        },
+        {
+          "date": "2023-05-05",
+          "time_of_day": "before_open",
+          "pre_date": "2023-05-04",
+          "post_date": "2023-05-05",
+          "reaction": -0.00358
+        },
+        {
+          "date": "2023-08-04",
+          "time_of_day": "before_open",
+          "pre_date": "2023-08-03",
+          "post_date": "2023-08-04",
+          "reaction": 0.03971
+        },
+        {
+          "date": "2023-11-03",
+          "time_of_day": "before_open",
+          "pre_date": "2023-11-02",
+          "post_date": "2023-11-03",
+          "reaction": 0.04115
+        },
+        {
+          "date": "2024-02-02",
+          "time_of_day": "before_open",
+          "pre_date": "2024-02-01",
+          "post_date": "2024-02-02",
+          "reaction": -0.01056
+        },
+        {
+          "date": "2024-05-03",
+          "time_of_day": "before_open",
+          "pre_date": "2024-05-02",
+          "post_date": "2024-05-03",
+          "reaction": 0.03187
+        },
+        {
+          "date": "2024-08-02",
+          "time_of_day": "before_open",
+          "pre_date": "2024-08-01",
+          "post_date": "2024-08-02",
+          "reaction": 0.04328
+        },
+        {
+          "date": "2024-11-01",
+          "time_of_day": "before_open",
+          "pre_date": "2024-10-31",
+          "post_date": "2024-11-01",
+          "reaction": -0.01672
+        },
+        {
+          "date": "2025-02-07",
+          "time_of_day": "before_open",
+          "pre_date": "2025-02-06",
+          "post_date": "2025-02-07",
+          "reaction": 0.02014
+        },
+        {
+          "date": "2025-05-02",
+          "time_of_day": "before_open",
+          "pre_date": "2025-05-01",
+          "post_date": "2025-05-02",
+          "reaction": 0.02342
+        },
+        {
+          "date": "2025-08-01",
+          "time_of_day": "before_open",
+          "pre_date": "2025-07-31",
+          "post_date": "2025-08-01",
+          "reaction": 0.028
+        },
+        {
+          "date": "2025-10-31",
+          "time_of_day": "before_open",
+          "pre_date": "2025-10-30",
+          "post_date": "2025-10-31",
+          "reaction": 0.03729
+        },
+        {
+          "date": "2026-02-06",
+          "time_of_day": "before_open",
+          "pre_date": "2026-02-05",
+          "post_date": "2026-02-06",
+          "reaction": -0.00697
+        },
+        {
+          "date": "2026-05-01",
+          "time_of_day": "before_open",
+          "pre_date": "2026-04-30",
+          "post_date": "2026-05-01",
+          "reaction": 0.08954
+        },
+        {
+          "date": "2026-07-31",
+          "time_of_day": "before_open",
+          "pre_date": "2026-07-30",
+          "post_date": "2026-07-31",
+          "reaction": 0.04624
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.02854,
+        "median_abs": 0.02668,
+        "max_abs": 0.08954,
+        "max_date": "2026-05-01",
+        "n_last8": 8,
+        "median_abs_last8": 0.02571,
+        "mean_abs_last8": 0.03354
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "CINF": {
+      "next": {
+        "date": "2026-10-26",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-10-26T16:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-26",
+          "time_of_day": "after_close",
+          "pre_date": "2020-10-26",
+          "post_date": "2020-10-27",
+          "reaction": -0.03854
+        },
+        {
+          "date": "2021-02-10",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-10",
+          "post_date": "2021-02-11",
+          "reaction": 0.02617
+        },
+        {
+          "date": "2021-04-28",
+          "time_of_day": "after_close",
+          "pre_date": "2021-04-28",
+          "post_date": "2021-04-29",
+          "reaction": 0.0444
+        },
+        {
+          "date": "2021-07-28",
+          "time_of_day": "after_close",
+          "pre_date": "2021-07-28",
+          "post_date": "2021-07-29",
+          "reaction": 0.03527
+        },
+        {
+          "date": "2021-10-27",
+          "time_of_day": "after_close",
+          "pre_date": "2021-10-27",
+          "post_date": "2021-10-28",
+          "reaction": 0.04117
+        },
+        {
+          "date": "2022-02-15",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-15",
+          "post_date": "2022-02-16",
+          "reaction": 0.06173
+        },
+        {
+          "date": "2022-04-28",
+          "time_of_day": "after_close",
+          "pre_date": "2022-04-28",
+          "post_date": "2022-04-29",
+          "reaction": -0.09809
+        },
+        {
+          "date": "2022-07-27",
+          "time_of_day": "after_close",
+          "pre_date": "2022-07-27",
+          "post_date": "2022-07-28",
+          "reaction": -0.13908
+        },
+        {
+          "date": "2022-10-31",
+          "time_of_day": "after_close",
+          "pre_date": "2022-10-31",
+          "post_date": "2022-11-01",
+          "reaction": -0.03968
+        },
+        {
+          "date": "2023-02-06",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-06",
+          "post_date": "2023-02-07",
+          "reaction": 0.10704
+        },
+        {
+          "date": "2023-04-27",
+          "time_of_day": "after_close",
+          "pre_date": "2023-04-27",
+          "post_date": "2023-04-28",
+          "reaction": 0.02731
+        },
+        {
+          "date": "2023-07-27",
+          "time_of_day": "after_close",
+          "pre_date": "2023-07-27",
+          "post_date": "2023-07-28",
+          "reaction": 0.06851
+        },
+        {
+          "date": "2023-10-26",
+          "time_of_day": "after_close",
+          "pre_date": "2023-10-26",
+          "post_date": "2023-10-27",
+          "reaction": -0.02107
+        },
+        {
+          "date": "2024-02-06",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-06",
+          "post_date": "2024-02-07",
+          "reaction": -0.04523
+        },
+        {
+          "date": "2024-04-25",
+          "time_of_day": "after_close",
+          "pre_date": "2024-04-25",
+          "post_date": "2024-04-26",
+          "reaction": -0.06383
+        },
+        {
+          "date": "2024-07-25",
+          "time_of_day": "after_close",
+          "pre_date": "2024-07-25",
+          "post_date": "2024-07-26",
+          "reaction": 0.03042
+        },
+        {
+          "date": "2024-10-24",
+          "time_of_day": "after_close",
+          "pre_date": "2024-10-24",
+          "post_date": "2024-10-25",
+          "reaction": 0.02177
+        },
+        {
+          "date": "2025-02-10",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-10",
+          "post_date": "2025-02-11",
+          "reaction": 0.02809
+        },
+        {
+          "date": "2025-04-28",
+          "time_of_day": "after_close",
+          "pre_date": "2025-04-28",
+          "post_date": "2025-04-29",
+          "reaction": 0.02929
+        },
+        {
+          "date": "2025-07-28",
+          "time_of_day": "after_close",
+          "pre_date": "2025-07-28",
+          "post_date": "2025-07-29",
+          "reaction": 0.03617
+        },
+        {
+          "date": "2025-10-27",
+          "time_of_day": "after_close",
+          "pre_date": "2025-10-27",
+          "post_date": "2025-10-28",
+          "reaction": -0.03736
+        },
+        {
+          "date": "2026-02-09",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-09",
+          "post_date": "2026-02-10",
+          "reaction": -0.03325
+        },
+        {
+          "date": "2026-04-27",
+          "time_of_day": "after_close",
+          "pre_date": "2026-04-27",
+          "post_date": "2026-04-28",
+          "reaction": -0.00411
+        },
+        {
+          "date": "2026-07-27",
+          "time_of_day": "after_close",
+          "pre_date": "2026-07-27",
+          "post_date": "2026-07-28",
+          "reaction": -0.00868
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.04526,
+        "median_abs": 0.03676,
+        "max_abs": 0.13908,
+        "max_date": "2022-07-27",
+        "n_last8": 8,
+        "median_abs_last8": 0.02869,
+        "mean_abs_last8": 0.02484
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "CPAY": {
+      "next": {
+        "date": "2026-11-04",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-11-04T15:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-11-05",
+          "time_of_day": "after_close",
+          "pre_date": "2020-11-05",
+          "post_date": "2020-11-06",
+          "reaction": -0.03287
+        },
+        {
+          "date": "2021-02-04",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-04",
+          "post_date": "2021-02-05",
+          "reaction": -0.02434
+        },
+        {
+          "date": "2021-05-05",
+          "time_of_day": "after_close",
+          "pre_date": "2021-05-05",
+          "post_date": "2021-05-06",
+          "reaction": -0.00896
+        },
+        {
+          "date": "2021-08-04",
+          "time_of_day": "after_close",
+          "pre_date": "2021-08-04",
+          "post_date": "2021-08-05",
+          "reaction": 0.05327
+        },
+        {
+          "date": "2021-11-03",
+          "time_of_day": "after_close",
+          "pre_date": "2021-11-03",
+          "post_date": "2021-11-04",
+          "reaction": -0.00091
+        },
+        {
+          "date": "2022-02-08",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-08",
+          "post_date": "2022-02-09",
+          "reaction": 0.06658
+        },
+        {
+          "date": "2022-05-05",
+          "time_of_day": "after_close",
+          "pre_date": "2022-05-05",
+          "post_date": "2022-05-06",
+          "reaction": -0.07969
+        },
+        {
+          "date": "2022-08-03",
+          "time_of_day": "after_close",
+          "pre_date": "2022-08-03",
+          "post_date": "2022-08-04",
+          "reaction": -0.01231
+        },
+        {
+          "date": "2022-11-02",
+          "time_of_day": "after_close",
+          "pre_date": "2022-11-02",
+          "post_date": "2022-11-03",
+          "reaction": -0.02289
+        },
+        {
+          "date": "2023-02-08",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-08",
+          "post_date": "2023-02-09",
+          "reaction": -0.02369
+        },
+        {
+          "date": "2023-05-03",
+          "time_of_day": "after_close",
+          "pre_date": "2023-05-03",
+          "post_date": "2023-05-04",
+          "reaction": 0.07842
+        },
+        {
+          "date": "2023-08-08",
+          "time_of_day": "after_close",
+          "pre_date": "2023-08-08",
+          "post_date": "2023-08-09",
+          "reaction": 0.06338
+        },
+        {
+          "date": "2023-11-08",
+          "time_of_day": "after_close",
+          "pre_date": "2023-11-08",
+          "post_date": "2023-11-09",
+          "reaction": -0.02883
+        },
+        {
+          "date": "2024-02-07",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-07",
+          "post_date": "2024-02-08",
+          "reaction": -0.09202
+        },
+        {
+          "date": "2024-05-08",
+          "time_of_day": "after_close",
+          "pre_date": "2024-05-08",
+          "post_date": "2024-05-09",
+          "reaction": -0.06989
+        },
+        {
+          "date": "2024-08-07",
+          "time_of_day": "after_close",
+          "pre_date": "2024-08-07",
+          "post_date": "2024-08-08",
+          "reaction": 0.05938
+        },
+        {
+          "date": "2024-11-07",
+          "time_of_day": "after_close",
+          "pre_date": "2024-11-07",
+          "post_date": "2024-11-08",
+          "reaction": 0.05631
+        },
+        {
+          "date": "2025-02-05",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-05",
+          "post_date": "2025-02-06",
+          "reaction": 0.00226
+        },
+        {
+          "date": "2025-05-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-05-06",
+          "post_date": "2025-05-07",
+          "reaction": -0.00135
+        },
+        {
+          "date": "2025-08-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-08-06",
+          "post_date": "2025-08-07",
+          "reaction": -0.03355
+        },
+        {
+          "date": "2025-11-05",
+          "time_of_day": "after_close",
+          "pre_date": "2025-11-05",
+          "post_date": "2025-11-06",
+          "reaction": 0.06233
+        },
+        {
+          "date": "2026-02-04",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-04",
+          "post_date": "2026-02-05",
+          "reaction": 0.11563
+        },
+        {
+          "date": "2026-05-07",
+          "time_of_day": "after_close",
+          "pre_date": "2026-05-07",
+          "post_date": "2026-05-08",
+          "reaction": 0.12507
+        },
+        {
+          "date": "2026-08-05",
+          "time_of_day": "after_close",
+          "pre_date": "2026-08-05",
+          "post_date": "2026-08-06",
+          "reaction": 0.0095
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.04681,
+        "median_abs": 0.04341,
+        "max_abs": 0.12507,
+        "max_date": "2026-05-07",
+        "n_last8": 8,
+        "median_abs_last8": 0.04493,
+        "mean_abs_last8": 0.05075
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "CSCO": {
+      "next": {
+        "date": "2026-11-12",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-11-12T15:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-11-12",
+          "time_of_day": "after_close",
+          "pre_date": "2020-11-12",
+          "post_date": "2020-11-13",
+          "reaction": 0.0706
+        },
+        {
+          "date": "2021-02-09",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-09",
+          "post_date": "2021-02-10",
+          "reaction": -0.02598
+        },
+        {
+          "date": "2021-05-19",
+          "time_of_day": "after_close",
+          "pre_date": "2021-05-19",
+          "post_date": "2021-05-20",
+          "reaction": 0.00724
+        },
+        {
+          "date": "2021-08-18",
+          "time_of_day": "after_close",
+          "pre_date": "2021-08-18",
+          "post_date": "2021-08-19",
+          "reaction": 0.03844
+        },
+        {
+          "date": "2021-11-17",
+          "time_of_day": "after_close",
+          "pre_date": "2021-11-17",
+          "post_date": "2021-11-18",
+          "reaction": -0.05514
+        },
+        {
+          "date": "2022-02-16",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-16",
+          "post_date": "2022-02-17",
+          "reaction": 0.02802
+        },
+        {
+          "date": "2022-05-18",
+          "time_of_day": "after_close",
+          "pre_date": "2022-05-18",
+          "post_date": "2022-05-19",
+          "reaction": -0.1373
+        },
+        {
+          "date": "2022-08-17",
+          "time_of_day": "after_close",
+          "pre_date": "2022-08-17",
+          "post_date": "2022-08-18",
+          "reaction": 0.05808
+        },
+        {
+          "date": "2022-11-16",
+          "time_of_day": "after_close",
+          "pre_date": "2022-11-16",
+          "post_date": "2022-11-17",
+          "reaction": 0.04956
+        },
+        {
+          "date": "2023-02-15",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-15",
+          "post_date": "2023-02-16",
+          "reaction": 0.05243
+        },
+        {
+          "date": "2023-05-17",
+          "time_of_day": "after_close",
+          "pre_date": "2023-05-17",
+          "post_date": "2023-05-18",
+          "reaction": 0.01197
+        },
+        {
+          "date": "2023-08-16",
+          "time_of_day": "after_close",
+          "pre_date": "2023-08-16",
+          "post_date": "2023-08-17",
+          "reaction": 0.03342
+        },
+        {
+          "date": "2023-11-15",
+          "time_of_day": "after_close",
+          "pre_date": "2023-11-15",
+          "post_date": "2023-11-16",
+          "reaction": -0.09835
+        },
+        {
+          "date": "2024-02-14",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-14",
+          "post_date": "2024-02-15",
+          "reaction": -0.02426
+        },
+        {
+          "date": "2024-05-15",
+          "time_of_day": "after_close",
+          "pre_date": "2024-05-15",
+          "post_date": "2024-05-16",
+          "reaction": -0.02678
+        },
+        {
+          "date": "2024-08-14",
+          "time_of_day": "after_close",
+          "pre_date": "2024-08-14",
+          "post_date": "2024-08-15",
+          "reaction": 0.068
+        },
+        {
+          "date": "2024-11-13",
+          "time_of_day": "after_close",
+          "pre_date": "2024-11-13",
+          "post_date": "2024-11-14",
+          "reaction": -0.02129
+        },
+        {
+          "date": "2025-02-12",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-12",
+          "post_date": "2025-02-13",
+          "reaction": 0.02095
+        },
+        {
+          "date": "2025-05-14",
+          "time_of_day": "after_close",
+          "pre_date": "2025-05-14",
+          "post_date": "2025-05-15",
+          "reaction": 0.04846
+        },
+        {
+          "date": "2025-08-13",
+          "time_of_day": "after_close",
+          "pre_date": "2025-08-13",
+          "post_date": "2025-08-14",
+          "reaction": -0.01563
+        },
+        {
+          "date": "2025-11-12",
+          "time_of_day": "after_close",
+          "pre_date": "2025-11-12",
+          "post_date": "2025-11-13",
+          "reaction": 0.04624
+        },
+        {
+          "date": "2026-02-11",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-11",
+          "post_date": "2026-02-12",
+          "reaction": -0.12322
+        },
+        {
+          "date": "2026-05-13",
+          "time_of_day": "after_close",
+          "pre_date": "2026-05-13",
+          "post_date": "2026-05-14",
+          "reaction": 0.13409
+        },
+        {
+          "date": "2026-08-12",
+          "time_of_day": "after_close",
+          "pre_date": "2026-08-12",
+          "post_date": "2026-08-13",
+          "reaction": -0.08403
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.05331,
+        "median_abs": 0.04735,
+        "max_abs": 0.1373,
+        "max_date": "2022-05-18",
+        "n_last8": 8,
+        "median_abs_last8": 0.04735,
+        "mean_abs_last8": 0.06174
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "DASH": {
+      "next": {
+        "date": "2026-11-04",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-11-04T15:00:00"
+      },
+      "history": [
+        {
+          "date": "2021-02-25",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-25",
+          "post_date": "2021-02-26",
+          "reaction": 0.0157
+        },
+        {
+          "date": "2021-05-13",
+          "time_of_day": "after_close",
+          "pre_date": "2021-05-13",
+          "post_date": "2021-05-14",
+          "reaction": 0.22149
+        },
+        {
+          "date": "2021-08-12",
+          "time_of_day": "after_close",
+          "pre_date": "2021-08-12",
+          "post_date": "2021-08-13",
+          "reaction": 0.03496
+        },
+        {
+          "date": "2021-11-09",
+          "time_of_day": "after_close",
+          "pre_date": "2021-11-09",
+          "post_date": "2021-11-10",
+          "reaction": 0.11578
+        },
+        {
+          "date": "2022-02-16",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-16",
+          "post_date": "2022-02-17",
+          "reaction": 0.10686
+        },
+        {
+          "date": "2022-05-06",
+          "time_of_day": "after_close",
+          "pre_date": "2022-05-06",
+          "post_date": "2022-05-09",
+          "reaction": -0.10997
+        },
+        {
+          "date": "2022-08-04",
+          "time_of_day": "after_close",
+          "pre_date": "2022-08-04",
+          "post_date": "2022-08-05",
+          "reaction": -0.01315
+        },
+        {
+          "date": "2022-11-03",
+          "time_of_day": "after_close",
+          "pre_date": "2022-11-03",
+          "post_date": "2022-11-04",
+          "reaction": 0.08318
+        },
+        {
+          "date": "2023-02-16",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-16",
+          "post_date": "2023-02-17",
+          "reaction": -0.07595
+        },
+        {
+          "date": "2023-05-04",
+          "time_of_day": "after_close",
+          "pre_date": "2023-05-04",
+          "post_date": "2023-05-05",
+          "reaction": 0.00111
+        },
+        {
+          "date": "2023-08-02",
+          "time_of_day": "after_close",
+          "pre_date": "2023-08-02",
+          "post_date": "2023-08-03",
+          "reaction": -0.00605
+        },
+        {
+          "date": "2023-11-01",
+          "time_of_day": "after_close",
+          "pre_date": "2023-11-01",
+          "post_date": "2023-11-02",
+          "reaction": 0.15665
+        },
+        {
+          "date": "2024-02-15",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-15",
+          "post_date": "2024-02-16",
+          "reaction": -0.08125
+        },
+        {
+          "date": "2024-05-01",
+          "time_of_day": "after_close",
+          "pre_date": "2024-05-01",
+          "post_date": "2024-05-02",
+          "reaction": -0.10317
+        },
+        {
+          "date": "2024-08-01",
+          "time_of_day": "after_close",
+          "pre_date": "2024-08-01",
+          "post_date": "2024-08-02",
+          "reaction": 0.08346
+        },
+        {
+          "date": "2024-10-30",
+          "time_of_day": "after_close",
+          "pre_date": "2024-10-30",
+          "post_date": "2024-10-31",
+          "reaction": 0.00934
+        },
+        {
+          "date": "2025-02-11",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-11",
+          "post_date": "2025-02-12",
+          "reaction": 0.0404
+        },
+        {
+          "date": "2025-05-06",
+          "time_of_day": "before_open",
+          "pre_date": "2025-05-05",
+          "post_date": "2025-05-06",
+          "reaction": -0.07444
+        },
+        {
+          "date": "2025-08-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-08-06",
+          "post_date": "2025-08-07",
+          "reaction": 0.05002
+        },
+        {
+          "date": "2025-11-05",
+          "time_of_day": "after_close",
+          "pre_date": "2025-11-05",
+          "post_date": "2025-11-06",
+          "reaction": -0.17454
+        },
+        {
+          "date": "2026-02-18",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-18",
+          "post_date": "2026-02-19",
+          "reaction": 0.01621
+        },
+        {
+          "date": "2026-05-06",
+          "time_of_day": "after_close",
+          "pre_date": "2026-05-06",
+          "post_date": "2026-05-07",
+          "reaction": 0.02012
+        },
+        {
+          "date": "2026-08-05",
+          "time_of_day": "after_close",
+          "pre_date": "2026-08-05",
+          "post_date": "2026-08-06",
+          "reaction": 0.0289
+        }
+      ],
+      "stats": {
+        "n": 23,
+        "mean_abs": 0.07055,
+        "median_abs": 0.07444,
+        "max_abs": 0.22149,
+        "max_date": "2021-05-13",
+        "n_last8": 8,
+        "median_abs_last8": 0.03465,
+        "mean_abs_last8": 0.05175
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "MS": {
+      "next": {
+        "date": "2026-10-14",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-10-14T08:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-15",
+          "time_of_day": "before_open",
+          "pre_date": "2020-10-14",
+          "post_date": "2020-10-15",
+          "reaction": 0.01343
+        },
+        {
+          "date": "2021-01-20",
+          "time_of_day": "before_open",
+          "pre_date": "2021-01-19",
+          "post_date": "2021-01-20",
+          "reaction": -0.002
+        },
+        {
+          "date": "2021-04-16",
+          "time_of_day": "before_open",
+          "pre_date": "2021-04-15",
+          "post_date": "2021-04-16",
+          "reaction": -0.02759
+        },
+        {
+          "date": "2021-07-15",
+          "time_of_day": "before_open",
+          "pre_date": "2021-07-14",
+          "post_date": "2021-07-15",
+          "reaction": 0.00184
+        },
+        {
+          "date": "2021-10-14",
+          "time_of_day": "before_open",
+          "pre_date": "2021-10-13",
+          "post_date": "2021-10-14",
+          "reaction": 0.02475
+        },
+        {
+          "date": "2022-01-19",
+          "time_of_day": "before_open",
+          "pre_date": "2022-01-18",
+          "post_date": "2022-01-19",
+          "reaction": 0.0183
+        },
+        {
+          "date": "2022-04-14",
+          "time_of_day": "before_open",
+          "pre_date": "2022-04-13",
+          "post_date": "2022-04-14",
+          "reaction": 0.00749
+        },
+        {
+          "date": "2022-07-14",
+          "time_of_day": "before_open",
+          "pre_date": "2022-07-13",
+          "post_date": "2022-07-14",
+          "reaction": -0.00387
+        },
+        {
+          "date": "2022-10-14",
+          "time_of_day": "before_open",
+          "pre_date": "2022-10-13",
+          "post_date": "2022-10-14",
+          "reaction": -0.05068
+        },
+        {
+          "date": "2023-01-17",
+          "time_of_day": "before_open",
+          "pre_date": "2023-01-13",
+          "post_date": "2023-01-17",
+          "reaction": 0.05913
+        },
+        {
+          "date": "2023-04-19",
+          "time_of_day": "before_open",
+          "pre_date": "2023-04-18",
+          "post_date": "2023-04-19",
+          "reaction": 0.00668
+        },
+        {
+          "date": "2023-07-18",
+          "time_of_day": "before_open",
+          "pre_date": "2023-07-17",
+          "post_date": "2023-07-18",
+          "reaction": 0.06449
+        },
+        {
+          "date": "2023-10-18",
+          "time_of_day": "before_open",
+          "pre_date": "2023-10-17",
+          "post_date": "2023-10-18",
+          "reaction": -0.06784
+        },
+        {
+          "date": "2024-01-16",
+          "time_of_day": "before_open",
+          "pre_date": "2024-01-12",
+          "post_date": "2024-01-16",
+          "reaction": -0.04158
+        },
+        {
+          "date": "2024-04-16",
+          "time_of_day": "before_open",
+          "pre_date": "2024-04-15",
+          "post_date": "2024-04-16",
+          "reaction": 0.02472
+        },
+        {
+          "date": "2024-07-16",
+          "time_of_day": "before_open",
+          "pre_date": "2024-07-15",
+          "post_date": "2024-07-16",
+          "reaction": 0.00912
+        },
+        {
+          "date": "2024-10-16",
+          "time_of_day": "before_open",
+          "pre_date": "2024-10-15",
+          "post_date": "2024-10-16",
+          "reaction": 0.06496
+        },
+        {
+          "date": "2025-01-16",
+          "time_of_day": "before_open",
+          "pre_date": "2025-01-15",
+          "post_date": "2025-01-16",
+          "reaction": 0.04029
+        },
+        {
+          "date": "2025-04-11",
+          "time_of_day": "before_open",
+          "pre_date": "2025-04-10",
+          "post_date": "2025-04-11",
+          "reaction": 0.01445
+        },
+        {
+          "date": "2025-07-16",
+          "time_of_day": "before_open",
+          "pre_date": "2025-07-15",
+          "post_date": "2025-07-16",
+          "reaction": -0.01271
+        },
+        {
+          "date": "2025-10-15",
+          "time_of_day": "before_open",
+          "pre_date": "2025-10-14",
+          "post_date": "2025-10-15",
+          "reaction": 0.04706
+        },
+        {
+          "date": "2026-01-15",
+          "time_of_day": "before_open",
+          "pre_date": "2026-01-14",
+          "post_date": "2026-01-15",
+          "reaction": 0.0578
+        },
+        {
+          "date": "2026-04-15",
+          "time_of_day": "before_open",
+          "pre_date": "2026-04-14",
+          "post_date": "2026-04-15",
+          "reaction": 0.04516
+        },
+        {
+          "date": "2026-07-15",
+          "time_of_day": "before_open",
+          "pre_date": "2026-07-14",
+          "post_date": "2026-07-15",
+          "reaction": 0.00387
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.02958,
+        "median_abs": 0.02474,
+        "max_abs": 0.06784,
+        "max_date": "2023-10-18",
+        "n_last8": 8,
+        "median_abs_last8": 0.04272,
+        "mean_abs_last8": 0.03579
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "OXY": {
+      "next": {
+        "date": "2026-11-09",
+        "time_of_day": "after_close",
+        "provider_stamp": "2026-11-09T15:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-11-09",
+          "time_of_day": "after_close",
+          "pre_date": "2020-11-09",
+          "post_date": "2020-11-10",
+          "reaction": 0.01227
+        },
+        {
+          "date": "2021-02-22",
+          "time_of_day": "after_close",
+          "pre_date": "2021-02-22",
+          "post_date": "2021-02-23",
+          "reaction": -0.01549
+        },
+        {
+          "date": "2021-05-10",
+          "time_of_day": "after_close",
+          "pre_date": "2021-05-10",
+          "post_date": "2021-05-11",
+          "reaction": -0.07886
+        },
+        {
+          "date": "2021-08-03",
+          "time_of_day": "after_close",
+          "pre_date": "2021-08-03",
+          "post_date": "2021-08-04",
+          "reaction": -0.028
+        },
+        {
+          "date": "2021-11-04",
+          "time_of_day": "after_close",
+          "pre_date": "2021-11-04",
+          "post_date": "2021-11-05",
+          "reaction": -0.00978
+        },
+        {
+          "date": "2022-02-24",
+          "time_of_day": "after_close",
+          "pre_date": "2022-02-24",
+          "post_date": "2022-02-25",
+          "reaction": -0.00462
+        },
+        {
+          "date": "2022-05-10",
+          "time_of_day": "after_close",
+          "pre_date": "2022-05-10",
+          "post_date": "2022-05-11",
+          "reaction": 0.01161
+        },
+        {
+          "date": "2022-08-02",
+          "time_of_day": "after_close",
+          "pre_date": "2022-08-02",
+          "post_date": "2022-08-03",
+          "reaction": -0.06256
+        },
+        {
+          "date": "2022-11-08",
+          "time_of_day": "after_close",
+          "pre_date": "2022-11-08",
+          "post_date": "2022-11-09",
+          "reaction": -0.09221
+        },
+        {
+          "date": "2023-02-27",
+          "time_of_day": "after_close",
+          "pre_date": "2023-02-27",
+          "post_date": "2023-02-28",
+          "reaction": -0.00678
+        },
+        {
+          "date": "2023-05-09",
+          "time_of_day": "after_close",
+          "pre_date": "2023-05-09",
+          "post_date": "2023-05-10",
+          "reaction": -0.03579
+        },
+        {
+          "date": "2023-08-02",
+          "time_of_day": "after_close",
+          "pre_date": "2023-08-02",
+          "post_date": "2023-08-03",
+          "reaction": 0.01204
+        },
+        {
+          "date": "2023-11-07",
+          "time_of_day": "after_close",
+          "pre_date": "2023-11-07",
+          "post_date": "2023-11-08",
+          "reaction": 0.01578
+        },
+        {
+          "date": "2024-02-14",
+          "time_of_day": "after_close",
+          "pre_date": "2024-02-14",
+          "post_date": "2024-02-15",
+          "reaction": 0.04904
+        },
+        {
+          "date": "2024-05-07",
+          "time_of_day": "after_close",
+          "pre_date": "2024-05-07",
+          "post_date": "2024-05-08",
+          "reaction": -0.02136
+        },
+        {
+          "date": "2024-08-07",
+          "time_of_day": "after_close",
+          "pre_date": "2024-08-07",
+          "post_date": "2024-08-08",
+          "reaction": 0.04313
+        },
+        {
+          "date": "2024-11-12",
+          "time_of_day": "after_close",
+          "pre_date": "2024-11-12",
+          "post_date": "2024-11-13",
+          "reaction": 0.0165
+        },
+        {
+          "date": "2025-02-18",
+          "time_of_day": "after_close",
+          "pre_date": "2025-02-18",
+          "post_date": "2025-02-19",
+          "reaction": 0.04402
+        },
+        {
+          "date": "2025-05-07",
+          "time_of_day": "after_close",
+          "pre_date": "2025-05-07",
+          "post_date": "2025-05-08",
+          "reaction": 0.06229
+        },
+        {
+          "date": "2025-08-06",
+          "time_of_day": "after_close",
+          "pre_date": "2025-08-06",
+          "post_date": "2025-08-07",
+          "reaction": 0.02468
+        },
+        {
+          "date": "2025-11-10",
+          "time_of_day": "after_close",
+          "pre_date": "2025-11-10",
+          "post_date": "2025-11-11",
+          "reaction": 0.0012
+        },
+        {
+          "date": "2026-02-18",
+          "time_of_day": "after_close",
+          "pre_date": "2026-02-18",
+          "post_date": "2026-02-19",
+          "reaction": 0.09382
+        },
+        {
+          "date": "2026-05-05",
+          "time_of_day": "after_close",
+          "pre_date": "2026-05-05",
+          "post_date": "2026-05-06",
+          "reaction": -0.07112
+        },
+        {
+          "date": "2026-08-05",
+          "time_of_day": "after_close",
+          "pre_date": "2026-08-05",
+          "post_date": "2026-08-06",
+          "reaction": 0.04144
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.0356,
+        "median_abs": 0.02634,
+        "max_abs": 0.09382,
+        "max_date": "2026-02-18",
+        "n_last8": 8,
+        "median_abs_last8": 0.04273,
+        "mean_abs_last8": 0.04438
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "SCHW": {
+      "next": {
+        "date": "2026-10-15",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-10-15T08:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-15",
+          "time_of_day": "before_open",
+          "pre_date": "2020-10-14",
+          "post_date": "2020-10-15",
+          "reaction": 0.05146
+        },
+        {
+          "date": "2021-01-19",
+          "time_of_day": "before_open",
+          "pre_date": "2021-01-15",
+          "post_date": "2021-01-19",
+          "reaction": 0.00817
+        },
+        {
+          "date": "2021-04-15",
+          "time_of_day": "before_open",
+          "pre_date": "2021-04-14",
+          "post_date": "2021-04-15",
+          "reaction": -0.02877
+        },
+        {
+          "date": "2021-07-16",
+          "time_of_day": "before_open",
+          "pre_date": "2021-07-15",
+          "post_date": "2021-07-16",
+          "reaction": -0.02353
+        },
+        {
+          "date": "2021-10-15",
+          "time_of_day": "before_open",
+          "pre_date": "2021-10-14",
+          "post_date": "2021-10-15",
+          "reaction": 0.03572
+        },
+        {
+          "date": "2022-01-18",
+          "time_of_day": "before_open",
+          "pre_date": "2022-01-14",
+          "post_date": "2022-01-18",
+          "reaction": -0.03528
+        },
+        {
+          "date": "2022-04-18",
+          "time_of_day": "before_open",
+          "pre_date": "2022-04-14",
+          "post_date": "2022-04-18",
+          "reaction": -0.09438
+        },
+        {
+          "date": "2022-07-18",
+          "time_of_day": "before_open",
+          "pre_date": "2022-07-15",
+          "post_date": "2022-07-18",
+          "reaction": -0.01512
+        },
+        {
+          "date": "2022-10-17",
+          "time_of_day": "before_open",
+          "pre_date": "2022-10-14",
+          "post_date": "2022-10-17",
+          "reaction": -0.02247
+        },
+        {
+          "date": "2023-01-18",
+          "time_of_day": "before_open",
+          "pre_date": "2023-01-17",
+          "post_date": "2023-01-18",
+          "reaction": -0.02527
+        },
+        {
+          "date": "2023-04-17",
+          "time_of_day": "after_close",
+          "pre_date": "2023-04-17",
+          "post_date": "2023-04-18",
+          "reaction": 0.02331
+        },
+        {
+          "date": "2023-07-18",
+          "time_of_day": "before_open",
+          "pre_date": "2023-07-17",
+          "post_date": "2023-07-18",
+          "reaction": 0.12568
+        },
+        {
+          "date": "2023-10-16",
+          "time_of_day": "before_open",
+          "pre_date": "2023-10-13",
+          "post_date": "2023-10-16",
+          "reaction": 0.04656
+        },
+        {
+          "date": "2024-01-17",
+          "time_of_day": "before_open",
+          "pre_date": "2024-01-16",
+          "post_date": "2024-01-17",
+          "reaction": -0.01337
+        },
+        {
+          "date": "2024-04-15",
+          "time_of_day": "before_open",
+          "pre_date": "2024-04-12",
+          "post_date": "2024-04-15",
+          "reaction": 0.01714
+        },
+        {
+          "date": "2024-07-16",
+          "time_of_day": "before_open",
+          "pre_date": "2024-07-15",
+          "post_date": "2024-07-16",
+          "reaction": -0.10177
+        },
+        {
+          "date": "2024-10-15",
+          "time_of_day": "before_open",
+          "pre_date": "2024-10-14",
+          "post_date": "2024-10-15",
+          "reaction": 0.06104
+        },
+        {
+          "date": "2025-01-21",
+          "time_of_day": "after_close",
+          "pre_date": "2025-01-21",
+          "post_date": "2025-01-22",
+          "reaction": -0.00408
+        },
+        {
+          "date": "2025-04-17",
+          "time_of_day": "before_open",
+          "pre_date": "2025-04-16",
+          "post_date": "2025-04-17",
+          "reaction": 0.00594
+        },
+        {
+          "date": "2025-07-18",
+          "time_of_day": "before_open",
+          "pre_date": "2025-07-17",
+          "post_date": "2025-07-18",
+          "reaction": 0.029
+        },
+        {
+          "date": "2025-10-16",
+          "time_of_day": "before_open",
+          "pre_date": "2025-10-15",
+          "post_date": "2025-10-16",
+          "reaction": -0.00975
+        },
+        {
+          "date": "2026-01-21",
+          "time_of_day": "before_open",
+          "pre_date": "2026-01-20",
+          "post_date": "2026-01-21",
+          "reaction": 0.00792
+        },
+        {
+          "date": "2026-04-16",
+          "time_of_day": "before_open",
+          "pre_date": "2026-04-15",
+          "post_date": "2026-04-16",
+          "reaction": -0.07629
+        },
+        {
+          "date": "2026-07-21",
+          "time_of_day": "before_open",
+          "pre_date": "2026-07-20",
+          "post_date": "2026-07-21",
+          "reaction": -0.02516
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.03697,
+        "median_abs": 0.02522,
+        "max_abs": 0.12568,
+        "max_date": "2023-07-18",
+        "n_last8": 8,
+        "median_abs_last8": 0.01745,
+        "mean_abs_last8": 0.0274
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
+      "history_years": 6
+    },
+    "SPGI": {
+      "next": {
+        "date": "2026-10-27",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-10-27T08:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-27",
+          "time_of_day": "before_open",
+          "pre_date": "2020-10-26",
+          "post_date": "2020-10-27",
+          "reaction": -0.00809
+        },
+        {
+          "date": "2021-02-09",
+          "time_of_day": "before_open",
+          "pre_date": "2021-02-08",
+          "post_date": "2021-02-09",
+          "reaction": 0.02136
+        },
+        {
+          "date": "2021-04-29",
+          "time_of_day": "before_open",
+          "pre_date": "2021-04-28",
+          "post_date": "2021-04-29",
+          "reaction": 0.0332
+        },
+        {
+          "date": "2021-07-29",
+          "time_of_day": "before_open",
+          "pre_date": "2021-07-28",
+          "post_date": "2021-07-29",
+          "reaction": 0.02911
+        },
+        {
+          "date": "2021-10-26",
+          "time_of_day": "before_open",
+          "pre_date": "2021-10-25",
+          "post_date": "2021-10-26",
+          "reaction": 0.03856
+        },
+        {
+          "date": "2022-02-08",
+          "time_of_day": "before_open",
+          "pre_date": "2022-02-07",
+          "post_date": "2022-02-08",
+          "reaction": -0.0135
+        },
+        {
+          "date": "2022-05-04",
+          "time_of_day": "before_open",
+          "pre_date": "2022-05-03",
+          "post_date": "2022-05-04",
+          "reaction": 0.01304
+        },
+        {
+          "date": "2022-08-02",
+          "time_of_day": "before_open",
+          "pre_date": "2022-08-01",
+          "post_date": "2022-08-02",
+          "reaction": -0.01675
+        },
+        {
+          "date": "2022-10-27",
+          "time_of_day": "before_open",
+          "pre_date": "2022-10-26",
+          "post_date": "2022-10-27",
+          "reaction": 0.02497
+        },
+        {
+          "date": "2023-02-09",
+          "time_of_day": "before_open",
+          "pre_date": "2023-02-08",
+          "post_date": "2023-02-09",
+          "reaction": -0.00601
+        },
+        {
+          "date": "2023-04-27",
+          "time_of_day": "before_open",
+          "pre_date": "2023-04-26",
+          "post_date": "2023-04-27",
+          "reaction": 0.04561
+        },
+        {
+          "date": "2023-07-27",
+          "time_of_day": "before_open",
+          "pre_date": "2023-07-26",
+          "post_date": "2023-07-27",
+          "reaction": -0.0764
+        },
+        {
+          "date": "2023-11-02",
+          "time_of_day": "before_open",
+          "pre_date": "2023-11-01",
+          "post_date": "2023-11-02",
+          "reaction": 0.06978
+        },
+        {
+          "date": "2024-02-08",
+          "time_of_day": "before_open",
+          "pre_date": "2024-02-07",
+          "post_date": "2024-02-08",
+          "reaction": -0.05023
+        },
+        {
+          "date": "2024-04-25",
+          "time_of_day": "before_open",
+          "pre_date": "2024-04-24",
+          "post_date": "2024-04-25",
+          "reaction": 0.00537
+        },
+        {
+          "date": "2024-07-30",
+          "time_of_day": "before_open",
+          "pre_date": "2024-07-29",
+          "post_date": "2024-07-30",
+          "reaction": -0.00269
+        },
+        {
+          "date": "2024-10-24",
+          "time_of_day": "before_open",
+          "pre_date": "2024-10-23",
+          "post_date": "2024-10-24",
+          "reaction": -0.03466
+        },
+        {
+          "date": "2025-02-11",
+          "time_of_day": "before_open",
+          "pre_date": "2025-02-10",
+          "post_date": "2025-02-11",
+          "reaction": 0.04892
+        },
+        {
+          "date": "2025-04-29",
+          "time_of_day": "before_open",
+          "pre_date": "2025-04-28",
+          "post_date": "2025-04-29",
+          "reaction": 0.02585
+        },
+        {
+          "date": "2025-07-31",
+          "time_of_day": "before_open",
+          "pre_date": "2025-07-30",
+          "post_date": "2025-07-31",
+          "reaction": 0.04113
+        },
+        {
+          "date": "2025-10-30",
+          "time_of_day": "before_open",
+          "pre_date": "2025-10-29",
+          "post_date": "2025-10-30",
+          "reaction": 0.03915
+        },
+        {
+          "date": "2026-02-10",
+          "time_of_day": "before_open",
+          "pre_date": "2026-02-09",
+          "post_date": "2026-02-10",
+          "reaction": -0.09705
+        },
+        {
+          "date": "2026-04-28",
+          "time_of_day": "before_open",
+          "pre_date": "2026-04-27",
+          "post_date": "2026-04-28",
+          "reaction": -0.00858
+        },
+        {
+          "date": "2026-07-28",
+          "time_of_day": "before_open",
+          "pre_date": "2026-07-27",
+          "post_date": "2026-07-28",
+          "reaction": -0.03517
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.03272,
+        "median_abs": 0.03116,
+        "max_abs": 0.09705,
+        "max_date": "2026-02-10",
+        "n_last8": 8,
+        "median_abs_last8": 0.03716,
+        "mean_abs_last8": 0.04131
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-09-29T22:45:57-04:00",
       "history_years": 6
     }
   },
