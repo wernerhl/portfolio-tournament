@@ -1,8 +1,8 @@
 {
   "cadence": "daily",
   "session_date": "2026-09-25",
-  "as_of": "2026-09-29",
-  "computed_at": "2026-09-29T22:47:22-04:00",
+  "as_of": "2026-09-30",
+  "computed_at": "2026-09-30T04:10:48-04:00",
   "label": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
   "rules": [
     {
@@ -131,823 +131,8 @@
   ],
   "pricing": "each leg at the chain's price_used (bid-ask mid where both are positive, else last, flagged); per share and on the position (shares \u00d7 per-share; contracts = shares/100 noted)",
   "stress_method": "the book's loss in the three standing index scenarios (book.json) with the structure in place: the position's stressed price is spot \u00d7 (1 + \u03b2_index \u00d7 shock), the structure's payoff at that price less its net premium replaces the position's unhedged loss",
-  "nav": 234854.0,
+  "nav": 235103.0,
   "positions": {
-    "ANET": {
-      "spot": 206.55,
-      "shares": 100.0,
-      "cost_basis": 160.0,
-      "value": 20286.0,
-      "embedded_gain": 0.2909,
-      "large_embedded_gain": false,
-      "embedded_gain_note": null,
-      "risk_share": 0.094,
-      "betas": {
-        "SPY": 1.928,
-        "SMH": 0.646
-      },
-      "volatility_state": "mixed",
-      "term_inverted": false,
-      "next_earnings": "2026-11-03",
-      "implied_move": 0.0507,
-      "skew": 0.0012,
-      "impaired": false,
-      "tenors": [
-        {
-          "tenor": "after_earnings",
-          "expiry": "2026-11-20",
-          "days": 56,
-          "sessions": 40,
-          "earnings_inside": true,
-          "context": {
-            "risk_share": 0.093951,
-            "state": "mixed",
-            "earnings_inside": true,
-            "term_inverted": false,
-            "skew": 0.0012
-          },
-          "structures": [
-            {
-              "id": "put_10",
-              "label": "Protective put, 10% OTM",
-              "expiry": "2026-11-20",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 185.0,
-                  "price": 7.275,
-                  "quote": "mid",
-                  "iv": 0.5227,
-                  "delta": -0.2532,
-                  "target_moneyness": 0.9
-                }
-              ],
-              "net_per_share": 7.28,
-              "net_kind": "debit",
-              "net_on_position": 728.0,
-              "contracts": 1,
-              "floor": 177.72,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 213.83,
-              "delta_change_per_share": -0.2532,
-              "position_delta_after": 0.7468,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -2883.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43925.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.187
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -2883.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75797.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3227
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -2883.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126837.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5401
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 1
-            },
-            {
-              "id": "put_15",
-              "label": "Protective put, 15% OTM",
-              "expiry": "2026-11-20",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 175.0,
-                  "price": 4.725,
-                  "quote": "mid",
-                  "iv": 0.533,
-                  "delta": -0.1794,
-                  "target_moneyness": 0.85
-                }
-              ],
-              "net_per_share": 4.72,
-              "net_kind": "debit",
-              "net_on_position": 472.0,
-              "contracts": 1,
-              "floor": 170.28,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 211.28,
-              "delta_change_per_share": -0.1794,
-              "position_delta_after": 0.8206,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -3628.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44670.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1902
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -3628.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76542.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3259
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -3628.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127582.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5432
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 2
-            },
-            {
-              "id": "put_spread_10_20",
-              "label": "Put spread, 10/20%",
-              "expiry": "2026-11-20",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 185.0,
-                  "price": 7.275,
-                  "quote": "mid",
-                  "iv": 0.5227,
-                  "delta": -0.2532,
-                  "target_moneyness": 0.9
-                },
-                {
-                  "cp": "p",
-                  "side": "sell",
-                  "strike": 165.0,
-                  "price": 2.79,
-                  "quote": "mid",
-                  "iv": 0.5365,
-                  "delta": -0.1174,
-                  "target_moneyness": 0.8
-                }
-              ],
-              "net_per_share": 4.49,
-              "net_kind": "debit",
-              "net_on_position": 449.0,
-              "contracts": 1,
-              "floor": 180.51,
-              "floor_note": "protection ends below 165.00 (the short put)",
-              "cap": null,
-              "breakeven": 211.04,
-              "delta_change_per_share": -0.1358,
-              "position_delta_after": 0.8642,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -2604.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43646.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1858
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -6413.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79328.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3378
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -11989.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135943.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5788
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 3
-            },
-            {
-              "id": "collar_15_10",
-              "label": "Collar, 15% put / 10% call",
-              "expiry": "2026-11-20",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 175.0,
-                  "price": 4.725,
-                  "quote": "mid",
-                  "iv": 0.533,
-                  "delta": -0.1794,
-                  "target_moneyness": 0.85
-                },
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 230.0,
-                  "price": 8.925,
-                  "quote": "mid",
-                  "iv": 0.5158,
-                  "delta": 0.3487,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -4.2,
-              "net_kind": "credit",
-              "net_on_position": -420.0,
-              "contracts": 1,
-              "floor": 179.2,
-              "floor_note": null,
-              "cap": 234.2,
-              "breakeven": 202.35,
-              "delta_change_per_share": -0.5282,
-              "position_delta_after": 0.4718,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -2735.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43777.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1864
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -2735.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75650.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3221
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -2735.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126690.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5394
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 4
-            },
-            {
-              "id": "covered_call_10",
-              "label": "Covered call, 10% OTM",
-              "expiry": "2026-11-20",
-              "legs": [
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 230.0,
-                  "price": 8.925,
-                  "quote": "mid",
-                  "iv": 0.5158,
-                  "delta": 0.3487,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -8.93,
-              "net_kind": "credit",
-              "net_on_position": -893.0,
-              "contracts": 1,
-              "floor": null,
-              "floor_note": null,
-              "cap": 238.93,
-              "breakeven": 197.63,
-              "delta_change_per_share": -0.3487,
-              "position_delta_after": 0.6513,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -3113.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44155.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.188
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -7072.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79987.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3406
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -12648.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136602.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5816
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 5
-            }
-          ]
-        },
-        {
-          "tenor": "about_90d",
-          "expiry": "2026-12-18",
-          "days": 84,
-          "sessions": 59,
-          "earnings_inside": true,
-          "context": {
-            "risk_share": 0.093951,
-            "state": "mixed",
-            "earnings_inside": true,
-            "term_inverted": false,
-            "skew": 0.0012
-          },
-          "structures": [
-            {
-              "id": "put_10",
-              "label": "Protective put, 10% OTM",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 185.0,
-                  "price": 9.85,
-                  "quote": "mid",
-                  "iv": 0.5153,
-                  "delta": -0.2725,
-                  "target_moneyness": 0.9
-                }
-              ],
-              "net_per_share": 9.85,
-              "net_kind": "debit",
-              "net_on_position": 985.0,
-              "contracts": 1,
-              "floor": 175.15,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 216.4,
-              "delta_change_per_share": -0.2725,
-              "position_delta_after": 0.7275,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -3140.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44182.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1881
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -3140.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76055.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3238
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -3140.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127095.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5412
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 1
-            },
-            {
-              "id": "put_15",
-              "label": "Protective put, 15% OTM",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 175.0,
-                  "price": 6.775,
-                  "quote": "mid",
-                  "iv": 0.5189,
-                  "delta": -0.205,
-                  "target_moneyness": 0.85
-                }
-              ],
-              "net_per_share": 6.78,
-              "net_kind": "debit",
-              "net_on_position": 678.0,
-              "contracts": 1,
-              "floor": 168.22,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 213.33,
-              "delta_change_per_share": -0.205,
-              "position_delta_after": 0.795,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -3833.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44875.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1911
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -3833.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76747.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3268
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -3833.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127787.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5441
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 2
-            },
-            {
-              "id": "put_spread_10_20",
-              "label": "Put spread, 10/20%",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 185.0,
-                  "price": 9.85,
-                  "quote": "mid",
-                  "iv": 0.5153,
-                  "delta": -0.2725,
-                  "target_moneyness": 0.9
-                },
-                {
-                  "cp": "p",
-                  "side": "sell",
-                  "strike": 165.0,
-                  "price": 4.65,
-                  "quote": "mid",
-                  "iv": 0.5324,
-                  "delta": -0.1496,
-                  "target_moneyness": 0.8
-                }
-              ],
-              "net_per_share": 5.2,
-              "net_kind": "debit",
-              "net_on_position": 520.0,
-              "contracts": 1,
-              "floor": 179.8,
-              "floor_note": "protection ends below 165.00 (the short put)",
-              "cap": null,
-              "breakeven": 211.75,
-              "delta_change_per_share": -0.1229,
-              "position_delta_after": 0.8771,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -2675.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43717.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1861
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -6485.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79399.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3381
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -12060.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136015.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5791
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 3
-            },
-            {
-              "id": "collar_15_10",
-              "label": "Collar, 15% put / 10% call",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 175.0,
-                  "price": 6.775,
-                  "quote": "mid",
-                  "iv": 0.5189,
-                  "delta": -0.205,
-                  "target_moneyness": 0.85
-                },
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 230.0,
-                  "price": 12.25,
-                  "quote": "mid",
-                  "iv": 0.5074,
-                  "delta": 0.3913,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -5.47,
-              "net_kind": "credit",
-              "net_on_position": -548.0,
-              "contracts": 1,
-              "floor": 180.47,
-              "floor_note": null,
-              "cap": 235.47,
-              "breakeven": 201.08,
-              "delta_change_per_share": -0.5962,
-              "position_delta_after": 0.4038,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -2608.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43650.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1859
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -2608.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75522.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3216
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -2608.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126562.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5389
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 4
-            },
-            {
-              "id": "covered_call_10",
-              "label": "Covered call, 10% OTM",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 230.0,
-                  "price": 12.25,
-                  "quote": "mid",
-                  "iv": 0.5074,
-                  "delta": 0.3913,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -12.25,
-              "net_kind": "credit",
-              "net_on_position": -1225.0,
-              "contracts": 1,
-              "floor": null,
-              "floor_note": null,
-              "cap": 242.25,
-              "breakeven": 194.3,
-              "delta_change_per_share": -0.3913,
-              "position_delta_after": 0.6087,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 166.5,
-                  "position_unhedged": -4005.0,
-                  "position_with_structure": -2780.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43823.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1866
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 126.9,
-                  "position_unhedged": -7965.0,
-                  "position_with_structure": -6740.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79654.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3392
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": 71.15,
-                  "position_unhedged": -13540.0,
-                  "position_with_structure": -12315.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136270.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5802
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 5
-            }
-          ]
-        }
-      ],
-      "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated"
-    },
     "AVGO": {
       "spot": 352.81,
       "shares": 50.0,
@@ -956,7 +141,7 @@
       "embedded_gain": 0.0798,
       "large_embedded_gain": false,
       "embedded_gain_note": null,
-      "risk_share": 0.0771,
+      "risk_share": 0.2281,
       "betas": {
         "SPY": 2.045,
         "SMH": 0.727
@@ -975,7 +160,7 @@
           "sessions": 59,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.077123,
+            "risk_share": 0.228132,
             "state": "cheap",
             "earnings_inside": true,
             "term_inverted": false,
@@ -1015,10 +200,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -3404.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44605.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1899
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14304.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0608
                 },
                 {
                   "id": "spy_-20",
@@ -1026,10 +211,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -3404.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -77068.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3282
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -29664.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1262
                 },
                 {
                   "id": "spy_-34",
@@ -1037,10 +222,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -3404.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -128633.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5477
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -48046.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2044
                 }
               ],
               "quote_flags": [
@@ -1097,10 +282,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -2623.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43824.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1866
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13523.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0575
                 },
                 {
                   "id": "spy_-20",
@@ -1108,10 +293,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -5992.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79656.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3392
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32252.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1372
                 },
                 {
                   "id": "spy_-34",
@@ -1119,10 +304,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -11043.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136271.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5802
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55684.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2369
                 }
               ],
               "quote_flags": [
@@ -1169,10 +354,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -2600.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43801.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1865
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13500.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0574
                 },
                 {
                   "id": "spy_-20",
@@ -1180,10 +365,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -2600.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76264.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3247
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28860.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1228
                 },
                 {
                   "id": "spy_-34",
@@ -1191,10 +376,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -2600.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127829.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5443
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -47242.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2009
                 }
               ],
               "quote_flags": [
@@ -1251,10 +436,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -2618.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43819.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1866
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13518.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0575
                 },
                 {
                   "id": "spy_-20",
@@ -1262,10 +447,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -2618.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76282.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3248
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28878.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1228
                 },
                 {
                   "id": "spy_-34",
@@ -1273,10 +458,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -2618.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127846.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5444
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -47259.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.201
                 }
               ],
               "quote_flags": [
@@ -1323,10 +508,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -3061.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44262.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1885
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13961.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0594
                 },
                 {
                   "id": "spy_-20",
@@ -1334,10 +519,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -6429.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80093.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.341
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32689.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.139
                 },
                 {
                   "id": "spy_-34",
@@ -1345,10 +530,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -11480.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136709.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5821
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56122.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2387
                 }
               ],
               "quote_flags": [
@@ -1371,7 +556,7 @@
           "sessions": 59,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.077123,
+            "risk_share": 0.228132,
             "state": "cheap",
             "earnings_inside": true,
             "term_inverted": false,
@@ -1411,10 +596,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -3404.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44605.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1899
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14304.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0608
                 },
                 {
                   "id": "spy_-20",
@@ -1422,10 +607,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -3404.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -77068.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3282
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -29664.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1262
                 },
                 {
                   "id": "spy_-34",
@@ -1433,10 +618,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -3404.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -128633.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5477
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -48046.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2044
                 }
               ],
               "quote_flags": [
@@ -1493,10 +678,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -2623.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43824.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1866
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13523.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0575
                 },
                 {
                   "id": "spy_-20",
@@ -1504,10 +689,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -5992.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79656.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3392
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32252.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1372
                 },
                 {
                   "id": "spy_-34",
@@ -1515,10 +700,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -11043.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136271.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5802
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55684.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2369
                 }
               ],
               "quote_flags": [
@@ -1565,10 +750,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -2600.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43801.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1865
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13500.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0574
                 },
                 {
                   "id": "spy_-20",
@@ -1576,10 +761,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -2600.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76264.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3247
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28860.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1228
                 },
                 {
                   "id": "spy_-34",
@@ -1587,10 +772,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -2600.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127829.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5443
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -47242.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2009
                 }
               ],
               "quote_flags": [
@@ -1647,10 +832,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -2618.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43819.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1866
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13518.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0575
                 },
                 {
                   "id": "spy_-20",
@@ -1658,10 +843,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -2618.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76282.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3248
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28878.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1228
                 },
                 {
                   "id": "spy_-34",
@@ -1669,10 +854,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -2618.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -127846.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5444
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -47259.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.201
                 }
               ],
               "quote_flags": [
@@ -1719,10 +904,10 @@
                   "stressed_price": 275.87,
                   "position_unhedged": -3847.0,
                   "position_with_structure": -3061.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44262.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1885
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13961.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0594
                 },
                 {
                   "id": "spy_-20",
@@ -1730,10 +915,10 @@
                   "stressed_price": 208.5,
                   "position_unhedged": -7216.0,
                   "position_with_structure": -6429.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80093.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.341
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32689.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.139
                 },
                 {
                   "id": "spy_-34",
@@ -1741,10 +926,10 @@
                   "stressed_price": 107.48,
                   "position_unhedged": -12267.0,
                   "position_with_structure": -11480.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136709.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5821
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56122.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2387
                 }
               ],
               "quote_flags": [
@@ -1771,7 +956,7 @@
       "embedded_gain": -0.2942,
       "large_embedded_gain": false,
       "embedded_gain_note": null,
-      "risk_share": 0.0245,
+      "risk_share": 0.0816,
       "betas": {
         "SPY": 3.12,
         "SMH": 0.678
@@ -1790,7 +975,7 @@
           "sessions": 77,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.024535,
+            "risk_share": 0.081555,
             "state": "cheap",
             "earnings_inside": true,
             "term_inverted": false,
@@ -1840,10 +1025,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -930.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44857.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.191
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14556.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0619
                 },
                 {
                   "id": "spy_-20",
@@ -1851,10 +1036,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -3059.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80497.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3428
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -33093.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1408
                 },
                 {
                   "id": "spy_-34",
@@ -1862,10 +1047,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -5468.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -137113.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5838
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56526.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2404
                 }
               ],
               "quote_flags": [
@@ -1912,10 +1097,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -1412.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45339.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1931
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -15039.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.064
                 },
                 {
                   "id": "spy_-20",
@@ -1923,10 +1108,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -1412.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78851.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3357
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31447.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1338
                 },
                 {
                   "id": "spy_-34",
@@ -1934,10 +1119,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -1412.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -133057.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5666
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -52471.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2232
                 }
               ],
               "quote_flags": [
@@ -1984,10 +1169,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -1238.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45165.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1923
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14865.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0632
                 },
                 {
                   "id": "spy_-20",
@@ -1995,10 +1180,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -1238.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78677.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.335
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31273.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.133
                 },
                 {
                   "id": "spy_-34",
@@ -2006,10 +1191,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -1238.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -132883.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5658
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -52297.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2224
                 }
               ],
               "quote_flags": [
@@ -2066,10 +1251,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -687.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44614.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.19
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14313.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0609
                 },
                 {
                   "id": "spy_-20",
@@ -2077,10 +1262,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -687.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78125.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3327
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -30721.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1307
                 },
                 {
                   "id": "spy_-34",
@@ -2088,10 +1273,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -687.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -132332.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5635
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -51745.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2201
                 }
               ],
               "quote_flags": [
@@ -2138,10 +1323,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -396.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44323.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1887
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14022.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0596
                 },
                 {
                   "id": "spy_-20",
@@ -2149,10 +1334,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -2716.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80154.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3413
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32750.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1393
                 },
                 {
                   "id": "spy_-34",
@@ -2160,10 +1345,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -5125.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136770.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5824
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56183.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.239
                 }
               ],
               "quote_flags": [
@@ -2186,7 +1371,7 @@
           "sessions": 77,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.024535,
+            "risk_share": 0.081555,
             "state": "cheap",
             "earnings_inside": true,
             "term_inverted": false,
@@ -2236,10 +1421,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -930.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44857.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.191
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14556.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0619
                 },
                 {
                   "id": "spy_-20",
@@ -2247,10 +1432,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -3059.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80497.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3428
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -33093.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1408
                 },
                 {
                   "id": "spy_-34",
@@ -2258,10 +1443,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -5468.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -137113.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5838
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56526.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2404
                 }
               ],
               "quote_flags": [
@@ -2308,10 +1493,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -1412.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45339.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1931
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -15039.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.064
                 },
                 {
                   "id": "spy_-20",
@@ -2319,10 +1504,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -1412.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78851.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3357
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31447.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1338
                 },
                 {
                   "id": "spy_-34",
@@ -2330,10 +1515,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -1412.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -133057.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5666
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -52471.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2232
                 }
               ],
               "quote_flags": [
@@ -2380,10 +1565,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -1238.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45165.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1923
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14865.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0632
                 },
                 {
                   "id": "spy_-20",
@@ -2391,10 +1576,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -1238.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78677.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.335
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31273.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.133
                 },
                 {
                   "id": "spy_-34",
@@ -2402,10 +1587,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -1238.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -132883.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5658
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -52297.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2224
                 }
               ],
               "quote_flags": [
@@ -2462,10 +1647,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -687.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44614.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.19
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14313.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0609
                 },
                 {
                   "id": "spy_-20",
@@ -2473,10 +1658,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -687.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78125.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3327
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -30721.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1307
                 },
                 {
                   "id": "spy_-34",
@@ -2484,10 +1669,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -687.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -132332.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5635
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -51745.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2201
                 }
               ],
               "quote_flags": [
@@ -2534,10 +1719,10 @@
                   "stressed_price": 21.96,
                   "position_unhedged": -1121.0,
                   "position_with_structure": -396.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44323.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1887
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14022.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0596
                 },
                 {
                   "id": "spy_-20",
@@ -2545,10 +1730,10 @@
                   "stressed_price": 10.36,
                   "position_unhedged": -3441.0,
                   "position_with_structure": -2716.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80154.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3413
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32750.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1393
                 },
                 {
                   "id": "spy_-34",
@@ -2556,10 +1741,10 @@
                   "stressed_price": -1.68,
                   "position_unhedged": -5850.0,
                   "position_with_structure": -5125.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136770.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5824
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56183.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.239
                 }
               ],
               "quote_flags": [
@@ -2586,7 +1771,7 @@
       "embedded_gain": 0.0477,
       "large_embedded_gain": false,
       "embedded_gain_note": null,
-      "risk_share": 0.1165,
+      "risk_share": 0.3562,
       "betas": {
         "SPY": 1.905,
         "SMH": 0.722
@@ -2605,7 +1790,7 @@
           "sessions": 25,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.116464,
+            "risk_share": 0.356232,
             "state": "mixed",
             "earnings_inside": true,
             "term_inverted": false,
@@ -2645,10 +1830,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -2915.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -42778.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1821
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -12477.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0531
                 },
                 {
                   "id": "spy_-20",
@@ -2656,10 +1841,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -2915.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -74675.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.318
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -27271.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.116
                 },
                 {
                   "id": "spy_-34",
@@ -2667,10 +1852,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -2915.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -124907.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5318
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -44320.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1885
                 }
               ],
               "quote_flags": [
@@ -2717,10 +1902,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3945.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43808.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1865
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13507.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0575
                 },
                 {
                   "id": "spy_-20",
@@ -2728,10 +1913,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -3945.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75705.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3223
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28301.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1204
                 },
                 {
                   "id": "spy_-34",
@@ -2739,10 +1924,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -3945.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -125937.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5362
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -45350.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1929
                 }
               ],
               "quote_flags": [
@@ -2799,10 +1984,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3157.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43020.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1832
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -12720.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0541
                 },
                 {
                   "id": "spy_-20",
@@ -2810,10 +1995,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -7092.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78852.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3357
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31448.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1338
                 },
                 {
                   "id": "spy_-34",
@@ -2821,10 +2006,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -13475.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135467.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5768
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -54881.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2334
                 }
               ],
               "quote_flags": [
@@ -2881,10 +2066,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3340.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43203.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.184
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -12902.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0549
                 },
                 {
                   "id": "spy_-20",
@@ -2892,10 +2077,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -3340.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75100.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3198
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -27696.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1178
                 },
                 {
                   "id": "spy_-34",
@@ -2903,10 +2088,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -3340.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -125332.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5337
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -44745.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1903
                 }
               ],
               "quote_flags": [
@@ -2953,10 +2138,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -4580.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44443.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1892
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14142.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0602
                 },
                 {
                   "id": "spy_-20",
@@ -2964,10 +2149,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -8514.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80274.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3418
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32870.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1398
                 },
                 {
                   "id": "spy_-34",
@@ -2975,10 +2160,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -14897.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136890.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5829
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56303.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2395
                 }
               ],
               "quote_flags": [
@@ -3001,7 +2186,7 @@
           "sessions": 59,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.116464,
+            "risk_share": 0.356232,
             "state": "mixed",
             "earnings_inside": true,
             "term_inverted": false,
@@ -3041,10 +2226,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3471.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43334.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1845
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13033.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0554
                 },
                 {
                   "id": "spy_-20",
@@ -3052,10 +2237,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -3471.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75231.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3203
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -27827.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1184
                 },
                 {
                   "id": "spy_-34",
@@ -3063,10 +2248,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -3471.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -125463.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5342
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -44877.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1909
                 }
               ],
               "quote_flags": [
@@ -3113,10 +2298,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -4336.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44199.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1882
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13898.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0591
                 },
                 {
                   "id": "spy_-20",
@@ -3124,10 +2309,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -4336.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76096.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.324
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28692.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.122
                 },
                 {
                   "id": "spy_-34",
@@ -3135,10 +2320,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -4336.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126328.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5379
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -45742.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1946
                 }
               ],
               "quote_flags": [
@@ -3195,10 +2380,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3308.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43172.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1838
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -12871.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0547
                 },
                 {
                   "id": "spy_-20",
@@ -3206,10 +2391,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -7243.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79003.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3364
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31599.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1344
                 },
                 {
                   "id": "spy_-34",
@@ -3217,10 +2402,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -13626.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135619.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5775
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55032.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2341
                 }
               ],
               "quote_flags": [
@@ -3277,10 +2462,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3065.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -42928.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1828
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -12627.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0537
                 },
                 {
                   "id": "spy_-20",
@@ -3288,10 +2473,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -3065.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -74825.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3186
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -27421.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1166
                 },
                 {
                   "id": "spy_-34",
@@ -3299,10 +2484,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -3065.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -125057.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5325
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -44470.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1892
                 }
               ],
               "quote_flags": [
@@ -3349,10 +2534,10 @@
                   "stressed_price": 750.24,
                   "position_unhedged": -5185.0,
                   "position_with_structure": -3913.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -43777.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1864
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13476.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0573
                 },
                 {
                   "id": "spy_-20",
@@ -3360,10 +2545,10 @@
                   "stressed_price": 592.87,
                   "position_unhedged": -9119.0,
                   "position_with_structure": -7848.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79608.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.339
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32204.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.137
                 },
                 {
                   "id": "spy_-34",
@@ -3371,10 +2556,10 @@
                   "stressed_price": 337.54,
                   "position_unhedged": -15502.0,
                   "position_with_structure": -14231.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136224.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.58
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55637.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2366
                 }
               ],
               "quote_flags": [
@@ -3401,7 +2586,7 @@
       "embedded_gain": 0.0437,
       "large_embedded_gain": false,
       "embedded_gain_note": null,
-      "risk_share": 0.0151,
+      "risk_share": 0.0997,
       "betas": {
         "SPY": 1.537,
         "SMH": 0.163
@@ -3420,7 +2605,7 @@
           "sessions": 25,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.015104,
+            "risk_share": 0.09968,
             "state": "mixed",
             "earnings_inside": true,
             "term_inverted": false,
@@ -3460,10 +2645,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -978.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45190.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1924
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14889.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0633
                 },
                 {
                   "id": "spy_-20",
@@ -3471,10 +2656,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -1946.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -77583.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3303
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -30179.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1284
                 },
                 {
                   "id": "spy_-34",
@@ -3482,10 +2667,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -1946.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -130528.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5558
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -49942.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2124
                 }
               ],
               "quote_flags": [
@@ -3532,10 +2717,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -889.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45101.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.192
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14800.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.063
                 },
                 {
                   "id": "spy_-20",
@@ -3543,10 +2728,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -2857.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78494.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3342
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31090.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1322
                 },
                 {
                   "id": "spy_-34",
@@ -3554,10 +2739,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -2857.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -131440.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5597
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -50853.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2163
                 }
               ],
               "quote_flags": [
@@ -3614,10 +2799,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -945.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45157.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1923
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14856.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0632
                 },
                 {
                   "id": "spy_-20",
@@ -3625,10 +2810,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -3601.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79238.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3374
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31834.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1354
                 },
                 {
                   "id": "spy_-34",
@@ -3636,10 +2821,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -7271.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135854.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5785
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55267.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2351
                 }
               ],
               "quote_flags": [
@@ -3696,10 +2881,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -694.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44906.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1912
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14605.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0621
                 },
                 {
                   "id": "spy_-20",
@@ -3707,10 +2892,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -2662.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78299.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3334
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -30895.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1314
                 },
                 {
                   "id": "spy_-34",
@@ -3718,10 +2903,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -2662.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -131245.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5588
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -50658.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2155
                 }
               ],
               "quote_flags": [
@@ -3768,10 +2953,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -641.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44853.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.191
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14552.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0619
                 },
                 {
                   "id": "spy_-20",
@@ -3779,10 +2964,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -5048.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80684.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3436
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -33280.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1416
                 },
                 {
                   "id": "spy_-34",
@@ -3790,10 +2975,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -8718.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -137300.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5846
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56713.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2412
                 }
               ],
               "quote_flags": [
@@ -3816,7 +3001,7 @@
           "sessions": 59,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.015104,
+            "risk_share": 0.09968,
             "state": "mixed",
             "earnings_inside": true,
             "term_inverted": false,
@@ -3856,10 +3041,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -1184.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45395.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1933
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -15095.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0642
                 },
                 {
                   "id": "spy_-20",
@@ -3867,10 +3052,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -2151.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -77788.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3312
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -30384.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1292
                 },
                 {
                   "id": "spy_-34",
@@ -3878,10 +3063,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -2151.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -130734.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5567
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -50147.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2133
                 }
               ],
               "quote_flags": [
@@ -3928,10 +3113,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -1006.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45218.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1925
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14917.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0634
                 },
                 {
                   "id": "spy_-20",
@@ -3939,10 +3124,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -2974.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78611.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3347
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31207.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1327
                 },
                 {
                   "id": "spy_-34",
@@ -3950,10 +3135,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -2974.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -131556.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5602
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -50970.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2168
                 }
               ],
               "quote_flags": [
@@ -4010,10 +3195,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -1085.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45297.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1929
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14996.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0638
                 },
                 {
                   "id": "spy_-20",
@@ -4021,10 +3206,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -3742.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79378.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.338
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31974.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.136
                 },
                 {
                   "id": "spy_-34",
@@ -4032,10 +3217,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -7412.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135994.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5791
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55407.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2357
                 }
               ],
               "quote_flags": [
@@ -4092,10 +3277,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -526.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44738.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1905
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14437.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0614
                 },
                 {
                   "id": "spy_-20",
@@ -4103,10 +3288,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -2494.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -78131.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3327
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -30727.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1307
                 },
                 {
                   "id": "spy_-34",
@@ -4114,10 +3299,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -2494.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -131076.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5581
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -50490.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2148
                 }
               ],
               "quote_flags": [
@@ -4164,10 +3349,10 @@
                   "stressed_price": 324.36,
                   "position_unhedged": -836.0,
                   "position_with_structure": -356.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44568.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1898
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14267.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0607
                 },
                 {
                   "id": "spy_-20",
@@ -4175,10 +3360,10 @@
                   "stressed_price": 236.23,
                   "position_unhedged": -5243.0,
                   "position_with_structure": -4763.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80399.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3423
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32995.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1403
                 },
                 {
                   "id": "spy_-34",
@@ -4186,10 +3371,10 @@
                   "stressed_price": 162.83,
                   "position_unhedged": -8913.0,
                   "position_with_structure": -8433.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -137015.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5834
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56428.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.24
                 }
               ],
               "quote_flags": [
@@ -4208,821 +3393,6 @@
       ],
       "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated"
     },
-    "MU": {
-      "spot": 1082.28,
-      "shares": 50.0,
-      "cost_basis": 910.0,
-      "value": 53254.0,
-      "embedded_gain": 0.1893,
-      "large_embedded_gain": false,
-      "embedded_gain_note": null,
-      "risk_share": 0.6044,
-      "betas": {
-        "SPY": 3.716,
-        "SMH": 1.65
-      },
-      "volatility_state": "mixed",
-      "term_inverted": true,
-      "next_earnings": "2026-09-30",
-      "implied_move": 0.0778,
-      "skew": -0.0202,
-      "impaired": false,
-      "tenors": [
-        {
-          "tenor": "after_earnings",
-          "expiry": "2026-10-02",
-          "days": 7,
-          "sessions": 5,
-          "earnings_inside": true,
-          "context": {
-            "risk_share": 0.604354,
-            "state": "mixed",
-            "earnings_inside": true,
-            "term_inverted": true,
-            "skew": -0.0202
-          },
-          "structures": [
-            {
-              "id": "collar_15_10",
-              "label": "Collar, 15% put / 10% call",
-              "expiry": "2026-10-02",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 915.0,
-                  "price": 3.15,
-                  "quote": "mid",
-                  "iv": 0.7915,
-                  "delta": -0.0583,
-                  "target_moneyness": 0.85
-                },
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 1195.0,
-                  "price": 13.35,
-                  "quote": "mid",
-                  "iv": 0.796,
-                  "delta": 0.206,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -10.2,
-              "net_kind": "credit",
-              "net_on_position": -510.0,
-              "contracts": 0,
-              "floor": 925.2,
-              "floor_note": null,
-              "cap": 1205.2,
-              "breakeven": 1072.08,
-              "delta_change_per_share": -0.2643,
-              "position_delta_after": 0.7357,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -7854.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -26109.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1112
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -7854.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -48513.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.2066
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -7854.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -76974.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.3278
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 1,
-              "ranked_by": [
-                "rule 1: position risk share above 40% \u2014 collar first regardless of volatility state"
-              ],
-              "excluded": false,
-              "rank": 1
-            },
-            {
-              "id": "put_10",
-              "label": "Protective put, 10% OTM",
-              "expiry": "2026-10-02",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 970.0,
-                  "price": 8.4,
-                  "quote": "mid",
-                  "iv": 0.7539,
-                  "delta": -0.1374,
-                  "target_moneyness": 0.9
-                }
-              ],
-              "net_per_share": 8.4,
-              "net_kind": "debit",
-              "net_on_position": 420.0,
-              "contracts": 0,
-              "floor": 961.6,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 1090.68,
-              "delta_change_per_share": -0.1374,
-              "position_delta_after": 0.8626,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -6034.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -24289.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1034
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -6034.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -46693.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.1988
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -6034.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -75154.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.32
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 2
-            },
-            {
-              "id": "put_15",
-              "label": "Protective put, 15% OTM",
-              "expiry": "2026-10-02",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 915.0,
-                  "price": 3.15,
-                  "quote": "mid",
-                  "iv": 0.7915,
-                  "delta": -0.0583,
-                  "target_moneyness": 0.85
-                }
-              ],
-              "net_per_share": 3.15,
-              "net_kind": "debit",
-              "net_on_position": 158.0,
-              "contracts": 0,
-              "floor": 911.85,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 1085.43,
-              "delta_change_per_share": -0.0583,
-              "position_delta_after": 0.9417,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -8522.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -26777.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.114
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -8522.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -49180.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.2094
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -8522.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -77641.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.3306
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 3
-            },
-            {
-              "id": "put_spread_10_20",
-              "label": "Put spread, 10/20%",
-              "expiry": "2026-10-02",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 970.0,
-                  "price": 8.4,
-                  "quote": "mid",
-                  "iv": 0.7539,
-                  "delta": -0.1374,
-                  "target_moneyness": 0.9
-                },
-                {
-                  "cp": "p",
-                  "side": "sell",
-                  "strike": 865.0,
-                  "price": 1.515,
-                  "quote": "mid",
-                  "iv": 0.867,
-                  "delta": -0.0285,
-                  "target_moneyness": 0.8
-                }
-              ],
-              "net_per_share": 6.88,
-              "net_kind": "debit",
-              "net_on_position": 344.0,
-              "contracts": 0,
-              "floor": 963.12,
-              "floor_note": "protection ends below 865.00 (the short put)",
-              "cap": null,
-              "breakeven": 1089.17,
-              "delta_change_per_share": -0.1089,
-              "position_delta_after": 0.8911,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -21887.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -40142.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1709
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -35315.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75974.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3235
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -63469.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -132589.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5646
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 4
-            },
-            {
-              "id": "covered_call_10",
-              "label": "Covered call, 10% OTM",
-              "expiry": "2026-10-02",
-              "legs": [
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 1195.0,
-                  "price": 13.35,
-                  "quote": "mid",
-                  "iv": 0.796,
-                  "delta": 0.206,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -13.35,
-              "net_kind": "credit",
-              "net_on_position": -668.0,
-              "contracts": 0,
-              "floor": null,
-              "floor_note": null,
-              "cap": 1208.35,
-              "breakeven": 1068.93,
-              "delta_change_per_share": -0.206,
-              "position_delta_after": 0.794,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -26125.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44380.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.189
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -39553.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80212.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3415
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -67708.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136827.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5826
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "rule 5: earnings inside the tenor with an inverted term structure \u2014 no naked premium selling ranked"
-              ],
-              "excluded": true,
-              "rank": null
-            }
-          ]
-        },
-        {
-          "tenor": "about_90d",
-          "expiry": "2026-12-18",
-          "days": 84,
-          "sessions": 59,
-          "earnings_inside": true,
-          "context": {
-            "risk_share": 0.604354,
-            "state": "mixed",
-            "earnings_inside": true,
-            "term_inverted": true,
-            "skew": -0.0202
-          },
-          "structures": [
-            {
-              "id": "collar_15_10",
-              "label": "Collar, 15% put / 10% call",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 910.0,
-                  "price": 43.0,
-                  "quote": "mid",
-                  "iv": 0.5819,
-                  "delta": -0.2147,
-                  "target_moneyness": 0.85
-                },
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 1200.0,
-                  "price": 83.525,
-                  "quote": "mid",
-                  "iv": 0.5949,
-                  "delta": 0.4278,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -40.53,
-              "net_kind": "credit",
-              "net_on_position": -2026.0,
-              "contracts": 0,
-              "floor": 950.52,
-              "floor_note": null,
-              "cap": 1240.53,
-              "breakeven": 1041.76,
-              "delta_change_per_share": -0.6425,
-              "position_delta_after": 0.3575,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -6588.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -24843.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1058
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -6588.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -47246.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.2012
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -6588.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -75708.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.3224
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 1,
-              "ranked_by": [
-                "rule 1: position risk share above 40% \u2014 collar first regardless of volatility state"
-              ],
-              "excluded": false,
-              "rank": 1
-            },
-            {
-              "id": "put_10",
-              "label": "Protective put, 10% OTM",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 970.0,
-                  "price": 62.725,
-                  "quote": "mid",
-                  "iv": 0.5768,
-                  "delta": -0.2857,
-                  "target_moneyness": 0.9
-                }
-              ],
-              "net_per_share": 62.73,
-              "net_kind": "debit",
-              "net_on_position": 3136.0,
-              "contracts": 0,
-              "floor": 907.27,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 1145.01,
-              "delta_change_per_share": -0.2857,
-              "position_delta_after": 0.7143,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -8750.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -27005.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.115
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -8750.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -49409.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.2104
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -8750.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -77870.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.3316
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 2
-            },
-            {
-              "id": "put_15",
-              "label": "Protective put, 15% OTM",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 910.0,
-                  "price": 43.0,
-                  "quote": "mid",
-                  "iv": 0.5819,
-                  "delta": -0.2147,
-                  "target_moneyness": 0.85
-                }
-              ],
-              "net_per_share": 43.0,
-              "net_kind": "debit",
-              "net_on_position": 2150.0,
-              "contracts": 0,
-              "floor": 867.0,
-              "floor_note": null,
-              "cap": null,
-              "breakeven": 1125.28,
-              "delta_change_per_share": -0.2147,
-              "position_delta_after": 0.7853,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -10764.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -29019.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1236
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -10764.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -51423.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.219
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -10764.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -79884.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.3401
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 3
-            },
-            {
-              "id": "put_spread_10_20",
-              "label": "Put spread, 10/20%",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "p",
-                  "side": "buy",
-                  "strike": 970.0,
-                  "price": 62.725,
-                  "quote": "mid",
-                  "iv": 0.5768,
-                  "delta": -0.2857,
-                  "target_moneyness": 0.9
-                },
-                {
-                  "cp": "p",
-                  "side": "sell",
-                  "strike": 860.0,
-                  "price": 29.35,
-                  "quote": "mid",
-                  "iv": 0.5804,
-                  "delta": -0.1604,
-                  "target_moneyness": 0.8
-                }
-              ],
-              "net_per_share": 33.38,
-              "net_kind": "debit",
-              "net_on_position": 1669.0,
-              "contracts": 0,
-              "floor": 936.62,
-              "floor_note": "protection ends below 860.00 (the short put)",
-              "cap": null,
-              "breakeven": 1115.66,
-              "delta_change_per_share": -0.1253,
-              "position_delta_after": 0.8747,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -22961.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -41217.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1755
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -36389.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -77048.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3281
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -64544.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -133664.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5691
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "no rule fired: the registered structure order (protection first)"
-              ],
-              "excluded": false,
-              "rank": 4
-            },
-            {
-              "id": "covered_call_10",
-              "label": "Covered call, 10% OTM",
-              "expiry": "2026-12-18",
-              "legs": [
-                {
-                  "cp": "c",
-                  "side": "sell",
-                  "strike": 1200.0,
-                  "price": 83.525,
-                  "quote": "mid",
-                  "iv": 0.5949,
-                  "delta": 0.4278,
-                  "target_moneyness": 1.1
-                }
-              ],
-              "net_per_share": -83.53,
-              "net_kind": "credit",
-              "net_on_position": -4176.0,
-              "contracts": 0,
-              "floor": null,
-              "floor_note": null,
-              "cap": 1283.53,
-              "breakeven": 998.76,
-              "delta_change_per_share": -0.4278,
-              "position_delta_after": 0.5722,
-              "stress": [
-                {
-                  "id": "smh_-30",
-                  "label": "Semiconductors (SMH) \u221230%",
-                  "stressed_price": 546.43,
-                  "position_unhedged": -26793.0,
-                  "position_with_structure": -22616.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -40872.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.174
-                },
-                {
-                  "id": "spy_-20",
-                  "label": "Market (SPY) \u221220%",
-                  "stressed_price": 277.87,
-                  "position_unhedged": -40221.0,
-                  "position_with_structure": -36044.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76703.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3266
-                },
-                {
-                  "id": "spy_-34",
-                  "label": "Market (SPY) \u221234%, 2020-scale",
-                  "stressed_price": -285.22,
-                  "position_unhedged": -68375.0,
-                  "position_with_structure": -64199.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -133319.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5677
-                }
-              ],
-              "quote_flags": [
-                "mid"
-              ],
-              "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated",
-              "rank_priority": 9,
-              "ranked_by": [
-                "rule 5: earnings inside the tenor with an inverted term structure \u2014 no naked premium selling ranked"
-              ],
-              "excluded": true,
-              "rank": null
-            }
-          ]
-        }
-      ],
-      "diagnostic": "DIAGNOSTIC: descriptive; no execution path; option overlays not yet validated"
-    },
     "NVDA": {
       "spot": 225.07,
       "shares": 100.1509,
@@ -5031,7 +3401,7 @@
       "embedded_gain": 1.5924,
       "large_embedded_gain": true,
       "embedded_gain_note": "gain over 50% on cost: a structure that avoids a sale ranks above a trim when it achieves the same stress reduction; the tax consideration is stated in words, no tax computation",
-      "risk_share": 0.0685,
+      "risk_share": 0.2344,
       "betas": {
         "SPY": 1.873,
         "SMH": 0.549
@@ -5050,7 +3420,7 @@
           "sessions": 40,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.068469,
+            "risk_share": 0.234401,
             "state": "cheap",
             "earnings_inside": true,
             "term_inverted": false,
@@ -5090,10 +3460,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3736.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45069.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1919
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14769.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0628
                 },
                 {
                   "id": "spy_-20",
@@ -5101,10 +3471,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -3736.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76171.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3243
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28767.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1224
                 },
                 {
                   "id": "spy_-34",
@@ -5112,10 +3482,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -3736.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126875.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5402
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -46288.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1969
                 }
               ],
               "quote_flags": [
@@ -5172,10 +3542,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -2744.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44077.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1877
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13777.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0586
                 },
                 {
                   "id": "spy_-20",
@@ -5183,10 +3553,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -6675.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79110.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3368
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31706.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1349
                 },
                 {
                   "id": "spy_-34",
@@ -5194,10 +3564,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -12586.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135725.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5779
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55139.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2345
                 }
               ],
               "quote_flags": [
@@ -5244,10 +3614,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -2881.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44215.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1883
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13914.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0592
                 },
                 {
                   "id": "spy_-20",
@@ -5255,10 +3625,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -2881.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75316.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3207
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -27912.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1187
                 },
                 {
                   "id": "spy_-34",
@@ -5266,10 +3636,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -2881.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126020.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5366
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -45433.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1932
                 }
               ],
               "quote_flags": [
@@ -5326,10 +3696,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3285.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44619.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.19
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14318.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0609
                 },
                 {
                   "id": "spy_-20",
@@ -5337,10 +3707,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -3285.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75720.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3224
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28316.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1204
                 },
                 {
                   "id": "spy_-34",
@@ -5348,10 +3718,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -3285.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126424.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5383
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -45837.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.195
                 }
               ],
               "quote_flags": [
@@ -5398,10 +3768,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3264.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44597.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1899
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14296.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0608
                 },
                 {
                   "id": "spy_-20",
@@ -5409,10 +3779,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -7994.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80429.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3425
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -33025.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1405
                 },
                 {
                   "id": "spy_-34",
@@ -5420,10 +3790,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -13905.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -137044.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5835
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56457.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2401
                 }
               ],
               "quote_flags": [
@@ -5446,7 +3816,7 @@
           "sessions": 59,
           "earnings_inside": true,
           "context": {
-            "risk_share": 0.068469,
+            "risk_share": 0.234401,
             "state": "cheap",
             "earnings_inside": true,
             "term_inverted": false,
@@ -5496,10 +3866,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -2831.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44164.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.188
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -13863.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.059
                 },
                 {
                   "id": "spy_-20",
@@ -5507,10 +3877,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -6762.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -79196.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3372
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -31792.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1352
                 },
                 {
                   "id": "spy_-34",
@@ -5518,10 +3888,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -12673.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -135812.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5783
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -55225.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2349
                 }
               ],
               "quote_flags": [
@@ -5568,10 +3938,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3783.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -45116.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1921
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14815.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.063
                 },
                 {
                   "id": "spy_-20",
@@ -5579,10 +3949,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -3783.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -76217.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3245
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28813.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1226
                 },
                 {
                   "id": "spy_-34",
@@ -5590,10 +3960,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -3783.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126922.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5404
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -46335.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1971
                 }
               ],
               "quote_flags": [
@@ -5640,10 +4010,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3059.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44392.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.189
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14092.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0599
                 },
                 {
                   "id": "spy_-20",
@@ -5651,10 +4021,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -3059.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75494.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3214
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28090.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1195
                 },
                 {
                   "id": "spy_-34",
@@ -5662,10 +4032,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -3059.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126198.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5373
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -45611.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.194
                 }
               ],
               "quote_flags": [
@@ -5722,10 +4092,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3099.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44433.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1892
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14132.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0601
                 },
                 {
                   "id": "spy_-20",
@@ -5733,10 +4103,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -3099.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -75534.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3216
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -28130.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1196
                 },
                 {
                   "id": "spy_-34",
@@ -5744,10 +4114,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -3099.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -126238.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5375
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -45651.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.1942
                 }
               ],
               "quote_flags": [
@@ -5794,10 +4164,10 @@
                   "stressed_price": 187.98,
                   "position_unhedged": -3715.0,
                   "position_with_structure": -3031.0,
-                  "book_loss_unhedged": -45048.0,
-                  "book_loss_with_structure": -44364.0,
-                  "book_share_nav_unhedged": -0.1918,
-                  "book_share_nav_with_structure": -0.1889
+                  "book_loss_unhedged": -14747.0,
+                  "book_loss_with_structure": -14064.0,
+                  "book_share_nav_unhedged": -0.0627,
+                  "book_share_nav_with_structure": -0.0598
                 },
                 {
                   "id": "spy_-20",
@@ -5805,10 +4175,10 @@
                   "stressed_price": 140.75,
                   "position_unhedged": -8445.0,
                   "position_with_structure": -7761.0,
-                  "book_loss_unhedged": -80879.0,
-                  "book_loss_with_structure": -80196.0,
-                  "book_share_nav_unhedged": -0.3444,
-                  "book_share_nav_with_structure": -0.3415
+                  "book_loss_unhedged": -33475.0,
+                  "book_loss_with_structure": -32792.0,
+                  "book_share_nav_unhedged": -0.1424,
+                  "book_share_nav_with_structure": -0.1395
                 },
                 {
                   "id": "spy_-34",
@@ -5816,10 +4186,10 @@
                   "stressed_price": 81.72,
                   "position_unhedged": -14356.0,
                   "position_with_structure": -13673.0,
-                  "book_loss_unhedged": -137495.0,
-                  "book_loss_with_structure": -136811.0,
-                  "book_share_nav_unhedged": -0.5854,
-                  "book_share_nav_with_structure": -0.5825
+                  "book_loss_unhedged": -56908.0,
+                  "book_loss_with_structure": -56225.0,
+                  "book_share_nav_unhedged": -0.2421,
+                  "book_share_nav_with_structure": -0.2391
                 }
               ],
               "quote_flags": [

@@ -253,8 +253,13 @@ def name_lens(tk: str, df: pd.DataFrame, meta_tk: dict, session: str, closes: pd
                   "caveat": ("sign depends on who holds the calls; for names with heavy speculative call buying the "
                              "convention is likely reversed; not validated"), "collapsed_by_default": True})
 
+    # Roles follow the CURRENT holdings and board (the vintage's roles are what they were at the
+    # snapshot; a name sold since must not read "held" on the event board or the hedge cards).
+    cur_roles = oc.analyzed_universe()
+    roles_now = cur_roles.get(tk, [])
     return {
-        "roles": meta_tk.get("roles", []), "spot": r4(spot, 2), "spot_source": meta_tk.get("spot_source"),
+        "roles": roles_now, "roles_at_snapshot": meta_tk.get("roles", []),
+        "spot": r4(spot, 2), "spot_source": meta_tk.get("spot_source"),
         "impaired": bool(impaired), "front_live_quote_share": r4(meta_tk.get("front_live_quote_share")),
         "volatility": {"iv30": r4(iv_front), "iv30_expiry": front, "iv30_days": cal_days.get(front), "atm_strike_30": k_front,
                        "iv90": r4(iv_back), "iv90_expiry": back, "iv90_days": cal_days.get(back),

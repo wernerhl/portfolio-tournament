@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-29",
   "as_of": "2026-09-29",
-  "computed_at": "2026-09-29T22:45:49-04:00",
+  "computed_at": "2026-09-30T04:10:02-04:00",
   "index": "SPY (data/source/sector_etfs.parquet, dividend-adjusted)",
   "index_through": "2026-09-29",
   "index_last_close": 764.2,
@@ -165,13 +165,13 @@
     }
   },
   "book_posture": {
-    "beta_equity_sleeve": 2.5223,
-    "beta_with_cash": 1.7219,
+    "beta_equity_sleeve": 1.9286,
+    "beta_with_cash": 0.7119,
     "beta_definition": "\u03a3 w \u03b2 over position betas; with cash: w over NAV (cash at beta 0); equity sleeve: w over equity; the constant-weight sleeve regression is the cross-check",
-    "sigma_book_60": 0.408,
-    "sigma_book_126": 0.4706,
-    "actual_equity_share": 0.6827,
-    "actual_cash_share": 0.3173,
+    "sigma_book_60": 0.2701,
+    "sigma_book_126": 0.3162,
+    "actual_equity_share": 0.3691,
+    "actual_cash_share": 0.6309,
     "book_as_of": "2026-09-29",
     "book_session": "2026-09-29",
     "translation": "index equity share \u00f7 equity-sleeve beta, capped at 100 percent",
@@ -181,9 +181,9 @@
         "kind": "regime_schedule",
         "tier": "1_cap_pres",
         "index_share": 0.5403,
-        "book_share": 0.2142,
+        "book_share": 0.2802,
         "full_deployment_index_share": 0.75,
-        "full_deployment_book_share": 0.2973,
+        "full_deployment_book_share": 0.3889,
         "computed_from": {
           "R_full": 0.2796,
           "cash_floor": 0.25,
@@ -198,9 +198,9 @@
         "kind": "regime_schedule",
         "tier": "2_balanced",
         "index_share": 0.6543,
-        "book_share": 0.2594,
+        "book_share": 0.3393,
         "full_deployment_index_share": 0.85,
-        "full_deployment_book_share": 0.337,
+        "full_deployment_book_share": 0.4407,
         "computed_from": {
           "R_full": 0.2796,
           "cash_floor": 0.15,
@@ -215,9 +215,9 @@
         "kind": "regime_schedule",
         "tier": "3_aggressive",
         "index_share": 0.7882,
-        "book_share": 0.3125,
+        "book_share": 0.4087,
         "full_deployment_index_share": 0.9,
-        "full_deployment_book_share": 0.3568,
+        "full_deployment_book_share": 0.4667,
         "computed_from": {
           "R_full": 0.2796,
           "cash_floor": 0.1,
@@ -232,9 +232,9 @@
         "kind": "regime_schedule",
         "tier": "4_tactical",
         "index_share": 0.7204,
-        "book_share": 0.2856,
+        "book_share": 0.3735,
         "full_deployment_index_share": 1.0,
-        "full_deployment_book_share": 0.3965,
+        "full_deployment_book_share": 0.5185,
         "computed_from": {
           "R_full": 0.2796,
           "cash_floor": 0.0,
@@ -249,9 +249,9 @@
         "kind": "regime_schedule",
         "tier": "5_werner",
         "index_share": 0.6543,
-        "book_share": 0.2594,
+        "book_share": 0.3393,
         "full_deployment_index_share": 0.85,
-        "full_deployment_book_share": 0.337,
+        "full_deployment_book_share": 0.4407,
         "computed_from": {
           "R_full": 0.2796,
           "cash_floor": 0.15,
@@ -266,7 +266,7 @@
         "kind": "c3_rule",
         "id": "sma10",
         "index_share": 1.0,
-        "book_share": 0.3965,
+        "book_share": 0.5185,
         "state": "invested"
       },
       {
@@ -274,7 +274,7 @@
         "kind": "c3_rule",
         "id": "tsmom_12_1",
         "index_share": 1.0,
-        "book_share": 0.3965,
+        "book_share": 0.5185,
         "state": "invested"
       },
       {
@@ -282,7 +282,7 @@
         "kind": "c3_rule",
         "id": "vol_target_10",
         "index_share": 0.8954,
-        "book_share": 0.355,
+        "book_share": 0.4643,
         "state": "scaled"
       },
       {
@@ -290,30 +290,30 @@
         "kind": "vol_target",
         "target": 0.1,
         "index_share": 0.8954,
-        "book_share": 0.355,
-        "book_share_on_book_vol": 0.2451,
-        "book_share_on_book_vol_126": 0.2125,
+        "book_share": 0.4643,
+        "book_share_on_book_vol": 0.3702,
+        "book_share_on_book_vol_126": 0.3163,
         "computed_from": {
           "sigma_index_60": 0.1117,
-          "sigma_book_60": 0.408,
-          "sigma_book_126": 0.4706
+          "sigma_book_60": 0.2701,
+          "sigma_book_126": 0.3162
         },
-        "label": "index: min(1, 0.10/\u03c360 index 11.2%) translated by \u03b2; book: min(1, 0.10/\u03c360 book 40.8%) \u2014 the book's own realised volatility, not the index's (registered rule at 10%; 15% is a comparator, not registered)"
+        "label": "index: min(1, 0.10/\u03c360 index 11.2%) translated by \u03b2; book: min(1, 0.10/\u03c360 book 27.0%) \u2014 the book's own realised volatility, not the index's (registered rule at 10%; 15% is a comparator, not registered)"
       },
       {
         "rule": "volatility targeting at 15%",
         "kind": "vol_target",
         "target": 0.15,
         "index_share": 1.0,
-        "book_share": 0.3965,
-        "book_share_on_book_vol": 0.3676,
-        "book_share_on_book_vol_126": 0.3187,
+        "book_share": 0.5185,
+        "book_share_on_book_vol": 0.5553,
+        "book_share_on_book_vol_126": 0.4744,
         "computed_from": {
           "sigma_index_60": 0.1117,
-          "sigma_book_60": 0.408,
-          "sigma_book_126": 0.4706
+          "sigma_book_60": 0.2701,
+          "sigma_book_126": 0.3162
         },
-        "label": "index: min(1, 0.15/\u03c360 index 11.2%) translated by \u03b2; book: min(1, 0.15/\u03c360 book 40.8%) \u2014 the book's own realised volatility, not the index's (not a registered rule; comparator)"
+        "label": "index: min(1, 0.15/\u03c360 index 11.2%) translated by \u03b2; book: min(1, 0.15/\u03c360 book 27.0%) \u2014 the book's own realised volatility, not the index's (not a registered rule; comparator)"
       }
     ],
     "note": "descriptive; no rule drives this book"

@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-09-29",
   "as_of": "2026-09-29",
-  "computed_at": "2026-09-29T22:47:23-04:00",
+  "computed_at": "2026-09-30T04:10:49-04:00",
   "method": "per-name OLS, 252 sessions, daily simple returns; factors: market SPY, size IWM\u2212SPY, value IWD\u2212IWF, momentum MTUM\u2212SPY; portfolio exposure = weight-averaged beta (equity weights, names with betas only)",
   "label": "estimated, 252-session regression",
   "window_sessions": 252,
@@ -115,7 +115,7 @@
     "ANET": {
       "ticker": "ANET",
       "sector": "Technology",
-      "sector_source": "fundamentals_snapshot.parquet",
+      "sector_source": "ticker_indicators.json",
       "n_obs": 250,
       "window_sessions": 252,
       "status": "partial_history",
@@ -133,7 +133,6 @@
       "history_start": "2014-06-06",
       "missing_sessions": 2,
       "in_portfolios": [
-        "book",
         "5_werner"
       ]
     },
@@ -438,7 +437,7 @@
     "GEV": {
       "ticker": "GEV",
       "sector": "Industrials",
-      "sector_source": "fundamentals_snapshot.parquet",
+      "sector_source": "ticker_indicators.json",
       "n_obs": 250,
       "window_sessions": 252,
       "status": "partial_history",
@@ -727,7 +726,6 @@
       "history_start": "2005-01-03",
       "missing_sessions": 2,
       "in_portfolios": [
-        "book",
         "3_aggressive",
         "4_tactical",
         "5_werner"
@@ -1080,33 +1078,29 @@
   "portfolios": {
     "book": {
       "exposure": {
-        "market": 1.5389,
-        "size": -0.0628,
-        "value": -0.3298,
-        "momentum": 1.2897
+        "market": 1.3601,
+        "size": 0.156,
+        "value": -0.6294,
+        "momentum": 0.4067
       },
       "covered_weight": 1.0,
       "excluded": [],
-      "n_names": 7,
-      "n_covered": 7,
-      "equity_value": 160326.4113,
+      "n_names": 5,
+      "n_covered": 5,
+      "equity_value": 86786.4134,
       "weights": {
-        "MU": 0.3322,
-        "GEV": 0.1501,
-        "NVDA": 0.1419,
-        "ANET": 0.1265,
-        "AVGO": 0.1107,
-        "GOOG": 0.1052,
-        "BMNR": 0.0334
+        "GEV": 0.2773,
+        "NVDA": 0.2622,
+        "AVGO": 0.2046,
+        "GOOG": 0.1943,
+        "BMNR": 0.0616
       },
       "source": "data/holdings.json",
       "priced_at": {
-        "MU": "2026-09-29",
         "GEV": "2026-09-29",
         "NVDA": "2026-09-29",
-        "ANET": "2026-09-29",
-        "GOOG": "2026-09-29",
         "AVGO": "2026-09-29",
+        "GOOG": "2026-09-29",
         "BMNR": "2026-09-29"
       },
       "unpriced": []
@@ -1258,8 +1252,8 @@
     "spy_self_regression": {
       "betas": {
         "market": 1.0,
-        "size": 0.0,
-        "value": 0.0,
+        "size": -0.0,
+        "value": -0.0,
         "momentum": 0.0
       },
       "intercept": 0.0,
