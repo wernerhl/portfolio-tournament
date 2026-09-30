@@ -38,6 +38,10 @@ const FILES = {
   // options lens (order 26-Sept-2026)
   optionsLens:["data/options/lens.json","json"], optionsHedges:["data/options/hedges.json","json"],
   earningsRx:["data/options/earnings_reactions.json","json"],
+  // the daily brief, news, goals, gains and ownership (order 30-Sept-2026)
+  dailyLog:["data/daily_log.jsonl","jsonl"], briefFacts:["data/brief_facts.json","json"], briefRules:["data/brief_rules.json","json"],
+  news:["data/news.json","json"], goals:["data/goals.json","json"], claimsReg:["data/claims_register.json","json"],
+  gains:["data/realized_gains.json","json"], insiders:["data/ownership/insiders.json","json"], holders13f:["data/ownership/holders_13f.json","json"],
 };
 async function loadFiles(keys, into){
   const target = into || S;

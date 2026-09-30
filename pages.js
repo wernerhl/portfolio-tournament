@@ -60,8 +60,8 @@ function renderPositionsList(){   // book page: the held names' position reading
   const b = S.book; if (!b || !S.signals || !S.signals.signals) return "";
   const names = (b.positions || []).filter(p => p.value != null).sort((x, y) => y.value - x.value).map(p => p.ticker);
   const boxes = names.map(tk => { const sig = S.signals.signals[tk]; if (!sig) return `<div class="mono t1 c-3">${tk}: no signal record yet (written by the nightly)</div>`;
-    return `<div class="pos-box"><div class="mono t2 w7 c-1 mb1">${tk}</div>${renderTwoScore(tk)}${renderSignalBox(tk)}</div>`; }).join("");
-  return `<div class="rcc-card"><h3>POSITION READINGS · <span class="c-3 w5">each held name against the rulebook's levels — observations, not instructions · ${S.signals.label || "mechanical rulebook; expectancy not validated"}</span>${asOfBadge(S.signals.session_date)}</h3><div class="pos-grid">${boxes}</div></div>`;
+    return `<div class="pos-box"><div class="mono t2 w7 c-1 mb1">${tk}</div>${renderTwoScore(tk)}${renderSignalBox(tk)}${renderNameNews(tk)}${renderInsiderBlock(tk)}${renderOwnershipBlock(tk)}</div>`; }).join("");
+  return `<div class="rcc-card"><h3>POSITION READINGS · <span class="c-3 w5">each held name against the rulebook's levels — observations, not instructions · ${S.signals.label || "mechanical rulebook; expectancy not validated"}</span>${holdingsPill()}${asOfBadge(S.signals.session_date)}</h3><div class="pos-grid">${boxes}</div></div>`;
 }
 function renderUniverseCard(){   // system page: the one universe (6.2)
   const u = S.universeMeta; if (!u) return "";
@@ -74,11 +74,13 @@ function renderUniverseCard(){   // system page: the one universe (6.2)
 const PAGES = {
   home: {
     title: "PORTFOLIO TOURNAMENT", sub: () => `${updatedStr()} · the regime index and the book's drawdown · 4 algo tiers + Werner`,
-    loads: ["config","tournament","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries"],
+    loads: ["config","tournament","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens"],
     compose(){
       const live = liveRow(); const R = live ? live.R_t : null;
       const rv = renderRegimeCommandCenter(R); const strip = renderStatusStrip();
       let h = renderTopBanner();
+      // order 30-Sept: the brief (B3) with the news panel (B4) beside it, the events board (B5) below the log
+      h += `<div class="tier tier-1"><h2 class="tier-title">THE BRIEF</h2><div class="brief-grid">${renderBriefStrip(10)}${renderNewsPanel()}</div>${renderEventsBoard()}</div>`;
       h += `<div class="tier tier-1"><h2 class="tier-title">REGIME</h2>${strip ? `<div class="only-mobile">${strip}</div>` : ""}<div class="tier1-grid">${rv.gauge}${renderDrawdownCard()}</div></div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">CONTEXT</h2><div class="tier2-grid">${renderRegimeOverlayPanel()}<div>${rv.timeline}${rv.deployment}</div></div></div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">READINGS</h2><div class="only-desktop">${strip}</div>${d3("INDICATOR READINGS", rv.indicators)}${d3("CALENDAR", renderCalendarCard())}</div>`;
@@ -87,19 +89,21 @@ const PAGES = {
   },
   book: {
     title: "THE BOOK", sub: () => `${S.book ? "analytics through " + S.book.as_of : ""} · positions from data/holdings.json, the only holdings source · every panel descriptive`,
-    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges"],
+    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f"],
     compose(){
       const strip = renderStatusStrip();
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE BOOK</h2>${strip}${renderBookPanel()}</div>`;
+      // order 30-Sept D1–D3: the operator's goals beside the book, the realized gains after the positions
+      h += `<div class="tier tier-1"><h2 class="tier-title">THE GOALS</h2><div class="goals-grid">${renderHouseGoalCard()}${renderClaimsCard()}</div></div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">SIZING, STRESS AND SLEEVES</h2>${renderEventBoard()}${renderPostureCard()}<div class="rcc-card">${renderStressPanel()}</div>${renderSleevesPanel()}</div>`;
-      h += `<div class="tier tier-3"><h2 class="tier-title">POSITIONS</h2>${renderPositionsList()}</div>`;
+      h += `<div class="tier tier-3"><h2 class="tier-title">POSITIONS</h2>${renderPositionsList()}${renderRealizedGainsCard()}</div>`;
       h += `<div class="tier tier-1"><h2 class="tier-title">THE HEDGE SELECTOR</h2>${renderHedgeSelector()}</div>`;
       return h;
     },
   },
   bonds: {
     title: "BONDS", sub: () => `${S.bondsStates ? "states through " + S.bondsStates.session_date : ""} · sleeve level only (asset-class ETFs and the curve) · a monitor and an allocation aid · descriptive, no buy or sell instruction`,
-    loads: ["config","bondsStates","bondsMetrics","status"],
+    loads: ["config","bondsStates","bondsMetrics","status","holdingsFile"],
     compose(){
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE CURVE</h2>${renderBondsCurve()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">CREDIT, INFLATION AND THE RATES REGIME</h2>${renderBondsCredit()}${renderBondsBreakeven()}${renderBondsRatesRegime()}</div>`;
@@ -141,10 +145,10 @@ const PAGES = {
   },
   system: {
     title: "SYSTEM", sub: () => "audit history · no-publish count · the action log · the universe",
-    loads: ["config","status","actions","regimePub","eventCal","tournament","holdingsFile","regime","universeMeta","auditLast"],
+    loads: ["config","status","actions","regimePub","eventCal","tournament","holdingsFile","regime","universeMeta","auditLast","dailyLog","briefRules"],
     compose(){
       let h = `<div class="tier tier-1"><h2 class="tier-title">PIPELINE</h2>${renderStatusStrip()}${renderSystemPanel()}</div>`;
-      h += `<div class="tier tier-2"><h2 class="tier-title">RECORDS</h2>${renderActionLog()}${renderUniverseCard()}</div>`;
+      h += `<div class="tier tier-2"><h2 class="tier-title">RECORDS</h2>${renderBriefHistory()}${renderActionLog()}${renderUniverseCard()}</div>`;
       return h;
     },
   },

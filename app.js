@@ -2433,7 +2433,7 @@ function renderStressPanel(){
   const b = S.book; if (!b || !b.stress) return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS</div><div class="mono t1 c-3">book.json not published</div></div>`;
   const money = v => "$" + fmt(Math.round(Math.abs(v)));
   const rows = b.stress.map(sc => `<tr title="${(sc.method || "").replace(/"/g, "'")}"><td class="c-2">${sc.label}</td><td class="num c-neg">−${money(sc.loss)}</td><td class="num c-neg w6">${(sc.share_nav * 100).toFixed(1)}%</td></tr>`).join("");
-  return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS · <span class="c-3">fixed · dollars and share of NAV ${money(b.nav)}</span>${intradayBadge(b)}</div>
+  return `<div class="stress-panel"><div class="fx-head mono t1 c-3">STRESS SCENARIOS · <span class="c-3">fixed · dollars and share of NAV ${money(b.nav)}</span>${holdingsPill()}${intradayBadge(b)}</div>
     <table class="stress-table"><tr><th>SCENARIO</th><th class="num">LOSS</th><th class="num">OF NAV</th></tr>${rows}</table>
     <div class="mono t1 c-3 mt1">index shocks through each holding's ${b.definitions ? b.definitions.window_sessions : 126}-session beta to the shocked index; thesis shocks from registry exposures · ${b.stress_note || "descriptive"}</div>
   </div>`;
@@ -2749,7 +2749,7 @@ function renderBookPanel(){
     ${cell("EFFECTIVE THESES · SIZING FIGURE", `${P.effective_theses != null ? P.effective_theses : "—"}`, `1/Σw² over the registry exposure of the invested sleeve · this is the figure used for sizing`)}
     ${cell("EFFECTIVE BETS · CORRELATION", `${P.effective_bets != null ? P.effective_bets : "—"}`, `exponential entropy of the equity correlation eigenvalues · ${P.effective_bets_note || ""}`)}
   </div>`;
-  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">positions from data/holdings.json (${b.source && b.source.holdings_as_of ? "holdings as of " + b.source.holdings_as_of : "the only holdings source"}) · ${b.intraday ? "values live; risk windows through " + b.as_of : "analytics through " + b.as_of}</span>${intradayBadge(b)}</h3>
+  return `<div class="rcc-card book-panel"><h3>THE BOOK · <span class="c-3 w5">positions from data/holdings.json (${b.source && b.source.holdings_as_of ? "holdings as of " + b.source.holdings_as_of : "the only holdings source"}) · ${b.intraday ? "values live; risk windows through " + b.as_of : "analytics through " + b.as_of}</span>${holdingsPill()}${intradayBadge(b)}</h3>
     <div class="mono t1 c-3 mb2">NAV ${money(b.nav)} = equity ${money(b.equity)} + cash ${money(b.cash)} · invested ${p1(b.invested_share)} · window ${b.window ? b.window.start + " → " + b.window.end : ""} · ${b.note || ""}${(b.warnings || []).length ? ` · <span class="c-warn">${b.warnings.join("; ")}</span>` : ""}</div>
     <div class="tbl-scroll"><table class="book-table">
       <tr><th>TICKER</th><th class="num">NAV %</th><th class="num">EQ %</th><th class="num">SHARES</th><th class="num">COST</th><th class="num">PRICE</th><th class="num">VALUE</th><th class="num">UNREAL.</th><th class="num">vs COST</th><th class="num">VOL</th><th class="num">β SPY</th><th class="num">β SMH</th><th class="num">RISK SHARE</th><th class="num">DD 1Y</th><th class="num">vs MA200</th><th class="num">RSI</th><th>THESIS</th></tr>
@@ -2838,7 +2838,7 @@ function renderSleevesPanel(){
     return `<tr class="sleeve-group"><td colspan="6" class="mono t1 w6 c-2">${g.label.toUpperCase()}${g.theses.length ? ` <span class="c-3 w4">· registry ${g.theses.map(thesisLabel).join(", ")}</span>` : ""}</td></tr>${rows}`;
   }).join("");
   const rest = b.sleeves.filter(s_ => !(b.sleeve_groups || []).some(g => g.etfs.some(e => e.ticker === s_.ticker) || g.names.some(n => n.ticker === s_.ticker)));
-  return `<div class="rcc-card sleeves-panel"><h3>${(b.sleeves_heading || "exposures the book lacks, at the level where the system has evidence").toUpperCase()} · <span class="c-3 w5">sleeves grouped by thesis · correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions</span>${intradayBadge(b)}</h3>
+  return `<div class="rcc-card sleeves-panel"><h3>${(b.sleeves_heading || "exposures the book lacks, at the level where the system has evidence").toUpperCase()} · <span class="c-3 w5">sleeves grouped by thesis · correlation of daily returns to the equity book, ${b.definitions ? b.definitions.window_sessions : 126} sessions</span>${holdingsPill()}${intradayBadge(b)}</h3>
     <div class="tbl-scroll"><table class="sleeves-table"><tr><th>SLEEVE</th><th>NAME</th><th>KIND</th><th>CORRELATION TO THE BOOK</th><th class="num">ρ</th><th class="num">n</th></tr>${groups}${rest.length ? `<tr class="sleeve-group"><td colspan="6" class="mono t1 w6 c-2">OTHER SLEEVES · <span class="c-3 w4">ascending</span></td></tr>${rest.map(sleeveRow).join("")}` : ""}</table></div>
     <div class="chart-meta">${b.sleeves_note || ""} · screen names pass the quality bar (fundamental ≥ ${qb.fundamental}, visibility ≥ ${qb.visibility}, the shelf's bar) and carry a registry thesis; held names excluded · book series: constant current equity weights · sorted ascending within each group</div>
   </div>`;
@@ -3274,7 +3274,7 @@ function renderBondsSleeveMenu(){
 function renderBondsConditional(){
   const cm = S.bondsStates && S.bondsStates.book_integration && S.bondsStates.book_integration.conditional_message; if (!cm) return "";
   const tn = cm.top_name || {};
-  return `<div class="rcc-card"><h3>ADDING A SLEEVE TO THIS BOOK · <span class="c-3 w5">the marginal effect on volatility and stress loss, at the book's current concentration</span>${intradayBadge(S.bondsStates)}</h3>
+  return `<div class="rcc-card"><h3>ADDING A SLEEVE TO THIS BOOK · <span class="c-3 w5">the marginal effect on volatility and stress loss, at the book's current concentration</span>${holdingsPill()}${intradayBadge(S.bondsStates)}</h3>
     ${cm.fires ? `<div class="mono t1 c-warn w5">${cm.message || ""}</div>` : `<div class="mono t1 c-2">Top-name risk share ${tn.risk_share==null?"—":(tn.risk_share*100).toFixed(0)+"%"} (below 40%): diversification effects are not concentration-limited.</div>`}
     <div class="chart-meta">${cm.note || ""}</div></div>`;
 }
@@ -3284,7 +3284,7 @@ function renderBondsWholeStress(){
   const eq = (w.equity_scenarios || []).map(s => `<tr><td class="c-2">${s.label||s.id}</td><td class="num c-neg">${s.share_nav==null?"—":(s.share_nav*100).toFixed(1)+"%"}</td></tr>`).join("");
   const fi = (w.fixed_income && w.fixed_income.sleeves || []).map(r => `<tr><td class="mono t2 c-1 w6">${r.ticker}</td><td class="num c-neg">${r.rate_up_100bp==null?"—":(r.rate_up_100bp*100).toFixed(1)+"%"}</td><td class="num c-pos">${r.rate_down_100bp==null?"—":"+"+(r.rate_down_100bp*100).toFixed(1)+"%"}</td><td class="num c-neg">${r.spread_widen_return==null?"—":(r.spread_widen_return*100).toFixed(1)+"%"}</td></tr>`).join("");
   const sp = w.fixed_income && w.fixed_income.spread_shock || {};
-  return `<div class="rcc-card"><h3>WHOLE-PORTFOLIO STRESS · <span class="c-3 w5">the equity book's scenarios beside each sleeve's rate and spread sensitivity — one portfolio</span>${intradayBadge(S.bondsStates)}</h3>
+  return `<div class="rcc-card"><h3>WHOLE-PORTFOLIO STRESS · <span class="c-3 w5">the equity book's scenarios beside each sleeve's rate and spread sensitivity — one portfolio</span>${holdingsPill()}${intradayBadge(S.bondsStates)}</h3>
     <div class="book-grid">
       <div><div class="fx-head mono t1 c-3">EQUITY BOOK (actual losses, share of NAV)</div>
         <table class="stress-table"><tr><th>SCENARIO</th><th class="num">OF NAV</th></tr>${eq}</table></div>
@@ -3318,7 +3318,7 @@ function renderEventBoard(){
         <td class="num c-2">${optPct(h.median_abs)}</td><td class="num c-3">${optPct(h.max_abs)}</td>
         <td class="num c-2">${l8.n_exceeding_implied != null ? `${l8.n_exceeding_implied} of ${l8.n}` : "—"}</td>
         <td class="num c-1">${p.risk_share != null ? (p.risk_share * 100).toFixed(0) + "%" : "—"}</td></tr>`; }).join("");
-  return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${asOfBadge(L.session_date)}</h3>
+  return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${holdingsPill()}${asOfBadge(L.session_date)}</h3>
     ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>RELEASE</th><th class="num">IMPLIED MOVE</th><th class="num">ON THE POSITION</th><th class="num">MEDIAN PAST</th><th class="num">MAX PAST</th><th class="num">LAST 8 EXCEEDED</th><th class="num">SHARE OF BOOK RISK</th></tr>${rows}</table></div>`
            : `<div class="mono t1 c-3">no held name reports inside 45 days</div>`}
     <div class="chart-meta">implied move: bracketing method — the last expiry before the release against the first after it, event variance = post total variance − pre total variance − the pre-expiry base over the non-event sessions (fallback without a pre-event expiry flagged; lens definitions) · past reactions: close before the release to close after · descriptive; no directional implication</div></div>`;
@@ -3342,8 +3342,184 @@ function renderHedgeSelector(){
         <div class="tbl-scroll"><table class="th-table"><tr><th>#</th><th>STRUCTURE</th><th class="num">NET / SH</th><th class="num">ON POSITION</th><th class="num">FLOOR</th><th class="num">CAP</th><th class="num">BREAKEVEN</th><th class="num">Δ</th><th class="num">BOOK LOSS WITH STRUCTURE</th><th>RANKED BY</th><th></th></tr>${rows}</table></div></div>`; }).join("");
     return `<details class="mt2" open><summary class="mono t2 w7 c-1 ptr">${tk} <span class="mono t1 w5 c-3">· ${ctx}</span></summary>${p.embedded_gain_note ? `<div class="mono t1 c-3 mt1">${p.embedded_gain_note}</div>` : ""}${tenors}</details>`;
   }).join("");
-  return `<div class="rcc-card"><h3>THE HEDGE SELECTOR <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">four structures priced and ranked on the live chain for each held name, at the first expiry beyond earnings and at about 90 days</span>${asOfBadge(H.session_date)}</h3>
+  return `<div class="rcc-card"><h3>THE HEDGE SELECTOR <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">four structures priced and ranked on the live chain for each held name, at the first expiry beyond earnings and at about 90 days</span>${holdingsPill()}${asOfBadge(H.session_date)}</h3>
     <div class="mono t1 c-warn">${H.label}</div>
     ${cards}
     <div class="chart-meta">${H.pricing} · ${H.stress_method} · selection rules fixed in data/options/hedge_rules.json (${(H.rules || []).length} rules, pre-registered) · ${H.note}</div></div>`;
+}
+
+// ═══ Order 30-Sept-2026: the daily brief (B1–B3), the news (B4), the events board (B5), the amber
+//     holdings pill (C4), the house goal and the claims register (D1/D2), realized gains (D3), the
+//     per-name insider and ownership blocks (E1/E2). Every panel is descriptive. ═══════════════════
+function escText30(s){ return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function etStamp30(iso){
+  if (!iso) return "—";
+  const d = new Date(iso); if (isNaN(d.getTime())) return String(iso).slice(0, 16);
+  return d.toLocaleString("en-US", {timeZone: "America/New_York", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"});
+}
+// C4: "holdings as of {date}, manual" in amber on every panel that uses the holdings, until an export is ingested
+function holdingsPill(){
+  const hf = S.holdingsFile; if (!hf || !hf.as_of) return "";
+  const manual = !/^brokerage export/i.test(String(hf.source || ""));
+  return manual ? `<span class="mono t1 w6 r1 x2 c-warn ml2" title="${escText30(hf.source)}">holdings as of ${hf.as_of}, manual</span>` : "";
+}
+function briefColorCls(c){ return c === "RED" ? "c-neg" : c === "YELLOW" ? "c-warn" : "c-pos"; }
+function briefEntryHtml(e, full){
+  const cls = e.color || "GREEN";
+  const rules = (e.rules_fired || []).map(r => `<span class="brief-rule mono t1" title="${escText30(r.text)} — ${escText30(r.evidence)}">${r.id}</span>`).join("");
+  return `<div class="brief-entry ${cls}"><div class="flx gap2 x27"><span class="mono t1 w7 c-1">${e.session}</span><span class="mono t1 w6 ${briefColorCls(cls)}">${cls}</span><span class="mono t1 c-3">${e.text_source === "model" ? "model: " + (e.model || "") : "template"}${e.supersedes ? " · correction of " + e.supersedes : ""}</span></div>
+    <div class="serif t2 c-1 lh16 mt1">${escText30(e.text)}</div>
+    <div class="mt1">${rules || '<span class="mono t1 c-3">no rule fired</span>'}${full ? ` <span class="mono t1 c-3">· payload ${String(e.payload_sha256 || "").slice(0, 10)} · entry ${String(e.entry_sha256 || "").slice(0, 10)} · logged ${String(e.logged_at || "").slice(0, 16)}</span>` : ""}</div></div>`;
+}
+function renderBriefStrip(n){   // home: the vertical strip, newest first (B3)
+  const L = Array.isArray(S.dailyLog) ? S.dailyLog : [];
+  if (!L.length) return `<div class="rcc-card"><h3>THE DAILY BRIEF</h3><div class="mono t1 c-3">no entry yet (data/daily_log.jsonl is written by the nightly)</div></div>`;
+  const last = L[L.length - 1];
+  const rows = L.slice().reverse().slice(0, n || 10).map(e => briefEntryHtml(e, false)).join("");
+  return `<div class="rcc-card brief-card"><h3>THE DAILY BRIEF · <span class="c-3 w5">one colour per session by pre-registered rule · one sentence from the facts payload, under a validator · append-only</span>${asOfBadge(last.session)}</h3>
+    <div class="brief-strip">${rows}</div>
+    <div class="chart-meta">the colour describes the state of the session; it is not a forecast · rules and thresholds: data/brief_rules.json · the payload behind the latest sentence: data/brief_facts.json · full history on the system page</div></div>`;
+}
+function renderBriefHistory(){   // system: the full log (B3)
+  const L = Array.isArray(S.dailyLog) ? S.dailyLog : []; if (!L.length) return "";
+  const R = S.briefRules || {};
+  const rows = L.slice().reverse().map(e => briefEntryHtml(e, true)).join("");
+  const counts = L.reduce((a, e) => { a[e.color] = (a[e.color] || 0) + 1; return a; }, {});
+  return `<div class="rcc-card"><h3>THE DAILY BRIEF · FULL HISTORY · <span class="c-3 w5">${L.length} entries · RED ${counts.RED || 0} · YELLOW ${counts.YELLOW || 0} · GREEN ${counts.GREEN || 0} · entries are never edited; a correction is a new entry referencing the old</span>${asOfBadge(L[L.length - 1].session)}</h3>
+    <div class="brief-strip">${rows}</div>
+    <div class="chart-meta">rules frozen ${String(R.frozen_at || "").slice(0, 10)} (${(R.rules || []).length} rules: ${(R.rules || []).map(r => r.id).join(" ")}) · ${R.note || ""}</div></div>`;
+}
+function newsRowHtml(it){
+  const tag = it.tier === 1 ? '<span class="tier-tag mono t1 w6 c-1">T1 primary</span>' : '<span class="tier-tag mono t1 w6 c-3">T2 secondary</span>';
+  const tags = (it.tickers || []).concat(it.topics || []).join(" ");
+  return `<tr class="${it.tier === 1 ? "" : "dim"}"><td class="mono t1 c-3">${etStamp30(it.timestamp)}</td><td>${tag}</td><td class="mono t1 c-2">${escText30(it.source)}</td>
+    <td class="serif t1 c-1"><a href="${escText30(it.url)}" target="_blank" rel="noopener">${escText30(it.headline)}</a>${it.disclosure_lag_label ? ` <span class="mono t1 c-warn">· ${escText30(it.disclosure_lag_label)}</span>` : ""}</td><td class="mono t1 c-3">${escText30(tags)}</td></tr>`;
+}
+function renderNewsPanel(){   // home: the last 24 hours, Tier 1 first (B4)
+  const N = S.news;
+  if (!N || !N.items) return `<div class="rcc-card"><h3>NEWS</h3><div class="mono t1 c-3">data/news.json not published yet</div></div>`;
+  const byId = {}; N.items.forEach(it => { byId[it.id] = it; });
+  const items = (N.last24h || []).map(id => byId[id]).filter(Boolean);
+  const ex = N.excluded || {}; const st = N.sources_status || {};
+  const failed = Object.entries(st).filter(([k, v]) => /^(failed|skipped)/.test(String(v))).map(([k, v]) => `${k}: ${v}`);
+  return `<div class="rcc-card news-card"><h3>NEWS · <span class="c-3 w5">last ${N.window_hours || 24} hours · primary sources first, secondary labeled · bodies never stored, summaries system-written</span><span class="mono t1 w5 ls06 c-3 ml2">fetched ${etStamp30(N.fetched_at)} ET</span></h3>
+    ${items.length ? `<div class="tbl-scroll"><table class="th-table news-table">${items.map(newsRowHtml).join("")}</table></div>` : '<div class="mono t1 c-3">no relevant item in the window</div>'}
+    <details class="mt2"><summary class="mono t1 w5 c-3 ptr ls05">sources and exclusions</summary><div class="mono t1 c-3 mt1 lh17">${N.rule || ""}<br>withheld: vocabulary rule ${ex.vocabulary_rule || 0} · directive rule ${ex.directive_rule || 0} · irrelevant ${ex.irrelevant || 0}<br>${failed.length ? failed.join("<br>") : "every source responded"}</div></details></div>`;
+}
+function renderNameNews(tk){   // each held name's card: its last five items (B4)
+  const N = S.news; if (!N || !N.items || !N.per_name) return "";
+  const byId = {}; N.items.forEach(it => { byId[it.id] = it; });
+  const items = (N.per_name[tk] || []).map(id => byId[id]).filter(Boolean).slice(0, 5);
+  if (!items.length) return `<div class="name-block mono t1 c-3">news: no item on record for ${tk}</div>`;
+  return `<div class="name-block"><div class="mono t1 w6 c-3 ls12 mb1">NEWS · LAST FIVE</div>${items.map(it => `<div class="mono t1 c-2 lh16"><span class="c-3">${etStamp30(it.timestamp)}</span> · ${it.tier === 1 ? '<span class="c-1">T1</span>' : '<span class="c-3">T2</span>'} ${escText30(it.source)} · <a href="${escText30(it.url)}" target="_blank" rel="noopener">${escText30(it.headline)}</a>${it.disclosure_lag_label ? ` <span class="c-warn">· ${escText30(it.disclosure_lag_label)}</span>` : ""}</div>`).join("")}</div>`;
+}
+function _mondayOf(iso){ const d = new Date(iso + "T12:00:00Z"); const wd = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - wd); return d.toISOString().slice(0, 10); }
+function _plusDays(iso, n){ const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function renderEventsBoard(){   // home, below the log: the next 45 days by week, clusters highlighted (B5)
+  const cal = S.eventCal || {}; const ev = cal.events || []; if (!ev.length) return "";
+  const today = _etDateISO(new Date()); const end = _plusDays(today, 45);
+  const held = new Set(((S.holdingsFile && S.holdingsFile.holdings) || []).filter(h => (h.shares || 0) > 0).map(h => String(h.ticker).toUpperCase()));
+  const lens = (S.optionsLens && S.optionsLens.names) || {}; const pos = {}; ((S.book && S.book.positions) || []).forEach(p => { pos[p.ticker] = p; });
+  const clusters = {}; (cal.clusters || []).forEach(c => { clusters[c.date] = c; });
+  const inWin = ev.filter(e => e.date >= today && e.date <= end && e.type !== "TREASURY");
+  const weeks = {};
+  inWin.forEach(e => { const k = _mondayOf(e.date); (weeks[k] = weeks[k] || []).push(e); });
+  const imp = e => `<span class="imp imp-${e.impact || "medium"}">${(e.impact || "—").toUpperCase()}</span>`;
+  const dayName = iso => new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", {weekday: "short", timeZone: "UTC"});
+  const body = Object.keys(weeks).sort().map(k => {
+    const es = weeks[k].slice().sort((a, b) => a.date.localeCompare(b.date) || String(a.time_et || "").localeCompare(String(b.time_et || "")) || a.type.localeCompare(b.type));
+    const boardEarn = es.filter(e => e.type === "EARNINGS" && !held.has(String(e.ticker).toUpperCase()));
+    const rows = es.filter(e => !(e.type === "EARNINGS" && !held.has(String(e.ticker).toUpperCase()))).map(e => {
+      const cl = clusters[e.date]; const isCl = cl && (e.impact === "high" || (e.type === "EARNINGS" && cl.earnings.includes(String(e.ticker).toUpperCase())));
+      let detail = escText30(e.name || "");
+      if (e.type === "EARNINGS") {
+        const tk = String(e.ticker).toUpperCase(); const o = lens[tk]; const p = pos[tk] || {}; const em = o && o.event ? o.event : null;
+        const dollars = (em && em.implied_move != null && p.value != null) ? em.implied_move * p.value : null;
+        detail = `${tk} earnings${em && em.time_of_day ? " (" + em.time_of_day.replace("_", " ") + ")" : ""}${em && em.implied_move != null ? ` · market prices ±${optPct(em.implied_move)}${dollars != null ? " · ±" + fmtMoney(dollars) + " on the position" : ""}${em.fallback ? " (fallback method)" : ""}` : " · implied move unavailable"}`;
+      }
+      return `<tr class="${isCl ? "cluster" : ""}"><td class="mono t1 c-2">${dayName(e.date)} ${e.date.slice(5)}</td><td class="mono t1 c-3">${e.time_et ? e.time_et + " ET" : ""}</td><td class="mono t1 c-1 w6">${escText30(e.label || e.type)}</td><td>${imp(e)}</td><td class="serif t1 c-2">${detail}${isCl ? ` <span class="mono t1 w6 c-warn">· CLUSTER: ${cl.macro.join(", ")} with ${cl.earnings.join(", ")} earnings</span>` : ""}</td></tr>`;
+    }).join("");
+    const extra = boardEarn.length ? `<tr><td colspan="5" class="mono t1 c-3">+ ${boardEarn.length} other names' earnings (board and register): ${boardEarn.map(e => `${e.ticker} ${e.date.slice(5)}`).join(", ")}</td></tr>` : "";
+    return `<tr><td colspan="5" class="ev-week">WEEK OF ${k}</td></tr>${rows}${extra}`;
+  }).join("");
+  return `<div class="rcc-card events-card"><h3>EVENTS · NEXT 45 DAYS · <span class="c-3 w5">scheduled releases by week with their impact level; held-name earnings with the options lens's implied move; a high-impact release on a held name's earnings date is a cluster</span>${holdingsPill()}${asOfBadge(cal.as_of)}</h3>
+    <div class="tbl-scroll"><table class="th-table events-table"><tr><th>DATE</th><th>TIME</th><th>EVENT</th><th>IMPACT</th><th>DETAIL</th></tr>${body}</table></div>
+    <div class="chart-meta">calendar from the agencies' published schedules (provenance per event in data/event_calendar.json) · earnings dates from the provider, estimated until confirmed · descriptive; no directional implication</div></div>`;
+}
+function renderHouseGoalCard(){   // book: D1
+  const G = S.goals; const h = G && G.house_goal; if (!h) return `<div class="rcc-card"><h3>HOUSE GOAL</h3><div class="mono t1 c-3">data/goals.json not published yet</div></div>`;
+  const brl = v => v == null ? "—" : "R$" + fmt(Math.round(v)); const usd = v => v == null ? "—" : "$" + fmt(Math.round(v));
+  const pc = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
+  const cell = (k, v, s, cls) => `<div class="so-cell"><div class="k">${k}</div><div class="v ${cls || "c-1"}">${v}</div><div class="s">${s || ""}</div></div>`;
+  const fx = h.fx || {};
+  const sens = (h.fx_sensitivity || []).map(r => `<tr><td class="mono t1 c-2">${(+r.rate).toFixed(2)}</td><td class="num">${usd(r.target_usd)}</td><td class="num">${brl(r.book_brl)}</td><td class="num">${pc(r.share_of_target_book)}</td></tr>`).join("");
+  const sav = (h.monthly_savings || []).map(s => `<tr><td class="mono t1 c-2">${(s.annual_return * 100).toFixed(0)}% a year</td><td class="num c-1 w6">${brl(s.monthly_brl)}</td><td class="num">${usd(s.monthly_usd_at_rate)}</td></tr>`).join("");
+  return `<div class="rcc-card goal-card"><h3>HOUSE GOAL · <span class="c-3 w5">R$${fmt(h.target_brl)} by ${h.horizon_end} · in reais at the ${fx.mode === "intraday" ? "live" : "last"} rate</span>${holdingsPill()}${intradayBadge(G)}</h3>
+    <div class="so-strip">
+      ${cell("TOTAL BOOK IN REAIS", brl(h.book_brl), `${pc(h.share_of_target_book)} of the target · ${usd(h.book_usd)} at USDBRL ${fx.rate != null ? (+fx.rate).toFixed(4) : "—"} (${fx.as_of || "—"})`)}
+      ${cell("CASH IN REAIS", brl(h.cash_brl), `${pc(h.share_of_target_cash)} of the target · ${usd(h.cash_usd)}`)}
+      ${cell("THE TARGET IN DOLLARS", usd(h.target_usd_at_rate), `at the ${fx.mode === "intraday" ? "live" : "last"} rate · ${h.months_remaining} months remaining`)}
+      ${cell("HORIZON", `${h.horizon_start} → ${h.horizon_end}`, "three years from 18 September 2026")}
+    </div>
+    <div class="goal-grid mt2">
+      <div><div class="fx-head mono t1 c-3">FX SENSITIVITY · the target's dollar cost and the book's reais value at each rate</div>
+        <div class="tbl-scroll"><table class="th-table"><tr><th>USDBRL</th><th class="num">TARGET IN USD</th><th class="num">BOOK IN REAIS</th><th class="num">SHARE OF TARGET</th></tr>${sens}</table></div></div>
+      <div><div class="fx-head mono t1 c-3">REQUIRED MONTHLY SAVINGS · on the reais floor of ${brl(h.book_brl)} over ${h.months_remaining} months</div>
+        <div class="tbl-scroll"><table class="th-table"><tr><th>ANNUAL RETURN</th><th class="num">PER MONTH</th><th class="num">IN DOLLARS</th></tr>${sav}</table></div></div>
+    </div>
+    <div class="chart-meta">${h.fx_sensitivity_note || ""} · ${h.savings_basis || ""} · ${h.note || "descriptive; no recommendation"}</div></div>`;
+}
+function renderClaimsCard(){   // book: D2
+  const G = S.goals; const cl = (G && G.claims) || []; const reg = S.claimsReg;
+  if (!cl.length && !reg) return "";
+  const usd = v => v == null ? "—" : "$" + fmt(Math.round(v));
+  const pc = (v, nd = 2) => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : ""}${(v * 100).toFixed(nd)}%</span>`;
+  const cell = (k, v, s, cls) => `<div class="so-cell"><div class="k">${k}</div><div class="v ${cls || "c-1"}">${v}</div><div class="s">${s || ""}</div></div>`;
+  const cards = cl.map(c => `<div class="so-strip">
+      ${cell("THE CLAIM · " + c.recorded, `${usd(c.start_value_usd)} → ${(c.target_annualized_return * 100).toFixed(0)}% a year for ${c.horizon_years} years`, escText30(c.text))}
+      ${cell("SINCE START", pc(c.since_start_return), `${usd(c.nav_usd)} at the ${c.session} close · ${c.sessions_elapsed} sessions (${c.calendar_days_elapsed} days) elapsed`)}
+      ${cell("ANNUALIZED EQUIVALENT", `<span class="${c.under_one_year ? "c-warn" : "c-1"}">${c.annualized_equivalent == null ? "—" : ((c.annualized_equivalent >= 0 ? "+" : "") + (c.annualized_equivalent * 100).toFixed(1) + "%")}</span>`, c.under_one_year ? escText30(c.annualized_caption) : "over one year")}
+      ${cell("THE 29% PATH", usd(c.target_path_value_now_usd), `today's path value · gap ${c.gap_to_path_usd >= 0 ? "+" : "−"}${usd(Math.abs(c.gap_to_path_usd))} · ${(c.target_path || []).map(p => p.years + "y " + usd(p.value_usd)).join(" · ")}`)}
+    </div>`).join("");
+  return `<div class="rcc-card claims-card"><h3>CLAIMS REGISTER · <span class="c-3 w5">pre-registered by the operator · the record is never edited · progress computed against it</span>${holdingsPill()}${asOfBadge(G && G.session_date)}</h3>
+    ${cards || '<div class="mono t1 c-3">no progress computed yet</div>'}
+    <div class="chart-meta">record: data/claims_register.json (${reg ? (reg.claims || []).length : "—"} claim${reg && (reg.claims || []).length === 1 ? "" : "s"}) · ${reg && reg.note ? escText30(reg.note) : ""} · descriptive; no recommendation</div></div>`;
+}
+function renderRealizedGainsCard(){   // book: D3
+  const g = S.gains; if (!g) return "";
+  const money = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v < 0 ? "−" : ""}$${fmt(Math.round(Math.abs(v)))}</span>`;
+  const years = Object.keys(g.years || {}).sort().reverse();
+  const yrRows = years.map(y => { const r = g.years[y] || {}; return `<tr><td class="mono t2 c-1 w6">${y}${r.year_to_date ? ' <span class="c-3 t1">year to date</span>' : ""}</td><td class="num">${money(r.net)}</td><td class="num">${money(r.short_term)}</td><td class="num">${money(r.long_term)}</td><td class="num c-3">${r.n_lots == null ? "—" : r.n_lots}</td><td class="c-3 t1">${escText30(r.basis || (r.wash_sale_disallowed != null ? "wash-sale disallowed " + money(r.wash_sale_disallowed) : ""))}</td></tr>`; }).join("");
+  const posRows = years.flatMap(y => ((g.years[y] || {}).by_position || []).slice(0, 12).map(p => `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td class="mono t1 c-3">${y}</td><td class="num c-3">${p.n_lots == null ? "—" : p.n_lots}</td><td class="num">${money(p.proceeds)}</td><td class="num">${money(p.cost_basis)}</td><td class="num">${money(p.gain_loss)}</td><td class="num">${money(p.short_term)}</td><td class="num">${money(p.long_term)}</td></tr>`)).join("");
+  return `<div class="rcc-card gains-card"><h3>REALIZED GAINS · <span class="c-3 w5">by year and by position, short- and long-term · from the brokerage's realized gain/loss export · descriptive; no tax computation</span>${g.pending_export ? '<span class="mono t1 w6 r1 x2 c-warn ml2">operator report, pending export</span>' : ""}${asOfBadge(g.as_of)}</h3>
+    <div class="tbl-scroll"><table class="th-table"><tr><th>YEAR</th><th class="num">NET</th><th class="num">SHORT-TERM</th><th class="num">LONG-TERM</th><th class="num">LOTS</th><th>BASIS</th></tr>${yrRows}</table></div>
+    ${posRows ? `<div class="tbl-scroll mt2"><table class="th-table"><tr><th>POSITION</th><th>YEAR</th><th class="num">LOTS</th><th class="num">PROCEEDS</th><th class="num">COST</th><th class="num">GAIN / LOSS</th><th class="num">SHORT</th><th class="num">LONG</th></tr>${posRows}</table></div>` : '<div class="mono t1 c-3 mt1">per-position detail arrives with the export (drop it in inbox/ and run scripts/ingest_inbox.py)</div>'}
+    <div class="chart-meta">source: ${escText30(g.source || "")}${g.input_sha256 ? " · export " + String(g.input_sha256).slice(0, 12) : ""} · ${escText30(g.note || "descriptive; no tax computation")}</div></div>`;
+}
+function renderInsiderBlock(tk){   // each held name's card: opportunistic purchases in the last 90 days, the cluster flag (E1)
+  const I = S.insiders; const n = I && I.names && I.names[tk];
+  if (!n) return `<div class="name-block mono t1 c-3">insiders: ${I && I.status ? escText30(typeof I.status === "string" ? I.status : JSON.stringify(I.status)) : "no EDGAR data on record (the ownership job needs the declared contact, SEC_USER_AGENT)"}</div>`;
+  const money = v => v == null ? "—" : "$" + fmt(Math.round(v));
+  const buys = n.opportunistic_purchases_90d || [];
+  const cl = n.cluster || {};
+  const rows = buys.map(b => `<tr><td class="mono t1 c-3">${b.date || ""}</td><td class="c-2">${escText30(b.insider)}</td><td class="c-3 t1">${escText30(b.role || "")}</td><td class="num">${b.shares == null ? "—" : fmt(Math.round(b.shares))}</td><td class="num">${money(b.dollars)}</td><td class="mono t1 c-3" title="${escText30(b.classification_basis || "")}">${escText30(b.classification || "")}${b.filing_url ? ` · <a href="${escText30(b.filing_url)}" target="_blank" rel="noopener">Form 4</a>` : ""}</td></tr>`).join("");
+  const sales = (n.sales_shown || []).map(s => `<tr class="dim"><td class="mono t1 c-3">${s.date || ""}</td><td class="c-2">${escText30(s.insider)}</td><td class="c-3 t1">${escText30(s.role || "")}</td><td class="num">−${s.shares == null ? "—" : fmt(Math.round(s.shares))}</td><td class="num">${money(s.dollars)}</td><td class="mono t1 c-3" title="${escText30(s.classification_basis || "")}">${escText30(s.classification || "")} · sale</td></tr>`).join("");
+  const rex = n.routine_excluded; const rexN = rex == null ? null : (typeof rex === "number" ? rex : rex.purchases);
+  const hc = I.history_coverage || {}; const reg = I.signal_registration || {};
+  return `<div class="name-block"><div class="mono t1 w6 c-3 ls12 mb1">INSIDERS · OPPORTUNISTIC PURCHASES, LAST 90 DAYS${cl.flag ? ` <span class="c-warn">· CLUSTER: ${cl.n_distinct_buyers_30d} distinct buyers within 30 days (${cl.window_start || ""} → ${cl.window_end || ""})</span>` : ""}</div>
+    ${rows || sales ? `<div class="tbl-scroll"><table class="th-table"><tr><th>DATE</th><th>INSIDER</th><th>ROLE</th><th class="num">SHARES</th><th class="num">DOLLARS</th><th>CLASSIFICATION</th></tr>${rows}${sales}</table></div>` : '<div class="mono t1 c-2">no opportunistic open-market purchase in the last 90 days</div>'}
+    <div class="mono t1 c-3 mt1">routine vs opportunistic by the Cohen, Malloy and Pomorski rule (an insider who traded in the same calendar month in each of the prior three years is routine)${rexN != null ? ` · routine purchases excluded: ${rexN}` : ""}${sales ? ` · ${escText30(n.sales_shown_label || "sales are mostly compensation or diversification")}` : ""}${hc.complete === false ? ` · <span class="c-warn">history incomplete (${(hc.quarters_missing || []).length} quarters missing)</span>` : ""} · ${escText30(reg.status || "a candidate return signal registered for the Phase 5 validation on the union universe; it enters no score before it passes")}</div></div>`;
+}
+function renderOwnershipBlock(tk){   // each held name's card: 13F context only (E2)
+  const H = S.holders13f; const n = H && H.names && H.names[tk];
+  if (!n) return `<div class="name-block mono t1 c-3">13F context: ${H && H.status ? escText30(typeof H.status === "string" ? H.status : JSON.stringify(H.status)) : "no EDGAR data on record (the ownership job needs the declared contact, SEC_USER_AGENT)"}</div>`;
+  const money = v => v == null ? "—" : "$" + fmt(Math.round(v));
+  const chg = v => v == null ? "—" : `<span class="${v >= 0 ? "c-pos" : "c-neg"}">${v >= 0 ? "+" : "−"}${fmt(Math.round(Math.abs(v)))}</span>`;
+  const nm = h => h.manager || h.name || "";
+  const rows = (n.top_holders || []).map(h => `<tr><td class="c-2">${escText30(nm(h))}</td><td class="num">${h.shares == null ? "—" : fmt(Math.round(h.shares))}</td><td class="num">${chg(h.share_change)}</td><td class="num">${money(h.value_usd != null ? h.value_usd : h.value)}</td><td class="mono t1 c-3">as of ${h.as_of_quarter_end || "—"} · disclosed ${h.disclosed || "—"}</td></tr>`).join("");
+  const nw = (n.new_positions_over_1b || n.new_positions || []).map(h => `${escText30(nm(h))} (as of ${h.as_of_quarter_end}, disclosed ${h.disclosed})`).join("; ");
+  const ex = (n.full_exits_over_1b || n.exits || []).map(h => `${escText30(nm(h))} (as of ${h.as_of_quarter_end}, disclosed ${h.disclosed})`).join("; ");
+  return `<div class="name-block"><div class="mono t1 w6 c-3 ls12 mb1">INSTITUTIONAL OWNERSHIP · CONTEXT ONLY</div>
+    ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>HOLDER</th><th class="num">SHARES</th><th class="num">CHANGE ON THE QUARTER</th><th class="num">VALUE</th><th>DATES</th></tr>${rows}</table></div>` : '<div class="mono t1 c-2">no holder on record</div>'}
+    <div class="mono t1 c-3 mt1">${escText30(n.caption || "")}${nw ? `<br>new positions among funds above $1 billion: ${nw}` : ""}${ex ? `<br>full exits among funds above $1 billion: ${ex}` : ""} · no signal, no score</div></div>`;
 }
