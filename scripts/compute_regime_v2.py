@@ -470,6 +470,25 @@ def main():
     _now = _dtt.now(_tz.utc)
     _session_complete = (today_key < _now.strftime("%Y-%m-%d")) or \
                         (_now.hour > 21 or (_now.hour == 21 and _now.minute >= 30))
+    # T1 (audit 30-Sept-2026): a session the nightly never published gets a no-publish row with
+    # the reason (the vintage's own convention), so the append-only record carries no gap and
+    # the referee's CRITICAL gap check can be satisfied without inventing a value.
+    if len(pub.index):
+        from trading_calendar import is_trading_day as _itd
+        from datetime import date as _date, timedelta as _td
+        _last = max(str(d) for d in pub.index)
+        _d = _date.fromisoformat(_last) + _td(days=1)
+        _end = _date.fromisoformat(today_key) - _td(days=1)
+        _added = []
+        while _d <= _end:
+            _s = _d.isoformat()
+            if _itd(_s) and _s not in pub.index:
+                pub.loc[_s, "R_t_published"] = float("nan")
+                pub.loc[_s, "no_publish_reason"] = f"no publish: session not published by the nightly (recorded {_now.strftime('%Y-%m-%d')})"
+                _added.append(_s)
+            _d += _td(days=1)
+        if _added:
+            print(f"  published vintage: recorded {len(_added)} no-publish session(s) {_added}")
     if today_key not in pub.index and _session_complete:
         pub.loc[today_key, "R_t_published"] = round(float(_latest_pub["R_full"]), 4)
         print(f"  appended published vintage: {today_key} R_t = {float(_latest_pub['R_full']):.4f}")

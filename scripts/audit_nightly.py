@@ -125,7 +125,11 @@ def audit_dir(root, label, last_sess):
             if len(ds)>30:
                 expected=set(trading_days(ds[-60] if len(ds)>60 else ds[0], ds[-1]))
                 missing=sorted(expected-set(ds))
-                if missing: add('HIGH',f'{label}:gaps',f'{name}: missing trading days in recent window {missing[:6]}')
+                # Tournament audit 30-Sept-2026 (T1): a gap is CRITICAL. Producers self-heal — the
+                # published vintage records a no-publish row for a missed session, the tournament
+                # history is backfilled under the as-published convention — so a CRITICAL here
+                # means a producer failed to, never a legitimate hole.
+                if missing: add('CRITICAL',f'{label}:gaps',f'{name}: missing trading days in recent window {missing[:6]}')
             # consecutive identical numeric rows (frozen-computation symptom)
             ISO=re.compile(r'calibrated|equal_weight|elastic',re.I)   # isotonic/step-mapped columns hold constant by design
             # Order 30-Sept C3 (tournament:dead_columns resolved): regime_v4_daily.csv's model-winner
@@ -156,6 +160,79 @@ def main(troot, sroot, today=None):
     T=lambda n: json.load(open(os.path.join(troot,n)))
     # ---------- tournament identities ----------
     t=T('tournament.json'); h=t['history']; L=h[-1]
+    # T1 (audit 30-Sept-2026): no missing session in the history — CRITICAL; backfilled rows are
+    # marked and counted (INFO). T3: the label must respect the hysteresis corridor from 30 Sept.
+    hd_=[to_date(r['date']) for r in h if to_date(r.get('date',''))]
+    if hd_:
+        miss_=[d for d in trading_days(hd_[0],hd_[-1]) if d not in set(hd_)]
+        if miss_: add('CRITICAL','tournament:gaps',f'tournament.json history missing session(s) {[str(d) for d in miss_[:8]]} — backfill_sessions.py did not run')
+        nb_=sum(1 for r in h if r.get('backfilled'))
+        if nb_: add('INFO','tournament:backfilled',f'{nb_} history row(s) are backfilled under the as-published convention (marked backfilled: true)')
+    try:
+        sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__))))
+        from regime_label import label_with_corridor as _lwc, LEVELS as _LV
+        for i in range(1,len(h)):
+            if str(h[i].get('date',''))<'2026-09-30': continue
+            exp_=_lwc(float(h[i]['R_t']),h[i-1].get('regime'))
+            if h[i].get('regime')!=exp_: add('CRITICAL','label:corridor',f'tournament row {h[i]["date"]}: label {h[i].get("regime")} but the corridor off {h[i-1].get("regime")} at R {h[i]["R_t"]} gives {exp_}')
+    except Exception as _e:
+        add('MEDIUM','label:corridor',f'corridor check could not run ({type(_e).__name__})')
+    # T3: one issuer, one class per tier (data/share_classes.json); the operator tier not comparable until rebuilt from trades
+    scp_=os.path.join(troot,'share_classes.json')
+    if os.path.exists(scp_):
+        iss_={}
+        for issuer,s_ in (json.load(open(scp_)).get('issuers') or {}).items():
+            for c_ in s_.get('classes',[]): iss_[str(c_).upper()]=issuer
+        for k,v in L['tiers'].items():
+            seen_={}
+            for p_ in v.get('positions',[]):
+                if (p_.get('shares') or 0)>0 and str(p_.get('ticker','')).upper() in iss_:
+                    seen_.setdefault(iss_[str(p_['ticker']).upper()],[]).append(p_['ticker'])
+            for issuer,cl_ in seen_.items():
+                if len(cl_)>1: add('HIGH','tournament:issuer_dup',f'{k}: two classes of {issuer} held together {cl_} (collapsed at the next reconstitution)')
+    wc_=t.get('werner_comparable')
+    if not wc_: add('HIGH','tournament:werner_comparable','tournament.json carries no werner_comparable block (the operator tier must be marked not comparable until rebuilt from trades)')
+    elif wc_.get('comparable') and not wc_.get('rebuilt_from_trades'): add('CRITICAL','tournament:werner_comparable','the operator tier is marked comparable without a trades-based rebuild on record')
+    # T2 / T4 / T6 (audit order 30-Sept): the nightly audit, the twins and their logs, the mistakes ledger — under data/tournament/
+    # (outside the generic sweep) and data/mistakes.jsonl
+    tap_=os.path.join(troot,'tournament','audit.json')
+    if os.path.exists(tap_):
+        ta_=json.load(open(tap_)); tad_=to_date(ta_.get('session_date') or '')
+        if not tad_ or (tad_<ls and len(trading_days(tad_,ls))-1>1): add('HIGH','audit:stale',f'tournament/audit.json session_date {tad_} vs last session {ls}')
+        if ta_.get('missing_sessions_now'): add('CRITICAL','tournament:gaps',f'tournament/audit.json reports missing sessions {ta_["missing_sessions_now"][:6]}')
+    else: add('HIGH','audit:missing','data/tournament/audit.json absent (tournament_audit.py did not run)')
+    twp_=os.path.join(troot,'tournament','twins.json')
+    if os.path.exists(twp_):
+        tw_=json.load(open(twp_)); twd_=to_date(tw_.get('session_date') or '')
+        if not twd_ or (twd_<ls and len(trading_days(twd_,ls))-1>1): add('HIGH','twins:stale',f'twins.json session_date {twd_} vs last session {ls}')
+        for tid_,w_ in (tw_.get('twins') or {}).items():
+            hist_=w_.get('nav_history') or []
+            if hist_:
+                l_=hist_[-1]; g_=abs(float(l_.get('target_cash_pct') or 0)-float(l_.get('actual_cash_pct') or 0))
+                if g_>5.0+1e-6: add('HIGH','twins:cash_gap',f'{tid_}: cash gap {g_:.1f} points after execution (the rule executes beyond 5)')
+            if w_.get('parent') not in L['tiers'] and w_.get('parent_tier') not in L['tiers']: add('HIGH','twins:parent',f'{tid_}: parent tier not in the tournament')
+        _lang(twp_,'twins')
+    for lf_ in ('tournament/trades.jsonl','tournament/spells.jsonl'):
+        lp2_=os.path.join(troot,lf_)
+        if os.path.exists(lp2_): _lang(lp2_,'logs') if '_lang' in dir() else None
+    mp_=os.path.join(troot,'mistakes.jsonl')
+    if os.path.exists(mp_):
+        import hashlib as _hm
+        ents_=[]
+        try:
+            for ln_ in open(mp_,encoding='utf-8'):
+                ln_=ln_.strip()
+                if ln_: ents_.append(json.loads(ln_))
+        except Exception as e:
+            add('CRITICAL','mistakes:parse',f'mistakes.jsonl unreadable ({e})')
+        ids_={e.get('entry_id') for e in ents_}
+        for e in ents_:
+            body_={k:v for k,v in e.items() if k!='entry_sha256'}
+            if _hm.sha256(json.dumps(body_,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()!=e.get('entry_sha256'):
+                add('CRITICAL','mistakes:edited',f'mistakes.jsonl entry {e.get("entry_id")} does not match its hash — the ledger is append-only')
+            if e.get('refers_to') and e['refers_to'] not in ids_: add('HIGH','mistakes:reference',f'entry {e.get("entry_id")} refers to an unknown entry')
+        if len(ids_)!=len(ents_): add('CRITICAL','mistakes:duplicate','mistakes.jsonl carries duplicate entry ids')
+    else: add('HIGH','mistakes:missing','data/mistakes.jsonl absent')
     for k,v in L['tiers'].items():
         eq=sum(p.get('value',0) for p in v.get('positions',[])); cash=v.get('cash',0)
         if abs(eq+cash-v['nav'])>1: add('CRITICAL','identity:nav',f'{k}: equity+cash={eq+cash:.0f} != nav={v["nav"]:.0f}')

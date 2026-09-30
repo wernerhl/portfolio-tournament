@@ -89,8 +89,13 @@ def latest_R_t() -> tuple[float, str]:
     return R, df["R_t"].dropna().index[-1].strftime("%Y-%m-%d")
 
 
-def regime_label(R):
-    return "LOW RISK" if R < 0.30 else "ELEVATED" if R < 0.50 else "HIGH RISK" if R < 0.70 else "CRISIS"
+def regime_label(R, prev_label=None):
+    """Tournament audit 30-Sept-2026 (2.3 / T3): the label applies the hysteresis corridor
+    (enter a higher band at edge + 0.02, leave it at edge − 0.02) off the previous published
+    row's label — the ONE label function in scripts/regime_label.py. Without a previous label
+    (first row) the plain band."""
+    from regime_label import label_with_corridor
+    return label_with_corridor(R, prev_label)
 
 
 def effr_daily_rate():
@@ -263,6 +268,47 @@ def cost_restatement(history: list, cost_rt: float, cost_label: str) -> dict:
             "tiers": out}
 
 
+def werner_comparable(history: list) -> dict:
+    """Tournament audit 30-Sept-2026 (2.1 / 4.4): the operator's tier has never matched the
+    account — it held the config's picks until 29 September, then was re-seeded from the 16-Sept
+    holdings file, a 27.9 percent step in NAV that is an accounting artifact, not a return. The
+    as-published NAVs stay untouched. This ADDITIVE block records every re-seed event (a session
+    where the tier's name set changed with no trade record behind it) and a comparable series
+    that chain-links the tier's daily returns with each re-seed session's step excluded (the
+    session's ratio taken as 1). Until the tier is rebuilt from the brokerage transactions
+    export, it is `comparable: false` and excluded from the leaderboard's ranking."""
+    rows = [r for r in history if (r.get("tiers") or {}).get("5_werner")]
+    events, series, prev = [], [], None
+    comp = None
+    for r in rows:
+        w = r["tiers"]["5_werner"]
+        names = {p["ticker"] for p in w.get("positions", []) if float(p.get("shares") or 0) > 0}
+        nav = float(w.get("nav") or 0)
+        if prev is None:
+            comp = nav
+        else:
+            pnames = {p["ticker"] for p in prev["tiers"]["5_werner"].get("positions", []) if float(p.get("shares") or 0) > 0}
+            pnav = float(prev["tiers"]["5_werner"].get("nav") or 0)
+            reseed = names != pnames
+            if reseed:
+                events.append({"date": r["date"], "nav_before": round(pnav, 2), "nav_after": round(nav, 2),
+                               "step_pct": round((nav / pnav - 1.0) * 100, 2) if pnav > 0 else None,
+                               "names_before": sorted(pnames), "names_after": sorted(names),
+                               "note": "positions re-seeded from data/holdings.json; the step is an accounting artifact, excluded from the comparable series"})
+                comp = comp  # the step is excluded: the comparable NAV carries over unchanged
+            elif pnav > 0:
+                comp = comp * (nav / pnav)
+        series.append({"date": r["date"], "nav_as_published": round(nav, 2), "nav_comparable": round(comp, 2) if comp is not None else None})
+        prev = r
+    return {"cadence": "daily", "as_of": rows[-1]["date"] if rows else None,
+            "comparable": False,
+            "comparable_reason": "the tier is not rebuilt from the brokerage transactions export; until then it is shown as not comparable and excluded from rankings (order 30-Sept, 4.4)",
+            "reseed_events": events,
+            "series_definition": "daily returns of the as-published NAV chain-linked from inception with each re-seed session's step excluded (ratio 1 on that session)",
+            "series": series,
+            "note": "as-published NAVs untouched; this block is additive"}
+
+
 def annotate_drawdowns(history: list, as_of: str) -> dict:
     """Order 9-Sept-2026 (dashboard) P2.1: depth below the running peak per session, for every
     tier and every benchmark, written into each history row as `drawdown` alongside `nav`
@@ -416,6 +462,24 @@ def main():
     else:
         tournament = {"inception_date": today, "history": []}
     history = tournament["history"]
+    # T1 (audit 30-Sept-2026): a session the nightly missed is filled BEFORE today's row, under
+    # the as-published convention and marked backfilled, so the history never carries a gap
+    # (the referee reports any remaining gap as CRITICAL).
+    try:
+        from backfill_sessions import backfill_missing
+        _ins = backfill_missing(tournament, through=today if history and history[-1]["date"] < today else None)
+        if _ins:
+            history = tournament["history"]
+            tournament["backfilled_sessions"] = sorted(set((tournament.get("backfilled_sessions") or []) + _ins))
+            print(f"  backfilled {len(_ins)} missing session(s): {_ins}")
+    except Exception as _e:
+        print(f"  warn backfill_missing: {type(_e).__name__}: {_e}", file=sys.stderr)
+    # T3: the label from the corridor off the previous published row (never re-derived from R alone)
+    if history and history[-1].get("date") != today:
+        regime = regime_label(R_t, history[-1].get("regime"))
+    elif len(history) >= 2 and history[-1].get("date") == today:
+        regime = regime_label(R_t, history[-2].get("regime"))
+    print(f"  label (corridor): {regime}")
 
     # Get previous-day NAVs for compounding (for benchmarks + algo tiers)
     prev_navs = {}
@@ -607,6 +671,7 @@ def main():
         history.append(entry)
     tournament["history"] = history
     tournament["cost_restatement"] = cost_restatement(history, COST_RT, COST_LABEL)   # C1, additive
+    tournament["werner_comparable"] = werner_comparable(history)                       # T3 (audit 30-Sept), additive
     tournament["drawdown"] = annotate_drawdowns(history, today)                        # P2.1, additive (per-row drawdown alongside nav)
     write_backtest_drawdown(today)                                                    # P2.1 companion for the backtest curves
     tournament["last_updated"] = datetime.now().isoformat()
