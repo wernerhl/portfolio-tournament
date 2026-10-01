@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-09-30",
- "fetched_at": "2026-10-01T01:47:04-04:00",
+ "fetched_at": "2026-10-01T15:17:05-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,41 +57,147 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=5 (parsed 20)",
-  "fed_speeches": "ok n=5 (parsed 15)",
+  "fed_press": "ok n=3 (parsed 20)",
+  "fed_speeches": "ok n=8 (parsed 15)",
   "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=2 (parsed 18)",
-  "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=49 (parsed 41 names)",
+  "dol": "ok n=0 (parsed 10)",
+  "edgar": "ok n=51 (parsed 41 names)",
   "ir_avgo": "ok n=1 (parsed 10)",
   "ir_nvda": "ok n=2 (parsed 20)",
-  "ir_gev": "ok n=3 (parsed 20)",
+  "ir_gev": "ok n=4 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=5 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=1 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=5 (parsed 10)",
-  "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
+  "yahoo_headlines:GEV": "ok n=0 (parsed 0)",
+  "yahoo_headlines:NVDA": "ok n=0 (parsed 0)",
+  "yahoo_headlines:AVGO": "ok n=0 (parsed 0)",
+  "yahoo_headlines:GOOG": "ok n=0 (parsed 0)",
+  "yahoo_headlines:BMNR": "ok n=0 (parsed 0)"
  },
  "excluded": {
-  "vocabulary_rule": 1,
+  "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 38,
-  "out_of_window": 27317,
+  "irrelevant": 8,
+  "out_of_window": 27319,
   "unparseable": 0
  },
  "counts": {
-  "items": 109,
-  "tier1": 70,
+  "items": 112,
+  "tier1": 73,
   "tier2": 39,
-  "last24h": 46
+  "last24h": 21
  },
  "items": [
+  {
+   "id": "bc6d5ff2ab1b9fe9ea3b8222d2a5affb5aac5aa3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Bowman, Modernizing Financial Regulation: Initial Observations from eSLR",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20261001a.htm",
+   "timestamp": "2026-10-01T15:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0f8a88c617254ec8dc118909e39dc7fb46ab7166",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Jefferson, The U.S. Economy and Monetary Policy",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/jefferson20261001a.htm",
+   "timestamp": "2026-10-01T13:30:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova and PROTEC Celebrate Next Engineers Engineering Academy Graduation",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-protec-celebrate-next-engineers-engineering-academy-graduation",
+   "timestamp": "2026-10-01T10:34:39-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e1dfff34bb8cf81e2b9d143955df0d6d65f6ed42",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Waller, The Data Version of Godzilla versus Kong: FRED Takes on AI",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/waller20261001a.htm",
+   "timestamp": "2026-10-01T10:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6c42783210b99589e2a6340d366592435ca4e08e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NORTHROP GRUMMAN CORP /DE/",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1133421/000162828026064144/xslF345X06/wk-form4_1790867229.xml",
+   "timestamp": "2026-10-01T07:07:12-04:00",
+   "tickers": [
+    "NOC"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-01 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9f4d944355b24780cd67eed1c27941383d8bb7cd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NORTHROP GRUMMAN CORP /DE/",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1133421/000162828026064142/xslF345X06/wk-form4_1790867081.xml",
+   "timestamp": "2026-10-01T07:04:44-04:00",
+   "tickers": [
+    "NOC"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-01 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6ae1556d4d693e5cd5f07e009f9570a7e6d0395d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000357/xslF345X06/wk-form4_1790859958.xml",
+   "timestamp": "2026-10-01T05:06:00-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-01 · FORM 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "7dd4b2c594c0a209638105896744a0840379890c",
    "tier": 1,
@@ -1763,75 +1869,15 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-09-24 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "a09909ffdb688fe7097caca6a9a9fd36d7a9de2a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board requests public comment on two proposals related to establishing a regulatory framework for Board-supervised payment stablecoin issuers under the GENIUS Act",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260924a.htm",
-   "timestamp": "2026-09-24T14:30:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4369d45eef224b5a56d71efe4bdf898914b6b491",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board issues enforcement action with former employee of Sandy Spring Bank",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20260924a.htm",
-   "timestamp": "2026-09-24T11:00:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "31ce3e0d3db8c77daa10d8307c3060c91ad924a6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Unemployment Insurance Weekly Claims Report",
-   "source": "Department of Labor release",
-   "source_id": "dol",
-   "url": "http://www.dol.gov/newsroom/releases/eta/eta20260924",
-   "timestamp": "2026-09-24T08:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "CLAIMS"
-   ],
-   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8d949c41732b54740c56b5ef5ad21e6778d5a757",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063311/vrt-20260924.htm",
-   "timestamp": "2026-09-24T06:38:08-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-09-24 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
    "fea9a4b6bfb1358de0627932c86bdda03e88a486",
    "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
    "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
-   "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
-   "608e96dfbaf485e2cb131a114c190b094a938355"
+   "83c5fa3692ef8fc85e2d75fcb8e026e492df025a"
   ],
   "NVDA": [
    "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
@@ -1863,6 +1909,13 @@
   ]
  },
  "last24h": [
+  "bc6d5ff2ab1b9fe9ea3b8222d2a5affb5aac5aa3",
+  "0f8a88c617254ec8dc118909e39dc7fb46ab7166",
+  "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
+  "e1dfff34bb8cf81e2b9d143955df0d6d65f6ed42",
+  "6c42783210b99589e2a6340d366592435ca4e08e",
+  "9f4d944355b24780cd67eed1c27941383d8bb7cd",
+  "6ae1556d4d693e5cd5f07e009f9570a7e6d0395d",
   "7dd4b2c594c0a209638105896744a0840379890c",
   "0742e4f2f8b38ffc310a4f1323d6c1f8487c96b9",
   "5ad2984d4edc4494b94d2ee87794990dbaaebf5f",
@@ -1870,44 +1923,12 @@
   "1bcee7ed45e125457ddc0a92df535467f585c668",
   "d72ea504580466b38998b048d3bf894d4263fec3",
   "5b13dd92b3e8254d991f6ba919e490e3656f4edc",
-  "9fbd5bcb11ca9af74863fec8ee0db7209ff0f33e",
-  "67f6708aa40f73719ce9db1e65ae2fcb96d61dfa",
-  "6f10aea73bca7dc493d2d75c3aa83c3221b1a748",
-  "3cd30cb8eab68062ff42e98f5e0fb7ccf31fba6d",
-  "af39ec1e79dbdc37c552c1ac9111b9a9fa2eea6d",
-  "554ec3034d9cc375ceba2d15f6e86a230d72c0f4",
-  "b803f5abe70f84baf4ff6c2203a5eb8c83a8cb5a",
-  "2410987401c4dc3456e85e58d147e57a67731dcb",
-  "742014f4ce9cfd233f26e845e5f0084b53092bc4",
-  "975ec4f2519a98482fd8462204820da26b6cbce9",
-  "eb4f84bf4af6f6fc9450b379afb6f6ae12de5952",
-  "7f355e1357bbe552d08a0e2dbf4eca8d2028f8c9",
-  "b6bc6a096eb423eb62c959590153d591b1304a9f",
-  "5b834063e909716a40c5e7be83baa81be47507e8",
-  "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
-  "4ce97152c7051265e0c6adafe20a8146bab30c5f",
   "04680932e761ce4bb3e9f335a584f70121944102",
   "c9ea7169cdca70f27aa560e1309b87b6143c869e",
   "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
   "87f489c49538e82cbc8c2e47234bece5259a7348",
   "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
   "fea9a4b6bfb1358de0627932c86bdda03e88a486",
-  "3208241e531ffc00aa3f5f5d73b07a040ecb13a5",
-  "6789c07456fb8387f32dc93692bf7f698eabc979",
-  "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
-  "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
-  "cf2da6280da6d2d1e0a4b01639e95b8cb1c5471e",
-  "debc6d880810d2bce76424591c3b21d90a6a8bb1",
-  "13611b09d0b63dfc5a17a1c633a96ddf3a2b3ded",
-  "98948837bb9a86625c189a9ff1f3ef8a812b179b",
-  "a14d4baadfe04dbc00e8bc9d7338a8858cb78cc3",
-  "6447dba1b2e5a4501ddcae265a667c0956e61859",
-  "214bbfabe8da23aca998619c432c6a669bade7eb",
-  "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
-  "115b15ad70ffc721f00760c3118c1b485f3d9605",
-  "80c280815bbcfe505f579f0432231c52e02dba9a",
-  "d48b2c89b443db8bc7a44348b57ca7fbd78b8bc7",
-  "f61c569f36dc3c07ad0e6973f166ea3a214c3244",
-  "30ea2fc08baf671b5caac5ed18afdae6aee58a0f"
+  "3208241e531ffc00aa3f5f5d73b07a040ecb13a5"
  ]
 }
