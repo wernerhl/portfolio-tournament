@@ -201,6 +201,16 @@ def main(troot, sroot, today=None):
     wc_=t.get('werner_comparable')
     if not wc_: add('HIGH','tournament:werner_comparable','tournament.json carries no werner_comparable block (the operator tier must be marked not comparable until rebuilt from trades)')
     elif wc_.get('comparable') and not wc_.get('rebuilt_from_trades'): add('CRITICAL','tournament:werner_comparable','the operator tier is marked comparable without a trades-based rebuild on record')
+    # 1-Oct-2026: the operator tier must equal the account (book.json) on the same session — the 30-Sept
+    # row kept $89,340 of tier cash against the account's $148,317 and read the MU/ANET sales as a 29.6% loss
+    try:
+        bk_=json.load(open(os.path.join(troot,'book.json')))
+        w5_=(L['tiers'].get('5_werner') or {})
+        if w5_ and bk_.get('nav') and str(bk_.get('session_date') or bk_.get('as_of'))[:10]==str(L['date'])[:10]:
+            gap_=abs(float(w5_.get('nav') or 0)/float(bk_['nav'])-1.0)
+            if gap_>0.01: add('HIGH','tournament:werner_vs_book',f'operator tier NAV {float(w5_.get("nav") or 0):,.0f} vs the book {float(bk_["nav"]):,.0f} on {L["date"]} ({gap_*100:.1f}% apart; cash {float(w5_.get("cash") or 0):,.0f} vs {float(bk_.get("cash") or 0):,.0f})')
+    except Exception as _e:
+        add('MEDIUM','tournament:werner_vs_book',f'check could not run ({type(_e).__name__})')
     # T2 / T4 / T6 (audit order 30-Sept): the nightly audit, the twins and their logs, the mistakes ledger — under data/tournament/
     # (outside the generic sweep) and data/mistakes.jsonl
     tap_=os.path.join(troot,'tournament','audit.json')
@@ -522,8 +532,12 @@ def main(troot, sroot, today=None):
         stale=[]
         for tk in sorted(held_):
             n=(lj.get('names') or {}).get(tk) or {}
-            sd_=to_date(str(n.get('spot_source') or '')[:10])
-            if sd_ is None or sd_!=ls: stale.append(f'{tk}: {n.get("spot_source") or "no spot"}')
+            # spot_source is either "YYYY-MM-DD close" (the fallback) or "provider 1-minute tape" (a
+            # scheduled vintage: the spot is the tape at the snapshot, so its date is the vintage's pulled_at)
+            src_=str(n.get('spot_source') or '')
+            sd_=to_date(src_[:10])
+            if sd_ is None and 'tape' in src_.lower(): sd_=to_date(str(lj.get('pulled_at') or '')[:10])
+            if sd_ is None or sd_!=ls: stale.append(f'{tk}: {src_ or "no spot"}')
         if stale: add('HIGH','options:lens_spot_stale',f'held names whose lens spot is not the last session {ls}: {stale[:6]}')
         # C1: the event-implied move must be computed by the bracketing method (or its flagged fallback)
         meth=str((lj.get('definitions') or {}).get('event_move',''))

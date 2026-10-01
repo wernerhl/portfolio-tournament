@@ -9,7 +9,7 @@ Benchmarks: SPY, QQQ, 60/40 SPY/TLT, SSO (synthetic 1.5×). All $100K notional, 
 Output: data/tournament.json  (frontend consumes this)
 """
 from __future__ import annotations
-import json, os, sys, warnings
+import hashlib, json, os, sys, warnings
 from datetime import datetime
 from pathlib import Path
 
@@ -289,12 +289,16 @@ def werner_comparable(history: list) -> dict:
         else:
             pnames = {p["ticker"] for p in prev["tiers"]["5_werner"].get("positions", []) if float(p.get("shares") or 0) > 0}
             pnav = float(prev["tiers"]["5_werner"].get("nav") or 0)
-            reseed = names != pnames
+            # a re-seed: the name set changed, any share count changed, or the row re-synced its
+            # cash to the holdings file (1-Oct-2026: a cash-only re-sync carries no name change)
+            shares = {p["ticker"]: round(float(p.get("shares") or 0), 4) for p in w.get("positions", [])}
+            pshares = {p["ticker"]: round(float(p.get("shares") or 0), 4) for p in prev["tiers"]["5_werner"].get("positions", [])}
+            reseed = names != pnames or shares != pshares or bool(w.get("reseeded"))
             if reseed:
                 events.append({"date": r["date"], "nav_before": round(pnav, 2), "nav_after": round(nav, 2),
                                "step_pct": round((nav / pnav - 1.0) * 100, 2) if pnav > 0 else None,
                                "names_before": sorted(pnames), "names_after": sorted(names),
-                               "note": "positions re-seeded from data/holdings.json; the step is an accounting artifact, excluded from the comparable series"})
+                               "note": "positions (and, from 1-Oct-2026, cash) re-seeded from data/holdings.json; the step is an accounting artifact, excluded from the comparable series"})
                 comp = comp  # the step is excluded: the comparable NAV carries over unchanged
             elif pnav > 0:
                 comp = comp * (nav / pnav)
@@ -613,12 +617,23 @@ def main():
             "cost_basis": round(cost, 2),
             "gain_pct": round((px / cost - 1) * 100, 1) if cost > 0 else None,
         })
-    # Werner cash: from config.cash, compounded by EFFR if we have a previous record
+    # Werner cash. Repair 1-Oct-2026: positions were always read from data/holdings.json while cash
+    # compounded from the previous row forever, so a sale recorded in the holdings file (positions
+    # down, account cash up) read as a loss — the 30-Sept row showed −29.6% after the MU and ANET
+    # sales because the tier kept $89,340 of cash against the account's $148,317. Positions and
+    # cash now come from the same account snapshot: when the holdings file changes (its signature
+    # differs from the previous row's, or the previous row has none) both re-sync to it, and the
+    # row is marked reseeded so werner_comparable() excludes the step; otherwise the previous
+    # cash accrues at EFFR as before.
     prev_werner = (history[-1]["tiers"].get("5_werner", {}) if history else {}) or {}
-    if prev_werner and "cash" in prev_werner:
+    holdings_sig = hashlib.sha256(json.dumps({"as_of": _hj.get("as_of"), "cash": werner_cash_cfg,
+                                              "holdings": werner_holdings}, sort_keys=True, default=str).encode()).hexdigest()[:16]
+    if prev_werner and "cash" in prev_werner and prev_werner.get("holdings_sig") == holdings_sig:
         cash_w = float(prev_werner["cash"]) * (1 + effr_daily)
+        cash_source, reseeded = "previous row, accrued at EFFR", False
     else:
         cash_w = werner_cash_cfg   # P3.1: from data/holdings.json
+        cash_source, reseeded = "data/holdings.json (account snapshot)", bool(prev_werner)
     total_w = equity_w + cash_w
     w_cp = cash_pct_from_formula(R_t, werner_spec)
     for p in werner_positions:
@@ -634,6 +649,7 @@ def main():
         "n_positions": len([p for p in werner_positions if p.get("value")]),
         "holdings": [p["ticker"] for p in werner_positions if p.get("value")],
         "positions": werner_positions,
+        "holdings_sig": holdings_sig, "cash_source": cash_source, "reseeded": reseeded,   # 1-Oct-2026 repair, additive
     }
 
     # ----- BENCHMARKS (inception-anchored: NAV = $100k × current/inception) -----
@@ -659,7 +675,6 @@ def main():
         "benchmarks": bench_normalized,
     }
     # P4.1: action log (append-only; compares this row with the previous published row)
-    import hashlib
     _snap = json.dumps({"date": today, "R_t": round(R_t, 4), "prices": prices, "tier_holdings": tier_holdings,
                         "werner": werner_holdings}, sort_keys=True, default=str).encode()
     n_actions = log_actions(history, entry, hashlib.sha256(_snap).hexdigest())
