@@ -8,7 +8,9 @@ name: Nightly
 # (intraday.yml, market_open.yml) is unchanged. Replaces daily_update.yml and
 # the screener repository's rescore.yml.
 #
-# Two schedules: the close run at 22:00 UTC, and a late retry at 01:30 UTC
+# Three schedules (1-Oct-2026): the close run at 22:00 UTC, a late retry at 03:30 UTC (23:30 ET) and the
+# 04:00 ET morning publish; both retries run only when the last completed session is unpublished.
+# Original note — two schedules: the close run at 22:00 UTC, and a late retry at 01:30 UTC
 # that proceeds ONLY when the close run was rejected for a missing close bar
 # (ASSERTION bar_session_mismatch / PRICE_STORE_SESSION — the provider had no
 # bar for the session at ~20:00 ET on 09-09, 09-11, 09-14 and 09-15). A
@@ -18,6 +20,7 @@ name: Nightly
 on:
   schedule:
     - cron: '0 22 * * 1-5'
+    - cron: '30 3 * * 2-6'   # 23:30 ET late retry (1-Oct-2026): the provider posted the 29- and 30-Sept closes after 21:00 ET both nights; publishes the same evening instead of waiting for the morning run
     - cron: '0 8 * * 2-6'    # 04:00 ET morning publish (lands 04:00–07:00 ET with GitHub's delay, before the open) when the evening run found no close bar
   workflow_dispatch:
 
@@ -52,7 +55,7 @@ jobs:
           import sys
           sys.path.insert(0, "scripts")
           from trading_calendar import last_completed_session
-          late = os.environ.get("GITHUB_SCHEDULE", "") == "0 8 * * 2-6"
+          late = os.environ.get("GITHUB_SCHEDULE", "") in ("0 8 * * 2-6", "30 3 * * 2-6")   # both retries publish only an unpublished session
           st = {}
           try: st = json.load(open("data/status.json"))
           except Exception: pass

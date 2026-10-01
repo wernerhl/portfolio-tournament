@@ -82,15 +82,20 @@ def main():
     now_et = _dt.now(ZoneInfo("America/New_York"))
     is_weekday = now_et.weekday() < 5
     after_close = (now_et.hour, now_et.minute) >= (16, 15)
+    # Repair 1-Oct-2026: the hazard is a session IN PROGRESS (09:30–16:15 ET). Before the open the
+    # last completed session is settled, so the nightly's after-midnight runs (late cron delivery,
+    # the 23:30 retry landing past midnight, the 04:00 ET morning publish, a dispatch) publish too.
+    # The guard read 00:19 ET on 1-Oct as "pre-close" and left the board on 29-Sept.
+    pre_open = (now_et.hour, now_et.minute) < (9, 30)
     forced = args.force_publish is not None
-    publish = (not is_weekday) or after_close or forced
+    publish = (not is_weekday) or after_close or pre_open or forced
     computed_at = now_et.isoformat(timespec='seconds')
 
     scratch_dir = None
     if not publish:
         scratch_dir = DATA / "scratch" / now_et.strftime('%Y%m%d-%H%M%S')
         scratch_dir.mkdir(parents=True, exist_ok=True)
-        print(f"[5] RUN GUARD: {now_et.strftime('%H:%M ET')} is pre-close on a trading day "
+        print(f"[5] RUN GUARD: {now_et.strftime('%H:%M ET')} is during a trading session "
               f"and no --force-publish given → SCRATCH MODE ({scratch_dir.relative_to(ROOT)})")
 
     config = load_config()

@@ -354,7 +354,9 @@ def fetch_canonical(universe, universe_with_bench):
                 fund.update(fetch_fundamentals(miss_f))
 
             prov_out = {
-                "mode": "canonical", "base": base,
+                # served file: the repository-relative base (1-Oct-2026), not the machine's path
+                "mode": "canonical", "base": (base if str(base).startswith("http") else
+                                              (lambda b: "." if Path(b).resolve() == Path(__file__).resolve().parents[2] else Path(b).name)(base)),
                 "canonical_session": prov["session_date"],
                 "canonical_built_at": prov["built_at"],
                 "canonical_coverage_pct": prov["coverage_pct"],
@@ -410,8 +412,14 @@ def fetch_holdings():
                 else:
                     blob = _json.loads(Path(where).read_text())
                 _validate_holdings(blob, where)
+                # 1-Oct-2026: a served file records the repository-relative path, never the
+                # machine's absolute one (the runner's or a local checkout's home directory)
+                _shown = where
+                if not where.startswith("http"):
+                    try: _shown = str(Path(where).resolve().relative_to(Path(__file__).resolve().parents[2]))
+                    except Exception: _shown = Path(where).name
                 HOLDINGS_SOURCE = {
-                    "mode": mode, "path": where,
+                    "mode": mode, "path": _shown,
                     "as_of": blob.get("as_of"), "cadence": blob.get("cadence"),
                     "n_holdings": len(blob["holdings"]), "cash": blob.get("cash"),
                 }
