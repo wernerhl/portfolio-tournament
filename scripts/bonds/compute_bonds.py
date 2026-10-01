@@ -523,6 +523,68 @@ def whole_portfolio_stress(bj: dict, sm: dict, ind: pd.DataFrame, through: pd.Ti
     }
 
 
+# ── Order 1-Oct-2026 [R5]: the rates-stress monitor (DIAGNOSTIC) ───────────────
+RATES_STRESS_GATE = ("DIAGNOSTIC: not read by R, the headline, the overlay scalar, any sizing or the brief's colours. "
+                     "Using it needs a registered test that passes and the operator's written authorization "
+                     "(reports/rates_stress_registration_2026-10-01.md, proposed, not run).")
+
+
+def _sessions_only(s: pd.Series) -> pd.Series:
+    try:
+        from trading_calendar import is_trading_day
+        return s.loc[[d for d in s.index if is_trading_day(d.date())]]
+    except Exception:  # noqa: BLE001
+        return s
+
+
+def rates_stress(ind: pd.DataFrame, through: pd.Timestamp) -> dict:
+    """MOVE (Treasury implied volatility) against its past year and ten years; the 10-year real (DFII10)
+    and nominal (DGS10) yields against ten years, each with the 60-session change; the real share of the
+    nominal change. Descriptive; not in R; nothing reads it."""
+    out = {"label": "DIAGNOSTIC", "gate": RATES_STRESS_GATE, "window_change_sessions": 60}
+    # MOVE from the volatility store (yfinance ^MOVE, the recorded provider)
+    try:
+        vol = pd.read_parquet(bc.SOURCE / "vol_indicators.parquet"); vol.index = pd.to_datetime(vol.index)
+        mv = _sessions_only(vol["move"].dropna()) if "move" in vol.columns else pd.Series(dtype=float)
+    except Exception:  # noqa: BLE001
+        mv = pd.Series(dtype=float)
+    if len(mv):
+        m_last, m_d = float(mv.iloc[-1]), mv.index[-1]
+        y1 = mv.iloc[-252:]
+        try:
+            canon = json.loads((bc.DATA / "vol_close_canonical.json").read_text())
+            prov = (canon.get("providers") or {}).get("move") or "yfinance"
+        except Exception:  # noqa: BLE001
+            prov = "yfinance"
+        out["move"] = {"level": round(m_last, 2), "date": str(m_d.date()), "series": "^MOVE", "provider": prov,
+                       "pctile_1y": round(float((y1 < m_last).mean()) * 100.0, 1) if len(y1) >= 60 else None,
+                       "pctile_10y": pctile(mv, m_last, m_d),
+                       "change_60": round(m_last - float(mv.iloc[-61]), 2) if len(mv) > 60 else None,
+                       "level_60_sessions_earlier": round(float(mv.iloc[-61]), 2) if len(mv) > 60 else None,
+                       "note": "ICE publishes no free official close; a session without a yfinance bar is unavailable, not substituted"}
+    else:
+        out["move"] = {"level": None, "reason": "MOVE unavailable in the volatility store (no yfinance ^MOVE history); not substituted"}
+
+    def yld(col, series_id):
+        if col not in ind.columns:
+            return {"level_pct": None, "series": series_id, "reason": f"{series_id} not in the store"}
+        s = ind.loc[:through, col].dropna()
+        if s.empty:
+            return {"level_pct": None, "series": series_id, "reason": "no observation"}
+        v, d = float(s.iloc[-1]), s.index[-1]
+        return {"level_pct": round(v, 3), "date": str(d.date()), "series": series_id, "provider": "FRED",
+                "pctile_10y": pctile(s, v, d),
+                "change_60_bp": round((v - float(s.iloc[-61])) * 100.0, 1) if len(s) > 60 else None}
+    real, nom = yld("tips_real_10y", "DFII10"), yld("us10y", "DGS10")
+    out["real_10y"], out["nominal_10y"] = real, nom
+    if real.get("change_60_bp") is not None and nom.get("change_60_bp") not in (None, 0):
+        out["real_share_of_nominal_change"] = round(real["change_60_bp"] / nom["change_60_bp"], 3)
+        out["real_share_definition"] = "60-session change in DFII10 / 60-session change in DGS10 (the rest is the breakeven)"
+    else:
+        out["real_share_of_nominal_change"] = None
+    return out
+
+
 # ── payload ────────────────────────────────────────────────────────────────
 def build(live: dict | None = None, intraday: bool = False) -> dict:
     cfg = bc.load_state_config()
@@ -535,6 +597,7 @@ def build(live: dict | None = None, intraday: bool = False) -> dict:
     alloc = {"duration": q_duration(sm, ind, through), "credit": q_credit(credit),
              "real_vs_nominal": q_real_nominal(realnom)}
     rregime = rates_regime(cfg, curve, credit)
+    rstress = rates_stress(ind, through)
     bk = equity_book(live)
     srets = ba.daily_returns(bc.load_sleeve_prices())
     etfs = ba.load_etfs(); spy_ret = ba.daily_returns(etfs)["SPY"] if "SPY" in etfs.columns else pd.Series(dtype=float)
@@ -563,6 +626,7 @@ def build(live: dict | None = None, intraday: bool = False) -> dict:
         "real_nominal": realnom,
         "allocation_questions": alloc,
         "rates_regime": rregime,
+        "rates_stress": rstress,      # [R5] DIAGNOSTIC; read by nothing that sizes, labels or colours
         "book_integration": book_int,
         "note": "descriptive; states and associations only, no rate forecast; no buy or sell instruction.",
     }

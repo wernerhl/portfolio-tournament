@@ -229,6 +229,13 @@ def build_canonical_close(vol_df: pd.DataFrame, canon_date: str | None = None) -
             canonical["null_reasons"][name] = (f"no Cboe row for {canon_date} "
                                                f"(cboe series: {sources.get(name, {}).get('provider')}) "
                                                f"and no yfinance bar")
+    # [R5.1] MOVE: provenance recorded beside the vol complex; NOT a required field (no free official close)
+    if "move" in vol_df.columns and ts in vol_df.index and pd.notna(vol_df.loc[ts, "move"]):
+        canonical["move"], canonical["providers"]["move"] = round(float(vol_df.loc[ts, "move"]), 4), "yfinance"
+    else:
+        canonical["move"], canonical["providers"]["move"] = None, "unavailable"
+        canonical["null_reasons"]["move"] = (f"no ^MOVE bar for {canon_date}: ICE publishes no free official close and "
+                                             f"yfinance had none; unavailable, not substituted")
     canonical["spread_spot_3m"] = (round(canonical["vix"] - canonical["vix3m"], 4)
                                    if canonical["vix"] is not None and canonical["vix3m"] is not None
                                    else None)
@@ -350,6 +357,10 @@ def main():
         "spx":  "^GSPC", "dxy":  "DX-Y.NYB",
         "oil":  "CL=F",  "gold": "GC=F",  "tlt":  "TLT",
         "hyg":  "HYG",   "lqd":  "LQD",
+        # order 1-Oct-2026 [R5.1]: the ICE BofA MOVE index (Treasury implied volatility), DIAGNOSTIC only.
+        # ICE publishes no free official close, so yfinance ^MOVE is the recorded provider; a session
+        # without a bar is unavailable, never substituted.
+        "move": "^MOVE",
     }
     vol_data = {}
     for name, tk in vol_tickers.items():

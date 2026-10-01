@@ -123,10 +123,34 @@ function renderIndicators(){
     </div>
     <div class="ind-grid">${t.items.map(renderIndCard).join("")}</div>
     ${ownsExpanded ? renderIndicatorDetail() : ""}`;
-  }).join("") + IND_LEGEND;
+  }).join("") + IND_LEGEND + renderRatesStressStrip();
 }
 // [R1.4] one legend line under the cards
 const IND_LEGEND = `<div class="ind-legend mono t1 c-3 mt2">Statuses rank each reading against its own past 252 sessions; the 10-year percentile is shown for scale.</div>`;
+// Order 1-Oct-2026 [R5.2]: the rates-stress strip under the regime cards — DIAGNOSTIC, not in R; nothing
+// that sizes, labels or colours reads it (referee bond:rates_stress_gate)
+function _ord(n){ n = Math.round(n); const t = n % 100, u = n % 10; return n + ((t >= 11 && t <= 13) ? "th" : u === 1 ? "st" : u === 2 ? "nd" : u === 3 ? "rd" : "th"); }
+function ratesStressParts(rs){
+  const m = rs.move || {}, r = rs.real_10y || {}, n = rs.nominal_10y || {};
+  const sgn = v => (v >= 0 ? "+" : "") + v;
+  return [
+    m.level != null ? `MOVE ${m.level.toFixed(2)}${m.pctile_1y != null ? `, ${_ord(m.pctile_1y)} percentile of the past year` : ""}${m.pctile_10y != null ? `, ${_ord(m.pctile_10y)} of ten years` : ""}${m.change_60 != null ? `; ${sgn(m.change_60.toFixed(1))} over 60 sessions` : ""}` : `MOVE unavailable (${m.reason || "no bar"})`,
+    r.level_pct != null ? `10-year real yield (DFII10) ${r.level_pct.toFixed(2)}%${r.pctile_10y != null ? `, ${_ord(r.pctile_10y)} percentile of ten years` : ""}${r.change_60_bp != null ? `; ${sgn(r.change_60_bp.toFixed(0))}bp over 60 sessions` : ""}` : "10-year real yield unavailable",
+    n.level_pct != null ? `10-year (DGS10) ${n.level_pct.toFixed(2)}%${n.pctile_10y != null ? `, ${_ord(n.pctile_10y)} percentile of ten years` : ""}${n.change_60_bp != null ? `; ${sgn(n.change_60_bp.toFixed(0))}bp over 60 sessions` : ""}` : "10-year unavailable",
+    rs.real_share_of_nominal_change != null ? `the real yield is ${Math.round(rs.real_share_of_nominal_change * 100)}% of that 60-session rise (the rest is the breakeven)` : null,
+  ].filter(Boolean);
+}
+function renderRatesStressStrip(){
+  const rs = S.bondsStates && S.bondsStates.rates_stress; if (!rs) return "";
+  return `<div class="strip strip-2 mt2"><span class="w6 c-1">Rates stress (DIAGNOSTIC, not in R)</span> · ${ratesStressParts(rs).join(" · ")} <span class="c-3">· as of ${(rs.move && rs.move.date) || "—"} (MOVE), ${(rs.nominal_10y && rs.nominal_10y.date) || "—"} (FRED) · on the Bonds page</span></div>`;
+}
+function renderBondsRatesStress(){
+  const rs = S.bondsStates && S.bondsStates.rates_stress; if (!rs) return "";
+  return `<div class="rcc-card"><h3>RATES STRESS <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">Treasury implied volatility and the 10-year real and nominal yields against their own history; not in R</span>${asOfBadge(rs.move && rs.move.date)}</h3>
+    ${ratesStressParts(rs).map(p => `<div class="mono t1 c-2 lh16">${p}</div>`).join("")}
+    <div class="chart-meta c-warn">${rs.gate || ""}</div>
+    <div class="chart-meta">MOVE: the ICE BofA index of one-month implied volatility on Treasury options (yfinance ^MOVE; ICE publishes no free official close, so a session without a bar is unavailable, never substituted) · yields: FRED DFII10 and DGS10 · percentiles: the share of the trailing window below today's value</div></div>`;
+}
 // AUDIT FIX 2: prefer the intraday-snapshot value when it covers the same
 // instrument and is fresher than the EOD payload. Card and banner now agree
 // on VIX/VVIX/VIX3M/DXY/SKEW etc. The z-score / phi / status are KEPT from

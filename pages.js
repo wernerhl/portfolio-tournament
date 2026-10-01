@@ -77,7 +77,7 @@ function renderUniverseCard(){   // system page: the one universe (6.2)
 const PAGES = {
   home: {
     title: "PORTFOLIO TOURNAMENT", sub: () => `${updatedStr()} · the regime index and the book's drawdown · 4 algo tiers + Werner`,
-    loads: ["config","tournament","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens"],
+    loads: ["config","tournament","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens","bondsStates"],
     compose(){
       const live = liveRow(); const R = live ? live.R_t : null;
       const rv = renderRegimeCommandCenter(R); const strip = renderStatusStrip();
@@ -109,7 +109,7 @@ const PAGES = {
     loads: ["config","bondsStates","bondsMetrics","status","holdingsFile"],
     compose(){
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE CURVE</h2>${renderBondsCurve()}</div>`;
-      h += `<div class="tier tier-2"><h2 class="tier-title">CREDIT, INFLATION AND THE RATES REGIME</h2>${renderBondsCredit()}${renderBondsBreakeven()}${renderBondsRatesRegime()}</div>`;
+      h += `<div class="tier tier-2"><h2 class="tier-title">CREDIT, INFLATION AND THE RATES REGIME</h2>${renderBondsCredit()}${renderBondsBreakeven()}${renderBondsRatesRegime()}${renderBondsRatesStress()}</div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">THE SLEEVE MENU AND THE ALLOCATION READS</h2>${renderBondsSleeveMenu()}${renderBondsAllocationReads()}</div>`;
       h += `<div class="tier tier-1"><h2 class="tier-title">BOOK INTEGRATION AND WHOLE-PORTFOLIO STRESS</h2>${renderBondsConditional()}${renderBondsWholeStress()}</div>`;
       return h;

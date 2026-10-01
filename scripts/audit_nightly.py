@@ -54,6 +54,44 @@ REGIME_SCALE = {"hy_oas": 100.0}   # stored in percent, shown in basis points
 SEVERITY_WORDS = ("crisis", "acute", "stress", "shock", "spike", "crunch", "drain", "severely", "panic")
 
 
+# [R5.3] the code paths that must never read the rates-stress block: R, the label, the headline, the overlay
+# scalar, every sizing path and the brief's colour rules
+RATES_STRESS_CONSUMERS = ('scripts/compute_regime_v2.py', 'scripts/regime_label.py', 'scripts/compute_vol_regime.py',
+                          'scripts/compute_nav.py', 'scripts/compute_twins.py', 'scripts/daily_brief.py',
+                          'data/brief_rules.json', 'app.js#headlineVerdict')
+_RS_TOKEN = re.compile(r'rates_stress|RATES_STRESS|\^MOVE')
+_RS_MOVE_CHANNEL = re.compile(r'\(\s*["\']move["\']\s*,')     # a "move" channel in the regime's INDICATORS
+
+
+def rates_stress_sources(repo_root):
+    """name -> source text for every consumer (headlineVerdict's body only, for app.js)."""
+    out = {}
+    for name in RATES_STRESS_CONSUMERS:
+        path, _, fn = name.partition('#')
+        try:
+            txt = open(os.path.join(repo_root, path)).read()
+        except Exception:
+            out[name] = None; continue
+        if fn:
+            m_ = re.search(r'function\s+' + fn + r'\s*\(.*?\n}\n', txt, re.S)
+            txt = m_.group(0) if m_ else None
+        out[name] = txt
+    return out
+
+
+def check_rates_stress_gate(states, sources):
+    out = []
+    rs = (states or {}).get('rates_stress')
+    if rs is not None and str(rs.get('label', '')).upper() != 'DIAGNOSTIC':
+        out.append(('CRITICAL', 'bond:rates_stress_gate', f'rates_stress label is {rs.get("label")!r}, not DIAGNOSTIC'))
+    for name, txt in (sources or {}).items():
+        if txt is None:
+            out.append(('HIGH', 'bond:rates_stress_gate', f'{name}: source unreadable, the gate could not be verified')); continue
+        if _RS_TOKEN.search(txt) or (name.endswith('compute_regime_v2.py') and _RS_MOVE_CHANNEL.search(txt)):
+            out.append(('CRITICAL', 'bond:rates_stress_gate', f'{name} reads the rates-stress block or MOVE (DIAGNOSTIC: no registered test has passed)'))
+    return out
+
+
 def check_bond_carry(states, sleeve_metrics, fred):
     """[R3] bond:carry_basis. CRITICAL when the duration read or the menu's carry column is computed from
     distribution yields (or carries yield per unit of duration); HIGH when IEF's pickup falls outside
@@ -550,6 +588,8 @@ def main(troot, sroot, today=None):
         except Exception:
             fred_=None
         for f_ in check_bond_carry(stj, json.load(open(sm_)) if os.path.exists(sm_) else {}, fred_): add(*f_)
+        # [R5.3] the rates-stress monitor stays DIAGNOSTIC and unread by R, the headline, the overlay, sizing, the brief's colours
+        for f_ in check_rates_stress_gate(stj, rates_stress_sources(os.path.dirname(os.path.abspath(troot)))): add(*f_)
     # language: the words edge and alpha appear nowhere in the module; no buy/sell directive
     for bf in ('bonds/sleeve_metrics.json','bonds/states.json','bonds/sleeve_universe.json'):
         bp_=os.path.join(troot,bf)
