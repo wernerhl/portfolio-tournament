@@ -2894,7 +2894,7 @@ function renderSleevesPanel(){
 function renderCalendarCard(){
   const ev = (S.eventCal && S.eventCal.events) || [];
   const today = _etDateISO(new Date());
-  const next = ev.filter(e => e && e.date >= today).slice(0, 8);
+  const next = ev.filter(e => e && e.date >= today && e.type !== "REFUNDING" && (e.type !== "TREASURY" || ["3Y","10Y","30Y"].includes(e.tenor || String(e.label || "").split(" ")[0]))).slice(0, 8);   // R6.3 (1-Oct-2026): the pre-R6 type set
   if (!next.length) return "";
   return `<div class="rcc-card cal-card"><h3>CALENDAR · <span class="c-3 w5">next scheduled macro events</span></h3>
     <table class="cal-table">${next.map(e => `<tr><td class="mono t1 c-2">${e.date}</td><td class="mono t1 c-1">${e.label || e.type}</td><td class="serif t1 c-3">${e.name || ""}</td></tr>`).join("")}</table>
@@ -3494,7 +3494,7 @@ function renderEventsBoard(){   // home, below the log: the next 45 days by week
   const held = new Set(((S.holdingsFile && S.holdingsFile.holdings) || []).filter(h => (h.shares || 0) > 0).map(h => String(h.ticker).toUpperCase()));
   const lens = (S.optionsLens && S.optionsLens.names) || {}; const pos = {}; ((S.book && S.book.positions) || []).forEach(p => { pos[p.ticker] = p; });
   const clusters = {}; (cal.clusters || []).forEach(c => { clusters[c.date] = c; });
-  const inWin = ev.filter(e => e.date >= today && e.date <= end && e.type !== "TREASURY");
+  const inWin = ev.filter(e => e.date >= today && e.date <= end && e.type !== "TREASURY" && e.type !== "REFUNDING");   // R6.3 (1-Oct-2026): the pre-R6 type set
   const weeks = {};
   inWin.forEach(e => { const k = _mondayOf(e.date); (weeks[k] = weeks[k] || []).push(e); });
   const imp = e => `<span class="imp imp-${e.impact || "medium"}">${(e.impact || "—").toUpperCase()}</span>`;

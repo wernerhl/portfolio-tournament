@@ -185,6 +185,12 @@ def load_events() -> dict[str, list[str]]:
         d = json.load(open(DATA / "event_calendar.json"))
         out = {}
         for e in d["events"]:
+            # Order 1-Oct-2026 R6.3: the frozen conditioning keeps its pre-R6 type set — TREASURY 3Y/10Y/30Y
+            # only (now on their sourced dates), no REFUNDING and none of the newly sourced tenors
+            if e["type"] == "REFUNDING":
+                continue
+            if e["type"] == "TREASURY" and (e.get("tenor") or str(e.get("label", "")).split(" ")[0]) not in ("3Y", "10Y", "30Y"):
+                continue
             out.setdefault(e["date"], []).append(e["type"])
         return out
     except Exception as e:

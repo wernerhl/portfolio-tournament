@@ -826,6 +826,14 @@ def main(troot, sroot, today=None):
     noimp=[e for e in ev if str(e.get('date',''))>='2026-09-30' and e.get('impact') not in ('high','medium','low')]
     if noimp: add('HIGH','calendar:impact',f'{len(noimp)} upcoming entries lack an impact level (first: {noimp[0].get("date")} {noimp[0].get("type")})')
     if isinstance(cal,dict) and 'clusters' not in cal: add('HIGH','calendar:clusters','event_calendar.json carries no cluster detection (A2)')
+    # Order 1-Oct-2026 R6: Treasury auctions against TreasuryDirect TA_WS (a failed fetch is itself a finding)
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from calendar_checks import check_treasury_source, load_announced
+        _ann, _fs = load_announced(os.path.join(troot, 'event_calendar.json'))
+        for _sev, _chk, _det in check_treasury_source(cal, _ann, today=str(ls), fetch_status=_fs): add(_sev, _chk, _det)
+    except Exception as _e:
+        add('HIGH', 'calendar:treasury_source', f'check could not run: {type(_e).__name__}: {_e}')
     # ---------- screener ----------
     sc=json.load(open(os.path.join(sroot,'scores.json'))); w=sc.get('watchlist',[])
     if w:

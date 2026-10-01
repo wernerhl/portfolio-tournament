@@ -314,6 +314,7 @@ def facts_payload(session: str, rules: dict) -> dict:
                 "held_earnings": [{"date": e["date"], "ticker": str(e.get("ticker", "")).upper()} for e in events
                                   if e.get("date") in (s1, s2) and e.get("type") == "EARNINGS" and str(e.get("ticker", "")).upper() in held_set]}
     nxt = [e for e in events if e.get("date") > session and e.get("impact") in ("high", "medium")
+           and (e.get("type") in MACRO_TYPES or e.get("type") == "EARNINGS")   # R6.3 (1-Oct-2026): the pre-R6 type set (no REFUNDING)
            and (e.get("type") != "EARNINGS" or str(e.get("ticker", "")).upper() in held_set)]
     nxt.sort(key=lambda e: (e["date"], e.get("type", "")))
     next_events = [{"date": e["date"], "type": e["type"], "label": e.get("label"), "name": e.get("name"), "impact": e.get("impact"),
