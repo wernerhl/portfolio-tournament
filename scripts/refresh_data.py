@@ -453,6 +453,12 @@ def main():
                 # (TIPS). The real-vs-nominal read (module 2.3) uses breakeven_10y with
                 # tips_real_10y; fwd_5y5y_infl is the market's longer-horizon priced inflation.
                 "fwd_5y5y_infl":"T5YIFR", "tips_real_10y":"DFII10",
+                # order 1-Oct-2026 [R3.1]: the curve-implied carry basis — the CMT points {0.25, 1, 2, 5,
+                # 7, 10, 20, 30}, the real curve at 5/7/20/30 (10 above) and the IG OAS by maturity bucket
+                "us01y":"DGS1", "us07y":"DGS7", "us20y":"DGS20",
+                "tips_real_5y":"DFII5", "tips_real_7y":"DFII7", "tips_real_20y":"DFII20", "tips_real_30y":"DFII30",
+                "ig_oas_1_3":"BAMLC1A0C13Y", "ig_oas_3_5":"BAMLC2A0C35Y", "ig_oas_5_7":"BAMLC3A0C57Y",
+                "ig_oas_7_10":"BAMLC4A0C710Y", "ig_oas_10_15":"BAMLC7A0C1015Y", "ig_oas_15p":"BAMLC8A0C15PY",
                 "baa_yield":"BAA", "aaa_yield":"AAA",
                 "mortgage_30y":"MORTGAGE30US",
                 "umich_sentiment":"UMCSENT", "ism_mfg":"BUSLOANS",

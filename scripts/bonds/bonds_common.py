@@ -50,6 +50,191 @@ CREDIT_INDEX = {
 }
 NEAR_ZERO_DURATION = 0.5   # below this, yield-per-duration is unstable (floating / cash)
 
+# ── Order 1-Oct-2026 [R3.2]: weighted-average maturity per sleeve, from the issuer's fund page, with the
+# as-of date and source per sleeve (retrieved 2026-10-01). The curve-implied yield reads the curve at this
+# maturity. A sleeve without a figure gets curve_implied_yield null with the reason. ──
+AVG_MATURITY = {
+    # ticker: (years, as_of, source)
+    "SHV":  (0.29,  "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239466)"),
+    "SHY":  (1.89,  "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239452)"),
+    "IEF":  (8.42,  "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239456)"),
+    "TLT":  (26.03, "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239454)"),
+    "GOVT": (7.37,  "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239468)"),
+    "TIP":  (7.00,  "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239467)"),
+    "LQD":  (12.62, "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239566)"),
+    "HYG":  (4.27,  "2026-09-29", "iShares fund page, Weighted Avg Maturity (ishares.com/us/products/239565)"),
+    "VCSH": (3.1,   "2026-08-31", "Vanguard fund characteristics, average maturity (investor.vanguard.com, VCSH)"),
+    "VCIT": (7.6,   "2026-08-31", "Vanguard fund characteristics, average maturity (investor.vanguard.com, VCIT)"),
+    "JNK":  (5.07,  "2026-09-29", "State Street fund page, Average Maturity in Years (ssga.com, JNK)"),
+}
+# Which curve prices each sleeve (R3.2). treasury: the CMT curve at the maturity; ig: the CMT curve plus the
+# IG OAS of the bucket containing the maturity; hy: the CMT curve plus the HY OAS; real: the TIPS real curve.
+CURVE_TYPE = {"SHV": "treasury", "SHY": "treasury", "IEF": "treasury", "TLT": "treasury", "GOVT": "treasury",
+              "VCSH": "ig", "VCIT": "ig", "LQD": "ig", "HYG": "hy", "JNK": "hy", "TIP": "real"}
+NO_CURVE_REASON = {
+    "EMB":  "no public spread series matches the sleeve (USD emerging-market sovereigns); never substituted",
+    "MBB":  "no public spread series matches the sleeve (agency MBS, prepayment-sensitive cash flows); never substituted",
+    "MUB":  "tax-exempt: compare at the holder's marginal tax rate, and no rate is assumed; no public spread series matches the sleeve; never substituted",
+    "BKLN": "floating-rate senior loans: no public spread series matches the sleeve; never substituted",
+    "FLOT": "floating-rate notes: the coupon resets with short rates, so no public spread series matches the sleeve; never substituted",
+    "AGG":  "a mixed aggregate (Treasuries, MBS, corporates): no single curve or public spread series matches the sleeve; never substituted",
+    "BND":  "a mixed aggregate (Treasuries, MBS, corporates): no single curve or public spread series matches the sleeve; never substituted",
+}
+CARRY_CONFIG = BONDS / "carry_config.json"     # the frozen CMT points, real points and IG maturity buckets
+CASH_SERIES = "us03m"                          # DGS3MO: y_cash for the pickup
+SIGMA_SERIES, SIGMA_WINDOW = "us10y", 126      # typical daily move of the 10-year, in bp
+YPD_DEPRECATION = ("deprecated 2026-10-01 (order R3.3): a trailing distribution yield divided by duration "
+                   "favours the shortest sleeve by construction (SHV's duration about 0.35) and lags rate moves; "
+                   "the carry basis is the curve-implied yield. Kept for continuity only; read, sorted and shown nowhere.")
+
+
+def load_carry_config() -> dict:
+    return json.loads(CARRY_CONFIG.read_text())
+
+
+def load_fred_store():
+    """(indicators frame, store label, through-date) — the module's one FRED reader. The point-in-time
+    store is preferred when it is within a week of the revised store; columns the point-in-time store
+    does not carry yet (series added after its last vintage rebuild) come from the revised store, and
+    the label says so."""
+    rev = pd.read_parquet(SOURCE / "fred_indicators.parquet"); rev.index = pd.to_datetime(rev.index)
+    rev = rev.sort_index(); rev_last = rev.index.max()
+    try:
+        pit = pd.read_parquet(SOURCE / "fred_indicators_pit.parquet"); pit.index = pd.to_datetime(pit.index)
+        if (rev_last - pit.index.max()).days <= 7:
+            pit = pit.sort_index()
+            extra = [c for c in rev.columns if c not in pit.columns]
+            if extra:
+                idx = pit.index.union(rev.index)
+                pit = pit.reindex(idx)
+                for c in extra:
+                    pit[c] = rev[c].reindex(idx)
+            label = "point-in-time (as-published, ALFRED)" + (f"; {len(extra)} newer series from the revised store" if extra else "")
+            return pit, label, pit.index.max()
+    except Exception:  # noqa: BLE001
+        pass
+    return rev, "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)", rev_last
+
+
+def _notna(x) -> bool:
+    try:
+        return x is not None and not pd.isna(x)
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _interp(points, T: float):
+    """Linear interpolation in maturity over (maturity, yield) points; clamped at the ends."""
+    pts = sorted(p for p in points if _notna(p[1]))
+    if not pts:
+        return None
+    if T <= pts[0][0]:
+        return pts[0][1]
+    if T >= pts[-1][0]:
+        return pts[-1][1]
+    for (t0, y0), (t1, y1) in zip(pts, pts[1:]):
+        if t0 <= T <= t1:
+            return y0 + (y1 - y0) * (T - t0) / (t1 - t0)
+    return None
+
+
+def _bracket(points, T: float):
+    mats = [m for m, _, _ in points]
+    lo = max([m for m in mats if m <= T], default=min(mats))
+    hi = min([m for m in mats if m >= T], default=max(mats))
+    return sorted({c for m, c, _ in points if m in (lo, hi)})
+
+
+def _row_on(ind, cols, through):
+    """The latest date on or before `through` where every column in `cols` has a value."""
+    miss = [c for c in cols if c not in ind.columns]
+    if miss:
+        return None, miss
+    sub = ind.loc[:through, cols].dropna()
+    if sub.empty:
+        return None, list(cols)
+    return sub.index[-1], []
+
+
+def carry_for(tk: str, ind, through, duration, cfg: dict) -> dict:
+    """Curve-implied yield and the carry metric for one sleeve (R3.2/R3.3). Every value carries its
+    series and date; nothing is substituted when an input is missing."""
+    out = {"curve_implied_yield_pct": None, "curve_type": CURVE_TYPE.get(tk), "avg_maturity_years": None,
+           "avg_maturity_as_of": None, "avg_maturity_source": None, "inputs": None, "inputs_date": None,
+           "curve_implied_reason": None, "pickup_bp": None, "breakeven_rise_bp": None,
+           "real_yield_pct": None, "breakeven_at_maturity_pct": None, "nominal_equivalent_pct": None}
+    if tk in NO_CURVE_REASON:
+        out["curve_implied_reason"] = NO_CURVE_REASON[tk]
+        return out
+    if tk not in CURVE_TYPE or tk not in AVG_MATURITY:
+        out["curve_implied_reason"] = "no average-maturity figure on record for the sleeve"
+        return out
+    T, mat_asof, mat_src = AVG_MATURITY[tk]
+    out.update(avg_maturity_years=T, avg_maturity_as_of=mat_asof, avg_maturity_source=mat_src)
+    cmt = [(float(p["maturity"]), p["col"], p["series"]) for p in cfg["cmt_points"]]
+    real = [(float(p["maturity"]), p["col"], p["series"]) for p in cfg["real_points"]]
+    kind = CURVE_TYPE[tk]
+    pts = real if kind == "real" else cmt
+    need = _bracket(pts, T)
+    extra, bucket = [], None
+    if kind == "ig":
+        bucket = next((x for x in cfg["ig_buckets"] if x["from"] <= T and (x["to"] is None or T < x["to"])), None)
+        if bucket is None:
+            out["curve_implied_reason"] = f"maturity {T}y falls in no frozen IG bucket"
+            return out
+        extra = [bucket["col"]]
+    elif kind == "hy":
+        extra = ["hy_oas"]
+    cols = need + extra + ([CASH_SERIES] if kind != "real" else [])
+    d, missing = _row_on(ind, cols, through)
+    if d is None:
+        out["curve_implied_reason"] = f"input series missing from the store: {missing} (pending the FRED fetch); never substituted"
+        return out
+    row = ind.loc[d]
+    sid = {c: s for _, c, s in pts}
+    y = _interp([(m, float(row[c])) for m, c, _ in pts if c in need], T)
+    ds = str(d.date())
+    inputs = {c: {"series": sid[c], "value": float(row[c]), "date": ds, "provider": "FRED"} for c in need}
+    if kind == "ig":
+        inputs[bucket["col"]] = {"series": bucket["series"], "value": float(row[bucket["col"]]), "date": ds,
+                                 "provider": "FRED (ICE BofA)", "bucket": bucket["label"]}
+        y += float(row[bucket["col"]])
+    elif kind == "hy":
+        inputs["hy_oas"] = {"series": "BAMLH0A0HYM2", "value": float(row["hy_oas"]), "date": ds, "provider": "FRED (ICE BofA)"}
+        y += float(row["hy_oas"])
+    out["inputs"], out["inputs_date"] = inputs, ds
+    if kind == "real":
+        # TIP: a REAL yield, excluded from nominal comparisons. The nominal-equivalent (real plus the
+        # breakeven at the same maturity) is shown only when both are available on the same date.
+        out["real_yield_pct"] = round(y, 3)
+        ncols = _bracket(cmt, T)
+        if all(c in ind.columns and _notna(ind.loc[d, c]) for c in ncols):
+            nom = _interp([(m, float(ind.loc[d, c])) for m, c, _ in cmt if c in ncols], T)
+            out["breakeven_at_maturity_pct"] = round(nom - y, 3)
+            out["nominal_equivalent_pct"] = round(y + (nom - y), 3)
+            for c in ncols:
+                inputs[c] = {"series": {cc: s for _, cc, s in cmt}[c], "value": float(ind.loc[d, c]), "date": ds, "provider": "FRED"}
+        out["curve_implied_reason"] = "a real yield (TIPS curve): excluded from nominal comparisons"
+        return out
+    out["curve_implied_yield_pct"] = round(y, 3)
+    y_cash = float(row[CASH_SERIES])
+    inputs[CASH_SERIES] = {"series": "DGS3MO", "value": y_cash, "date": ds, "provider": "FRED"}
+    out["pickup_bp"] = round((y - y_cash) * 100.0, 1)
+    if duration and duration > 0:
+        out["breakeven_rise_bp"] = round(out["pickup_bp"] / duration, 1)
+    return out
+
+
+def sigma_daily_bp(ind, through, col: str = SIGMA_SERIES, window: int = SIGMA_WINDOW):
+    """Standard deviation of daily changes of the 10-year CMT over `window` sessions, in bp."""
+    if col not in ind.columns:
+        return None, 0
+    s = ind.loc[:through, col].dropna()
+    ch = s.diff().dropna().iloc[-window:] * 100.0
+    if len(ch) < 60:
+        return None, len(ch)
+    return round(float(ch.std()), 2), len(ch)
+
 WINDOW = 126               # correlation / vol window, matching the book panel (order §7)
 MIN_OBS = 60
 ANN = 252.0

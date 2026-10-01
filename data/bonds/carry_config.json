@@ -1,0 +1,34 @@
+{
+  "cadence": "static",
+  "frozen_at": "2026-10-01",
+  "order": "1-Oct-2026 [R3.2]: the curve-implied carry basis",
+  "note": "CMT yields are par yields on a semiannual basis. A fund's portfolio yield differs by coupon, convexity and composition, so the field is named curve-implied. Changing this file is a new version, recorded with a reason.",
+  "cmt_points": [
+    {"maturity": 0.25, "col": "us03m", "series": "DGS3MO"},
+    {"maturity": 1,    "col": "us01y", "series": "DGS1"},
+    {"maturity": 2,    "col": "us02y", "series": "DGS2"},
+    {"maturity": 5,    "col": "us05y", "series": "DGS5"},
+    {"maturity": 7,    "col": "us07y", "series": "DGS7"},
+    {"maturity": 10,   "col": "us10y", "series": "DGS10"},
+    {"maturity": 20,   "col": "us20y", "series": "DGS20"},
+    {"maturity": 30,   "col": "us30y", "series": "DGS30"}
+  ],
+  "real_points": [
+    {"maturity": 5,  "col": "tips_real_5y",  "series": "DFII5"},
+    {"maturity": 7,  "col": "tips_real_7y",  "series": "DFII7"},
+    {"maturity": 10, "col": "tips_real_10y", "series": "DFII10"},
+    {"maturity": 20, "col": "tips_real_20y", "series": "DFII20"},
+    {"maturity": 30, "col": "tips_real_30y", "series": "DFII30"}
+  ],
+  "ig_buckets": [
+    {"from": 0,  "to": 3,    "col": "ig_oas_1_3",   "series": "BAMLC1A0C13Y",   "label": "1-3 years"},
+    {"from": 3,  "to": 5,    "col": "ig_oas_3_5",   "series": "BAMLC2A0C35Y",   "label": "3-5 years"},
+    {"from": 5,  "to": 7,    "col": "ig_oas_5_7",   "series": "BAMLC3A0C57Y",   "label": "5-7 years"},
+    {"from": 7,  "to": 10,   "col": "ig_oas_7_10",  "series": "BAMLC4A0C710Y",  "label": "7-10 years"},
+    {"from": 10, "to": 15,   "col": "ig_oas_10_15", "series": "BAMLC7A0C1015Y", "label": "10-15 years"},
+    {"from": 15, "to": null, "col": "ig_oas_15p",   "series": "BAMLC8A0C15PY",  "label": "15+ years"}
+  ],
+  "cash": {"col": "us03m", "series": "DGS3MO"},
+  "breakeven_rise": "pickup_bp / D, the parallel rise in yield over one year that erases the pickup, from dP/P = -D dy; roll-down and convexity are omitted",
+  "sigma": {"col": "us10y", "series": "DGS10", "window_sessions": 126, "unit": "bp", "definition": "standard deviation of daily changes"}
+}

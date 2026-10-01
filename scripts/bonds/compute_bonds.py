@@ -41,17 +41,9 @@ def log(m: str) -> None:
 
 # ── FRED store (as-published) ──────────────────────────────────────────────
 def load_fred() -> tuple[pd.DataFrame, str, pd.Timestamp]:
-    """Indicators frame, store label, through-date. Prefer the point-in-time store when it
-    is within a week of the revised store; else use revised and say the overlay is pending."""
-    rev = pd.read_parquet(bc.SOURCE / "fred_indicators.parquet"); rev.index = pd.to_datetime(rev.index)
-    rev_last = rev.index.max()
-    try:
-        pit = pd.read_parquet(bc.SOURCE / "fred_indicators_pit.parquet"); pit.index = pd.to_datetime(pit.index)
-        if (rev_last - pit.index.max()).days <= 7:
-            return pit.sort_index(), "point-in-time (as-published, ALFRED)", pit.index.max()
-    except Exception:
-        pass
-    return rev.sort_index(), "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)", rev_last
+    """Indicators frame, store label, through-date (bonds_common.load_fred_store: the point-in-time
+    store when within a week of the revised store, newer series filled from the revised store)."""
+    return bc.load_fred_store()
 
 
 def last_valid(s: pd.Series) -> tuple[float | None, pd.Timestamp | None]:
@@ -206,49 +198,62 @@ def load_sleeve_metrics() -> dict:
     return {r["ticker"]: r for r in j.get("sleeves", [])}
 
 
+def _a_an(x) -> str:
+    """'an' before a number read with a vowel sound (8, 11, 18, 80-89, 800…), else 'a'."""
+    if x is None:
+        return "a"
+    n = str(abs(int(round(x))))
+    return "an" if (n.startswith("8") or n in ("11", "18")) else "a"
+
+
 def q_duration(sm: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
-    """Compare the yield pickup of extending from cash to intermediate and long duration
-    against the additional rate risk. Descriptive; not a rate call."""
+    """Order 1-Oct-2026 [R3.4]: the pickup from bills to intermediate and long duration on the
+    curve-implied yields (the CMT curve at each sleeve's weighted-average maturity), and the parallel
+    rise in yields over a year that would erase it, stated in typical daily moves of the 10-year.
+    Descriptive; no rate call. Supersedes acceptance 9.4 of the 16-Sept order: the read no longer uses
+    trailing distribution yields or yield per unit of duration, which favoured cash by construction."""
+    cash_v, cash_d = last_valid(ind[bc.CASH_SERIES]) if bc.CASH_SERIES in ind else (None, None)
+    sig, sig_n = bc.sigma_daily_bp(ind, through)
+
     def leg(tk):
         r = sm.get(tk, {})
-        return {"ticker": tk, "yield_pct": r.get("distribution_yield_pct"),
-                "duration": r.get("effective_duration"), "yield_per_duration": r.get("yield_per_duration")}
-    cash, inter, long = leg("SHV"), leg("IEF"), leg("TLT")
-    def pickup(a, b):
-        if a["yield_pct"] is None or b["yield_pct"] is None or a["duration"] is None or b["duration"] is None:
-            return None, None
-        dd = b["duration"] - a["duration"]
-        return round(b["yield_pct"] - a["yield_pct"], 2), (round((b["yield_pct"] - a["yield_pct"]) / dd, 3) if dd else None)
-    up_i, per_i = pickup(cash, inter)
-    up_l, per_l = pickup(cash, long)
-    # term premium proxy: long-minus-cash yield spread (10y − 3m), and its 10y percentile
+        return {"ticker": tk, "curve_implied_yield_pct": r.get("curve_implied_yield_pct"),
+                "avg_maturity_years": r.get("avg_maturity_years"), "duration": r.get("effective_duration"),
+                "pickup_bp": r.get("pickup_bp"), "breakeven_rise_bp": r.get("breakeven_rise_bp"),
+                "breakeven_rise_typical_moves": r.get("breakeven_rise_typical_moves"),
+                "inputs_date": r.get("inputs_date"), "curve_implied_reason": r.get("curve_implied_reason"),
+                "trailing_distribution_yield_pct": r.get("distribution_yield_pct")}
+    short, inter, long = leg("SHY"), leg("IEF"), leg("TLT")
+    # term premium proxy: long-minus-cash yield spread (10y - 3m), and its 10y percentile (unchanged)
     tp = (ind["us10y"] - ind["us03m"]) if ("us10y" in ind and "us03m" in ind) else pd.Series(dtype=float)
     tp_cur, _ = last_valid(tp)
     tp_pct = pctile(tp, tp_cur, through)
-    # which sleeve has the highest yield per unit of duration among the Treasury ladder
-    ladder = ["SHV", "SHY", "IEF", "TLT", "GOVT"]
-    ypd = {tk: sm.get(tk, {}).get("yield_per_duration") for tk in ladder if sm.get(tk, {}).get("yield_per_duration") is not None}
-    best = max(ypd, key=ypd.get) if ypd else None
-    favorable = None
-    if best is not None:
-        favorable = best not in ("SHV",)   # if cash has the highest carry per duration, extension is not favoured
+
+    def clause(l):
+        if l["curve_implied_yield_pct"] is None:
+            return f"{l['ticker']}: curve-implied yield unavailable ({l['curve_implied_reason']})"
+        k = l["breakeven_rise_typical_moves"]
+        return (f"{l['ticker']}'s curve-implied yield is {l['curve_implied_yield_pct']:.2f}% at duration {l['duration']}: "
+                f"{l['pickup_bp']:.0f}bp over bills, erased by {_a_an(l['breakeven_rise_bp'])} {l['breakeven_rise_bp']:.0f}bp rise over a year"
+                + (f" ({k:.0f} typical daily move{'s' if round(k) != 1 else ''} of the 10-year)" if k is not None else ""))
+    read = (f"Bills yield {cash_v:.2f}%. " if cash_v is not None else "Bills yield unavailable. ") + \
+           clause(inter) + ". " + clause(long).replace(f"{long['ticker']}'s curve-implied yield is", f"{long['ticker']}:", 1) + "."
     return {
         "question": "Are you paid to take duration?",
-        "cash": cash, "intermediate": inter, "long": long,
-        "pickup_cash_to_intermediate_pct": up_i, "pickup_per_year_duration_intermediate": per_i,
-        "pickup_cash_to_long_pct": up_l, "pickup_per_year_duration_long": per_l,
+        "basis": "curve-implied yields (FRED CMT par yields at each sleeve's weighted-average maturity); not distribution yields",
+        "cash": {"series": "DGS3MO", "yield_pct": round(cash_v, 3) if cash_v is not None else None,
+                 "date": str(cash_d.date()) if cash_d is not None else None},
+        "short": short, "intermediate": inter, "long": long,
+        "sigma_10y_daily_bp": sig, "sigma_window_sessions": sig_n,
         "term_premium_proxy": {"definition": "long-minus-cash yield spread (10y minus 3m)",
                                "value_pct": round(tp_cur, 2) if tp_cur is not None else None,
                                "value_bps": round(tp_cur * 100, 0) if tp_cur is not None else None, "pctile_10y": tp_pct},
-        "highest_yield_per_duration": best,
-        "extension_favoured": favorable,
-        "read": (f"cash ({cash['ticker']}) yields {cash['yield_pct']}% at duration {cash['duration']}, "
-                 f"intermediate ({inter['ticker']}) {inter['yield_pct']}% at duration {inter['duration']}, "
-                 f"long ({long['ticker']}) {long['yield_pct']}% at duration {long['duration']}; "
-                 f"the yield per unit of duration is highest at {best}."),
+        "read": read,
+        "footnotes": ["CMT yields are par yields on a semiannual basis; a fund's portfolio yield differs by coupon, convexity and composition, so the yield is named curve-implied.",
+                      "The breakeven rise is pickup / duration, from dP/P = -D dy; roll-down and convexity are omitted.",
+                      "The trailing distribution yield is income paid over the past year; it lags rate moves and is shown for context only."],
         "note": ("Descriptive, not a rate call. The historical evidence that starting yield explains most "
-                 "of a bond sleeve's multi-year return is the basis; a low term-premium percentile means "
-                 "extension is thinly compensated."),
+                 "of a bond sleeve's multi-year return is the basis."),
     }
 
 
@@ -358,11 +363,15 @@ def equity_book(live: dict | None = None):
 def diversifier_menu(sm: dict) -> dict:
     """The sleeve menu sorted by correlation to the book ascending: a sleeve's value to THIS
     book is its correlation with what is already held, not its standalone yield (order 4.1)."""
+    # [R3.3] the menu's carry columns are curve-implied; yield_per_duration is no longer carried here
     rows = [{"ticker": r["ticker"], "asset_class": r.get("asset_class"), "role": r.get("role"),
              "correlation_to_book": r.get("correlation_to_book"),
+             "curve_implied_yield_pct": r.get("curve_implied_yield_pct"),
+             "real_yield_pct": r.get("real_yield_pct"),
+             "pickup_bp": r.get("pickup_bp"), "breakeven_rise_bp": r.get("breakeven_rise_bp"),
+             "curve_implied_reason": r.get("curve_implied_reason"),
              "distribution_yield_pct": r.get("distribution_yield_pct"),
              "effective_duration": r.get("effective_duration"),
-             "yield_per_duration": r.get("yield_per_duration"),
              "vol_126_ann": r.get("vol_126_ann")}
             for r in sm.values()]
     rows.sort(key=lambda r: (r["correlation_to_book"] is None, r["correlation_to_book"]))

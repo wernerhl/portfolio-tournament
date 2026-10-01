@@ -54,6 +54,50 @@ REGIME_SCALE = {"hy_oas": 100.0}   # stored in percent, shown in basis points
 SEVERITY_WORDS = ("crisis", "acute", "stress", "shock", "spike", "crunch", "drain", "severely", "panic")
 
 
+def check_bond_carry(states, sleeve_metrics, fred):
+    """[R3] bond:carry_basis. CRITICAL when the duration read or the menu's carry column is computed from
+    distribution yields (or carries yield per unit of duration); HIGH when IEF's pickup falls outside
+    [DGS5 - DGS3MO, DGS10 - DGS3MO] +- 5bp on its inputs date, or a sleeve lacks both a curve-implied
+    yield and its reason."""
+    out = []
+    d = ((states or {}).get('allocation_questions') or {}).get('duration') or {}
+    sm = {r.get('ticker'): r for r in (sleeve_metrics or {}).get('sleeves', [])}
+    if d:
+        bad = [k for k in ('highest_yield_per_duration', 'extension_favoured') if k in d]
+        if bad or 'per unit of duration' in str(d.get('read', '')).lower() or not str(d.get('basis', '')).lower().startswith('curve-implied'):
+            out.append(('CRITICAL', 'bond:carry_basis', f'the duration read is not on the curve-implied basis (fields {bad}; basis {d.get("basis")!r})'))
+        for leg in ('intermediate', 'long'):
+            l = d.get(leg) or {}
+            tk = l.get('ticker'); cy = l.get('curve_implied_yield_pct'); dy = (sm.get(tk) or {}).get('distribution_yield_pct')
+            if 'curve_implied_yield_pct' not in l:
+                out.append(('CRITICAL', 'bond:carry_basis', f'duration read {leg} leg {tk} carries no curve-implied yield'))
+            elif cy is not None and dy is not None and abs(float(cy) - float(dy)) < 0.005:
+                out.append(('CRITICAL', 'bond:carry_basis', f'duration read {leg} leg {tk}: curve-implied {cy}% equals the distribution yield {dy}%'))
+    menu = (((states or {}).get('book_integration') or {}).get('menu') or {}).get('sleeves', [])
+    for r in menu:
+        if 'yield_per_duration' in r:
+            out.append(('CRITICAL', 'bond:carry_basis', f'menu row {r.get("ticker")} carries yield_per_duration (the deprecated carry metric)')); break
+    cash = ((d.get('cash') or {}).get('yield_pct')) if d else None
+    for r in menu:
+        if r.get('pickup_bp') is not None and r.get('distribution_yield_pct') is not None and cash is not None \
+           and abs(float(r['pickup_bp']) - (float(r['distribution_yield_pct']) - float(cash)) * 100) < 0.5 \
+           and r.get('curve_implied_yield_pct') is not None and abs(float(r['curve_implied_yield_pct']) - float(r['distribution_yield_pct'])) > 0.01:
+            out.append(('CRITICAL', 'bond:carry_basis', f'menu row {r.get("ticker")}: the pickup is computed from the distribution yield')); break
+    for tk, r in sm.items():
+        if r.get('curve_implied_yield_pct') is None and r.get('real_yield_pct') is None and not r.get('curve_implied_reason'):
+            out.append(('HIGH', 'bond:carry_basis', f'{tk}: no curve-implied yield and no reason recorded'))
+    ief = (d.get('intermediate') or {}) if d else {}
+    if fred is not None and ief.get('pickup_bp') is not None and ief.get('inputs_date'):
+        try:
+            row = fred.loc[:ief['inputs_date'], ['us03m', 'us05y', 'us10y']].dropna().iloc[-1]
+            lo, hi = (row['us05y'] - row['us03m']) * 100 - 5, (row['us10y'] - row['us03m']) * 100 + 5
+            if not (lo <= float(ief['pickup_bp']) <= hi):
+                out.append(('HIGH', 'bond:carry_basis', f'IEF pickup {ief["pickup_bp"]}bp outside [DGS5-DGS3MO, DGS10-DGS3MO] +-5bp = [{lo:.1f}, {hi:.1f}] on {ief["inputs_date"]}'))
+        except Exception as e:  # noqa: BLE001
+            out.append(('MEDIUM', 'bond:carry_basis', f'IEF pickup range check could not run ({type(e).__name__})'))
+    return out
+
+
 def check_regime_display(ri):
     out = []
     for i in (ri or {}).get('indicators', []):
@@ -498,6 +542,14 @@ def main(troot, sroot, today=None):
         meth=str(cr.get('method','')).lower()
         if cr and ('option-adjusted' not in meth and 'oas' not in meth):
             add('HIGH','bond:credit_method','credit read method does not reference option-adjusted spreads (an ETF price ratio is prohibited)')
+        # Order 1-Oct-2026 [R3]: the carry basis is the curve-implied yield
+        fred_=None
+        try:
+            import pandas as _pd
+            fred_=_pd.read_parquet(os.path.join(troot,'source','fred_indicators.parquet')); fred_.index=_pd.to_datetime(fred_.index)
+        except Exception:
+            fred_=None
+        for f_ in check_bond_carry(stj, json.load(open(sm_)) if os.path.exists(sm_) else {}, fred_): add(*f_)
     # language: the words edge and alpha appear nowhere in the module; no buy/sell directive
     for bf in ('bonds/sleeve_metrics.json','bonds/states.json','bonds/sleeve_universe.json'):
         bp_=os.path.join(troot,bf)

@@ -54,6 +54,12 @@ PIT_SERIES = {
     "effr": "EFFR",                                        # cash-rate anchor for "paid to take duration"
     "breakeven_10y": "T10YIE", "fwd_5y5y_infl": "T5YIFR",  # real-vs-nominal read
     "tips_real_10y": "DFII10",                             # real 10y yield
+    # order 1-Oct-2026 [R3.1]: the curve-implied carry basis and the registration v2 challenger (t-1
+    # point-in-time CMT): CMT 1/7/20, real curve 5/7/20/30, IG OAS by maturity bucket
+    "us01y": "DGS1", "us07y": "DGS7", "us20y": "DGS20",
+    "tips_real_5y": "DFII5", "tips_real_7y": "DFII7", "tips_real_20y": "DFII20", "tips_real_30y": "DFII30",
+    "ig_oas_1_3": "BAMLC1A0C13Y", "ig_oas_3_5": "BAMLC2A0C35Y", "ig_oas_5_7": "BAMLC3A0C57Y",
+    "ig_oas_7_10": "BAMLC4A0C710Y", "ig_oas_10_15": "BAMLC7A0C1015Y", "ig_oas_15p": "BAMLC8A0C15PY",
 }
 # Did the series exist as published data before its first ALFRED vintage?
 # False = the product was created at (about) its first vintage; its earlier
@@ -70,6 +76,10 @@ EXISTED_BEFORE_VINTAGES = {
     # revisions negligible (yields/OAS are essentially not revised).
     "us02y": True, "us05y": True, "us30y": True, "ig_oas": True, "effr": True,
     "breakeven_10y": True, "fwd_5y5y_infl": True, "tips_real_10y": True,
+    # [R3.1]: CMT, TIPS real yields and ICE BofA bucket OAS were published products long before ALFRED
+    "us01y": True, "us07y": True, "us20y": True, "tips_real_5y": True, "tips_real_7y": True,
+    "tips_real_20y": True, "tips_real_30y": True, "ig_oas_1_3": True, "ig_oas_3_5": True, "ig_oas_5_7": True,
+    "ig_oas_7_10": True, "ig_oas_10_15": True, "ig_oas_15p": True,
 }
 ROW_CAP = 100_000
 VINTAGE_START = "1990-01-01"

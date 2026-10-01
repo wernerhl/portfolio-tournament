@@ -3267,7 +3267,7 @@ function renderBondsRatesRegime(){
 
 function renderBondsAllocationReads(){
   const s = S.bondsStates; const a = s && s.allocation_questions; if (!a) return "";
-  const card = (q) => q ? `<div class="th-pending-wrap"><div class="mono t1 w6 c-1">${q.question}</div><div class="mono t1 c-2 mt1">${q.read || ""}</div><div class="chart-meta">${q.note || ""}</div></div>` : "";
+  const card = (q) => q ? `<div class="th-pending-wrap"><div class="mono t1 w6 c-1">${q.question}</div><div class="mono t1 c-2 mt1">${q.read || ""}</div>${q.basis ? `<div class="mono t1 c-3 mt1">basis: ${q.basis}</div>` : ""}<div class="chart-meta">${q.note || ""}${(q.footnotes || []).map(f => ` · ${f}`).join("")}</div></div>` : "";
   return `<div class="rcc-card"><h3>THE ALLOCATION READS · <span class="c-3 w5">observable, evidence-based; each registered before it runs; no rate forecast</span>${asOfBadge(s.session_date)}</h3>
     ${card(a.duration)}${card(a.credit)}${card(a.real_vs_nominal)}</div>`;
 }
@@ -3285,21 +3285,27 @@ function renderBondsSleeveMenu(){
     if (a == null) return 1; if (b == null) return -1;
     return (a > b ? 1 : a < b ? -1 : 0) * sort.dir;
   });
-  const cols = [["ticker","SLEEVE"],["distribution_yield_pct","YIELD"],["effective_duration","DURATION"],["yield_per_duration","YIELD/DUR"],["vol_126_ann","VOL 126"],["correlation_to_book","CORR→BOOK"]];
-  const head = cols.map(([k,l]) => `<th class="${k==="ticker"?"":"num"} ptr" onclick="bondsSortBy('${k}')">${l}${sort.key===k?(sort.dir>0?" ▲":" ▼"):""}</th>`).join("");
+  // order 1-Oct-2026 [R3.3]: the carry columns are curve-implied (yield, pickup over bills, the breakeven rise
+  // that erases it); the trailing distribution yield stays, retitled; yield per unit of duration is gone
+  const cols = [["ticker","SLEEVE"],["curve_implied_yield_pct","CURVE-IMPLIED"],["pickup_bp","PICKUP"],["breakeven_rise_bp","BE RISE"],["effective_duration","DURATION"],["distribution_yield_pct","TRAILING DIST."],["vol_126_ann","VOL 126"],["correlation_to_book","CORR→BOOK"]];
+  const tips = {curve_implied_yield_pct: "CMT par yield at the sleeve's weighted-average maturity (plus the bucket OAS for credit)", pickup_bp: "curve-implied yield minus 3-month bills, bp",
+                breakeven_rise_bp: "the parallel rise over a year that erases the pickup: pickup / duration (roll-down and convexity omitted)", distribution_yield_pct: "trailing distribution yield (income; lags rate moves)"};
+  const head = cols.map(([k,l]) => `<th class="${k==="ticker"?"":"num"} ptr" title="${tips[k] || ""}" onclick="bondsSortBy('${k}')">${l}${sort.key===k?(sort.dir>0?" ▲":" ▼"):""}</th>`).join("");
   const body = rows.map(r => {
     const corr = r.correlation_to_book; const c = corr == null ? 0 : corr;
     const bar = `<span class="sleeve-bar"><span class="sleeve-zero"></span><span class="sleeve-fill ${c>=0?"bg-warn":"bg-pos"}" style="left:${c>=0?50:50+c*50}%;width:${Math.abs(c)*50}%"></span></span>`;
     return `<tr><td class="mono t2 c-1 w6" title="${r.role||""}">${r.ticker}</td>
-      <td class="num c-2">${_bpct(r.distribution_yield_pct,2)}</td>
+      <td class="num c-1" title="${r.curve_implied_reason || ""}">${r.curve_implied_yield_pct != null ? _bpct(r.curve_implied_yield_pct,2) : (r.real_yield_pct != null ? `${_bpct(r.real_yield_pct,2)} real` : "—")}</td>
+      <td class="num c-2">${r.pickup_bp != null ? r.pickup_bp.toFixed(0) + "bp" : "—"}</td>
+      <td class="num c-2">${r.breakeven_rise_bp != null ? r.breakeven_rise_bp.toFixed(0) + "bp" : "—"}</td>
       <td class="num c-2">${_bnum(r.effective_duration,2)}</td>
-      <td class="num c-2">${_bnum(r.yield_per_duration,3)}</td>
+      <td class="num c-3">${_bpct(r.distribution_yield_pct,2)}</td>
       <td class="num c-3">${r.vol_126_ann==null?"—":_bpct(r.vol_126_ann*100,1)}</td>
       <td class="num c-1">${corr==null?"—":corr.toFixed(2)} ${bar}</td></tr>`;
   }).join("");
   return `<div class="rcc-card"><h3>THE SLEEVE MENU · <span class="c-3 w5">sorted by correlation to the book — a sleeve's value here is its correlation with what is held, not its yield</span>${asOfBadge(S.bondsStates.session_date)}</h3>
     <div class="tbl-scroll"><table class="sleeves-table"><tr>${head}</tr>${body}</table></div>
-    <div class="chart-meta">${m.note || ""} · click a header to sort</div></div>`;
+    <div class="chart-meta">${m.note || ""} · curve-implied: the CMT par-yield curve at each sleeve's weighted-average maturity (semiannual basis; a fund's portfolio yield differs by coupon, convexity and composition); "real" marks TIP's real yield, excluded from nominal comparisons; a dash means no public curve or spread series matches the sleeve (hover for the reason) · trailing dist.: income paid over the past year, lags rate moves · click a header to sort</div></div>`;
 }
 
 function renderBondsConditional(){
