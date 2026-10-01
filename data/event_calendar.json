@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-09-30",
+  "rebuilt_at": "2026-10-01",
   "cadence": "weekly",
-  "as_of": "2026-09-30",
+  "as_of": "2026-10-01",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -67,7 +67,7 @@
       "note": "a high-impact macro release and a held name's earnings on the same session"
     }
   ],
-  "earnings_note": "EARNINGS events: provider earnings calendar per ticker for the held names, the register's claim tickers and the ai_infra members; one upcoming entry per ticker, refreshed weekly; written by scripts/build_earnings_calendar.py",
+  "earnings_note": "EARNINGS events: provider earnings calendar per ticker for the held names, the register's claim tickers, the ai_infra members and the screen board's top 40; one upcoming entry per ticker, refreshed weekly; written by scripts/build_earnings_calendar.py",
   "events": [
     {
       "date": "2024-01-05",
@@ -2316,11 +2316,33 @@
     {
       "date": "2026-09-30",
       "type": "EARNINGS",
+      "ticker": "FDS",
+      "name": "Earnings \u00b7 FDS",
+      "label": "FDS",
+      "source_url": "https://finance.yahoo.com/quote/FDS/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-01T00:22:04-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-09-30",
+      "type": "EARNINGS",
       "ticker": "MU",
       "name": "Earnings \u00b7 MU",
       "label": "MU",
       "source_url": "https://finance.yahoo.com/quote/MU/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-09-29T22:47:28-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-09-30",
+      "type": "EARNINGS",
+      "ticker": "MU",
+      "name": "Earnings \u00b7 MU",
+      "label": "MU",
+      "source_url": "https://finance.yahoo.com/quote/MU/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-01T00:22:04-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
