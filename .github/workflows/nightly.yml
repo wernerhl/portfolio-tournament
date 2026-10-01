@@ -75,6 +75,14 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_SCHEDULE: ${{ github.event.schedule }}
 
+      - name: Install Claude Code (the brief's sentence on the operator's plan; skipped when the token is not set)
+        if: steps.decide.outputs.run == 'true'
+        continue-on-error: true   # without it the brief falls back to the API key, then the template
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then npm install -g @anthropic-ai/claude-code >/dev/null && claude --version; else echo "CLAUDE_CODE_OAUTH_TOKEN not set: the brief uses the API key if set, else the template"; fi
+
       - name: Run the nightly pipeline
         id: pipeline
         if: steps.decide.outputs.run == 'true'
@@ -89,6 +97,9 @@ jobs:
           # Both are repository settings; neither is ever printed.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          # 1-Oct-2026: the operator's choice — the brief's sentence runs on the Claude subscription through
+          # Claude Code (token from `claude setup-token`); preferred over the API key when both are set
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: python scripts/update_daily.py
 
       - name: Referee (one sweep over data/ and data/screen/)

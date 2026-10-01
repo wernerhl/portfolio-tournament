@@ -492,11 +492,57 @@ def validate_text(text: str, p: dict, cfg: dict, universe: set | None = None) ->
     return (not reasons), reasons
 
 
+CC_TOKEN_ENV = "CLAUDE_CODE_OAUTH_TOKEN"
+
+
+def claude_code_text(p: dict, cfg: dict) -> tuple[str | None, dict]:
+    """The operator's plan (1-Oct-2026): Claude Code in print mode, authenticated by the long-lived token
+    that `claude setup-token` makes, held as the repository secret CLAUDE_CODE_OAUTH_TOKEN, so the
+    sentence counts against the subscription's usage instead of API billing. Same model, same system
+    prompt, same payload as the API path; no tools, no MCP servers, no saved session, run from an empty
+    directory so no project context is read. The token lives only in the subprocess environment and
+    is never printed or logged; ANTHROPIC_API_KEY is removed from that environment so the plan is used."""
+    import shutil, subprocess, tempfile
+    if not os.environ.get(CC_TOKEN_ENV):
+        return None, {"reason": f"{CC_TOKEN_ENV} not set in this environment"}
+    exe = shutil.which("claude")
+    if not exe:
+        return None, {"reason": "the claude command is not installed in this environment"}
+    model = cfg.get("model", "claude-sonnet-5-5")
+    compact = {k: v for k, v in p.items() if k not in ("sources",)}
+    env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
+    cmd = [exe, "-p", "--output-format", "json", "--model", model, "--system-prompt", SYSTEM_PROMPT,
+           "--tools", "", "--strict-mcp-config", "--no-session-persistence"]
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            r = subprocess.run(cmd, input="Payload:\n" + json.dumps(compact, ensure_ascii=False), capture_output=True,
+                               text=True, timeout=180, cwd=d, env=env)
+        if r.returncode != 0:
+            return None, {"model": model, "reason": f"claude exited with code {r.returncode}"}
+        out = json.loads(r.stdout)
+        if out.get("is_error"):
+            return None, {"model": model, "reason": f"claude reported an error (HTTP {out.get('api_error_status') or '—'}, {out.get('subtype')})"}
+        text = str(out.get("result") or "").strip()
+        return (text or None), {"model": model, "engine": "claude-code", "reason": None if text else "empty response"}
+    except subprocess.TimeoutExpired:
+        return None, {"model": model, "reason": "claude timed out after 180 s"}
+    except Exception as e:  # noqa: BLE001
+        return None, {"model": model, "reason": f"claude call failed ({type(e).__name__})"}
+
+
 def model_text(p: dict, cfg: dict) -> tuple[str | None, dict]:
+    # 1-Oct-2026: the operator's plan first (Claude Code with CLAUDE_CODE_OAUTH_TOKEN); the API key is the
+    # fallback; with neither, the caller uses the template. The engine choice lives in the environment,
+    # not in data/brief_rules.json, so the frozen rules (and their hash) are unchanged.
+    if os.environ.get(CC_TOKEN_ENV):
+        text, meta = claude_code_text(p, cfg)
+        if text is not None or not os.environ.get(cfg.get("api_env", "ANTHROPIC_API_KEY")):
+            return text, meta
+        log(f"plan path unavailable ({meta.get('reason')}); trying the API key")
     env = cfg.get("api_env", "ANTHROPIC_API_KEY")
     key = os.environ.get(env)
     if not key:
-        return None, {"reason": f"model unavailable: {env} not set in this environment"}
+        return None, {"reason": f"model unavailable: {CC_TOKEN_ENV} and {env} not set in this environment"}
     compact = {k: v for k, v in p.items() if k not in ("sources",)}
     body = {"model": cfg.get("model", "claude-sonnet-5-5"), "max_tokens": 160, "system": SYSTEM_PROMPT,
             "messages": [{"role": "user", "content": "Payload:\n" + json.dumps(compact, ensure_ascii=False)}]}
@@ -519,7 +565,7 @@ def narrative(p: dict, rules: dict) -> dict:
     if text is not None:
         ok, why = validate_text(text, p, cfg)
         if ok:
-            source, model = "model", meta.get("model")
+            source, model = "model", (meta.get("model") or "") + (" via Claude Code (plan)" if meta.get("engine") == "claude-code" else "")
         else:
             rejections.append({"source": "model", "text": text, "reasons": why})
             text2, meta2 = model_text(p, cfg) if False else (None, {})   # one attempt; the template is the fallback

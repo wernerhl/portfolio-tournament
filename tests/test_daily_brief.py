@@ -167,12 +167,63 @@ def test_template_validates_and_is_within_the_limit():
 def test_narrative_falls_back_to_template_without_a_model_key(monkey=None):
     import os
     saved = os.environ.pop(CFG.get("api_env", "ANTHROPIC_API_KEY"), None)
+    saved_cc = os.environ.pop(db.CC_TOKEN_ENV, None)
     try:
         nar = db.narrative(base_payload(), RULES)
         assert nar["text_source"] == "template" and nar["rejections"] and "not set" in nar["rejections"][0]["reasons"][0], nar
     finally:
         if saved is not None:
             os.environ[CFG.get("api_env", "ANTHROPIC_API_KEY")] = saved
+        if saved_cc is not None:
+            os.environ[db.CC_TOKEN_ENV] = saved_cc
+
+
+def _with_fake_claude(result_json: dict, fn):
+    """Run fn() with a stand-in `claude` first on PATH. The stand-in records its arguments and whether
+    it saw the plan token and an API key, then prints result_json — no network, no real credential."""
+    import os, stat
+    with tempfile.TemporaryDirectory() as td:
+        rec = Path(td) / "seen.json"
+        fake = Path(td) / "claude"
+        fake.write_text(f"#!{sys.executable}\nimport json, os, sys\n"
+                        f"stdin = sys.stdin.read()\n"
+                        f"json.dump({{'argv': sys.argv[1:], 'token': bool(os.environ.get('{db.CC_TOKEN_ENV}')), "
+                        f"'api_key': 'ANTHROPIC_API_KEY' in os.environ, 'stdin_has_payload': stdin.startswith('Payload:'), "
+                        f"'cwd_empty': not os.listdir('.')}}, open({str(rec)!r}, 'w'))\n"
+                        f"sys.stdout.write({json.dumps(result_json)!r})\n")
+        fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
+        saved = {k: os.environ.get(k) for k in ("PATH", db.CC_TOKEN_ENV, "ANTHROPIC_API_KEY")}
+        os.environ["PATH"] = td + os.pathsep + os.environ.get("PATH", "")
+        os.environ[db.CC_TOKEN_ENV] = "test-token-not-real"
+        os.environ.pop("ANTHROPIC_API_KEY", None)
+        try:
+            out = fn()
+            return out, json.loads(rec.read_text())
+        finally:
+            for k, v in saved.items():
+                if v is None: os.environ.pop(k, None)
+                else: os.environ[k] = v
+
+
+def test_plan_path_writes_the_sentence_through_claude_code():
+    """1-Oct-2026: with CLAUDE_CODE_OAUTH_TOKEN set, the sentence comes from Claude Code on the plan,
+    with no tools, from an empty directory, and passes the same validator."""
+    p = base_payload(); sentence = db.template_text(p)
+    nar, seen = _with_fake_claude({"type": "result", "subtype": "success", "is_error": False, "result": sentence},
+                                  lambda: db.narrative(p, RULES))
+    assert nar["text_source"] == "model" and nar["text"] == sentence, nar
+    assert nar["model"].endswith("via Claude Code (plan)"), nar["model"]
+    a = seen["argv"]
+    assert seen["token"] and not seen["api_key"] and seen["stdin_has_payload"] and seen["cwd_empty"], seen
+    assert "-p" in a and a[a.index("--tools") + 1] == "" and a[a.index("--model") + 1] == CFG.get("model", "claude-sonnet-5-5"), a
+
+
+def test_plan_path_error_falls_back_to_the_template():
+    p = base_payload()
+    nar, _ = _with_fake_claude({"type": "result", "subtype": "success", "is_error": True, "api_error_status": 401,
+                                "result": "Failed to authenticate."}, lambda: db.narrative(p, RULES))
+    assert nar["text_source"] == "template" and nar["text"] == db.template_text(p), nar
+    assert "HTTP 401" in nar["rejections"][0]["reasons"][0], nar["rejections"]
 
 
 def test_forced_entry_with_unpayloaded_number_is_rejected_and_replaced():
@@ -218,7 +269,8 @@ if __name__ == "__main__":
                test_r6_needs_both_levels, test_the_29_september_rules_reproduce_yellow, test_validator_rejects_unpayloaded_number,
                test_validator_accepts_payload_numbers_after_rounding, test_validator_rejects_forecast_verbs_and_directives_and_vocabulary,
                test_validator_rejects_foreign_security_and_word_limit, test_template_validates_and_is_within_the_limit,
-               test_narrative_falls_back_to_template_without_a_model_key, test_forced_entry_with_unpayloaded_number_is_rejected_and_replaced,
+               test_narrative_falls_back_to_template_without_a_model_key, test_plan_path_writes_the_sentence_through_claude_code,
+               test_plan_path_error_falls_back_to_the_template, test_forced_entry_with_unpayloaded_number_is_rejected_and_replaced,
                test_log_is_append_only_with_hashes_and_corrections, test_zz_repository_data_untouched]:
         run(fn)
     n_fail = sum(1 for _, ok, _ in RESULTS if not ok)
