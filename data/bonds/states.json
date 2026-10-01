@@ -6,7 +6,7 @@
   "intraday_note": null,
   "session_date": "2026-09-30",
   "as_of": "2026-10-01",
-  "computed_at": "2026-10-01T00:54:14-06:00",
+  "computed_at": "2026-10-01T01:01:24-06:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
     "fred_through": "2026-09-30",
@@ -133,6 +133,8 @@
       "oas_bps": 84.0,
       "pctile_10y": 42.0,
       "state": "normal",
+      "pctile_window_from": "2023-06-05",
+      "pctile_window_years": 3.3,
       "as_of": "2026-09-29"
     },
     "hy": {
@@ -140,6 +142,8 @@
       "oas_bps": 308.0,
       "pctile_10y": 47.8,
       "state": "normal",
+      "pctile_window_from": "2023-06-05",
+      "pctile_window_years": 3.3,
       "as_of": "2026-09-29"
     },
     "bands": [
@@ -167,7 +171,7 @@
       }
     ],
     "duration_caveat": "Computed from the option-adjusted spread series, which are duration-controlled by construction \u2014 NOT an ETF price ratio. A raw HYG-versus-LQD ratio is prohibited (duration-confounding, per the ledger).",
-    "footnote": "States against ten-year OAS history: tight (<20th percentile), normal (20\u201360th), wide (60\u201390th), stressed (>90th). Descriptive; no spread direction implied. Tight spreads mean little compensation for default and illiquidity risk."
+    "footnote": "States against the OAS history on record, up to ten years (FRED distributes the ICE BofA spread series for about three years, so the window starts 2023-06-05): tight (<20th percentile), normal (20\u201360th), wide (60\u201390th), stressed (>90th). Descriptive; no spread direction implied. Tight spreads mean little compensation for default and illiquidity risk."
   },
   "real_nominal": {
     "breakeven_10y_pct": 2.36,

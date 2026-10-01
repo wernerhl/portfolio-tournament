@@ -162,6 +162,10 @@ def display_fields(key: str, direction: str, panel_series: pd.Series, raw_v: flo
                    through: pd.Timestamp) -> dict:
     """Every display-only field for one indicator card."""
     p10 = pctile_10y(panel_series, raw_v, through)
+    # the window actually available (FRED's ICE BofA series, e.g. HY OAS, go back only to June 2023)
+    w = panel_series.loc[through - pd.DateOffset(years=10):through].dropna()
+    w_from = w.index.min() if len(w) else None
+    w_years = round((through - w_from).days / 365.25, 1) if w_from is not None else None
     r1 = rank_1y(panel_series, raw_v, through)
     z756 = z_window(panel_series.loc[:through], 756)
     if z756 is not None and direction == "lower":
@@ -173,6 +177,8 @@ def display_fields(key: str, direction: str, panel_series: pd.Series, raw_v: flo
         "narrative": narrative(key, raw_v, status, direction, r1),
         "pctile_10y": p10,
         "pctile_10y_risky": risky,
+        "pctile_window_from": str(w_from.date()) if w_from is not None else None,
+        "pctile_window_years": w_years,
         "rank_1y_pct": r1,
         "z_window": Z_WINDOW,
         "z_756": round(z756, 3) if z756 is not None else None,

@@ -541,6 +541,8 @@ def main():
             "unit":      _disp["unit"],
             "pctile_10y": _disp["pctile_10y"],
             "pctile_10y_risky": _disp["pctile_10y_risky"],
+            "pctile_window_from": _disp["pctile_window_from"],
+            "pctile_window_years": _disp["pctile_window_years"],
             "rank_1y_pct": _disp["rank_1y_pct"],
             "z_window":  _disp["z_window"],
             "z_756":     _disp["z_756"],

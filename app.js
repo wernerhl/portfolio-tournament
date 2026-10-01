@@ -198,7 +198,12 @@ function indScaleLine(i){
   const zv = i.z == null ? null : (i.direction === "lower" ? -i.z : i.z);
   const parts = [];
   if (zv != null) parts.push(`z ${zv >= 0 ? "+" : ""}${zv.toFixed(2)} vs past year`);
-  if (i.pctile_10y != null) parts.push(`10-year percentile ${Math.round(i.pctile_10y)}`);
+  if (i.pctile_10y != null) {
+    const yrs = i.pctile_window_years, from = i.pctile_window_from;
+    const short = yrs != null && yrs < 9.5 && from;
+    const mon = short ? new Date(from + "T12:00:00Z").toLocaleDateString("en-US", {month: "short", year: "numeric", timeZone: "UTC"}) : "";
+    parts.push(short ? `percentile ${Math.round(i.pctile_10y)} since ${mon} (${yrs} years on record)` : `10-year percentile ${Math.round(i.pctile_10y)}`);
+  }
   return `<div class="ind-scale mono t1 c-3">${parts.join(" · ")}</div>`;
 }
 
@@ -3262,7 +3267,7 @@ function renderBondsCredit(){
     const clr = _CREDIT_STATE_CLR[x.state] || "c-2";
     return `<div class="so-cell"><div class="k">${name}</div><div class="v ${clr}">${x.oas_bps == null ? "—" : x.oas_bps + "bp"}</div><div class="s">${x.pctile_10y == null ? "" : x.pctile_10y + "th percentile · " + (x.state || "")}</div></div>`;
   };
-  return `<div class="rcc-card"><h3>CREDIT SPREADS · <span class="c-3 w5">investment grade and high yield against their own ten-year history</span>${asOfBadge(c.ig && c.ig.as_of || s.session_date, {lag: 1})}</h3>
+  return `<div class="rcc-card"><h3>CREDIT SPREADS · <span class="c-3 w5">investment grade and high yield against their own history (up to ten years; FRED's ICE BofA series start ${(c.hy && c.hy.pctile_window_from) || "2023-06"})</span>${asOfBadge(c.ig && c.ig.as_of || s.session_date, {lag: 1})}</h3>
     <div class="so-strip">${leg(c.ig, "IG OAS")}${leg(c.hy, "HY OAS")}</div>
     <div class="chart-meta">${c.duration_caveat || ""}</div>
     <div class="chart-meta">${c.footnote || ""}</div></div>`;

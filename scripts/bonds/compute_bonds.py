@@ -139,9 +139,16 @@ def _oas_leg(ind: pd.DataFrame, col: str, bands: list[dict], through: pd.Timesta
                 "unavailable": "OAS series not in the store"}
     lvl, d = last_valid(ind[col])                    # OAS series are in percent (0.80 = 80 bps)
     pct = pctile(ind[col], lvl, through)
+    # 1-Oct-2026: the percentile's actual window. FRED distributes the ICE BofA OAS series for about three
+    # years only (the stored history starts 2023-06-05), so "ten-year" was a 3.3-year percentile.
+    w = ind[col].loc[through - pd.DateOffset(years=HISTORY_YEARS):through].dropna()
+    w_from = w.index.min() if len(w) else None
+    w_years = round((through - w_from).days / 365.25, 1) if w_from is not None else None
     return {"oas_pct": round(lvl, 3) if lvl is not None else None,
             "oas_bps": round(lvl * 100, 0) if lvl is not None else None,
             "pctile_10y": pct, "state": band_for(pct, bands),
+            "pctile_window_from": str(w_from.date()) if w_from is not None else None,
+            "pctile_window_years": w_years,
             "as_of": str(d.date()) if d is not None else None}
 
 
@@ -155,7 +162,8 @@ def credit_state(cfg: dict, ind: pd.DataFrame, through: pd.Timestamp) -> dict:
         "duration_caveat": ("Computed from the option-adjusted spread series, which are "
                             "duration-controlled by construction — NOT an ETF price ratio. A raw "
                             "HYG-versus-LQD ratio is prohibited (duration-confounding, per the ledger)."),
-        "footnote": ("States against ten-year OAS history: tight (<20th percentile), normal (20–60th), "
+        "footnote": ("States against the OAS history on record, up to ten years (FRED distributes the ICE BofA "
+                     "spread series for about three years, so the window starts 2023-06-05): tight (<20th percentile), normal (20–60th), "
                      "wide (60–90th), stressed (>90th). Descriptive; no spread direction implied. "
                      "Tight spreads mean little compensation for default and illiquidity risk."),
     }
