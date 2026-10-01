@@ -815,7 +815,8 @@ table,td{font-size:var(--t2)} small,sub,sup{font-size:var(--t1)} button,input,se
 /* ── P5.1 Mobile: single column below 820px; tier one always visible; tier two stacked cards;
    tier three collapsed under disclosure controls (closed by default); type steps down one size ── */
 @media (max-width:820px){
-  :root{--t5:22px;--t4:15px;--t3:13px;--t2:11px}
+  /* phone type: one step UP from desktop for data and captions (11px mono was unreadable on a phone) */
+  :root{--t5:24px;--t4:18px;--t3:15px;--t2:13px;--t1:12px}
   .w{padding:var(--s3) var(--s2)}
   .tier1-grid,.tier2-grid,.book-grid,.so-strip,.rcc-top{grid-template-columns:1fr}
   .tier-2 .rcc-card,.tier-2 .lbtable,.tier-2 .chart-card,.tier-2 .lb{margin-bottom:var(--s3)}
@@ -932,3 +933,112 @@ tr.cluster td{background:color-mix(in srgb,var(--warn) 10%,transparent)}
 @media (max-width:820px){.brief-grid,.goals-grid,.goal-grid{grid-template-columns:1fr}}
 .mistakes-table td{vertical-align:top;max-width:340px}
 .mistakes-table td:nth-child(3){min-width:260px}
+
+/* ── Phone readability pass (1-Oct-2026): the dashboard read on a 375px screen ─────────────────
+   Every rule below is phone-only (≤820px) except the scroll hint and the badge nowrap. */
+.asof{white-space:nowrap;display:inline-block}
+.scroll-hint{display:none;font:400 var(--t1) var(--mono);color:var(--text-3);margin:var(--s1) 0}
+.scrolls + .scroll-hint, .scroll-hint.on{display:block}
+@media (max-width:820px){
+  /* tier three keeps its one-step-down hierarchy without dropping below the phone floor */
+  .tier-3{--t5:20px;--t4:16px;--t3:14px;--t2:12px}
+  .w{padding:var(--s2) 12px var(--s4)}
+  /* the navigation: one row, swiped sideways, the current page scrolled into view by pages.js */
+  .site-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:var(--s1);
+    letter-spacing:.06em;margin-bottom:var(--s2);position:sticky;top:0;z-index:20;background:var(--bg)}
+  .site-nav::-webkit-scrollbar{display:none}
+  .site-nav a{flex:0 0 auto;padding:6px 10px}
+  .hd2{margin-bottom:var(--s3)} .hd2 h1{font-size:20px} .hd2-sub{font-size:13px;line-height:1.45}
+  .tier-title{font-size:var(--t5);margin-bottom:var(--s2)}
+  /* cards: less padding, and the heading reads as a title plus a sentence, not a wall of spaced capitals */
+  .rcc-card,.chart-card,.rop,.thesis,.th-block{padding:12px}
+  .rcc-card h3,.rop-block h4,.th-block h4,.chart-title{letter-spacing:.06em;line-height:1.45;margin-bottom:var(--s2)}
+  .rcc-card h3 > span.c-3:not(.asof):not(.x2):not(.tier-tag),.rcc-card h3 > span.w5:not(.asof):not(.x2):not(.tier-tag){display:block;text-transform:none;letter-spacing:0;font:italic 400 13px/1.45 var(--serif);color:var(--text-3);margin-top:2px}
+  .rcc-card h3 .asof,.rcc-card h3 .x2,.rcc-card h3 .tier-tag{margin:var(--s1) var(--s1) 0 0;letter-spacing:.02em}
+  .lb-h h2,.rop-head h2,.thesis-head h2{font-size:var(--t4)}
+  /* captions and notes: left-aligned, wrapped, readable */
+  .chart-meta,.th-meta{text-align:left;line-height:1.5}
+  .strip{padding:var(--s2);line-height:1.5;overflow-wrap:anywhere}
+  .mono.t1{line-height:1.5}
+  /* the news list: one item per block — time and tier, then source, then the headline at reading size */
+  .tier .news-table,.news-table{display:block;overflow:visible}
+  .news-table tbody{display:block}
+  .news-table tr{display:grid;grid-template-columns:1fr auto;gap:2px var(--s2);padding:var(--s2) 0;border-bottom:1px dashed var(--hairline)}
+  .news-table td{display:block;padding:0;border:0;white-space:normal;text-align:left}
+  .news-table td:nth-child(1){grid-row:1;grid-column:1}
+  .news-table td:nth-child(2){grid-row:1;grid-column:2;justify-self:end}
+  .news-table td:nth-child(3){grid-row:2;grid-column:1/-1}
+  .news-table td:nth-child(4){grid-row:3;grid-column:1/-1;font-size:15px;line-height:1.4}
+  .news-table td:nth-child(5){grid-row:4;grid-column:1/-1}
+  .news-table td:empty{display:none}
+  .news-table tr.dim td{opacity:.8}
+  /* the events board: date · time · event · impact on one line, the detail below */
+  .tier .events-table,.events-table{display:block;overflow:visible}
+  .events-table tbody{display:block}
+  .events-table tr:first-child{display:none}
+  .events-table tr{display:grid;grid-template-columns:auto auto 1fr auto;gap:2px var(--s2);align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--hairline)}
+  .events-table td{display:block;padding:0;border:0;white-space:normal;text-align:left}
+  .events-table td:nth-child(5){grid-column:1/-1;font-size:14px;line-height:1.45}
+  .events-table td:nth-child(4){justify-self:end}
+  .events-table td[colspan]{grid-column:1/-1}
+  .events-table td:empty{display:none}
+  .events-table .ev-week{padding-top:var(--s3);color:var(--accent)}
+  tr.cluster{background:color-mix(in srgb,var(--warn) 10%,transparent);border-left:3px solid var(--warn);padding-left:6px}
+  tr.cluster td{background:transparent}
+  /* text-heavy tables wrap instead of scrolling */
+  .act-panel td,.mistakes-table td,.posture-table td,.stress-table td{white-space:normal}
+  .mistakes-table td{max-width:none} .mistakes-table td:nth-child(3){min-width:200px}
+  /* wide numeric tables scroll inside their box; pages.js marks the ones that do and shows a hint */
+  .tbl-scroll{-webkit-overflow-scrolling:touch}
+  .sleeve-bar{min-width:90px}
+  .tk-head,.ind-detail-head{flex-wrap:wrap}
+  .brief-entry{padding:var(--s2)}
+  .brief-entry .serif.t2{font-size:15px;line-height:1.5}
+  details > summary{padding:var(--s1) 0}
+}
+@media (max-width:820px){
+  /* record tables stack into labelled cards (pages.js phoneTidy writes each cell's data-label) */
+  .tier table.stack-m,table.stack-m,table.stack-m tbody{display:block;overflow:visible;width:100%}
+  table.stack-m tr.stack-head{display:none}
+  table.stack-m tr{display:block;padding:var(--s2) 0;border-bottom:1px solid var(--hairline-hi)}
+  table.stack-m tr:last-child{border-bottom:0}
+  table.stack-m td{display:flex;gap:var(--s2);align-items:baseline;padding:2px 0;border:0;
+    white-space:normal;text-align:left!important;max-width:none!important;min-width:0!important;width:auto!important;overflow-wrap:anywhere}
+  table.stack-m td::before{content:attr(data-label);flex:0 0 31%;font:600 11px/1.45 var(--mono);color:var(--text-3);letter-spacing:.03em;text-transform:uppercase;overflow-wrap:anywhere}
+  table.stack-m td > .cv{flex:1 1 auto;min-width:0}
+  table.stack-m td.stack-full{display:block}
+  table.stack-m td.stack-full::before{content:none}
+  table.stack-m td:first-child{color:var(--text-1);font-weight:600}
+  table.stack-m td.serif,table.stack-m td .serif{font-size:14px;line-height:1.45}
+  table.stack-m td:empty{display:none}
+  .tbl-scroll:has(> table.stack-m){overflow:visible}
+}
+@media (max-width:820px){
+  /* the leaderboard: the tier name stays pinned while the numbers swipe; the rank is the row order */
+  .lbtable .lb-h-sub{display:block;line-height:1.6}
+  .lbtable .cond-toggle{margin:var(--s2) 0 0 0}
+  .lb-tournament table th:first-child,.lb-tournament table td.rank{display:none}
+  .lb-tournament .tier-desc{display:none}
+  .lbtable table tr > :nth-child(2){position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:1px 0 0 var(--hairline)}
+  .lbtable table tr.tier-row.open > :nth-child(2){background:var(--surface-2)}
+  .lbtable table td{padding:var(--s2) 6px}
+}
+.strip-info-fold > summary{list-style:none}
+.strip-info-fold > summary::-webkit-details-marker{display:none}
+.strip-info-fold > summary::before{content:"▸ ";color:var(--text-3)}
+.strip-info-fold[open] > summary::before{content:"▾ "}
+@media (max-width:820px){
+  /* wide tables keep their first column (the name) pinned while the numbers swipe */
+  .tbl-scroll table:not(.stack-m):not(.news-table):not(.events-table) tr > :first-child{position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:1px 0 0 var(--hairline)}
+  .th-block .tbl-scroll table:not(.stack-m) tr > :first-child{background:var(--surface-2)}
+}
+@media (max-width:820px){
+  /* the screen board on a phone: rank, ticker, a short name and the score in the first view */
+  .board-table tr > :nth-child(4){display:none}
+  .board-table td.nm{max-width:112px;overflow:hidden;text-overflow:ellipsis}
+}
+/* 1-Oct-2026, every width: prose cells wrap (the global td nowrap spilled the ledger's text across
+   its neighbours, and the operator row's long note stretched the leaderboard to 2,700px, clipping
+   the numbers under .lbtable's overflow:hidden) */
+.mistakes-table td,.act-panel td{white-space:normal}
+.lbtable .tier-desc{white-space:normal;max-width:420px;line-height:1.45}

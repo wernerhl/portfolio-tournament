@@ -25,6 +25,10 @@ const CHARTS = (() => {
 
   // Direct labels at the right end of each visible dataset (replaces legends). Simple vertical
   // de-collision: labels are pushed apart by one line height, in y order.
+  // Phone pass (1-Oct-2026): on a narrow canvas the labels were drawn over the plot. Below 480px the
+  // labels are shortened to 14 characters and the plot reserves right-hand room for the longest one.
+  const NARROW = 480, SHORT = 14;
+  const shortLabel = (chart, s) => (chart.width < NARROW && s.length > SHORT) ? s.slice(0, SHORT - 1) + "…" : s;
   const directLabels = {
     id: "directLabels",
     afterDatasetsDraw(chart, _args, opts) {
@@ -41,7 +45,7 @@ const CHARTS = (() => {
         const label = ds.directLabel != null ? ds.directLabel : ds.label;
         if (!label) return;
         const color = typeof ds.borderColor === "string" ? ds.borderColor : c.n1;
-        entries.push({y: last.y, x: last.x, label: String(label), color});
+        entries.push({y: last.y, x: last.x, label: shortLabel(chart, String(label)), color});
       });
       if (!entries.length) return;
       entries.sort((a, b) => a.y - b.y);
@@ -98,6 +102,23 @@ const CHARTS = (() => {
       ds.borderWidth = WEIGHT[role] != null ? WEIGHT[role] : WEIGHT.series;
       if (ds.pointRadius == null) ds.pointRadius = 0;
     });
+    // narrow canvas: reserve right-hand room for the shortened direct labels (set once, at creation)
+    try {
+      const el = ctx && (ctx.canvas || ctx), wPx = el && el.parentElement ? el.parentElement.clientWidth : 1000;
+      const dl = (options.plugins || {}).directLabels;
+      if (wPx > 0 && wPx < NARROW && !(dl && dl.enabled === false)) {
+        const m = document.createElement("canvas").getContext("2d"); m.font = `500 ${px("t1")}px ${tok("mono")}`;
+        let w = 0;
+        (data.datasets || []).forEach(ds => { if (ds.directLabel === false) return;
+          const l = ds.directLabel != null ? ds.directLabel : ds.label; if (!l) return;
+          const t = String(l).length > SHORT ? String(l).slice(0, SHORT - 1) + "…" : String(l);
+          w = Math.max(w, m.measureText(t).width); });
+        const p = (options.layout || {}).padding;
+        const pad = (typeof p === "object" && p) ? {...p} : (typeof p === "number" ? {left: p, right: p, top: p, bottom: p} : {});
+        pad.right = Math.max(pad.right || 8, Math.min(Math.ceil(w) + 12, Math.round(wPx * 0.38)));
+        options.layout = {...(options.layout || {}), padding: pad};
+      }
+    } catch (e) {}
     made++;
     return new Chart(ctx, {type: cfg.type, data, options, plugins: [directLabels, animateOnce, ...(cfg.plugins || [])]});
   }

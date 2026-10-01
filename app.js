@@ -500,40 +500,8 @@ function v4RegimeAction(reg){
 // ---- Session/staleness helpers (AUDIT FIX 2c + 5) -----------------
 // Approximate ET as UTC−4. A DST-precise conversion isn't needed for
 // badge logic; worst case the boundary slips one hour twice a year.
-function _etDateISO(d){ return new Date(d.getTime() - 4*3600e3).toISOString().slice(0,10); }
-function lastTradingSessionISO(){
-  const now = new Date();
-  const et = new Date(now.getTime() - 4*3600e3);
-  let d = new Date(Date.UTC(et.getUTCFullYear(), et.getUTCMonth(), et.getUTCDate()));
-  // Before the 16:00 ET close, today's session data can't exist yet.
-  if (et.getUTCHours() < 16) d.setUTCDate(d.getUTCDate() - 1);
-  // SEPT AUDIT [5.2]: holiday-aware — mirrors scripts/trading_calendar.py
-  // NYSE_HOLIDAYS (2025-2027; keep in sync). Without this, the day after a
-  // holiday badged every current panel STALE (Labor Day 2026-09-07).
-  const NYSE_HOLIDAYS = new Set([
-    "2025-01-01","2025-01-09","2025-01-20","2025-02-17","2025-04-18","2025-05-26",
-    "2025-06-19","2025-07-04","2025-09-01","2025-11-27","2025-12-25",
-    "2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25",
-    "2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25",
-    "2027-01-01","2027-01-18","2027-02-15","2027-03-26","2027-05-31",
-    "2027-06-18","2027-07-05","2027-09-06","2027-11-25","2027-12-24"]);
-  while ([0,6].includes(d.getUTCDay()) || NYSE_HOLIDAYS.has(d.toISOString().slice(0,10)))
-    d.setUTCDate(d.getUTCDate() - 1);
-  return d.toISOString().slice(0,10);
-}
-function isStaleAsOf(dateStr){
-  if (!dateStr) return true;
-  return String(dateStr).slice(0,10) < lastTradingSessionISO();
-}
-// Small chip rendered next to panel titles: grey when fresh, amber when stale.
-function asOfBadge(dateStr){
-  const d = dateStr ? String(dateStr).slice(0,10) : "—";
-  if (isStaleAsOf(d)) {
-    return `<span class="mono t1 w6 ls08 r1 c-warn ml2 x2">
-      STALE · as of ${d}</span>`;
-  }
-  return `<span class="mono t1 w5 ls06 c-3 ml2">as of ${d}</span>`;
-}
+// The session and freshness helpers (NYSE_HOLIDAYS, lastTradingSessionISO, dueSessionISO, freshnessOf,
+// asOfBadge) live in common.js since 1-Oct-2026, so the screen page shares the same rule.
 // Intraday-aware chip: a green "live · HH:MM ET" when the served file is an intraday
 // snapshot, else the ordinary as-of badge on its session date. Used by the panels the
 // 2-hourly intraday refresh recomputes (the book, and the bonds book-integration).
@@ -560,28 +528,44 @@ function renderStatusStrip(){
   // P1.2: semantic kinds (styles.css .strip-*) — the palette does not grow
   const strip = (kind, txt) => `<div class="strip strip-${kind}">${txt}</div>`;
   const a = st.audit || {};
+  // The pipeline's own words stay available under a disclosure; the strip leads with a plain sentence.
+  const raw = txt => `<details class="mt1"><summary class="ptr c-3">pipeline detail</summary><div class="c-3 mt1">${escText30(txt)}</div></details>`;
+  const servedSess = (() => { const t = S.tournament && S.tournament.history; return t && t.length ? String(t[t.length - 1].date).slice(0, 10) : null; })();
   if (a.critical && a.critical.length)
     parts.push(strip("neg",
-      `✗ audit CRITICAL — ${a.critical.join(", ")} · served artifacts are the last good board (session ${st.session_date || "?"})`));
-  else if (st.failure_reason)
-    parts.push(strip("warn",
-      `⚠ last run rejected: ${st.failure_reason} · served artifacts are the last good board (session ${st.session_date || "?"}; last success ${String(st.last_success || "").slice(0,16)})`));
+      `✗ The referee blocked the ${st.session_date || "last"} publish (CRITICAL: ${a.critical.join(", ")}). The pages show the last good board${servedSess ? ", session " + servedSess : ""}.`));
+  else if (st.failure_reason) {
+    const fr = String(st.failure_reason);
+    const noBar = /PRICE_STORE_SESSION|bar_session_mismatch|max date \S+ < last session/.test(fr);
+    const caughtUp = servedSess && st.session_date && servedSess >= st.session_date;
+    if (!caughtUp)
+      parts.push(strip(freshnessOf(servedSess) === "stale" ? "warn" : "2",
+        (noBar
+          ? `◷ The ${st.session_date} close is not published yet: the price provider had not posted it when the nightly ran (${String(st.last_attempt || "").slice(11, 16)} ET). The pages show ${servedSess || "the last good session"}; the late retry and the 04:00 ET morning run publish it.`
+          : `⚠ The ${st.session_date} publish was rejected by the pipeline's checks. The pages show ${servedSess || "the last good board"} (last success ${String(st.last_success || "").slice(0, 16)}).`)
+        + raw(fr)));
+  }
+  // The non-blocking lines fold into one disclosure (1-Oct-2026: three technical boxes topped every
+  // page on a phone); its summary keeps the finding count and the holdings date always visible.
+  const info = [];
   if (a.high && a.high.length)
-    parts.push(strip("2",
-      `audit: ${a.high.length} HIGH — ${a.high.join(", ")} <span class="c-3">(logged, non-blocking · ${String(a.ran_at || "").slice(0,16)})</span>`));
+    info.push(`Referee: ${a.high.length} non-blocking finding${a.high.length > 1 ? "s" : ""} logged at ${String(a.ran_at || "").slice(0, 16).replace("T", " ")} UTC: ${a.high.join(", ")}`);
   // B3: cross-file findings are reported in both repositories' strips and block neither;
   // the other repository's CRITICALs are shown but never block this deploy.
   if (a.xfile && a.xfile.length)
-    parts.push(strip("2",
-      `cross-file: ${a.xfile.join(", ")} <span class="c-3">(reported in both repositories; blocks neither)</span>`));
+    info.push(`cross-file: ${a.xfile.join(", ")} <span class="c-3">(reported in both repositories; blocks neither)</span>`);
   if (a.critical_other_repo && a.critical_other_repo.length)
-    parts.push(strip("2",
-      `other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span class="c-3">(does not block this deploy)</span>`));
-  // 16-Sept 2.3: the holdings date, always shown
+    info.push(`other repository CRITICAL: ${a.critical_other_repo.join(", ")} <span class="c-3">(does not block this deploy)</span>`);
+  // 16-Sept 2.3: the holdings date, always shown (in the summary line)
   const hf = S.holdingsFile;
   if (hf && hf.as_of)
-    parts.push(strip("2",
-      `book: holdings.json as of <strong class="c-1">${hf.as_of}</strong> · ${hf.source || "source not stated"}${hf.input_sha256 ? ` · export ${String(hf.input_sha256).slice(0, 12)}` : ""}${hf.exported_at ? ` · exported ${String(hf.exported_at).slice(0, 16)}` : ""}`));
+    info.push(`book: holdings.json as of <strong class="c-1">${hf.as_of}</strong> · ${hf.source || "source not stated"}${hf.input_sha256 ? ` · export ${String(hf.input_sha256).slice(0, 12)}` : ""}${hf.exported_at ? ` · exported ${String(hf.exported_at).slice(0, 16)}` : ""}`);
+  if (info.length) {
+    const nH = (a.high || []).length;
+    const sum = [nH ? `referee: ${nH} non-blocking finding${nH > 1 ? "s" : ""}` : "referee: clean",
+                 hf && hf.as_of ? `holdings as of <strong class="c-1">${hf.as_of}</strong>${/^brokerage export/i.test(String(hf.source || "")) ? "" : " (manual)"}` : ""].filter(Boolean).join(" · ");
+    parts.push(`<details class="strip strip-2 strip-info-fold"><summary class="ptr">${sum}</summary>${info.map(x => `<div class="mt1">${x}</div>`).join("")}</details>`);
+  }
   return parts.join("");
 }
 
@@ -686,7 +670,12 @@ function renderRegistryBanner(){
   if (unfrozen) parts.push(`registry v${td.registry_version} unapproved`);
   // A1: provisional mappings count toward coverage but are never silently permanent
   if (prov.count > 0) parts.push(`<span class="c-warn mono t1 w6 r1 x13">PROVISIONAL</span> ${prov.count} agent-proposed mapping${prov.count > 1 ? "s" : ""} applied — they expire back to unclassified from ${prov.expires_earliest || "?"} unless approved into the registry`);
-  if (holes.length) parts.push(`${nNames} names unclassified across ${holes.length} tier${holes.length > 1 ? "s" : ""} (${holes.map(([tid, t]) => `${(tierSpec(tid)||{}).short || tid} ${(t.unclassified_share*100).toFixed(0)}%`).join(" · ")})`);
+  // 1-Oct-2026: with no wholly unclassified name, the share comes from partial memberships — say so
+  // (the banner read "0 names unclassified across 1 tier (WERNER 17%)")
+  const holeTxt = holes.map(([tid, t]) => `${(tierSpec(tid)||{}).short || tid} ${(t.unclassified_share*100).toFixed(0)}%`).join(" · ");
+  if (holes.length) parts.push(nNames
+    ? `${nNames} name${nNames > 1 ? "s" : ""} unclassified across ${holes.length} tier${holes.length > 1 ? "s" : ""} (${holeTxt} of invested value)`
+    : `${holeTxt} of invested value unclassified, from names only partly mapped to a theme (no name is wholly unmapped)`);
   return `<div class="r2 mb3 x14">
     <div class="mono t1 w7 c-warn ls08">
       ⚠ THESIS REGISTRY NEEDS ATTENTION</div>
@@ -2557,7 +2546,11 @@ function renderTreemapCard(){
   const btn = (id, t) => `<button class="period-btn ${sel === id ? "on" : ""}" data-tm="${id}">${t}</button>`;
   const selector = `<div class="periods">${btn("5_werner", "BOOK")}${TIER_ORDER.filter(t => t !== "5_werner").map(t => btn(t, (tierSpec(t) || {}).short || t)).join("")}</div>`;
   if (!d) return `<div class="rcc-card tm-card"><div class="chart-head"><h3>THESIS TREEMAP</h3>${selector}</div><div class="ld">no positions for this selection</div></div>`;
-  const W = 1000, H = 440, LBL = 16;
+  // 1-Oct-2026: on a phone the 1000-unit frame scaled 12-unit labels down to ~4px; lay out in a
+  // narrow frame there so the labels render near their nominal size
+  const narrowTm = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
+  const W = narrowTm ? 400 : 1000, H = narrowTm ? 460 : 440, LBL = 16;
+  const fitTxt = (t, w) => { const n = Math.max(4, Math.floor((w - 12) / 8.3));   // 12-unit mono + .08em tracking ≈ 8.2 units a character return t.length > n ? t.slice(0, n - 1) + "…" : t; };
   const gitems = Object.entries(d.groups).map(([k, arr]) => ({key: k, area: arr.reduce((s, p) => s + p.w, 0)}));
   if (d.cashW > 0) gitems.push({key: "cash", area: d.cashW});
   const grects = squarify(gitems, 0, 0, W, H);
@@ -2571,7 +2564,7 @@ function renderTreemapCard(){
       if (g.w > 60 && g.h > 24) svg += `<text class="tm-t" x="${(g.x + 8).toFixed(1)}" y="${(g.y + 18).toFixed(1)}">cash ${(d.cashW * 100).toFixed(0)}%</text>`;
       return;
     }
-    if (g.w > 70 && g.h > LBL + 8) svg += `<text class="tm-glabel" x="${(g.x + 6).toFixed(1)}" y="${(g.y + 12).toFixed(1)}">${label.toUpperCase()} · ${(g.area * 100).toFixed(0)}%${g.key.includes("/") && g.w > 240 ? ` (${thesisLabel(parentOf(g.key)).toUpperCase()} ${(parentTot[parentOf(g.key)] * 100).toFixed(0)}%)` : ""}</text>`;
+    if (g.w > 70 && g.h > LBL + 8) svg += `<text class="tm-glabel" x="${(g.x + 6).toFixed(1)}" y="${(g.y + 12).toFixed(1)}"><title>${label} · ${(g.area * 100).toFixed(1)}%</title>${fitTxt(`${label.toUpperCase()} · ${(g.area * 100).toFixed(0)}%${g.key.includes("/") && g.w > 240 ? ` (${thesisLabel(parentOf(g.key)).toUpperCase()} ${(parentTot[parentOf(g.key)] * 100).toFixed(0)}%)` : ""}`, g.w)}</text>`;
     const members = d.groups[g.key] || [];
     const big = members.filter(m => m.w >= 0.005), small = members.filter(m => m.w < 0.005);
     const items = big.map(m => ({key: m.ticker, area: m.w, m}));
@@ -2773,19 +2766,31 @@ function renderActionLog(){
   const acts = (S.actions || []).slice(-30).reverse();
   const pub = {}; (S.regimePub || []).forEach(r => { if (r && r.date) pub[String(r.date).slice(0, 10)] = r; });
   const fmtW = w => Object.entries(w || {}).map(([k, v]) => `${k} ${v}`).join(", ");
+  const usd = x => "$" + Number(x).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
   const rows = acts.map(a => {
     const v = pub[a.session_date]; const rt = v && v.R_t_published != null && v.R_t_published !== "" ? (+v.R_t_published).toFixed(4) : "not published";
+    // Two record shapes share the log: tier rebalances (entries/exits + cash target before → after)
+    // and operator trades (ticker, quantity, price; price may be pending the brokerage export).
+    const isTrade = !!a.ticker;
+    const names = isTrade ? `${a.ticker} ${a.quantity != null ? a.quantity + " sh" : ""}`
+      : `${(a.entries || []).length ? "+" + a.entries.join(" ") : ""}${(a.exits || []).length ? " −" + a.exits.join(" ") : ""}`;
+    const pending = /pending/i.test(a.source || "") ? ` <span class="tier-tag c-warn" title="${escText30(a.source)}">pending export</span>` : "";
+    const sizing = isTrade
+      ? (a.price != null ? `${usd(a.amount != null ? a.amount : a.price * (a.quantity || 0))} @ ${usd(a.price)}${/inferred/i.test(a.price_basis || "") ? " (inferred)" : ""}` : "price not yet known")
+      : (a.target_cash_pct_before != null || a.target_cash_pct_after != null
+          ? `cash ${a.target_cash_pct_before != null ? a.target_cash_pct_before + "%" : "—"} → ${a.target_cash_pct_after != null ? a.target_cash_pct_after + "%" : "—"}` : "—");
+    const when = a.date_range ? `${a.date_range[0]} to ${a.date_range[1]}` : a.session_date;
     return `<tr>
-      <td><a class="c-info" href="data/regime_daily_published.csv" title="published vintage row ${a.session_date}: R_t ${rt}${v && v.no_publish_reason ? " · " + v.no_publish_reason : ""}">${a.session_date}</a></td>
+      <td><a class="c-info" href="data/regime_daily_published.csv" title="published vintage row ${a.session_date}: R_t ${rt}${v && v.no_publish_reason ? " · " + v.no_publish_reason : ""}">${when}</a></td>
       <td>${(tierSpec(a.tier) || {}).short || a.tier}</td>
-      <td class="c-1">${(a.action || []).join(", ")}</td>
-      <td class="c-3">${(a.entries || []).length ? "+" + a.entries.join(" ") : ""}${(a.exits || []).length ? " −" + a.exits.join(" ") : ""}</td>
-      <td class="c-2" title="before: ${fmtW(a.weights_before)} · after: ${fmtW(a.weights_after)}">cash ${a.target_cash_pct_before}% → ${a.target_cash_pct_after}%</td>
+      <td class="c-1">${(a.action || []).join(", ")}${pending}</td>
+      <td class="c-3">${names}</td>
+      <td class="c-2" title="${isTrade ? escText30(a.price_basis || "") : `before: ${fmtW(a.weights_before)} · after: ${fmtW(a.weights_after)}`}">${sizing}</td>
       <td>${a.regime || "—"} · ${a.R_full != null ? a.R_full : "—"}</td>
       <td class="c-3 mono t1" title="sha256 of the input snapshot (prices, holdings, R_t)">${String(a.input_snapshot_sha256 || "").slice(0, 12)}</td>
     </tr>`; }).join("");
   return `<div class="rcc-card act-panel"><h3>ACTION LOG · <span class="c-3 w5">append-only · newest first · last 30 of ${(S.actions || []).length}</span></h3>
-    ${rows ? `<div class="tbl-scroll"><table><tr><th>SESSION</th><th>TIER</th><th>ACTION</th><th>NAMES</th><th>SIZING</th><th>REGIME · R<sub>full</sub></th><th>INPUT HASH</th></tr>${rows}</table></div>`
+    ${rows ? `<div class="tbl-scroll"><table class="stack-m"><tr><th>SESSION</th><th>TIER</th><th>ACTION</th><th>NAMES</th><th>SIZING</th><th>REGIME · R<sub>full</sub></th><th>INPUT HASH</th></tr>${rows}</table></div>`
            : `<div class="mono t1 c-3">no actions logged yet — the log begins with the first change after deploy (no retroactive entries); written by compute_nav.py when a tier's positions or sizing change</div>`}
   </div>`;
 }
@@ -2796,7 +2801,7 @@ function renderCalibrationPanel(){
   const c = S.v4Cal; if (!c || !c.methods) return "";
   const win = c.winning_method || "equal_weight"; const m = c.methods[win] || {};
   const base = brierToRate(c.base_rate_brier);
-  return `<div class="rcc-card cal-panel"><h3>V4 CALIBRATION · <span class="c-3 w5">reliability of ${win.replace("_", " ")}: in-sample vs out-of-fold, one axis</span>${asOfBadge(c.as_of)}</h3>
+  return `<div class="rcc-card cal-panel"><h3>V4 CALIBRATION · <span class="c-3 w5">reliability of ${win.replace("_", " ")}: in-sample vs out-of-fold, one axis</span>${asOfBadge(c.as_of, {cadence: "monthly"})}</h3>
     <div class="chart-wrap cal-wrap"><canvas id="cal-chart"></canvas></div>
     <div class="chart-meta">base-rate Brier <strong class="c-1">${c.base_rate_brier}</strong>${base != null ? ` (event rate ${(base * 100).toFixed(1)}%)` : ""} · out-of-fold Brier, production model <strong class="c-1">${m.brier_out_of_fold}</strong> · in-sample ${m.brier_in_sample} (the isotonic fit, not evidence) · ${c.fold_definition && c.fold_definition.n_folds ? c.fold_definition.n_folds + " leave-one-crisis-out folds · " : ""}does not beat the base rate out of fold; use as a ranking, not a forecast.</div>
   </div>`;
@@ -2948,7 +2953,7 @@ function renderLeaderboardBlock(){
     ? `<div class="cond-caption">CONDITIONAL on <strong class="c-accent">${currentState || "—"}</strong>: scores are James-Stein shrunk toward unconditional. Bucket n = ${sn} days. ${sc.caption || ""}</div>`
     : "";
 
-  h += `<div class="lbtable">
+  h += `<div class="lbtable lb-tournament">
     <div class="lb-h"><h2>LEADERBOARD${asOfBadge(live && live.date)}</h2>
       <div class="lb-h-sub">${S.period === "ALL" ? "full sample" : S.period} · ${condMode ? "ranked by shrunk " + currentState + " return" : "ranked by total return"} · <span title="C1: costs = half-spread + impact, one-way, on NAV-weight turnover at every rebalance">net of costs (${(S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.cost_model) || "10 bps one-way"})</span>${c2DisclosureHtml()}${toggleHtml}</div></div>
     ${condCap}
@@ -3179,7 +3184,7 @@ function renderBondsCurve(){
   const s = S.bondsStates; if (!s || !s.curve) return `<div class="rcc-card"><h3>THE CURVE</h3><div class="mono t1 c-3">data/bonds/states.json not loaded</div></div>`;
   const c = s.curve; const clr = _CURVE_STATE_CLR[c.state] || "c-2";
   const mats = (c.maturities || []).map(m => `<tr><td class="mono t2 c-1 w6">${m.maturity}</td><td class="num c-2">${m.level_pct == null ? "<span class='c-3'>unavailable</span>" : _bpct(m.level_pct)}</td><td class="num c-3">${m.pctile_10y == null ? "—" : m.pctile_10y + "th"}</td></tr>`).join("");
-  return `<div class="rcc-card"><h3>THE CURVE · <span class="c-3 w5">Treasury level and slope, and each maturity's place in its ten-year range</span>${asOfBadge(c.as_of || s.session_date)}</h3>
+  return `<div class="rcc-card"><h3>THE CURVE · <span class="c-3 w5">Treasury level and slope, and each maturity's place in its ten-year range</span>${asOfBadge(c.as_of || s.session_date, {lag: 1})}</h3>
     <div class="dd-body"><div class="dd-wrap"><canvas id="bonds-curve-chart" height="220"></canvas></div>
     <div class="stress-panel"><div class="fx-head mono t1 c-3">STATE · <span class="${clr} w6">${(c.state||"—").toUpperCase()}</span></div>
       <div class="mono t1 c-2 mt1">2s10s slope <span class="c-1 w6">${c.slope_2s10s_bps == null ? "—" : c.slope_2s10s_bps + "bp"}</span> · ${c.slope_2s10s_pctile_10y == null ? "—" : c.slope_2s10s_pctile_10y + "th percentile over ten years"}</div>
@@ -3215,7 +3220,7 @@ function renderBondsCredit(){
     const clr = _CREDIT_STATE_CLR[x.state] || "c-2";
     return `<div class="so-cell"><div class="k">${name}</div><div class="v ${clr}">${x.oas_bps == null ? "—" : x.oas_bps + "bp"}</div><div class="s">${x.pctile_10y == null ? "" : x.pctile_10y + "th percentile · " + (x.state || "")}</div></div>`;
   };
-  return `<div class="rcc-card"><h3>CREDIT SPREADS · <span class="c-3 w5">investment grade and high yield against their own ten-year history</span>${asOfBadge(c.ig && c.ig.as_of || s.session_date)}</h3>
+  return `<div class="rcc-card"><h3>CREDIT SPREADS · <span class="c-3 w5">investment grade and high yield against their own ten-year history</span>${asOfBadge(c.ig && c.ig.as_of || s.session_date, {lag: 1})}</h3>
     <div class="so-strip">${leg(c.ig, "IG OAS")}${leg(c.hy, "HY OAS")}</div>
     <div class="chart-meta">${c.duration_caveat || ""}</div>
     <div class="chart-meta">${c.footnote || ""}</div></div>`;
@@ -3223,7 +3228,7 @@ function renderBondsCredit(){
 
 function renderBondsBreakeven(){
   const s = S.bondsStates; const r = s && s.real_nominal; if (!r) return "";
-  return `<div class="rcc-card"><h3>REAL VS NOMINAL · <span class="c-3 w5">the 10-year breakeven as priced inflation, and the real yield</span>${asOfBadge(r.as_of || s.session_date)}</h3>
+  return `<div class="rcc-card"><h3>REAL VS NOMINAL · <span class="c-3 w5">the 10-year breakeven as priced inflation, and the real yield</span>${asOfBadge(r.as_of || s.session_date, {lag: 1})}</h3>
     <div class="so-strip">
       <div class="so-cell"><div class="k">10Y BREAKEVEN</div><div class="v c-1">${_bpct(r.breakeven_10y_pct)}</div><div class="s">${r.breakeven_10y_pctile_10y == null ? "" : r.breakeven_10y_pctile_10y + "th percentile · priced inflation"}</div></div>
       <div class="so-cell"><div class="k">REAL 10Y YIELD</div><div class="v c-2">${r.real_10y_yield_pct == null ? "<span class='c-3'>unavailable</span>" : _bpct(r.real_10y_yield_pct)}</div><div class="s">${r.real_10y_yield_pct == null ? "DFII10 pending FRED fetch" : "DFII10"}</div></div>
@@ -3327,7 +3332,7 @@ function renderEventBoard(){
         <td class="num c-2">${l8.n_exceeding_implied != null ? `${l8.n_exceeding_implied} of ${l8.n}` : "—"}</td>
         <td class="num c-1">${p.risk_share != null ? (p.risk_share * 100).toFixed(0) + "%" : "—"}</td></tr>`; }).join("");
   return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${holdingsPill()}${asOfBadge(L.session_date)}</h3>
-    ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>RELEASE</th><th class="num">IMPLIED MOVE</th><th class="num">ON THE POSITION</th><th class="num">MEDIAN PAST</th><th class="num">MAX PAST</th><th class="num">LAST 8 EXCEEDED</th><th class="num">SHARE OF BOOK RISK</th></tr>${rows}</table></div>`
+    ${rows ? `<div class="tbl-scroll"><table class="th-table stack-m"><tr><th>NAME</th><th>RELEASE</th><th class="num">IMPLIED MOVE</th><th class="num">ON THE POSITION</th><th class="num">MEDIAN PAST</th><th class="num">MAX PAST</th><th class="num">LAST 8 EXCEEDED</th><th class="num">SHARE OF BOOK RISK</th></tr>${rows}</table></div>`
            : `<div class="mono t1 c-3">no held name reports inside 45 days</div>`}
     <div class="chart-meta">implied move: bracketing method — the last expiry before the release against the first after it, event variance = post total variance − pre total variance − the pre-expiry base over the non-event sessions (fallback without a pre-event expiry flagged; lens definitions) · past reactions: close before the release to close after · descriptive; no directional implication</div></div>`;
 }
@@ -3347,7 +3352,7 @@ function renderHedgeSelector(){
           <td class="c-3 t1">${(s.ranked_by || []).join("; ")}</td><td class="c-warn t1 w6" title="${s.diagnostic}">DIAGNOSTIC</td></tr>`; }).join("");
       const un = ((t.structures || [])[0] || {}).stress || []; const u = x => { const r = un.find(y => y.id === x); return r && r.book_share_nav_unhedged != null ? (r.book_share_nav_unhedged * 100).toFixed(1) + "%" : "—"; };
       return `<div class="mt2"><div class="mono t1 w6 c-2">${t.tenor.replace("_", " ").toUpperCase()} · ${t.expiry} (${t.days}d)${t.earnings_inside ? ' · <span class="c-warn">earnings inside the tenor</span>' : ""} · unhedged book loss SMH −30 / SPY −20 / SPY −34: ${u("smh_-30")} / ${u("spy_-20")} / ${u("spy_-34")}</div>
-        <div class="tbl-scroll"><table class="th-table"><tr><th>#</th><th>STRUCTURE</th><th class="num">NET / SH</th><th class="num">ON POSITION</th><th class="num">FLOOR</th><th class="num">CAP</th><th class="num">BREAKEVEN</th><th class="num">Δ</th><th class="num">BOOK LOSS WITH STRUCTURE</th><th>RANKED BY</th><th></th></tr>${rows}</table></div></div>`; }).join("");
+        <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>#</th><th>STRUCTURE</th><th class="num">NET / SH</th><th class="num">ON POSITION</th><th class="num">FLOOR</th><th class="num">CAP</th><th class="num">BREAKEVEN</th><th class="num">Δ</th><th class="num">BOOK LOSS WITH STRUCTURE</th><th>RANKED BY</th><th></th></tr>${rows}</table></div></div>`; }).join("");
     return `<details class="mt2" open><summary class="mono t2 w7 c-1 ptr">${tk} <span class="mono t1 w5 c-3">· ${ctx}</span></summary>${p.embedded_gain_note ? `<div class="mono t1 c-3 mt1">${p.embedded_gain_note}</div>` : ""}${tenors}</details>`;
   }).join("");
   return `<div class="rcc-card"><h3>THE HEDGE SELECTOR <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">four structures priced and ranked on the live chain for each held name, at the first expiry beyond earnings and at about 90 days</span>${holdingsPill()}${asOfBadge(H.session_date)}</h3>
@@ -3410,8 +3415,12 @@ function renderNewsPanel(){   // home: the last 24 hours, Tier 1 first (B4)
   const items = (N.last24h || []).map(id => byId[id]).filter(Boolean);
   const ex = N.excluded || {}; const st = N.sources_status || {};
   const failed = Object.entries(st).filter(([k, v]) => /^(failed|skipped)/.test(String(v))).map(([k, v]) => `${k}: ${v}`);
-  return `<div class="rcc-card news-card"><h3>NEWS · <span class="c-3 w5">last ${N.window_hours || 24} hours · primary sources first, secondary labeled · bodies never stored, summaries system-written</span><span class="mono t1 w5 ls06 c-3 ml2">fetched ${etStamp30(N.fetched_at)} ET</span></h3>
-    ${items.length ? `<div class="tbl-scroll"><table class="th-table news-table">${items.map(newsRowHtml).join("")}</table></div>` : '<div class="mono t1 c-3">no relevant item in the window</div>'}
+  // every primary item shows; secondary items beyond the first six fold under a disclosure (the list ran to 30+ rows)
+  const t1 = items.filter(it => it.tier === 1), t2 = items.filter(it => it.tier !== 1);
+  const shown = t1.concat(t2.slice(0, 6)), more = t2.slice(6);
+  return `<div class="rcc-card news-card"><h3>NEWS · <span class="c-3 w5">last ${N.window_hours || 24} hours · primary sources first, secondary labeled · bodies never stored, summaries system-written</span><span class="asof mono t1 w5 ls06 c-3 ml2">fetched ${etStamp30(N.fetched_at)} ET</span></h3>
+    ${items.length ? `<div class="tbl-scroll"><table class="th-table news-table">${shown.map(newsRowHtml).join("")}</table></div>
+      ${more.length ? `<details class="mt1"><summary class="mono t1 w5 c-3 ptr ls05">${more.length} more secondary item${more.length > 1 ? "s" : ""}</summary><div class="tbl-scroll"><table class="th-table news-table">${more.map(newsRowHtml).join("")}</table></div></details>` : ""}` : '<div class="mono t1 c-3">no relevant item in the window</div>'}
     <details class="mt2"><summary class="mono t1 w5 c-3 ptr ls05">sources and exclusions</summary><div class="mono t1 c-3 mt1 lh17">${N.rule || ""}<br>withheld: vocabulary rule ${ex.vocabulary_rule || 0} · directive rule ${ex.directive_rule || 0} · irrelevant ${ex.irrelevant || 0}<br>${failed.length ? failed.join("<br>") : "every source responded"}</div></details></div>`;
 }
 function renderNameNews(tk){   // each held name's card: its last five items (B4)
@@ -3499,9 +3508,9 @@ function renderRealizedGainsCard(){   // book: D3
   const years = Object.keys(g.years || {}).sort().reverse();
   const yrRows = years.map(y => { const r = g.years[y] || {}; return `<tr><td class="mono t2 c-1 w6">${y}${r.year_to_date ? ' <span class="c-3 t1">year to date</span>' : ""}</td><td class="num">${money(r.net)}</td><td class="num">${money(r.short_term)}</td><td class="num">${money(r.long_term)}</td><td class="num c-3">${r.n_lots == null ? "—" : r.n_lots}</td><td class="c-3 t1">${escText30(r.basis || (r.wash_sale_disallowed != null ? "wash-sale disallowed " + money(r.wash_sale_disallowed) : ""))}</td></tr>`; }).join("");
   const posRows = years.flatMap(y => ((g.years[y] || {}).by_position || []).slice(0, 12).map(p => `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td class="mono t1 c-3">${y}</td><td class="num c-3">${p.n_lots == null ? "—" : p.n_lots}</td><td class="num">${money(p.proceeds)}</td><td class="num">${money(p.cost_basis)}</td><td class="num">${money(p.gain_loss)}</td><td class="num">${money(p.short_term)}</td><td class="num">${money(p.long_term)}</td></tr>`)).join("");
-  return `<div class="rcc-card gains-card"><h3>REALIZED GAINS · <span class="c-3 w5">by year and by position, short- and long-term · from the brokerage's realized gain/loss export · descriptive; no tax computation</span>${g.pending_export ? '<span class="mono t1 w6 r1 x2 c-warn ml2">operator report, pending export</span>' : ""}${asOfBadge(g.as_of)}</h3>
+  return `<div class="rcc-card gains-card"><h3>REALIZED GAINS · <span class="c-3 w5">by year and by position, short- and long-term · from the brokerage's realized gain/loss export · descriptive; no tax computation</span>${g.pending_export ? '<span class="mono t1 w6 r1 x2 c-warn ml2">operator report, pending export</span>' : ""}${asOfBadge(g.as_of, {cadence: "static"})}</h3>
     <div class="tbl-scroll"><table class="th-table"><tr><th>YEAR</th><th class="num">NET</th><th class="num">SHORT-TERM</th><th class="num">LONG-TERM</th><th class="num">LOTS</th><th>BASIS</th></tr>${yrRows}</table></div>
-    ${posRows ? `<div class="tbl-scroll mt2"><table class="th-table"><tr><th>POSITION</th><th>YEAR</th><th class="num">LOTS</th><th class="num">PROCEEDS</th><th class="num">COST</th><th class="num">GAIN / LOSS</th><th class="num">SHORT</th><th class="num">LONG</th></tr>${posRows}</table></div>` : '<div class="mono t1 c-3 mt1">per-position detail arrives with the export (drop it in inbox/ and run scripts/ingest_inbox.py)</div>'}
+    ${posRows ? `<div class="tbl-scroll mt2"><table class="th-table stack-m"><tr><th>POSITION</th><th>YEAR</th><th class="num">LOTS</th><th class="num">PROCEEDS</th><th class="num">COST</th><th class="num">GAIN / LOSS</th><th class="num">SHORT</th><th class="num">LONG</th></tr>${posRows}</table></div>` : '<div class="mono t1 c-3 mt1">per-position detail arrives with the export (drop it in inbox/ and run scripts/ingest_inbox.py)</div>'}
     <div class="chart-meta">source: ${escText30(g.source || "")}${g.input_sha256 ? " · export " + String(g.input_sha256).slice(0, 12) : ""} · ${escText30(g.note || "descriptive; no tax computation")}</div></div>`;
 }
 function renderInsiderBlock(tk){   // each held name's card: opportunistic purchases in the last 90 days, the cluster flag (E1)
@@ -3515,7 +3524,7 @@ function renderInsiderBlock(tk){   // each held name's card: opportunistic purch
   const rex = n.routine_excluded; const rexN = rex == null ? null : (typeof rex === "number" ? rex : rex.purchases);
   const hc = I.history_coverage || {}; const reg = I.signal_registration || {};
   return `<div class="name-block"><div class="mono t1 w6 c-3 ls12 mb1">INSIDERS · OPPORTUNISTIC PURCHASES, LAST 90 DAYS${cl.flag ? ` <span class="c-warn">· CLUSTER: ${cl.n_distinct_buyers_30d} distinct buyers within 30 days (${cl.window_start || ""} → ${cl.window_end || ""})</span>` : ""}</div>
-    ${rows || sales ? `<div class="tbl-scroll"><table class="th-table"><tr><th>DATE</th><th>INSIDER</th><th>ROLE</th><th class="num">SHARES</th><th class="num">DOLLARS</th><th>CLASSIFICATION</th></tr>${rows}${sales}</table></div>` : '<div class="mono t1 c-2">no opportunistic open-market purchase in the last 90 days</div>'}
+    ${rows || sales ? `<div class="tbl-scroll"><table class="th-table stack-m"><tr><th>DATE</th><th>INSIDER</th><th>ROLE</th><th class="num">SHARES</th><th class="num">DOLLARS</th><th>CLASSIFICATION</th></tr>${rows}${sales}</table></div>` : '<div class="mono t1 c-2">no opportunistic open-market purchase in the last 90 days</div>'}
     <div class="mono t1 c-3 mt1">routine vs opportunistic by the Cohen, Malloy and Pomorski rule (an insider who traded in the same calendar month in each of the prior three years is routine)${rexN != null ? ` · routine purchases excluded: ${rexN}` : ""}${sales ? ` · ${escText30(n.sales_shown_label || "sales are mostly compensation or diversification")}` : ""}${hc.complete === false ? ` · <span class="c-warn">history incomplete (${(hc.quarters_missing || []).length} quarters missing)</span>` : ""} · ${escText30(reg.status || "a candidate return signal registered for the Phase 5 validation on the union universe; it enters no score before it passes")}</div></div>`;
 }
 function renderOwnershipBlock(tk){   // each held name's card: 13F context only (E2)
@@ -3528,7 +3537,7 @@ function renderOwnershipBlock(tk){   // each held name's card: 13F context only 
   const nw = (n.new_positions_over_1b || n.new_positions || []).map(h => `${escText30(nm(h))} (as of ${h.as_of_quarter_end}, disclosed ${h.disclosed})`).join("; ");
   const ex = (n.full_exits_over_1b || n.exits || []).map(h => `${escText30(nm(h))} (as of ${h.as_of_quarter_end}, disclosed ${h.disclosed})`).join("; ");
   return `<div class="name-block"><div class="mono t1 w6 c-3 ls12 mb1">INSTITUTIONAL OWNERSHIP · CONTEXT ONLY</div>
-    ${rows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>HOLDER</th><th class="num">SHARES</th><th class="num">CHANGE ON THE QUARTER</th><th class="num">VALUE</th><th>DATES</th></tr>${rows}</table></div>` : '<div class="mono t1 c-2">no holder on record</div>'}
+    ${rows ? `<div class="tbl-scroll"><table class="th-table stack-m"><tr><th>HOLDER</th><th class="num">SHARES</th><th class="num">CHANGE ON THE QUARTER</th><th class="num">VALUE</th><th>DATES</th></tr>${rows}</table></div>` : '<div class="mono t1 c-2">no holder on record</div>'}
     <div class="mono t1 c-3 mt1">${escText30(n.caption || "")}${nw ? `<br>new positions among funds above $1 billion: ${nw}` : ""}${ex ? `<br>full exits among funds above $1 billion: ${ex}` : ""} · no signal, no score</div></div>`;
 }
 
@@ -3553,8 +3562,8 @@ function renderMistakesLedger(){
       <td class="mono t1 c-3">${escText30(e.referee_check)}</td>
       <td class="mono t1 c-3" title="${escText30(e.entry_sha256)}">${String(e.entry_sha256 || "").slice(0, 8)}</td></tr>`).join("");
   const counts = L.reduce((a, e) => { a[e.who] = (a[e.who] || 0) + 1; return a; }, {});
-  return `<div class="rcc-card"><h3>THE MISTAKES LEDGER · <span class="c-3 w5">${L.length} entries · ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(" · ")} · newest first</span><span class="mono t1 w5 ls06 c-3 ml2">latest entry ${newest || "—"}</span></h3>
-    <div class="tbl-scroll"><table class="th-table mistakes-table"><tr><th>FOUND</th><th>WHO</th><th>WHAT WAS WRONG</th><th>DETECTED BY</th><th>WHAT IT COST</th><th>THE FIX</th><th>REFEREE CHECK</th><th>HASH</th></tr>${rows}</table></div>
+  return `<div class="rcc-card"><h3>THE MISTAKES LEDGER · <span class="c-3 w5">${L.length} entries · ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(" · ")} · newest first</span><span class="asof mono t1 w5 ls06 c-3 ml2">latest entry ${newest || "—"}</span></h3>
+    <div class="tbl-scroll"><table class="th-table mistakes-table stack-m"><tr><th>FOUND</th><th>WHO</th><th>WHAT WAS WRONG</th><th>DETECTED BY</th><th>WHAT IT COST</th><th>THE FIX</th><th>REFEREE CHECK</th><th>HASH</th></tr>${rows}</table></div>
     <div class="chart-meta">append-only: no entry is ever edited, a correction is a new entry referencing the old, and the referee raises CRITICAL when an entry no longer matches its hash · operator decisions enter from the brokerage transactions export with the stated reason at the time and, 20 and 60 sessions later, the outcome against not trading · a lesson becomes a rule only through a registration and a prospective test</div></div>`;
 }
 function renderSelectionAudit(){   // tournament page: what the tournament does (T2), the noise indicator (T3)
@@ -3597,7 +3606,7 @@ function renderTwinsCard(){   // tournament page: the continuous twins, a live c
     const tr = w.trade_counts || w.trades_by_reason || {}; const gap = (last.target_cash_pct != null && last.actual_cash_pct != null) ? (last.target_cash_pct - last.actual_cash_pct) : null;
     return `<tr><td class="mono t2 c-1 w6">${escText30(id)}</td><td class="c-3 t1">${(tierSpec(parent) || {}).short || parent}</td><td class="num">$${fmt(last.nav)}</td><td class="num ${first.nav && last.nav >= first.nav ? "c-pos" : "c-neg"}">${first.nav ? ((last.nav / first.nav - 1) * 100).toFixed(2) + "%" : "—"}</td><td class="num c-3">${pnav ? "$" + fmt(pnav) : "—"}</td><td class="num">${last.n_positions != null ? last.n_positions : "—"}</td><td class="num ${gap != null && Math.abs(gap) > 5 ? "c-warn" : "c-2"}">${last.actual_cash_pct != null ? last.actual_cash_pct.toFixed(1) + "% vs " + last.target_cash_pct.toFixed(1) + "%" : "—"}</td><td class="mono t1 c-3">${Object.entries(tr).map(([k, v]) => k + " " + v).join(" · ") || "—"}</td></tr>`; }).join("");
   return `<div class="rcc-card"><h3>CONTINUOUS TWINS · LIVE CONTEST · <span class="c-3 w5">1c–4c: the same universe, scores, targets and costs as tiers 1–4, differing only in execution — evaluated daily, traded on bands (rank buffer, regime cash beyond 5 points, weight drift beyond 25 percent of target) · the monthly tiers stay as controls</span>${asOfBadge(W.session_date)}</h3>
-    <div class="tbl-scroll"><table class="th-table"><tr><th>TWIN</th><th>PARENT</th><th class="num">NAV</th><th class="num">SINCE START</th><th class="num">PARENT NAV</th><th class="num">N</th><th class="num">CASH ACTUAL vs TARGET</th><th>TRADES BY REASON</th></tr>${rows}</table></div>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>TWIN</th><th>PARENT</th><th class="num">NAV</th><th class="num">SINCE START</th><th class="num">PARENT NAV</th><th class="num">N</th><th class="num">CASH ACTUAL vs TARGET</th><th>TRADES BY REASON</th></tr>${rows}</table></div>
     <div class="chart-meta">started ${escText30(W.start_date || "")} with the same capital · rules: data/tournament/continuous_rules.json · trades and spells: data/tournament/trades.jsonl, spells.jsonl (per tier, newest first, in each tier's detail) · replacement of the monthly tiers only after the registered C6 comparison${S.c6Power ? " · power check: " + escText30(S.c6Power.verdict) : ""}</div></div>`;
 }
 function renderTierLogs(tid){   // in a tier's detail: its trades and spells, newest first (T4)
@@ -3613,13 +3622,13 @@ function renderTierLogs(tid){   // in a tier's detail: its trades and spells, ne
   const sRows = Object.values(latest).sort((a, b) => String(b.exit_session || b.entry_session).localeCompare(String(a.exit_session || a.entry_session))).slice(0, 40).map(s => { const f = fu[s.spell_id] || {};
     return `<tr><td class="mono t1 c-1 w6">${escText30(s.ticker)}</td><td class="mono t1 c-3">${s.entry_session}</td><td class="mono t1 c-3">${s.exit_session || '<span class="c-warn">open</span>'}</td><td class="mono t1 c-2">${escText30(s.exit_reason || "")}</td><td class="num">${pct(s.return)}</td><td class="num">${pct(s.excess_vs_spy)}</td><td class="num">${pct(s.excess_vs_basket)}<span class="c-3 t1"> ${escText30(s.basket_thesis || "")}</span></td><td class="num">${f[20] ? pct(f[20].excess_vs_spy) : "—"}</td><td class="num">${f[60] ? pct(f[60].excess_vs_spy) : "—"}</td><td class="num c-3">${s.scores_at_entry && s.scores_at_entry.tier_rank != null ? "#" + s.scores_at_entry.tier_rank : "—"}</td></tr>`; }).join("");
   return `<div class="mt3"><div class="mono t1 w6 c-3 ls12 mb1">TRADES · newest first (${T.length})</div>
-    ${tRows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>SESSION</th><th>NAME</th><th>ACTION</th><th class="num">SHARES</th><th class="num">PRICE</th><th class="num">VALUE</th><th class="num">COST</th><th>REASON</th><th class="num">TIER RANK · SCORE</th><th class="num">BQ / TRADE-NOW</th><th>REGIME</th></tr>${tRows}</table></div>` : '<div class="mono t1 c-3">no trade logged</div>'}
+    ${tRows ? `<div class="tbl-scroll"><table class="th-table stack-m"><tr><th>SESSION</th><th>NAME</th><th>ACTION</th><th class="num">SHARES</th><th class="num">PRICE</th><th class="num">VALUE</th><th class="num">COST</th><th>REASON</th><th class="num">TIER RANK · SCORE</th><th class="num">BQ / TRADE-NOW</th><th>REGIME</th></tr>${tRows}</table></div>` : '<div class="mono t1 c-3">no trade logged</div>'}
     <div class="mono t1 w6 c-3 ls12 mb1 mt2">SPELLS · newest first (${Object.keys(latest).length})</div>
-    ${sRows ? `<div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>ENTRY</th><th>EXIT</th><th>EXIT REASON</th><th class="num">RETURN</th><th class="num">vs SPY</th><th class="num">vs THESIS BASKET</th><th class="num">+20 vs SPY</th><th class="num">+60 vs SPY</th><th class="num">RANK AT ENTRY</th></tr>${sRows}</table></div>` : '<div class="mono t1 c-3">no spell logged</div>'}</div>`;
+    ${sRows ? `<div class="tbl-scroll"><table class="th-table stack-m"><tr><th>NAME</th><th>ENTRY</th><th>EXIT</th><th>EXIT REASON</th><th class="num">RETURN</th><th class="num">vs SPY</th><th class="num">vs THESIS BASKET</th><th class="num">+20 vs SPY</th><th class="num">+60 vs SPY</th><th class="num">RANK AT ENTRY</th></tr>${sRows}</table></div>` : '<div class="mono t1 c-3">no spell logged</div>'}</div>`;
 }
 function renderReviewsCard(){   // system page: the monthly reviews (T7), generated and never edited
   const R = Array.isArray(S.reviews) ? S.reviews : []; if (!R.length) return "";
   const rows = R.slice().reverse().map(r => `<tr><td class="mono t1 c-1 w6">${escText30(r.month)}</td><td class="c-2 t1"><a href="${escText30(r.file)}" target="_blank" rel="noopener">${escText30(r.file)}</a></td><td class="mono t1 c-3">${String(r.generated_at || "").slice(0, 16)}</td><td class="mono t1 c-3">${r.effective_samples ? escText30(JSON.stringify(r.effective_samples)) : ""}</td><td class="mono t1 c-3" title="${escText30(r.sha256)}">${String(r.sha256 || "").slice(0, 8)}</td></tr>`).join("");
-  return `<div class="rcc-card"><h3>MONTHLY REVIEWS · <span class="c-3 w5">generated from the ledgers each month, stored, never edited · findings stated with the effective sample size (decision dates, not spells) and a date-block bootstrap interval · a lesson becomes a rule only through a registration and a prospective test</span>${asOfBadge(R[R.length - 1].generated_at)}</h3>
-    <div class="tbl-scroll"><table class="th-table"><tr><th>MONTH</th><th>REPORT</th><th>GENERATED</th><th>EFFECTIVE SAMPLES</th><th>HASH</th></tr>${rows}</table></div></div>`;
+  return `<div class="rcc-card"><h3>MONTHLY REVIEWS · <span class="c-3 w5">generated from the ledgers each month, stored, never edited · findings stated with the effective sample size (decision dates, not spells) and a date-block bootstrap interval · a lesson becomes a rule only through a registration and a prospective test</span>${asOfBadge(R[R.length - 1].generated_at, {cadence: "monthly"})}</h3>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>MONTH</th><th>REPORT</th><th>GENERATED</th><th>EFFECTIVE SAMPLES</th><th>HASH</th></tr>${rows}</table></div></div>`;
 }

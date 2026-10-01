@@ -17,7 +17,7 @@ function renderVintageCard(){   // C2 vintage comparison (evidence page)
   const c = S.c2; if (!c || !c.drawdown_reduction) return "";
   const rows = Object.entries(c.drawdown_reduction).map(([tid, v]) => { const t = tierSpec(tid) || {}; if (!v || !v.rev || !v.pit) return "";
     return `<tr><td class="${cc(t.color)}">${t.short || tid}</td><td class="num">${(v.rev.max_dd * 100).toFixed(1)}%</td><td class="num">${(v.pit.max_dd * 100).toFixed(1)}%</td><td class="num">${(v.rev.dd_reduction_vs_spy * 100).toFixed(1)}%</td><td class="num c-1 w6">${(v.pit.dd_reduction_vs_spy * 100).toFixed(1)}%</td></tr>`; }).join("");
-  return `<div class="rcc-card"><h3>VINTAGE COMPARISON (C2) · <span class="c-3 w5">the regime index rebuilt on ALFRED point-in-time inputs against the revised inputs, same engine</span>${asOfBadge(c.as_of)}</h3>
+  return `<div class="rcc-card"><h3>VINTAGE COMPARISON (C2) · <span class="c-3 w5">the regime index rebuilt on ALFRED point-in-time inputs against the revised inputs, same engine</span>${asOfBadge(c.as_of, {cadence: "static"})}</h3>
     <div class="tbl-scroll"><table class="th-table"><tr><th>TIER</th><th>MAX DD · REVISED</th><th>MAX DD · POINT-IN-TIME</th><th>DD REDUCTION vs SPY · REVISED</th><th>DD REDUCTION · POINT-IN-TIME</th></tr>${rows}</table></div>
     <div class="chart-meta">${c.summary || c.note || "revisions are the dominant channel; release lag accounts for almost none of the difference"} · report: reports/retirement_test_C2_input_vintages.md</div></div>`;
 }
@@ -27,7 +27,7 @@ function renderProvisionalLedger(){   // register page
   if (!es.length) return `<div class="rcc-card"><h3>PROVISIONAL LEDGER</h3><div class="mono t1 c-3">empty</div></div>`;
   const rows = es.map(([tk, e]) => `<tr><td class="mono t2 c-1 w6">${tk}</td><td class="c-2">${Object.entries(e.proposed || {}).map(([k, w]) => `${thesisLabel(k)} ${(+w).toFixed(2)}`).join(", ")}</td><td class="${e.status === "provisional" ? "c-warn" : e.status === "approved" ? "c-pos" : "c-3"}">${e.status}</td><td class="c-3 t1">${e.first_proposed || ""} → ${e.expires || ""}${e.resolved ? " · resolved " + e.resolved : ""}</td><td class="c-3 t1">${e.source || ""}</td><td class="c-3 t1">${(e.rationale || "").slice(0, 90)}</td></tr>`).join("");
   return `<div class="rcc-card"><h3>PROVISIONAL LEDGER · <span class="c-3 w5">agent-proposed name mappings: applied immediately, tagged, expiring after ${(L.policy && L.policy.expiry_days) || 30} days unless approved</span>${asOfBadge(L.as_of)}</h3>
-    <div class="tbl-scroll"><table class="th-table"><tr><th>NAME</th><th>PROPOSED MAPPING</th><th>STATUS</th><th>CLOCK</th><th>SOURCE</th><th>RATIONALE</th></tr>${rows}</table></div>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>NAME</th><th>PROPOSED MAPPING</th><th>STATUS</th><th>CLOCK</th><th>SOURCE</th><th>RATIONALE</th></tr>${rows}</table></div>
     <div class="chart-meta">${(L.policy && L.policy.rule) || ""}</div></div>`;
 }
 function renderProposals(){   // register page
@@ -36,7 +36,7 @@ function renderProposals(){   // register page
     ? `<tr><td class="mono t2 c-1 w6">${p.ticker}</td><td class="c-2">${Object.entries(p.proposed || {}).map(([k, w]) => `${thesisLabel(k)} ${(+w).toFixed(2)}`).join(", ") || "—"}</td><td class="${p.status === "provisional" ? "c-warn" : "c-3"}">${p.status || ""}</td><td class="c-3 t1">${p.source || ""}</td><td class="c-3 t1">${p.rationale || ""}</td></tr>`
     : `<tr><td class="mono t2 c-1 w6">${p.thesis_id || "—"}</td><td class="c-2">${p.type || ""} · ${p.label || ""}${p.proposed_members ? " · " + Object.keys(p.proposed_members).join(", ") : ""}</td><td class="c-3">${p.status || ""}</td><td class="c-3 t1">structural</td><td class="c-3 t1">${p.rationale || ""}${p.provisional_note ? " · " + p.provisional_note : ""}</td></tr>`).join("");
   return `<div class="rcc-card"><h3>REGISTRY PROPOSALS · <span class="c-3 w5">regenerated nightly · the agent never auto-merges; Werner approves with a version bump</span>${asOfBadge(P.as_of)}</h3>
-    <div class="tbl-scroll"><table class="th-table"><tr><th>NAME / THESIS</th><th>PROPOSED</th><th>STATUS</th><th>SOURCE</th><th>RATIONALE</th></tr>${rows}</table></div>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>NAME / THESIS</th><th>PROPOSED</th><th>STATUS</th><th>SOURCE</th><th>RATIONALE</th></tr>${rows}</table></div>
     <div class="chart-meta">${P.note || ""} · registry v${P.registry_version_current}${P.registry_frozen ? " frozen" : " pending"} · holdings changed today: ${(P.holdings_changed_today || []).join(", ") || "none"}</div></div>`;
 }
 function renderSystemPanel(){   // system page: pipeline status · audit · no-publish count
@@ -65,8 +65,11 @@ function renderPositionsList(){   // book page: the held names' position reading
 }
 function renderUniverseCard(){   // system page: the one universe (6.2)
   const u = S.universeMeta; if (!u) return "";
+  // the meta file carries per-input counts under inputs.{key}.n (a `sizes` block never existed)
+  const uN = k => { const i = (u.inputs || {})[k] || {}; return i.n != null ? i.n : "—"; };
+  const drops = ((u.share_class_collapse || {}).dropped) || [];
   return `<div class="rcc-card"><h3>THE UNIVERSE · <span class="c-3 w5">one union, built nightly, consumed by both scoring views</span>${asOfBadge(u.as_of)}</h3>
-    <div class="mono t1 c-2">union <strong class="c-1">${u.union_size}</strong> tickers = tournament canonical ${u.sizes && u.sizes.tournament_canonical} ∪ screen universe ${u.sizes && u.sizes.screener_universe} ∪ midcap additions ${u.sizes && u.sizes.midcap_additions} ∪ held ${u.sizes && u.sizes.held}</div>
+    <div class="mono t1 c-2">union <strong class="c-1">${u.union_size}</strong> tickers = tournament canonical ${uN("tournament_canonical")} ∪ screen universe ${uN("screener_historical")} ∪ midcap additions ${uN("midcap_additions")} ∪ held ${uN("holdings")}${drops.length ? `, less ${drops.length} duplicate share class${drops.length > 1 ? "es" : ""} (${drops.map(d => `${d.class} → ${d.kept}`).join(", ")})` : ""}</div>
     <div class="mono t1 c-3 mt1">only in the tournament universe: ${(u.only_tournament || []).join(", ") || "none"} · only in the screen universe or the midcap list: ${(u.only_screener_or_midcap || []).join(", ") || "none"} · held names added: ${(u.held_added || []).join(", ") || "none"}</div></div>`;
 }
 
@@ -171,7 +174,9 @@ function render(){
   applyTweens();
   bindEvents();
   drawCharts(PAGE._allSeries || null);
+  phoneTidy();
 }
+// phoneTidy() (the phone pass: stacked record tables, swipe hints, nav scroll) lives in common.js.
 async function boot(){
   const key = document.body.dataset.page || "home";
   PAGE = Object.assign({key}, PAGES[key]);

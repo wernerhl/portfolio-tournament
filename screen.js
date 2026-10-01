@@ -54,18 +54,12 @@ function renderStrips(D){
   const strip = (kind, txt) => `<div class="strip strip-${kind}">${txt}</div>`;
   let b = '';
   const sd = D.session_date;
+  // 1-Oct-2026: the same freshness rule as every other page (common.js freshnessOf): a close is
+  // pending until 09:30 ET the next session, stale only once that publish was due and missed.
   if (sd) {
-    const now = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/New_York'}));
-    const past = (now.getHours() > 16) || (now.getHours() === 16 && now.getMinutes() >= 15);
-    const HOL = new Set(["2025-01-01","2025-01-09","2025-01-20","2025-02-17","2025-04-18","2025-05-26","2025-06-19","2025-07-04","2025-09-01","2025-11-27","2025-12-25",
-      "2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25","2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25",
-      "2027-01-01","2027-01-18","2027-02-15","2027-03-26","2027-05-31","2027-06-18","2027-07-05","2027-09-06","2027-11-25","2027-12-24"]);
-    const iso = x => new Date(x.getTime() - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    const isSess = x => x.getDay() >= 1 && x.getDay() <= 5 && !HOL.has(iso(x));
-    let d = new Date(now);
-    if (!(isSess(d) && past)) { do { d.setDate(d.getDate() - 1); } while (!isSess(d)); }
-    const exp = iso(d);
-    if (sd < exp) b += strip('warn', `⚠ as of ${sd}; today's run did not publish${st.failure_reason ? ' — ' + st.failure_reason : ''}`);
+    const f = freshnessOf(sd);
+    if (f === 'stale') b += strip('warn', `⚠ The board is as of ${sd}; the ${prevSessionISO(dueSessionISO(), 0)} session's run did not publish${st.failure_reason ? ' — ' + st.failure_reason : ''}`);
+    else if (f === 'pending') b += strip('2', `◷ The board is as of ${sd}; the ${lastTradingSessionISO()} close is published overnight`);
   }
   if (st.failure_reason && !b) b += strip('2', `ℹ board is current (session ${sd}); a later redundant run was rejected (${st.failure_reason}) — served board unaffected`);
   const au = st.audit || {};
@@ -83,7 +77,7 @@ function renderWatchlist(W, U){
   const head = `<div class="lb-h"><h2>THE BOARD</h2><div class="lb-h-sub">top ${nTop} of ${U.total || 0} by composite${nHeld ? ` + ${nHeld} held name${nHeld === 1 ? '' : 's'} outside the top 40 (always on the board)` : ''} · HELD = in the book · descriptive ranking</div></div>`;
   if (!W.length) return `<div class="lbtable">${head}<div class="note">No board data</div></div>`;
   return `<div class="lbtable">${head}
-  <div class="tbl-scroll"><table><thead><tr>
+  <div class="tbl-scroll"><table class="board-table"><thead><tr>
     ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}${th('watch', 'entry_level', 'LEVEL', 1)}${th('watch', null, 'GAP', 1)}${th('watch', 'category', 'CAT')}${th('watch', null, 'OPTIONS')}
   </tr></thead><tbody>
     ${rows.map(r => {
@@ -251,6 +245,7 @@ function render(){
     </div>
   </section>`;
   a.innerHTML = h;
+  phoneTidy();
   document.querySelectorAll('th[data-k]').forEach(el => el.addEventListener('click', () => {
     const t = el.dataset.tbl, k = el.dataset.k; const cur = SC.sort[t];
     if (cur && cur.k === k) cur.dir *= -1; else SC.sort[t] = {k, dir: -1};
