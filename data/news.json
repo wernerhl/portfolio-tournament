@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-09-30",
- "fetched_at": "2026-10-01T15:17:05-04:00",
+ "as_of": "2026-10-01",
+ "fetched_at": "2026-10-01T19:41:24-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -63,8 +63,8 @@
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=2 (parsed 18)",
-  "dol": "ok n=0 (parsed 10)",
-  "edgar": "ok n=51 (parsed 41 names)",
+  "dol": "ok n=1 (parsed 10)",
+  "edgar": "ok n=52 (parsed 41 names)",
   "ir_avgo": "ok n=1 (parsed 10)",
   "ir_nvda": "ok n=2 (parsed 20)",
   "ir_gev": "ok n=4 (parsed 20)",
@@ -81,15 +81,15 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 8,
-  "out_of_window": 27319,
+  "irrelevant": 10,
+  "out_of_window": 27318,
   "unparseable": 0
  },
  "counts": {
-  "items": 112,
-  "tier1": 73,
+  "items": 114,
+  "tier1": 75,
   "tier2": 39,
-  "last24h": 21
+  "last24h": 13
  },
  "items": [
   {
@@ -104,6 +104,54 @@
    "tickers": [],
    "topics": [],
    "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8b63440eac4a2cbb0a0ac5603d00afd1abbdd0c7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ORACLE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000134143926000099/xslF345X06/form4.xml",
+   "timestamp": "2026-10-01T13:42:53-04:00",
+   "tickers": [
+    "ORCL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-01 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a96858cbb7c8ed2fcbc2211ebdc354f6a30478e6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by LOCKHEED MARTIN CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/936468/000122520826008067/xslF345X06/doc4.xml",
+   "timestamp": "2026-10-01T13:33:14-04:00",
+   "tickers": [
+    "LMT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-01 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "947501f044bbc0fe59a13ec7ff6cc7922cb42d23",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by LOCKHEED MARTIN CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/936468/000122520826008066/xslF345X06/doc4.xml",
+   "timestamp": "2026-10-01T13:33:13-04:00",
+   "tickers": [
+    "LMT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-01 · 4",
    "disclosure_lag_label": null
   },
   {
@@ -148,6 +196,22 @@
    "tickers": [],
    "topics": [],
    "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c577d18370c2c869cebc76af66887180cfd65652",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Unemployment Insurance Weekly Claims Report",
+   "source": "Department of Labor release",
+   "source_id": "dol",
+   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261001",
+   "timestamp": "2026-10-01T08:00:00-04:00",
+   "tickers": [],
+   "topics": [
+    "CLAIMS"
+   ],
+   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
   },
   {
@@ -1837,38 +1901,6 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-09-25 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "bb14a4ad05a2a37ea2bebc1487433877980625c4",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by FACTSET RESEARCH SYSTEMS INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063409/xslF345X06/wk-form4_1790282203.xml",
-   "timestamp": "2026-09-24T16:36:46-04:00",
-   "tickers": [
-    "FDS"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-24 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "90c26806433074541989d2314dfe745dd61721b0",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by INCYTE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/879169/000208597026000007/xslF345X06/wk-form4_1790280388.xml",
-   "timestamp": "2026-09-24T16:06:31-04:00",
-   "tickers": [
-    "INCY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-24 · FORM 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1910,25 +1942,17 @@
  },
  "last24h": [
   "bc6d5ff2ab1b9fe9ea3b8222d2a5affb5aac5aa3",
+  "8b63440eac4a2cbb0a0ac5603d00afd1abbdd0c7",
+  "a96858cbb7c8ed2fcbc2211ebdc354f6a30478e6",
+  "947501f044bbc0fe59a13ec7ff6cc7922cb42d23",
   "0f8a88c617254ec8dc118909e39dc7fb46ab7166",
   "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
   "e1dfff34bb8cf81e2b9d143955df0d6d65f6ed42",
+  "c577d18370c2c869cebc76af66887180cfd65652",
   "6c42783210b99589e2a6340d366592435ca4e08e",
   "9f4d944355b24780cd67eed1c27941383d8bb7cd",
   "6ae1556d4d693e5cd5f07e009f9570a7e6d0395d",
   "7dd4b2c594c0a209638105896744a0840379890c",
-  "0742e4f2f8b38ffc310a4f1323d6c1f8487c96b9",
-  "5ad2984d4edc4494b94d2ee87794990dbaaebf5f",
-  "671cf6312e0d2c949ce0a5decaaa91504949e9a5",
-  "1bcee7ed45e125457ddc0a92df535467f585c668",
-  "d72ea504580466b38998b048d3bf894d4263fec3",
-  "5b13dd92b3e8254d991f6ba919e490e3656f4edc",
-  "04680932e761ce4bb3e9f335a584f70121944102",
-  "c9ea7169cdca70f27aa560e1309b87b6143c869e",
-  "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
-  "87f489c49538e82cbc8c2e47234bece5259a7348",
-  "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
-  "fea9a4b6bfb1358de0627932c86bdda03e88a486",
-  "3208241e531ffc00aa3f5f5d73b07a040ecb13a5"
+  "0742e4f2f8b38ffc310a4f1323d6c1f8487c96b9"
  ]
 }
