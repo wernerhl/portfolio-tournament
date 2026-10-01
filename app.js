@@ -2550,7 +2550,7 @@ function renderTreemapCard(){
   // narrow frame there so the labels render near their nominal size
   const narrowTm = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
   const W = narrowTm ? 400 : 1000, H = narrowTm ? 460 : 440, LBL = 16;
-  const fitTxt = (t, w) => { const n = Math.max(4, Math.floor((w - 12) / 8.3));   // 12-unit mono + .08em tracking ≈ 8.2 units a character return t.length > n ? t.slice(0, n - 1) + "…" : t; };
+  const fitTxt = (t, w) => { const n = Math.max(4, Math.floor((w - 12) / 8.3)); /* 12-unit mono + .08em tracking ≈ 8.2 units a character */ return t.length > n ? t.slice(0, n - 1) + "…" : t; };
   const gitems = Object.entries(d.groups).map(([k, arr]) => ({key: k, area: arr.reduce((s, p) => s + p.w, 0)}));
   if (d.cashW > 0) gitems.push({key: "cash", area: d.cashW});
   const grects = squarify(gitems, 0, 0, W, H);
