@@ -518,24 +518,32 @@ def main():
         z_v   = float(z_df[key].dropna().iloc[-1]) if not z_df[key].dropna().empty else None
         raw_v = float(panel[key].dropna().iloc[-1]) if not panel[key].dropna().empty else None
         status = status_from_phi(phi_v)
-        narr   = narrative_for(idx, phi_v)
-        try:
-            value_str = fmt.format(v=raw_v) if raw_v is not None else "—"
-        except Exception:
-            value_str = f"{raw_v:.2f}" if raw_v is not None else "—"
+        # Order 1-Oct-2026 [R1], DISPLAY ONLY: value_str carries the true unit and the narrative is
+        # computed from the value (level phrase) and the status bucket naming its 252-session window
+        # (relative phrase); the fixed four-step templates in INDICATORS[...][7] are no longer shown.
+        # z, phi, status and everything that feeds R are computed above, unchanged.
+        import regime_display as _rd
+        _disp = _rd.display_fields(key, direction, panel[key], raw_v, status, d_last)
         indicator_payload.append({
             "key":       key,
             "label":     label,
             "tier":      tier,
             "weight":    TIER_WEIGHTS[tier],
             "value":     raw_v,
-            "value_str": value_str,
+            "value_str": _disp["value_str"],
             "z":         z_v,
             "phi":       phi_v,
             "status":    status,
-            "narrative": narr,
+            "narrative": _disp["narrative"],
             "direction": direction,
             "as_of":     d_last.strftime("%Y-%m-%d"),
+            # R1.3 scale fields, informational: never read by status, R or the headline
+            "unit":      _disp["unit"],
+            "pctile_10y": _disp["pctile_10y"],
+            "pctile_10y_risky": _disp["pctile_10y_risky"],
+            "rank_1y_pct": _disp["rank_1y_pct"],
+            "z_window":  _disp["z_window"],
+            "z_756":     _disp["z_756"],
         })
 
     n_by_status = {"safe":0, "neutral":0, "elevated":0, "crisis":0}

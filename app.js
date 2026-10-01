@@ -54,7 +54,9 @@ function regimeColor(R){ return R<0.3?"var(--g)":R<0.5?"var(--y)":R<0.7?"var(--o
 // P1.3: chart segment colours from the palette (orange retired: HIGH RISK is a warn/neg mix)
 function regimeHex(R){ const c = CHARTS.colors(); return R<0.3 ? c.pos : R<0.5 ? c.warn : R<0.7 ? `color-mix(in srgb, ${c.neg} 60%, ${c.warn})` : c.neg; }
 function statusHex(s){ return ({safe:"#4ade80",neutral:"#60a5fa",elevated:"#facc15",crisis:"#f87171"})[s] || "#737373"; }
-function statusLabel(s){ return ({safe:"Safe",neutral:"Neutral",elevated:"Caution",crisis:"Crisis"})[s] || s; }
+// Order 1-Oct-2026 [R1.4]: the "crisis" status is extreme only against the trailing 252 sessions; the key,
+// the colours and n_crisis are unchanged, the displayed word says what the bucket measures.
+function statusLabel(s){ return ({safe:"Safe",neutral:"Neutral",elevated:"Caution",crisis:"Extreme (1y)"})[s] || s; }
 
 // SVG semicircle gauge: 0 → 1 mapped to -90° → +90°.
 // Returns inline SVG markup.
@@ -103,7 +105,7 @@ function renderIndicators(){
   const hasTiers = all.some(i => i.tier);
   if (!hasTiers) {
     return `<div class="ind-grid">${all.map(renderIndCard).join("")}</div>`
-         + (S.expandedIndicator ? renderIndicatorDetail() : "");
+         + (S.expandedIndicator ? renderIndicatorDetail() : "") + IND_LEGEND;
   }
   const tiers = {
     A: {label:"TIER A — FORWARD-LOOKING",  desc:"what markets expect (weight 2.0)", items:[]},
@@ -121,8 +123,10 @@ function renderIndicators(){
     </div>
     <div class="ind-grid">${t.items.map(renderIndCard).join("")}</div>
     ${ownsExpanded ? renderIndicatorDetail() : ""}`;
-  }).join("");
+  }).join("") + IND_LEGEND;
 }
+// [R1.4] one legend line under the cards
+const IND_LEGEND = `<div class="ind-legend mono t1 c-3 mt2">Statuses rank each reading against its own past 252 sessions; the 10-year percentile is shown for scale.</div>`;
 // AUDIT FIX 2: prefer the intraday-snapshot value when it covers the same
 // instrument and is fresher than the EOD payload. Card and banner now agree
 // on VIX/VVIX/VIX3M/DXY/SKEW etc. The z-score / phi / status are KEPT from
@@ -153,14 +157,25 @@ function intradayValueFor(key){
   }
   return id.prices[mapped]?.last ?? null;
 }
-function formatIndicatorValue(key, val, fallbackStr){
+function formatIndicatorValue(key, val, fallbackStr, unit){
   if (val == null) return fallbackStr || "—";
-  // Match the precision of the EOD value_str roughly per indicator family.
-  if (key === "skew" || key === "mfg_new_orders") return val.toFixed(0);
-  if (key === "vvix" || key === "vix") return val.toFixed(2);
-  if (key === "dxy") return val.toFixed(1);
-  if (key === "vix_term") return val.toFixed(2);
-  return (typeof val === "number") ? val.toFixed(2) : String(val);
+  // Match the precision of the EOD value_str roughly per indicator family; [R1.1] the unit travels too.
+  const u = unit ? (unit === "pts" ? " pts" : unit === "$M" ? "M" : unit) : "";
+  if (key === "skew" || key === "mfg_new_orders") return val.toFixed(0) + u;
+  if (key === "vvix" || key === "vix") return val.toFixed(2) + u;
+  if (key === "dxy") return val.toFixed(1) + u;
+  if (key === "vix_term") return (val >= 0 ? "+" : "") + val.toFixed(2) + u;
+  return ((typeof val === "number") ? val.toFixed(2) : String(val)) + u;
+}
+// [R1.3] scale line: z against the 252-session window (in the value's own direction, so it reads the same
+// way as the narrative) and the ten-year percentile of the same series
+function indScaleLine(i){
+  if (i.z == null && i.pctile_10y == null) return "";
+  const zv = i.z == null ? null : (i.direction === "lower" ? -i.z : i.z);
+  const parts = [];
+  if (zv != null) parts.push(`z ${zv >= 0 ? "+" : ""}${zv.toFixed(2)} vs past year`);
+  if (i.pctile_10y != null) parts.push(`10-year percentile ${Math.round(i.pctile_10y)}`);
+  return `<div class="ind-scale mono t1 c-3">${parts.join(" · ")}</div>`;
 }
 
 function renderIndCard(i){
@@ -168,7 +183,7 @@ function renderIndCard(i){
   const open = (S.expandedIndicator === i.key);
   const intradayVal = intradayValueFor(i.key);
   const displayedStr = intradayVal != null
-    ? formatIndicatorValue(i.key, intradayVal, i.value_str)
+    ? formatIndicatorValue(i.key, intradayVal, i.value_str, i.unit)
     : (i.value_str || "—");
   const liveBadge = intradayVal != null
     ? ` <span title="Intraday snapshot" class="mono t1 w6 c-accent ls1 x1">·LIVE</span>`
@@ -176,7 +191,8 @@ function renderIndCard(i){
   return `<div class="ind-card ${i.status} ${open?"expanded":""}" data-ind="${i.key}">
     <div class="ind-lbl ${i.status}">${i.label}${liveBadge}</div>
     <div class="ind-val">${displayedStr}</div>
-    <div class="ind-narr">${i.narrative || ""}</div>
+    <div class="ind-narr">${i.narrative || ""}${intradayVal != null ? ' <span class="c-3">(at the close)</span>' : ""}</div>
+    ${indScaleLine(i)}
     <div class="ind-bar"><div class="fill ${cc(c,'bg')}" style="width:${(i.phi*100).toFixed(0)}%"></div></div>
   </div>`;
 }
@@ -202,7 +218,9 @@ function renderIndicatorDetail(){
     if (c.phi < 0.40) interp = `Below historical risk threshold. Z-score ${z} (${pct}th 1-year percentile). Not contributing to elevated regime.`;
     else if (c.phi < 0.60) interp = `Near neutral. Z-score ${z} (${pct}th percentile). Mild signal.`;
     else if (c.phi < 0.80) interp = `Elevated risk reading. Z-score ${z} (${pct}th percentile). Contributing to ${ind.tier === "A" ? "early warning" : "regime"} signal.`;
-    else interp = `Crisis-level reading. Z-score ${z} (${pct}th percentile). Strong contribution to risk score.`;
+    else interp = `Extreme against its own past 252 sessions. Z-score ${z} (${pct}th 1-year percentile). Strong contribution to the risk score.`;
+    const regI = ((S.regime && S.regime.indicators) || []).find(x => x.key === key) || {};
+    if (regI.pctile_10y != null) interp += ` Ten-year percentile ${Math.round(regI.pctile_10y)} (scale only; the status uses the 252-session window).`;
   }
 
   return `<div class="ind-detail">
@@ -833,7 +851,7 @@ function renderRegimeCommandCenter(R){
     inputs.v2_regime ? `v2 ${inputs.v2_regime}` : null,
     inputs.v4_regime ? `v4 ${inputs.v4_regime} <span class="c-3" title="${inputs.v4_excluded || ""}">(ranking only, not voting)</span>` : null,
     inputs.v4_stale ? `<span class="c-warn">v4: stale (as of ${inputs.v4_as_of || "?"})</span>` : null,
-    inputs.n_crisis > 0 ? `${inputs.n_crisis} crisis ch.` : null,
+    inputs.n_crisis > 0 ? `${inputs.n_crisis} channel${inputs.n_crisis > 1 ? "s" : ""} ${statusLabel("crisis").toLowerCase()}` : null,
     inputs.complacent ? `complacent` : null,
     inputs.shock ? `intraday shock` : null,
     inputs.shock_prior_session ? `prior-session shock (not voting)` : null,
@@ -913,7 +931,7 @@ function renderRegimeCommandCenter(R){
     <span class="c-pos">${safe} safe</span> ·
     <span class="c-info">${neu} neutral</span> ·
     <span class="c-warn">${ele} elevated</span> ·
-    <span class="c-neg">${cri} crisis</span></span>`;
+    <span class="c-neg">${cri} ${statusLabel("crisis").toLowerCase()}</span></span>`;
 
   // P1.4: the command centre is returned as tier fragments; render() places them:
   //   gauge → tier one · timeline + deployment → tier two · indicators + v4 → tier three

@@ -43,6 +43,46 @@ def trading_days(a,b):
 F=[]  # findings
 def add(sev, check, detail): F.append((sev,check,detail))
 
+
+# ── Order 1-Oct-2026 [R1]: regime card display checks (pure; tests/test_r_order_checks.py mutates) ──
+# The unit each card's value_str must carry. Independent of scripts/regime_display.py on purpose: a
+# change that drops a unit from both the formatter and the payload must still fire here.
+REGIME_UNITS = {"yield_3m10y": "pp", "breakeven_5y": "%", "baa_aaa": "bp", "vix_term": "pts", "mfg_new_orders": "M",
+                "loan_tightening": "%", "consumer_expect": "%", "hy_oas": "bp", "realized_vol": "%",
+                "spx_ret_60d": "%", "spx_drawdown": "%", "oil_60d_vel": "%"}
+REGIME_SCALE = {"hy_oas": 100.0}   # stored in percent, shown in basis points
+SEVERITY_WORDS = ("crisis", "acute", "stress", "shock", "spike", "crunch", "drain", "severely", "panic")
+
+
+def check_regime_display(ri):
+    out = []
+    for i in (ri or {}).get('indicators', []):
+        k, v, vs, nar = i.get('key'), i.get('value'), str(i.get('value_str') or ''), str(i.get('narrative') or '').lower()
+        u = REGIME_UNITS.get(k)
+        if u and v is not None and u not in vs:
+            out.append(('HIGH', 'regime:unit', f'{k}: value_str "{vs}" lacks its unit {u}'))
+        if k in REGIME_SCALE and v is not None:
+            m_ = re.search(r'-?\d[\d,]*\.?\d*', vs)
+            shown = float(m_.group(0).replace(',', '')) if m_ else None
+            if shown is None or abs(shown - v * REGIME_SCALE[k]) > 1.0:
+                out.append(('HIGH', 'regime:unit', f'{k}: value_str "{vs}" does not show value {v} x {REGIME_SCALE[k]:.0f}'))
+        if v is None:
+            continue
+        bad = None
+        if k == 'vix_term' and (('backwardation' in nar and v < 0) or ('contango' in nar and v > 0)): bad = 'term structure word vs the sign of the spread'
+        if k == 'yield_3m10y' and 'inverted' in nar and v > 0: bad = '"inverted" with a positive slope'
+        if k in ('spx_ret_60d', 'oil_60d_vel') and ((re.search(r'\b(negative|down|falling)\b', nar) and v > 0) or (re.search(r'\b(positive|up|rising|rallying)\b', nar) and v < 0)): bad = 'direction word vs the sign of the change'
+        if k == 'loan_tightening' and (('tightening' in nar and 'net tightening' in nar and v < 0) or ('easing' in nar and v > 0)): bad = 'easing/tightening vs the sign'
+        if k in ('nfci', 'anfci') and (('looser' in nar and v > 0) or ('tighter' in nar and v < 0)): bad = 'looser/tighter vs the sign'
+        if k in ('kcfsi', 'stlfsi') and (('calmer' in nar and v > 0)): bad = '"calmer than average" with a positive index'
+        if bad:
+            out.append(('HIGH', 'regime:narrative_level', f'{k}: "{i.get("narrative")}" contradicts value {v} ({bad})'))
+        sev_ = [w for w in SEVERITY_WORDS if re.search(r'\b' + w, nar)]
+        risky = i.get('pctile_10y_risky')
+        if sev_ and (risky is None or float(risky) < 90):
+            out.append(('HIGH', 'regime:narrative_level', f'{k}: severity word(s) {sev_} with ten-year percentile in the risky direction {risky} (< 90)'))
+    return out
+
 DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}')
 def to_date(s):
     try: return date.fromisoformat(str(s)[:10])
@@ -297,6 +337,8 @@ def main(troot, sroot, today=None):
     R=float(ri['R_full']); lab=str(ri.get('regime','')).upper()
     if R<0.28 and 'ELEV' in lab: add('HIGH','label:hysteresis',f'R_full {R} below exit threshold but label {lab}')
     if R>=0.32 and lab in ('LOW RISK','NORMAL','CALM'): add('HIGH','label:hysteresis',f'R_full {R} above entry threshold but label {lab}')
+    # Order 1-Oct-2026 [R1]: the cards' units and narratives (display only)
+    for f_ in check_regime_display(ri): add(*f_)
     # ---------- vol complex single source ----------
     if os.path.exists(os.path.join(troot,'vol_close_canonical.json')):
         can=T('vol_close_canonical.json'); vr=T('vol_regime.json'); it=T('intraday.json')
