@@ -436,6 +436,10 @@ def run(args) -> tuple[int, dict | None]:
     if args.dry_run:
         log("dry run: nothing written")
         return 0, payload
+    # 1-Oct-2026: the vocabulary rule on served names — a filer name containing either prohibited word
+    # is replaced by its SEC identifier; the count is recorded (figures unchanged)
+    payload["withheld_names"] = {"vocabulary_rule": ec.withhold_prohibited_names(payload),
+                                 "note": "names replaced by the filer's SEC identifier under the dashboard's vocabulary rule; every figure is unchanged"}
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(payload, indent=2))
     log("wrote %s" % out_path)

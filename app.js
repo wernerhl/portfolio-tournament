@@ -3415,11 +3415,19 @@ function renderNewsPanel(){   // home: the last 24 hours, Tier 1 first (B4)
   const items = (N.last24h || []).map(id => byId[id]).filter(Boolean);
   const ex = N.excluded || {}; const st = N.sources_status || {};
   const failed = Object.entries(st).filter(([k, v]) => /^(failed|skipped)/.test(String(v))).map(([k, v]) => `${k}: ${v}`);
-  // every primary item shows; secondary items beyond the first six fold under a disclosure (the list ran to 30+ rows)
-  const t1 = items.filter(it => it.tier === 1), t2 = items.filter(it => it.tier !== 1);
+  // every primary item shows; secondary items beyond the first six fold under a disclosure (the list ran to 30+ rows).
+  // 1-Oct-2026: routine insider filings (Form 4) on names not held fold into one line — with the SEC contact
+  // declared they ran to 15 of the 24 hours' items; filings on held names stay in the list.
+  const heldSet = new Set(((S.holdingsFile && S.holdingsFile.holdings) || []).filter(h => (h.shares || 0) > 0).map(h => String(h.ticker).toUpperCase()));
+  const routineF4 = it => it.source_id === "edgar" && /^Form 4\b/.test(it.headline || "") && !(it.tickers || []).some(t => heldSet.has(String(t).toUpperCase()));
+  const f4 = items.filter(routineF4);
+  const t1 = items.filter(it => it.tier === 1 && !routineF4(it)), t2 = items.filter(it => it.tier !== 1);
   const shown = t1.concat(t2.slice(0, 6)), more = t2.slice(6);
+  const f4Count = {}; f4.forEach(it => (it.tickers && it.tickers.length ? it.tickers : ["?"]).forEach(t => { f4Count[t] = (f4Count[t] || 0) + 1; }));
+  const f4Html = f4.length ? `<details class="mt1"><summary class="mono t1 w5 c-3 ptr ls05">${f4.length} insider filing${f4.length > 1 ? "s" : ""} (Form 4) on board names: ${Object.entries(f4Count).map(([t, n]) => n > 1 ? `${t} ${n}` : t).join(", ")}</summary><div class="tbl-scroll"><table class="th-table news-table">${f4.map(newsRowHtml).join("")}</table></div></details>` : "";
   return `<div class="rcc-card news-card"><h3>NEWS · <span class="c-3 w5">last ${N.window_hours || 24} hours · primary sources first, secondary labeled · bodies never stored, summaries system-written</span><span class="asof mono t1 w5 ls06 c-3 ml2">fetched ${etStamp30(N.fetched_at)} ET</span></h3>
     ${items.length ? `<div class="tbl-scroll"><table class="th-table news-table">${shown.map(newsRowHtml).join("")}</table></div>
+      ${f4Html}
       ${more.length ? `<details class="mt1"><summary class="mono t1 w5 c-3 ptr ls05">${more.length} more secondary item${more.length > 1 ? "s" : ""}</summary><div class="tbl-scroll"><table class="th-table news-table">${more.map(newsRowHtml).join("")}</table></div></details>` : ""}` : '<div class="mono t1 c-3">no relevant item in the window</div>'}
     <details class="mt2"><summary class="mono t1 w5 c-3 ptr ls05">sources and exclusions</summary><div class="mono t1 c-3 mt1 lh17">${N.rule || ""}<br>withheld: vocabulary rule ${ex.vocabulary_rule || 0} · directive rule ${ex.directive_rule || 0} · irrelevant ${ex.irrelevant || 0}<br>${failed.length ? failed.join("<br>") : "every source responded"}</div></details></div>`;
 }

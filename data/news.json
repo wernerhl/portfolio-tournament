@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-09-30",
- "fetched_at": "2026-10-01T00:22:06-04:00",
+ "fetched_at": "2026-10-01T01:47:04-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -15,45 +15,45 @@
   ],
   "top40": [
    "AVGO",
+   "GEV",
    "LMT",
    "GOOG",
-   "GEV",
    "NVDA",
    "TSM",
-   "RTX",
-   "EXPE",
    "NOC",
+   "EXPE",
    "PATH",
    "ADBE",
-   "FDS",
    "AMP",
+   "INCY",
+   "ADSK",
    "AXP",
-   "DASH",
+   "VRT",
+   "POWL",
    "GDDY",
    "CPAY",
-   "AMZN",
+   "DASH",
+   "BRO",
    "UBER",
    "CINF",
-   "TROW",
-   "APO",
-   "NFLX",
-   "CSCO",
    "CEG",
-   "MS",
-   "NXPI",
-   "INCY",
-   "MAS",
-   "ADSK",
-   "BLK",
+   "TROW",
+   "NFLX",
+   "GE",
+   "APO",
+   "ABNB",
+   "APP",
+   "FDS",
    "ORCL",
    "BR",
-   "ABNB",
-   "OXY",
-   "VRT",
+   "META",
+   "PYPL",
+   "QCOM",
    "SCHW",
    "MCO",
-   "CBOE",
-   "SPGI"
+   "MAS",
+   "SPGI",
+   "AOS"
   ]
  },
  "sources_status": {
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "skipped: SEC_USER_AGENT not set",
+  "edgar": "ok n=49 (parsed 41 names)",
   "ir_avgo": "ok n=1 (parsed 10)",
   "ir_nvda": "ok n=2 (parsed 20)",
   "ir_gev": "ok n=3 (parsed 20)",
@@ -74,24 +74,56 @@
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "yahoo_headlines:GEV": "ok n=5 (parsed 10)",
   "yahoo_headlines:NVDA": "ok n=1 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=1 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
   "yahoo_headlines:GOOG": "ok n=5 (parsed 10)",
   "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 1,
   "directive_rule": 0,
-  "irrelevant": 40,
-  "out_of_window": 131,
+  "irrelevant": 38,
+  "out_of_window": 27317,
   "unparseable": 0
  },
  "counts": {
-  "items": 58,
-  "tier1": 21,
-  "tier2": 37,
-  "last24h": 27
+  "items": 109,
+  "tier1": 70,
+  "tier2": 39,
+  "last24h": 46
  },
  "items": [
+  {
+   "id": "7dd4b2c594c0a209638105896744a0840379890c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by QUALCOMM INC/DE",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000098/xslF345X06/edgardoc.xml",
+   "timestamp": "2026-09-30T20:06:32-04:00",
+   "tickers": [
+    "QCOM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0742e4f2f8b38ffc310a4f1323d6c1f8487c96b9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by QUALCOMM INC/DE",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000097/xslF345X06/edgardoc.xml",
+   "timestamp": "2026-09-30T20:06:18-04:00",
+   "tickers": [
+    "QCOM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
   {
    "id": "04680932e761ce4bb3e9f335a584f70121944102",
    "tier": 2,
@@ -106,6 +138,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5ad2984d4edc4494b94d2ee87794990dbaaebf5f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326014886/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-30T18:22:17-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -141,6 +189,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "671cf6312e0d2c949ce0a5decaaa91504949e9a5",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Airbnb, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1559720/000119312526409153/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-30T16:43:43-04:00",
+   "tickers": [
+    "ABNB"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "87f489c49538e82cbc8c2e47234bece5259a7348",
    "tier": 2,
    "tier_label": "secondary",
@@ -154,6 +218,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · Investing.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1bcee7ed45e125457ddc0a92df535467f585c668",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Airbnb, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1559720/000119312526409120/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-30T16:30:08-04:00",
+   "tickers": [
+    "ABNB"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · 4",
    "disclosure_lag_label": null
   },
   {
@@ -182,10 +262,27 @@
    "url": "https://finance.yahoo.com/energy/articles/ge-vernova-gev-secures-nrc-201009594.html",
    "timestamp": "2026-09-30T16:10:09-04:00",
    "tickers": [
-    "GEV"
+    "GEV",
+    "GE"
    ],
    "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about GEV",
+   "summary": "Tier 2 headline · Simply Wall St. · about GEV, GE",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d72ea504580466b38998b048d3bf894d4263fec3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183261226000020/xslF345X06/form4-09302026_040901.xml",
+   "timestamp": "2026-09-30T16:10:06-04:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · 4",
    "disclosure_lag_label": null
   },
   {
@@ -219,6 +316,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "6789c07456fb8387f32dc93692bf7f698eabc979",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "What Is The Case For Waiting On Qualcomm Stock?",
+   "source": "Trefis",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.trefis.com/articles/617167/what-is-the-case-for-waiting-on-qualcomm-stock/2026-09-30",
+   "timestamp": "2026-09-30T14:51:54-04:00",
+   "tickers": [
+    "QCOM"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Trefis · about QCOM",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
    "tier": 2,
    "tier_label": "secondary",
@@ -244,10 +357,11 @@
    "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-stocks-slip-data-174915714.html",
    "timestamp": "2026-09-30T13:49:15-04:00",
    "tickers": [
-    "GEV"
+    "GEV",
+    "GE"
    ],
    "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about GEV",
+   "summary": "Tier 2 headline · GuruFocus.com · about GEV, GE",
    "disclosure_lag_label": null
   },
   {
@@ -299,6 +413,150 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "9fbd5bcb11ca9af74863fec8ee0db7209ff0f33e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000119445526000014/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:45:21-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "67f6708aa40f73719ce9db1e65ae2fcb96d61dfa",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000121670426000005/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:45:03-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6f10aea73bca7dc493d2d75c3aa83c3221b1a748",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000173720626000007/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:44:29-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3cd30cb8eab68062ff42e98f5e0fb7ccf31fba6d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000118425826000005/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:44:13-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "af39ec1e79dbdc37c552c1ac9111b9a9fa2eea6d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000198873726000005/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:43:53-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "554ec3034d9cc375ceba2d15f6e86a230d72c0f4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000150937026000009/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:43:35-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b803f5abe70f84baf4ff6c2203a5eb8c83a8cb5a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000149893526000006/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:43:02-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2410987401c4dc3456e85e58d147e57a67731dcb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000116019326000005/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:42:36-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "742014f4ce9cfd233f26e845e5f0084b53092bc4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000120792826000010/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-09-30T12:42:13-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "98948837bb9a86625c189a9ff1f3ef8a812b179b",
    "tier": 2,
    "tier_label": "secondary",
@@ -331,6 +589,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "6447dba1b2e5a4501ddcae265a667c0956e61859",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Here’s What The Apple Patent Renewal Really Does for Qualcomm and Why I’m Buying",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://247wallst.com/investing/2026/09/30/heres-what-the-apple-patent-renewal-really-does-for-qualcomm-and-why-im-buying/",
+   "timestamp": "2026-09-30T10:45:08-04:00",
+   "tickers": [
+    "QCOM"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about QCOM",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "214bbfabe8da23aca998619c432c6a669bade7eb",
    "tier": 2,
    "tier_label": "secondary",
@@ -359,6 +633,22 @@
    "tickers": [],
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "eb4f84bf4af6f6fc9450b379afb6f6ae12de5952",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by BITMINE IMMERSION TECHNOLOGIES, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226045035/form8-k.htm",
+   "timestamp": "2026-09-30T08:45:47-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-09-30 · 8-K",
    "disclosure_lag_label": null
   },
   {
@@ -421,10 +711,11 @@
    "url": "https://finance.yahoo.com/markets/stocks/articles/know-beyond-why-ge-vernova-120005281.html",
    "timestamp": "2026-09-30T08:00:05-04:00",
    "tickers": [
-    "GEV"
+    "GEV",
+    "GE"
    ],
    "topics": [],
-   "summary": "Tier 2 headline · Zacks · about GEV",
+   "summary": "Tier 2 headline · Zacks · about GEV, GE",
    "disclosure_lag_label": null
   },
   {
@@ -441,6 +732,22 @@
    ],
    "topics": [],
    "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4ce97152c7051265e0c6adafe20a8146bab30c5f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by FACTSET RESEARCH SYSTEMS INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063888/fds-20260924.htm",
+   "timestamp": "2026-09-30T07:01:06-04:00",
+   "tickers": [
+    "FDS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-09-30 · 8-K",
    "disclosure_lag_label": null
   },
   {
@@ -524,6 +831,102 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "90fbbcec64d09dc08d45b831fe836ed012bc1980",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526408019/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-29T20:27:35-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-29 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d988d1f6aa704d3bce1a7753408695490c49a66e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526408016/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-29T20:26:26-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-29 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d38adf7feb42043e1a2a38fed304cc0ad9e5ae7d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526408014/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-29T20:25:04-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-29 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "117241b6d5171d73a00761697373e67465a9ae68",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526408009/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-29T20:23:56-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-29 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cd2a03aab04b7915caef22043c0412796c76b7d2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526408007/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-29T20:22:32-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-29 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a37b9b3493f066406bdfdc63396ab01f7168d63c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526408004/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-29T20:20:42-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-29 · 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "608e96dfbaf485e2cb131a114c190b094a938355",
    "tier": 2,
    "tier_label": "secondary",
@@ -533,10 +936,11 @@
    "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-gev-gains-market-210003190.html",
    "timestamp": "2026-09-29T17:00:03-04:00",
    "tickers": [
-    "GEV"
+    "GEV",
+    "GE"
    ],
    "topics": [],
-   "summary": "Tier 2 headline · Zacks · about GEV",
+   "summary": "Tier 2 headline · Zacks · about GEV, GE",
    "disclosure_lag_label": null
   },
   {
@@ -549,10 +953,11 @@
    "url": "https://www.barrons.com/articles/ge-vernova-stock-hitachi-nuclear-energy-10815e0a?siteid=yhoof2&yptr=yahoo",
    "timestamp": "2026-09-29T16:55:00-04:00",
    "tickers": [
-    "GEV"
+    "GEV",
+    "GE"
    ],
    "topics": [],
-   "summary": "Tier 2 headline · Barrons.com · about GEV",
+   "summary": "Tier 2 headline · Barrons.com · about GEV, GE",
    "disclosure_lag_label": null
   },
   {
@@ -788,6 +1193,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "c620ba7531364088d5d6411a70653611e81f8a61",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326014647/xslF345X06/ownership.xml",
+   "timestamp": "2026-09-28T19:47:03-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "bf4aa7636b710d798710adae53cb64e9f484351a",
    "tier": 2,
    "tier_label": "secondary",
@@ -866,6 +1287,102 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "c30e61ff66ef0180ca273b4424f898342249115a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by CINCINNATI FINANCIAL CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/20286/000002028626000052/cinf-20260925.htm",
+   "timestamp": "2026-09-28T10:42:38-04:00",
+   "tickers": [
+    "CINF"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-09-28 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "92031f0ae5dda5596369767f328c0b88ae6bc699",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826007964/xslF345X06/doc4.xml",
+   "timestamp": "2026-09-28T10:26:24-04:00",
+   "tickers": [
+    "BR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-28 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0d662f8e3c3753e8507aebba5d59a21b7dafedbc",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826007962/xslF345X06/doc4.xml",
+   "timestamp": "2026-09-28T10:26:24-04:00",
+   "tickers": [
+    "BR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-28 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d5ab4199a46d8568ecfdb57287279ef19279a2c4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826007961/xslF345X06/doc4.xml",
+   "timestamp": "2026-09-28T10:26:23-04:00",
+   "tickers": [
+    "BR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-28 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "092652630a2ef87fd99ea80e4f6ab5cde93de70d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826007963/xslF345X06/doc4.xml",
+   "timestamp": "2026-09-28T10:26:23-04:00",
+   "tickers": [
+    "BR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-28 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ef0dc046a9d15423e69a9e317c8d193c0f68b637",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826007960/xslF345X06/doc4.xml",
+   "timestamp": "2026-09-28T10:26:21-04:00",
+   "tickers": [
+    "BR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-28 · 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "d34b2155decb470b653b9205d57416cf519e5306",
    "tier": 2,
    "tier_label": "secondary",
@@ -895,6 +1412,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · decrypt · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "303acfb12f5e03605e4054da157e864a9dfc77a3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by BITMINE IMMERSION TECHNOLOGIES, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226044459/form8-k.htm",
+   "timestamp": "2026-09-28T08:45:31-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-09-28 · 8-K",
    "disclosure_lag_label": null
   },
   {
@@ -946,6 +1479,54 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "0751924929e8f64aac2dd5c5c64e780b58234200",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by QUALCOMM INC/DE",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000096/xslF345X06/edgardoc.xml",
+   "timestamp": "2026-09-25T17:48:06-04:00",
+   "tickers": [
+    "QCOM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a7c9cf0c992f506b351ec1ac2516dd58a3acadb2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by SCHWAB CHARLES CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/316709/000156156326000023/xslF345X06/wk-form4_1790370888.xml",
+   "timestamp": "2026-09-25T17:14:51-04:00",
+   "tickers": [
+    "SCHW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "680d4dba74e73713c49bce091c963b59f6d07b22",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by FACTSET RESEARCH SYSTEMS INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063595/xslF345X06/wk-form4_1790368792.xml",
+   "timestamp": "2026-09-25T16:39:55-04:00",
+   "tickers": [
+    "FDS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "5a0ccfacc36b1ea631401f47416e5a1f662573a5",
    "tier": 1,
    "tier_label": "primary",
@@ -957,6 +1538,230 @@
    "tickers": [],
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Orders on Banking Applications · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f9006d54915ffb400c87b2c148f3ea2f6877ff07",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Broadcom Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1730168/000110465926110983/xslF345X06/tm2626134-1_4seq1.xml",
+   "timestamp": "2026-09-25T16:15:18-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · OWNERSHIP DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3a49ef742bad67127a2ccebc10a92da11870fa21",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063571/xslF345X06/wk-form4_1790366876.xml",
+   "timestamp": "2026-09-25T16:07:59-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "77fc09ceb741210b7537562dbe31ff49d3fd5c40",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063570/xslF345X06/wk-form4_1790366869.xml",
+   "timestamp": "2026-09-25T16:07:51-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "43801b8a3629072cd9a1e0f47181f5e191d61e80",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063569/xslF345X06/wk-form4_1790366861.xml",
+   "timestamp": "2026-09-25T16:07:44-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9d6987510318f7311e2fe8a0e6849196cc5bd9dc",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063568/xslF345X06/wk-form4_1790366852.xml",
+   "timestamp": "2026-09-25T16:07:36-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "105e428fe9ea07fd9139d066bf1b66dbac77aa48",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063567/xslF345X06/wk-form4_1790366843.xml",
+   "timestamp": "2026-09-25T16:07:26-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "47aa7b3f242ac5e895f186cf41e7967dd8675450",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063566/xslF345X06/wk-form4_1790366835.xml",
+   "timestamp": "2026-09-25T16:07:18-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8392ae66897082aead5251b12ab1ab940edf6cf1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063565/xslF345X06/wk-form4_1790366828.xml",
+   "timestamp": "2026-09-25T16:07:11-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3bd8b23b491e82864ef026100db5e9621bc646a8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063564/xslF345X06/wk-form4_1790366820.xml",
+   "timestamp": "2026-09-25T16:07:03-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f6e58735ee4692a3ef811454e4861e85f99579a7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063562/xslF345X06/wk-form4_1790366786.xml",
+   "timestamp": "2026-09-25T16:06:29-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "aeaa70bedfe4e4c3c1f70d4692e89927d0a3e2da",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063561/xslF345X06/wk-form4_1790366779.xml",
+   "timestamp": "2026-09-25T16:06:22-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a15559ffc0f2a2628624f12f989f101378001299",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by FACTSET RESEARCH SYSTEMS INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063495/fds-20260923.htm",
+   "timestamp": "2026-09-25T07:01:25-04:00",
+   "tickers": [
+    "FDS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-09-25 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bb14a4ad05a2a37ea2bebc1487433877980625c4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by FACTSET RESEARCH SYSTEMS INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063409/xslF345X06/wk-form4_1790282203.xml",
+   "timestamp": "2026-09-24T16:36:46-04:00",
+   "tickers": [
+    "FDS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-24 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "90c26806433074541989d2314dfe745dd61721b0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INCYTE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/879169/000208597026000007/xslF345X06/wk-form4_1790280388.xml",
+   "timestamp": "2026-09-24T16:06:31-04:00",
+   "tickers": [
+    "INCY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-09-24 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -1002,6 +1807,22 @@
    ],
    "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
+  },
+  {
+   "id": "8d949c41732b54740c56b5ef5ad21e6778d5a757",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Vertiv Holdings Co",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063311/vrt-20260924.htm",
+   "timestamp": "2026-09-24T06:38:08-04:00",
+   "tickers": [
+    "VRT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-09-24 · 8-K",
+   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1034,20 +1855,37 @@
    "3497859a5603e636b9b4c7cc8a941fbb59e05a7c"
   ],
   "BMNR": [
+   "eb4f84bf4af6f6fc9450b379afb6f6ae12de5952",
    "973ff1a4124a816614038a100a24ba0bd868353f",
    "01d241e7576a5cad02629f973dfc223dc43f9fc3",
    "bf4aa7636b710d798710adae53cb64e9f484351a",
-   "94610716f157ac4b5150b4fb6bd8d7b1e99e9234",
-   "d34b2155decb470b653b9205d57416cf519e5306"
+   "94610716f157ac4b5150b4fb6bd8d7b1e99e9234"
   ]
  },
  "last24h": [
+  "7dd4b2c594c0a209638105896744a0840379890c",
+  "0742e4f2f8b38ffc310a4f1323d6c1f8487c96b9",
+  "5ad2984d4edc4494b94d2ee87794990dbaaebf5f",
+  "671cf6312e0d2c949ce0a5decaaa91504949e9a5",
+  "1bcee7ed45e125457ddc0a92df535467f585c668",
+  "d72ea504580466b38998b048d3bf894d4263fec3",
   "5b13dd92b3e8254d991f6ba919e490e3656f4edc",
+  "9fbd5bcb11ca9af74863fec8ee0db7209ff0f33e",
+  "67f6708aa40f73719ce9db1e65ae2fcb96d61dfa",
+  "6f10aea73bca7dc493d2d75c3aa83c3221b1a748",
+  "3cd30cb8eab68062ff42e98f5e0fb7ccf31fba6d",
+  "af39ec1e79dbdc37c552c1ac9111b9a9fa2eea6d",
+  "554ec3034d9cc375ceba2d15f6e86a230d72c0f4",
+  "b803f5abe70f84baf4ff6c2203a5eb8c83a8cb5a",
+  "2410987401c4dc3456e85e58d147e57a67731dcb",
+  "742014f4ce9cfd233f26e845e5f0084b53092bc4",
   "975ec4f2519a98482fd8462204820da26b6cbce9",
+  "eb4f84bf4af6f6fc9450b379afb6f6ae12de5952",
   "7f355e1357bbe552d08a0e2dbf4eca8d2028f8c9",
   "b6bc6a096eb423eb62c959590153d591b1304a9f",
   "5b834063e909716a40c5e7be83baa81be47507e8",
   "83c5fa3692ef8fc85e2d75fcb8e026e492df025a",
+  "4ce97152c7051265e0c6adafe20a8146bab30c5f",
   "04680932e761ce4bb3e9f335a584f70121944102",
   "c9ea7169cdca70f27aa560e1309b87b6143c869e",
   "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
@@ -1055,6 +1893,7 @@
   "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
   "fea9a4b6bfb1358de0627932c86bdda03e88a486",
   "3208241e531ffc00aa3f5f5d73b07a040ecb13a5",
+  "6789c07456fb8387f32dc93692bf7f698eabc979",
   "3497859a5603e636b9b4c7cc8a941fbb59e05a7c",
   "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
   "cf2da6280da6d2d1e0a4b01639e95b8cb1c5471e",
@@ -1062,6 +1901,7 @@
   "13611b09d0b63dfc5a17a1c633a96ddf3a2b3ded",
   "98948837bb9a86625c189a9ff1f3ef8a812b179b",
   "a14d4baadfe04dbc00e8bc9d7338a8858cb78cc3",
+  "6447dba1b2e5a4501ddcae265a667c0956e61859",
   "214bbfabe8da23aca998619c432c6a669bade7eb",
   "762ca07d3d4885c2ee4654dbcb022c40804f41f0",
   "115b15ad70ffc721f00760c3118c1b485f3d9605",

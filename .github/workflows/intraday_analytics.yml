@@ -50,6 +50,10 @@ jobs:
         # No FRED key: the bonds states read the committed FRED store; only the equity/sleeve
         # tape is fetched. A failure of any step keeps the last good served file.
         continue-on-error: true
+        env:
+          # 1-Oct-2026: the SEC's declared contact, so the two-hourly news window keeps the EDGAR filings
+          # the nightly found (without it the source is skipped and its items drop out between nightlies)
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
         run: |
           python scripts/compute_book.py --intraday
           python scripts/bonds/build_sleeve_metrics.py --intraday
