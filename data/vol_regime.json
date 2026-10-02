@@ -1,9 +1,9 @@
 {
-  "updated": "2026-10-01T04:17:08.934566",
-  "as_of": "2026-09-30",
-  "session_date": "2026-09-30",
+  "updated": "2026-10-02T10:09:20.961341",
+  "as_of": "2026-10-01",
+  "session_date": "2026-10-01",
   "cadence": "daily",
-  "tradable_at": "2026-10-01",
+  "tradable_at": "2026-10-02",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -316,6 +316,12 @@
       "state": "contango",
       "spread": -2.03,
       "source": "cboe"
+    },
+    {
+      "d": "2026-10-01",
+      "state": "contango",
+      "spread": -2.19,
+      "source": "cboe"
     }
   ],
   "backfill_note": "2026-07-20 onward recomputed from the repaired canonical closes (Cboe official history overlaid on vol_indicators); source recorded per day",
@@ -336,10 +342,10 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 3,
-  "spread": -2.03,
-  "delta_spread": 0.02,
-  "sigma_threshold": 0.501,
+  "state_age": 4,
+  "spread": -2.19,
+  "delta_spread": -0.16,
+  "sigma_threshold": 0.487,
   "trigger_fired": false,
   "entry": {
     "current_entry_dspread": 0.9,
@@ -407,39 +413,34 @@
     }
   },
   "curve": {
-    "spot_vix": 16.34,
-    "vix1d": 12.2,
-    "vix3m": 18.37,
-    "spread_spot_3m": -2.03,
+    "spot_vix": 16.39,
+    "vix1d": 13.85,
+    "vix3m": 18.58,
+    "spread_spot_3m": -2.19,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-10-01",
+    "date": "2026-10-02",
     "types": [
-      "CLAIMS",
-      "ISM_MFG"
+      "NFP"
     ],
     "sessions_away": 1
   },
   "event_today": [
-    "EARNINGS",
-    "EARNINGS",
-    "GDP",
-    "PCE"
+    "CLAIMS",
+    "ISM_MFG"
   ],
   "conditioning": {
     "event_flag": true,
     "event_types": [
-      "EARNINGS",
-      "EARNINGS",
-      "GDP",
-      "PCE"
+      "CLAIMS",
+      "ISM_MFG"
     ],
-    "delta_2y_bps": 0.8,
+    "delta_2y_bps": -7.3,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
-    "front_end_repriced": false,
-    "held_close_proxy": 0.59,
+    "front_end_repriced": true,
+    "held_close_proxy": 0.6,
     "held_close": false
   },
   "attribution": {
@@ -447,10 +448,10 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": 0.003,
+      "smh_1d_return": 0.014,
       "breadth_delta_pp": 0.0,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.338,
+      "breadth_delta_sigma_1y_pp": 4.335,
       "breadth_z": 0.0,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
@@ -463,7 +464,7 @@
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-09-30",
+      "today_excluded_from_metrics": "2026-10-01",
       "all_triggers_reversion": {
         "n": 798,
         "n_reverted": 684,
@@ -478,30 +479,25 @@
         "small_n_caveat": null
       },
       "event_day_only_reversion": {
-        "n": 20,
-        "n_reverted": 17,
-        "hit_rate": 0.85,
+        "n": 23,
+        "n_reverted": 20,
+        "hit_rate": 0.8695652173913043,
         "wilson_95ci": [
-          0.6395767041130426,
-          0.9476322080405041
+          0.678721020269818,
+          0.954624234856553
         ],
         "horizon_sessions": 10,
         "threshold_sigma": 0.5,
         "small_n": true,
         "small_n_caveat": "n < 30 \u2014 hit rate and CI are indicative only"
       },
-      "event_day_caveat": "event-day n = 20 \u2192 95% CI 63\u201394%; not yet evidence",
+      "event_day_caveat": "event-day n = 23 \u2192 95% CI 67\u201395%; not yet evidence",
       "note": "`all_triggers_reversion` measures all fired triggers with a fully elapsed N-session horizon \u2014 the right denominator for the spread-spike reversion question. `event_day_only_reversion` is the event-day subsample; by construction it has handful-per-year n."
     },
     "no_lookahead_passed": true,
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-09-30",
-      "state": "contango",
-      "spread": -2.49
-    },
     {
       "d": "2025-10-01",
       "state": "contango",
@@ -1756,6 +1752,11 @@
       "d": "2026-09-30",
       "state": "contango",
       "spread": -2.03
+    },
+    {
+      "d": "2026-10-01",
+      "state": "contango",
+      "spread": -2.19
     }
   ],
   "past_spikes": [
@@ -1781,7 +1782,7 @@
       "d": "2026-05-11",
       "delta_spread": 0.45,
       "state": "contango",
-      "event": null
+      "event": "TREASURY"
     },
     {
       "d": "2026-05-15",

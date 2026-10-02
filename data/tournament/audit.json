@@ -1,35 +1,39 @@
 {
  "cadence": "daily",
- "session_date": "2026-09-30",
- "as_of": "2026-09-30",
- "computed_at": "2026-10-01T00:20:33-04:00",
- "rows": 92,
+ "session_date": "2026-10-01",
+ "as_of": "2026-10-01",
+ "computed_at": "2026-10-02T06:13:24-04:00",
+ "rows": 93,
  "first": "2026-05-20",
- "last": "2026-09-30",
+ "last": "2026-10-01",
  "reconstitutions": {
   "1_cap_pres": [
    "2026-06-01",
    "2026-07-01",
    "2026-08-03",
-   "2026-09-01"
+   "2026-09-01",
+   "2026-10-01"
   ],
   "2_balanced": [
    "2026-06-01",
    "2026-07-01",
    "2026-08-03",
-   "2026-09-01"
+   "2026-09-01",
+   "2026-10-01"
   ],
   "3_aggressive": [
    "2026-06-01",
    "2026-07-01",
    "2026-08-03",
-   "2026-09-01"
+   "2026-09-01",
+   "2026-10-01"
   ],
   "4_tactical": [
    "2026-06-01",
    "2026-07-01",
    "2026-08-03",
-   "2026-09-01"
+   "2026-09-01",
+   "2026-10-01"
   ]
  },
  "intra_month_trades": {
@@ -46,11 +50,11 @@
  },
  "cash_gap": {
   "1_cap_pres": {
-   "mean_abs_points": 2.7,
+   "mean_abs_points": 2.6,
    "max_abs_points": 11.1,
    "max_on": "2026-06-10",
    "sessions_over_5_points": 14,
-   "n_sessions": 92,
+   "n_sessions": 93,
    "on_2026-06-03": 7.3,
    "on_2026-07-29": 9.4
   },
@@ -59,7 +63,7 @@
    "max_abs_points": 9.5,
    "max_on": "2026-06-10",
    "sessions_over_5_points": 10,
-   "n_sessions": 92,
+   "n_sessions": 93,
    "on_2026-06-03": 6.8,
    "on_2026-07-29": 8.7
   },
@@ -68,16 +72,16 @@
    "max_abs_points": 5.3,
    "max_on": "2026-06-10",
    "sessions_over_5_points": 1,
-   "n_sessions": 92,
+   "n_sessions": 93,
    "on_2026-06-03": 4.5,
    "on_2026-07-29": 4.3
   },
   "4_tactical": {
-   "mean_abs_points": 3.4,
+   "mean_abs_points": 3.3,
    "max_abs_points": 14.2,
    "max_on": "2026-06-10",
    "sessions_over_5_points": 21,
-   "n_sessions": 92,
+   "n_sessions": 93,
    "on_2026-06-03": 11.0,
    "on_2026-07-29": 9.2
   },
@@ -267,17 +271,7 @@
   ],
   "corridor_in_force_from": "2026-09-30 (rows from this date carry the corridor label; earlier labels are as published)"
  },
- "share_classes_held_together": [
-  {
-   "tier": "2_balanced",
-   "issuer": "Alphabet",
-   "classes": [
-    "GOOG",
-    "GOOGL"
-   ],
-   "combined_weight_pct": 7.0
-  }
- ],
+ "share_classes_held_together": [],
  "retention": {
   "1_cap_pres": [
    {
@@ -303,6 +297,12 @@
     "kept": 3,
     "of": 12,
     "retention": 0.25
+   },
+   {
+    "date": "2026-10-01",
+    "kept": 2,
+    "of": 12,
+    "retention": 0.167
    }
   ],
   "2_balanced": [
@@ -329,6 +329,12 @@
     "kept": 7,
     "of": 20,
     "retention": 0.35
+   },
+   {
+    "date": "2026-10-01",
+    "kept": 3,
+    "of": 20,
+    "retention": 0.15
    }
   ],
   "3_aggressive": [
@@ -355,6 +361,12 @@
     "kept": 9,
     "of": 15,
     "retention": 0.6
+   },
+   {
+    "date": "2026-10-01",
+    "kept": 6,
+    "of": 15,
+    "retention": 0.4
    }
   ],
   "4_tactical": [
@@ -381,34 +393,41 @@
     "kept": 4,
     "of": 8,
     "retention": 0.5
+   },
+   {
+    "date": "2026-10-01",
+    "kept": 4,
+    "of": 8,
+    "retention": 0.5
    }
   ]
  },
  "spells": {
-  "n_spells": 181,
+  "n_spells": 221,
   "convention": "entry at the tier's position price on the first held row; exit at the position price on the last held row (open spells: the last row); SPY from the rows' benchmark prices",
   "per_tier": {
    "1_cap_pres": {
-    "n_spells": 44,
+    "n_spells": 54,
     "beat_spy": 21,
-    "share_beat_spy": 0.477,
+    "share_beat_spy": 0.389,
     "wilson_95": [
-     0.3375,
-     0.6206
+     0.2704,
+     0.5221
     ],
-    "mean_excess": 0.0029,
-    "effective_sample_decision_dates": 5,
+    "mean_excess": 0.0023,
+    "effective_sample_decision_dates": 6,
     "decision_dates": [
      "2026-05-20",
      "2026-06-01",
      "2026-07-01",
      "2026-08-03",
-     "2026-09-01"
+     "2026-09-01",
+     "2026-10-01"
     ],
     "store_variant": {
-     "n": 44,
-     "share_beat_spy": 0.523,
-     "mean_excess": 0.0062
+     "n": 54,
+     "share_beat_spy": 0.444,
+     "mean_excess": 0.0057
     },
     "best_spells": [
      {
@@ -429,26 +448,27 @@
     ]
    },
    "2_balanced": {
-    "n_spells": 71,
+    "n_spells": 88,
     "beat_spy": 41,
-    "share_beat_spy": 0.577,
+    "share_beat_spy": 0.466,
     "wilson_95": [
-     0.4615,
-     0.6855
+     0.3653,
+     0.5694
     ],
-    "mean_excess": 0.0234,
-    "effective_sample_decision_dates": 5,
+    "mean_excess": 0.0189,
+    "effective_sample_decision_dates": 6,
     "decision_dates": [
      "2026-05-20",
      "2026-06-01",
      "2026-07-01",
      "2026-08-03",
-     "2026-09-01"
+     "2026-09-01",
+     "2026-10-01"
     ],
     "store_variant": {
-     "n": 71,
-     "share_beat_spy": 0.592,
-     "mean_excess": 0.0183
+     "n": 88,
+     "share_beat_spy": 0.5,
+     "mean_excess": 0.0144
     },
     "best_spells": [
      {
@@ -469,37 +489,38 @@
     ]
    },
    "3_aggressive": {
-    "n_spells": 42,
+    "n_spells": 51,
     "beat_spy": 22,
-    "share_beat_spy": 0.524,
+    "share_beat_spy": 0.431,
     "wilson_95": [
-     0.3772,
-     0.6664
+     0.305,
+     0.5673
     ],
-    "mean_excess": 0.0166,
-    "effective_sample_decision_dates": 5,
+    "mean_excess": 0.017,
+    "effective_sample_decision_dates": 6,
     "decision_dates": [
      "2026-05-20",
      "2026-06-01",
      "2026-07-01",
      "2026-08-03",
-     "2026-09-01"
+     "2026-09-01",
+     "2026-10-01"
     ],
     "store_variant": {
-     "n": 42,
-     "share_beat_spy": 0.524,
-     "mean_excess": 0.0084
+     "n": 51,
+     "share_beat_spy": 0.431,
+     "mean_excess": 0.009
     },
     "best_spells": [
      {
       "ticker": "MU",
       "entry": "2026-05-20",
-      "excess_vs_spy": 0.4262
+      "excess_vs_spy": 0.4685
      },
      {
       "ticker": "SNDK",
       "entry": "2026-05-20",
-      "excess_vs_spy": 0.2206
+      "excess_vs_spy": 0.2531
      },
      {
       "ticker": "ARM",
@@ -509,37 +530,38 @@
     ]
    },
    "4_tactical": {
-    "n_spells": 24,
+    "n_spells": 28,
     "beat_spy": 14,
-    "share_beat_spy": 0.583,
+    "share_beat_spy": 0.5,
     "wilson_95": [
-     0.3883,
-     0.7553
+     0.3263,
+     0.6737
     ],
-    "mean_excess": 0.035,
-    "effective_sample_decision_dates": 5,
+    "mean_excess": 0.0348,
+    "effective_sample_decision_dates": 6,
     "decision_dates": [
      "2026-05-20",
      "2026-06-01",
      "2026-07-01",
      "2026-08-03",
-     "2026-09-01"
+     "2026-09-01",
+     "2026-10-01"
     ],
     "store_variant": {
-     "n": 24,
-     "share_beat_spy": 0.542,
-     "mean_excess": 0.0257
+     "n": 28,
+     "share_beat_spy": 0.464,
+     "mean_excess": 0.0258
     },
     "best_spells": [
      {
       "ticker": "MU",
       "entry": "2026-05-20",
-      "excess_vs_spy": 0.4262
+      "excess_vs_spy": 0.4685
      },
      {
       "ticker": "SNDK",
       "entry": "2026-05-20",
-      "excess_vs_spy": 0.2206
+      "excess_vs_spy": 0.2531
      },
      {
       "ticker": "APA",
@@ -552,13 +574,13 @@
   "spells": [
    {
     "tier": "1_cap_pres",
-    "ticker": "BSX",
+    "ticker": "BRO",
     "entry": "2026-05-20",
     "exit": "2026-06-01",
     "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": -0.1681,
-    "excess_vs_spy_store": -0.1767
+    "excess_vs_spy": -0.0411,
+    "excess_vs_spy_store": -0.0312
    },
    {
     "tier": "1_cap_pres",
@@ -572,26 +594,6 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "BRO",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": -0.0411,
-    "excess_vs_spy_store": -0.0312
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "MCO",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": -0.0003,
-    "excess_vs_spy_store": 0.0215
-   },
-   {
-    "tier": "1_cap_pres",
     "ticker": "MSCI",
     "entry": "2026-05-20",
     "exit": "2026-06-01",
@@ -599,16 +601,6 @@
     "status": "closed",
     "excess_vs_spy": 0.0644,
     "excess_vs_spy_store": 0.083
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "ALLE",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": -0.0142,
-    "excess_vs_spy_store": -0.016
    },
    {
     "tier": "1_cap_pres",
@@ -622,53 +614,33 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "PODD",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.0433,
-    "excess_vs_spy_store": 0.093
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "V",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.0785,
-    "excess_vs_spy_store": 0.102
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "MA",
+    "ticker": "MCO",
     "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": 0.0238,
-    "excess_vs_spy_store": 0.0403
+    "excess_vs_spy": -0.0003,
+    "excess_vs_spy_store": 0.0215
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "AMP",
+    "ticker": "ALLE",
     "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": -0.0042,
-    "excess_vs_spy_store": 0.0403
+    "excess_vs_spy": -0.0142,
+    "excess_vs_spy_store": -0.016
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "PYPL",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
+    "ticker": "BSX",
+    "entry": "2026-05-20",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": -0.029,
-    "excess_vs_spy_store": -0.0105
+    "excess_vs_spy": -0.1681,
+    "excess_vs_spy_store": -0.1767
    },
    {
     "tier": "1_cap_pres",
@@ -692,43 +664,53 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "BSX",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
+    "ticker": "V",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": 0.0835,
-    "excess_vs_spy_store": 0.1087
+    "excess_vs_spy": 0.0785,
+    "excess_vs_spy_store": 0.102
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "IDXX",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
+    "ticker": "AMP",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": 0.0383,
+    "excess_vs_spy": -0.0042,
     "excess_vs_spy_store": 0.0403
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "ZTS",
-    "entry": "2026-05-20",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
+    "ticker": "PODD",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": -0.0382,
-    "excess_vs_spy_store": -0.0575
+    "excess_vs_spy": 0.0433,
+    "excess_vs_spy_store": 0.093
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "PEP",
-    "entry": "2026-06-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
+    "ticker": "MA",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": 0.0013,
-    "excess_vs_spy_store": -0.0148
+    "excess_vs_spy": 0.0238,
+    "excess_vs_spy_store": 0.0403
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "PYPL",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": -0.029,
+    "excess_vs_spy_store": -0.0105
    },
    {
     "tier": "1_cap_pres",
@@ -742,16 +724,6 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "PFE",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0456,
-    "excess_vs_spy_store": 0.0322
-   },
-   {
-    "tier": "1_cap_pres",
     "ticker": "DXCM",
     "entry": "2026-07-01",
     "exit": "2026-08-03",
@@ -759,6 +731,26 @@
     "status": "closed",
     "excess_vs_spy": 0.2102,
     "excess_vs_spy_store": 0.252
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "PEP",
+    "entry": "2026-06-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0013,
+    "excess_vs_spy_store": -0.0148
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "ZTS",
+    "entry": "2026-05-20",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0382,
+    "excess_vs_spy_store": -0.0575
    },
    {
     "tier": "1_cap_pres",
@@ -772,6 +764,26 @@
    },
    {
     "tier": "1_cap_pres",
+    "ticker": "IDXX",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0383,
+    "excess_vs_spy_store": 0.0403
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "BSX",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0835,
+    "excess_vs_spy_store": 0.1087
+   },
+   {
+    "tier": "1_cap_pres",
     "ticker": "NDAQ",
     "entry": "2026-06-01",
     "exit": "2026-08-03",
@@ -782,43 +794,13 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "SPGI",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0347,
-    "excess_vs_spy_store": 0.0521
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "EW",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0093,
-    "excess_vs_spy_store": 0.0162
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "BRO",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0069,
-    "excess_vs_spy_store": -0.0017
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "MSCI",
+    "ticker": "PFE",
     "entry": "2026-07-01",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": -0.0481,
-    "excess_vs_spy_store": -0.054
+    "excess_vs_spy": 0.0456,
+    "excess_vs_spy_store": 0.0322
    },
    {
     "tier": "1_cap_pres",
@@ -832,23 +814,43 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "ALGN",
+    "ticker": "SPGI",
     "entry": "2026-08-03",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": -0.0882,
-    "excess_vs_spy_store": -0.1091
+    "excess_vs_spy": 0.0347,
+    "excess_vs_spy_store": 0.0521
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "VRT",
+    "ticker": "BRO",
     "entry": "2026-08-03",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": -0.0288,
-    "excess_vs_spy_store": -0.0323
+    "excess_vs_spy": -0.0069,
+    "excess_vs_spy_store": -0.0017
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "EW",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0093,
+    "excess_vs_spy_store": 0.0162
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "MSCI",
+    "entry": "2026-07-01",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0481,
+    "excess_vs_spy_store": -0.054
    },
    {
     "tier": "1_cap_pres",
@@ -862,6 +864,26 @@
    },
    {
     "tier": "1_cap_pres",
+    "ticker": "VRT",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0288,
+    "excess_vs_spy_store": -0.0323
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "ALGN",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0882,
+    "excess_vs_spy_store": -0.1091
+   },
+   {
+    "tier": "1_cap_pres",
     "ticker": "MCO",
     "entry": "2026-08-03",
     "exit": "2026-09-01",
@@ -872,143 +894,233 @@
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "LLY",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": 0.0253,
-    "excess_vs_spy_store": 0.0228
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "VST",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1193,
-    "excess_vs_spy_store": -0.1218
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "ISRG",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": 0.0766,
-    "excess_vs_spy_store": 0.0741
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "AFL",
+    "ticker": "AON",
     "entry": "2026-09-01",
-    "exit": null,
+    "exit": "2026-10-01",
     "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.0377,
-    "excess_vs_spy_store": -0.0401
+    "status": "closed",
+    "excess_vs_spy": -0.1529,
+    "excess_vs_spy_store": -0.1597
    },
    {
     "tier": "1_cap_pres",
     "ticker": "UAL",
     "entry": "2026-09-01",
-    "exit": null,
+    "exit": "2026-10-01",
     "last_held": "2026-09-30",
-    "status": "open",
+    "status": "closed",
     "excess_vs_spy": 0.0593,
-    "excess_vs_spy_store": 0.0568
+    "excess_vs_spy_store": 0.0629
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "AFL",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0377,
+    "excess_vs_spy_store": -0.0471
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "ISRG",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0766,
+    "excess_vs_spy_store": 0.058
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "SNA",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0479,
+    "excess_vs_spy_store": -0.0408
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "VST",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1193,
+    "excess_vs_spy_store": -0.1147
    },
    {
     "tier": "1_cap_pres",
     "ticker": "POWL",
     "entry": "2026-09-01",
-    "exit": null,
+    "exit": "2026-10-01",
     "last_held": "2026-09-30",
-    "status": "open",
+    "status": "closed",
     "excess_vs_spy": 0.0705,
-    "excess_vs_spy_store": 0.068
-   },
-   {
-    "tier": "1_cap_pres",
-    "ticker": "IDXX",
-    "entry": "2026-09-01",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.0433,
-    "excess_vs_spy_store": -0.0457
+    "excess_vs_spy_store": 0.1018
    },
    {
     "tier": "1_cap_pres",
     "ticker": "TROW",
     "entry": "2026-09-01",
-    "exit": null,
+    "exit": "2026-10-01",
     "last_held": "2026-09-30",
-    "status": "open",
+    "status": "closed",
     "excess_vs_spy": -0.0463,
-    "excess_vs_spy_store": -0.0488
+    "excess_vs_spy_store": -0.0343
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "PYPL",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0014,
+    "excess_vs_spy_store": 0.0072
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "IDXX",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0433,
+    "excess_vs_spy_store": -0.0557
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "LLY",
+    "entry": "2026-08-03",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0171,
+    "excess_vs_spy_store": 0.0146
    },
    {
     "tier": "1_cap_pres",
     "ticker": "AMP",
     "entry": "2026-09-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0938,
-    "excess_vs_spy_store": -0.0963
+    "excess_vs_spy": -0.091,
+    "excess_vs_spy_store": -0.0935
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "PYPL",
-    "entry": "2026-09-01",
+    "ticker": "VEEV",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0014,
-    "excess_vs_spy_store": -0.0011
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "AON",
-    "entry": "2026-09-01",
+    "ticker": "ABBV",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1529,
-    "excess_vs_spy_store": -0.1554
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "1_cap_pres",
-    "ticker": "SNA",
-    "entry": "2026-09-01",
+    "ticker": "FDS",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0479,
-    "excess_vs_spy_store": -0.0504
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
-    "tier": "2_balanced",
+    "tier": "1_cap_pres",
+    "ticker": "DXCM",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "V",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "INCY",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "AMGN",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "MRK",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "1_cap_pres",
+    "ticker": "NDAQ",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "1_cap_pres",
     "ticker": "MA",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": -0.0287,
-    "excess_vs_spy_store": -0.0289
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "GRMN",
+    "ticker": "EQT",
     "entry": "2026-05-20",
     "exit": "2026-06-01",
     "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": -0.0355,
-    "excess_vs_spy_store": -0.0261
+    "excess_vs_spy": -0.0707,
+    "excess_vs_spy_store": -0.0678
    },
    {
     "tier": "2_balanced",
@@ -1032,6 +1144,16 @@
    },
    {
     "tier": "2_balanced",
+    "ticker": "LULU",
+    "entry": "2026-05-20",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
+    "status": "closed",
+    "excess_vs_spy": 0.0273,
+    "excess_vs_spy_store": 0.0318
+   },
+   {
+    "tier": "2_balanced",
     "ticker": "MSCI",
     "entry": "2026-05-20",
     "exit": "2026-06-01",
@@ -1039,16 +1161,6 @@
     "status": "closed",
     "excess_vs_spy": 0.0644,
     "excess_vs_spy_store": 0.083
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "EQT",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": -0.0707,
-    "excess_vs_spy_store": -0.0678
    },
    {
     "tier": "2_balanced",
@@ -1072,16 +1184,6 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "LULU",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": 0.0273,
-    "excess_vs_spy_store": 0.0318
-   },
-   {
-    "tier": "2_balanced",
     "ticker": "DECK",
     "entry": "2026-05-20",
     "exit": "2026-06-01",
@@ -1092,93 +1194,23 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "BKNG",
+    "ticker": "GRMN",
     "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": 0.1282,
-    "excess_vs_spy_store": 0.155
+    "excess_vs_spy": -0.0355,
+    "excess_vs_spy_store": -0.0261
    },
    {
     "tier": "2_balanced",
-    "ticker": "SCHW",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.0553,
-    "excess_vs_spy_store": 0.0936
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "INTU",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": -0.2467,
-    "excess_vs_spy_store": -0.2307
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "CMCSA",
+    "ticker": "MA",
     "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
     "status": "closed",
-    "excess_vs_spy": -0.0207,
-    "excess_vs_spy_store": -0.0549
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "AMP",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.0415,
-    "excess_vs_spy_store": 0.0871
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "TPL",
-    "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.0798,
-    "excess_vs_spy_store": 0.0224
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "ANET",
-    "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.2017,
-    "excess_vs_spy_store": 0.1773
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "VEEV",
-    "entry": "2026-06-01",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": -0.0438,
-    "excess_vs_spy_store": -0.0092
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "TPR",
-    "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.0705,
-    "excess_vs_spy_store": 0.0517
+    "excess_vs_spy": -0.0287,
+    "excess_vs_spy_store": -0.0289
    },
    {
     "tier": "2_balanced",
@@ -1192,6 +1224,16 @@
    },
    {
     "tier": "2_balanced",
+    "ticker": "VEEV",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0438,
+    "excess_vs_spy_store": -0.0092
+   },
+   {
+    "tier": "2_balanced",
     "ticker": "RJF",
     "entry": "2026-06-01",
     "exit": "2026-07-01",
@@ -1199,6 +1241,76 @@
     "status": "closed",
     "excess_vs_spy": 0.0581,
     "excess_vs_spy_store": 0.0991
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "AMP",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0415,
+    "excess_vs_spy_store": 0.0871
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "CMCSA",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0207,
+    "excess_vs_spy_store": -0.0549
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "SCHW",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0553,
+    "excess_vs_spy_store": 0.0936
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "BKNG",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.1282,
+    "excess_vs_spy_store": 0.155
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "INTU",
+    "entry": "2026-06-01",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": -0.2467,
+    "excess_vs_spy_store": -0.2307
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "ANET",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.2017,
+    "excess_vs_spy_store": 0.1773
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "TPR",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0705,
+    "excess_vs_spy_store": 0.0517
    },
    {
     "tier": "2_balanced",
@@ -1212,13 +1324,53 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "APA",
+    "ticker": "TPL",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0798,
+    "excess_vs_spy_store": 0.0224
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "ICE",
+    "entry": "2026-06-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0671,
+    "excess_vs_spy_store": 0.0458
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "EQT",
     "entry": "2026-07-01",
     "exit": "2026-08-03",
     "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.1693,
-    "excess_vs_spy_store": 0.1409
+    "excess_vs_spy": 0.0137,
+    "excess_vs_spy_store": 0.0046
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "ORCL",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0903,
+    "excess_vs_spy_store": -0.0205
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "MSFT",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.2076,
+    "excess_vs_spy_store": 0.253
    },
    {
     "tier": "2_balanced",
@@ -1232,13 +1384,13 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "MSFT",
-    "entry": "2026-07-01",
+    "ticker": "ADBE",
+    "entry": "2026-06-01",
     "exit": "2026-08-03",
     "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.2076,
-    "excess_vs_spy_store": 0.253
+    "excess_vs_spy": -0.071,
+    "excess_vs_spy_store": -0.0842
    },
    {
     "tier": "2_balanced",
@@ -1262,66 +1414,6 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "EOG",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.1546,
-    "excess_vs_spy_store": 0.1169
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "ICE",
-    "entry": "2026-06-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0671,
-    "excess_vs_spy_store": 0.0458
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "ORCL",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0903,
-    "excess_vs_spy_store": -0.0205
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "GEN",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0496,
-    "excess_vs_spy_store": 0.0629
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "FISV",
-    "entry": "2026-05-20",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0516,
-    "excess_vs_spy_store": -0.0613
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "CME",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.1576,
-    "excess_vs_spy_store": 0.1363
-   },
-   {
-    "tier": "2_balanced",
     "ticker": "LVS",
     "entry": "2026-05-20",
     "exit": "2026-08-03",
@@ -1332,23 +1424,13 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "ADSK",
+    "ticker": "APA",
     "entry": "2026-07-01",
     "exit": "2026-08-03",
     "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.1707,
-    "excess_vs_spy_store": 0.159
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "EQT",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0137,
-    "excess_vs_spy_store": 0.0046
+    "excess_vs_spy": 0.1693,
+    "excess_vs_spy_store": 0.1409
    },
    {
     "tier": "2_balanced",
@@ -1362,73 +1444,63 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "ADBE",
-    "entry": "2026-06-01",
+    "ticker": "GEN",
+    "entry": "2026-07-01",
     "exit": "2026-08-03",
     "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": -0.071,
-    "excess_vs_spy_store": -0.0842
+    "excess_vs_spy": 0.0496,
+    "excess_vs_spy_store": 0.0629
    },
    {
     "tier": "2_balanced",
-    "ticker": "CRDO",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
+    "ticker": "ADSK",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.0235,
-    "excess_vs_spy_store": -0.0591
+    "excess_vs_spy": 0.1707,
+    "excess_vs_spy_store": 0.159
    },
    {
     "tier": "2_balanced",
-    "ticker": "NEM",
+    "ticker": "FISV",
     "entry": "2026-05-20",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.139,
-    "excess_vs_spy_store": 0.1116
+    "excess_vs_spy": -0.0516,
+    "excess_vs_spy_store": -0.0613
    },
    {
     "tier": "2_balanced",
-    "ticker": "CDNS",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
+    "ticker": "EOG",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": -0.0046,
-    "excess_vs_spy_store": -0.0742
+    "excess_vs_spy": 0.1546,
+    "excess_vs_spy_store": 0.1169
    },
    {
     "tier": "2_balanced",
-    "ticker": "EW",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
+    "ticker": "CME",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.0093,
-    "excess_vs_spy_store": 0.0162
+    "excess_vs_spy": 0.1576,
+    "excess_vs_spy_store": 0.1363
    },
    {
     "tier": "2_balanced",
-    "ticker": "TPL",
-    "entry": "2026-08-03",
+    "ticker": "PLTR",
+    "entry": "2026-06-01",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": -0.0907,
-    "excess_vs_spy_store": -0.0946
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "VRT",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0288,
-    "excess_vs_spy_store": -0.0323
+    "excess_vs_spy": 0.1489,
+    "excess_vs_spy_store": 0.1131
    },
    {
     "tier": "2_balanced",
@@ -1452,23 +1524,43 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "HOOD",
+    "ticker": "MS",
     "entry": "2026-08-03",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": 0.1478,
-    "excess_vs_spy_store": 0.1404
+    "excess_vs_spy": -0.0025,
+    "excess_vs_spy_store": -0.0063
    },
    {
     "tier": "2_balanced",
-    "ticker": "PLTR",
-    "entry": "2026-06-01",
+    "ticker": "EW",
+    "entry": "2026-08-03",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": 0.1489,
-    "excess_vs_spy_store": 0.1131
+    "excess_vs_spy": 0.0093,
+    "excess_vs_spy_store": 0.0162
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "CRDO",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0235,
+    "excess_vs_spy_store": -0.0591
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "CDNS",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0046,
+    "excess_vs_spy_store": -0.0742
    },
    {
     "tier": "2_balanced",
@@ -1482,13 +1574,13 @@
    },
    {
     "tier": "2_balanced",
-    "ticker": "MS",
+    "ticker": "VRT",
     "entry": "2026-08-03",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": -0.0025,
-    "excess_vs_spy_store": -0.0063
+    "excess_vs_spy": -0.0288,
+    "excess_vs_spy_store": -0.0323
    },
    {
     "tier": "2_balanced",
@@ -1502,203 +1594,413 @@
    },
    {
     "tier": "2_balanced",
+    "ticker": "NEM",
+    "entry": "2026-05-20",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": 0.139,
+    "excess_vs_spy_store": 0.1116
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "HOOD",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": 0.1478,
+    "excess_vs_spy_store": 0.1404
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "TPL",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0907,
+    "excess_vs_spy_store": -0.0946
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "RCL",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0005,
+    "excess_vs_spy_store": 0.0108
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "TXN",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.1045,
+    "excess_vs_spy_store": 0.105
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "APP",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.2915,
+    "excess_vs_spy_store": -0.3182
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "KLAC",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0601,
+    "excess_vs_spy_store": 0.0854
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "GOOGL",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0259,
+    "excess_vs_spy_store": 0.0042
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "GOOG",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0251,
+    "excess_vs_spy_store": 0.0033
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "MPWR",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0978,
+    "excess_vs_spy_store": 0.1047
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "LVS",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1387,
+    "excess_vs_spy_store": -0.1685
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "NXPI",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0531,
+    "excess_vs_spy_store": 0.0562
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "BKNG",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1686,
+    "excess_vs_spy_store": -0.1863
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "RL",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0407,
+    "excess_vs_spy_store": 0.0587
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "AVGO",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0511,
+    "excess_vs_spy_store": -0.0758
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "PYPL",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0014,
+    "excess_vs_spy_store": 0.0072
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "AXP",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0631,
+    "excess_vs_spy_store": -0.0736
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "TPR",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0592,
+    "excess_vs_spy_store": -0.0291
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "FISV",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1267,
+    "excess_vs_spy_store": -0.1271
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "FSLR",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.2539,
+    "excess_vs_spy_store": -0.2713
+   },
+   {
+    "tier": "2_balanced",
     "ticker": "META",
     "entry": "2026-05-20",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.1697,
-    "excess_vs_spy_store": 0.1645
+    "excess_vs_spy": 0.1691,
+    "excess_vs_spy_store": 0.1639
    },
    {
     "tier": "2_balanced",
     "ticker": "NVDA",
     "entry": "2026-07-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.1333,
-    "excess_vs_spy_store": 0.1307
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "NXPI",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": 0.0531,
-    "excess_vs_spy_store": 0.0506
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "APP",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.2915,
-    "excess_vs_spy_store": -0.294
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "KLAC",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": 0.0601,
-    "excess_vs_spy_store": 0.0576
-   },
-   {
-    "tier": "2_balanced",
-    "ticker": "FSLR",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.2539,
-    "excess_vs_spy_store": -0.2564
+    "excess_vs_spy": 0.144,
+    "excess_vs_spy_store": 0.1414
    },
    {
     "tier": "2_balanced",
     "ticker": "LLY",
     "entry": "2026-08-03",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0253,
-    "excess_vs_spy_store": 0.0228
+    "excess_vs_spy": 0.0171,
+    "excess_vs_spy_store": 0.0146
    },
    {
     "tier": "2_balanced",
-    "ticker": "BKNG",
-    "entry": "2026-09-01",
+    "ticker": "PLTR",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1686,
-    "excess_vs_spy_store": -0.1711
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "MPWR",
-    "entry": "2026-09-01",
+    "ticker": "MU",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0978,
-    "excess_vs_spy_store": 0.0953
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "GOOGL",
-    "entry": "2026-09-01",
+    "ticker": "SNDK",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0259,
-    "excess_vs_spy_store": 0.0234
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "FISV",
-    "entry": "2026-09-01",
+    "ticker": "STX",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1267,
-    "excess_vs_spy_store": -0.1292
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "PYPL",
-    "entry": "2026-09-01",
+    "ticker": "FTNT",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0014,
-    "excess_vs_spy_store": -0.0011
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "GOOG",
-    "entry": "2026-09-01",
+    "ticker": "MSFT",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0251,
-    "excess_vs_spy_store": 0.0226
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "AVGO",
-    "entry": "2026-09-01",
+    "ticker": "CRDO",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0511,
-    "excess_vs_spy_store": -0.0536
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "LVS",
-    "entry": "2026-09-01",
+    "ticker": "V",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1387,
-    "excess_vs_spy_store": -0.1411
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "AXP",
-    "entry": "2026-09-01",
+    "ticker": "CPAY",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0631,
-    "excess_vs_spy_store": -0.0656
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "RCL",
-    "entry": "2026-09-01",
+    "ticker": "INCY",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0005,
-    "excess_vs_spy_store": -0.003
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "TPR",
-    "entry": "2026-09-01",
+    "ticker": "NEM",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0592,
-    "excess_vs_spy_store": -0.0617
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "TXN",
-    "entry": "2026-09-01",
+    "ticker": "NTAP",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.1045,
-    "excess_vs_spy_store": 0.102
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "2_balanced",
-    "ticker": "RL",
-    "entry": "2026-09-01",
+    "ticker": "ALAB",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0407,
-    "excess_vs_spy_store": 0.0382
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "ANET",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "GEN",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "VEEV",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "2_balanced",
+    "ticker": "WDC",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "BMY",
+    "entry": "2026-05-20",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
+    "status": "closed",
+    "excess_vs_spy": -0.0438,
+    "excess_vs_spy_store": -0.0847
    },
    {
     "tier": "3_aggressive",
@@ -1722,6 +2024,16 @@
    },
    {
     "tier": "3_aggressive",
+    "ticker": "DECK",
+    "entry": "2026-05-20",
+    "exit": "2026-06-01",
+    "last_held": "2026-05-29",
+    "status": "closed",
+    "excess_vs_spy": 0.1384,
+    "excess_vs_spy_store": 0.1047
+   },
+   {
+    "tier": "3_aggressive",
     "ticker": "GRMN",
     "entry": "2026-05-20",
     "exit": "2026-06-01",
@@ -1729,16 +2041,6 @@
     "status": "closed",
     "excess_vs_spy": -0.0355,
     "excess_vs_spy_store": -0.0261
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "BMY",
-    "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
-    "status": "closed",
-    "excess_vs_spy": -0.0438,
-    "excess_vs_spy_store": -0.0847
    },
    {
     "tier": "3_aggressive",
@@ -1752,13 +2054,13 @@
    },
    {
     "tier": "3_aggressive",
-    "ticker": "DECK",
+    "ticker": "META",
     "entry": "2026-05-20",
-    "exit": "2026-06-01",
-    "last_held": "2026-05-29",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": 0.1384,
-    "excess_vs_spy_store": 0.1047
+    "excess_vs_spy": -0.0765,
+    "excess_vs_spy_store": 0.0043
    },
    {
     "tier": "3_aggressive",
@@ -1772,16 +2074,6 @@
    },
    {
     "tier": "3_aggressive",
-    "ticker": "ANET",
-    "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": 0.2017,
-    "excess_vs_spy_store": 0.1773
-   },
-   {
-    "tier": "3_aggressive",
     "ticker": "AVGO",
     "entry": "2026-06-01",
     "exit": "2026-07-01",
@@ -1789,6 +2081,16 @@
     "status": "closed",
     "excess_vs_spy": -0.1632,
     "excess_vs_spy_store": -0.1827
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "ANET",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
+    "status": "closed",
+    "excess_vs_spy": 0.2017,
+    "excess_vs_spy_store": 0.1773
    },
    {
     "tier": "3_aggressive",
@@ -1802,13 +2104,33 @@
    },
    {
     "tier": "3_aggressive",
-    "ticker": "META",
-    "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
+    "ticker": "ADBE",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": -0.0765,
-    "excess_vs_spy_store": 0.0043
+    "excess_vs_spy": 0.1852,
+    "excess_vs_spy_store": 0.1753
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "CPAY",
+    "entry": "2026-05-20",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.0825,
+    "excess_vs_spy_store": 0.0759
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "LVS",
+    "entry": "2026-06-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": -0.067,
+    "excess_vs_spy_store": -0.1139
    },
    {
     "tier": "3_aggressive",
@@ -1832,23 +2154,13 @@
    },
    {
     "tier": "3_aggressive",
-    "ticker": "CPAY",
-    "entry": "2026-05-20",
+    "ticker": "NTAP",
+    "entry": "2026-07-01",
     "exit": "2026-08-03",
     "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.0825,
-    "excess_vs_spy_store": 0.0759
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "EOG",
-    "entry": "2026-06-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.1035,
-    "excess_vs_spy_store": 0.0649
+    "excess_vs_spy": 0.1397,
+    "excess_vs_spy_store": 0.1537
    },
    {
     "tier": "3_aggressive",
@@ -1872,6 +2184,16 @@
    },
    {
     "tier": "3_aggressive",
+    "ticker": "EOG",
+    "entry": "2026-06-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.1035,
+    "excess_vs_spy_store": 0.0649
+   },
+   {
+    "tier": "3_aggressive",
     "ticker": "CF",
     "entry": "2026-07-01",
     "exit": "2026-08-03",
@@ -1879,86 +2201,6 @@
     "status": "closed",
     "excess_vs_spy": 0.1557,
     "excess_vs_spy_store": 0.0778
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "LVS",
-    "entry": "2026-06-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": -0.067,
-    "excess_vs_spy_store": -0.1139
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "NTAP",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.1397,
-    "excess_vs_spy_store": 0.1537
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "ADBE",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.1852,
-    "excess_vs_spy_store": 0.1753
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "ALAB",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0874,
-    "excess_vs_spy_store": -0.1336
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "CDNS",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0046,
-    "excess_vs_spy_store": -0.0742
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "TPL",
-    "entry": "2026-05-20",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.1048,
-    "excess_vs_spy_store": -0.1113
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "VRT",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0288,
-    "excess_vs_spy_store": -0.0323
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "MO",
-    "entry": "2026-06-01",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
-    "status": "closed",
-    "excess_vs_spy": -0.0137,
-    "excess_vs_spy_store": 0.0065
    },
    {
     "tier": "3_aggressive",
@@ -1972,153 +2214,293 @@
    },
    {
     "tier": "3_aggressive",
+    "ticker": "CDNS",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0046,
+    "excess_vs_spy_store": -0.0742
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "MO",
+    "entry": "2026-06-01",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0137,
+    "excess_vs_spy_store": 0.0065
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "VRT",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0288,
+    "excess_vs_spy_store": -0.0323
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "ALAB",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0874,
+    "excess_vs_spy_store": -0.1336
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "TPL",
+    "entry": "2026-05-20",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.1048,
+    "excess_vs_spy_store": -0.1113
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "BX",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1809,
+    "excess_vs_spy_store": -0.1841
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "MS",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1161,
+    "excess_vs_spy_store": -0.1208
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "GOOG",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0251,
+    "excess_vs_spy_store": 0.0033
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "ARM",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.2051,
+    "excess_vs_spy_store": 0.212
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "BKNG",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1686,
+    "excess_vs_spy_store": -0.1863
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "AVGO",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1112,
+    "excess_vs_spy_store": -0.1347
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "TXN",
+    "entry": "2026-08-03",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.0345,
+    "excess_vs_spy_store": 0.0348
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "FSLR",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1238,
+    "excess_vs_spy_store": -0.1433
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "EXPE",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1355,
+    "excess_vs_spy_store": -0.142
+   },
+   {
+    "tier": "3_aggressive",
     "ticker": "MU",
     "entry": "2026-05-20",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.4262,
-    "excess_vs_spy_store": 0.421
+    "excess_vs_spy": 0.4685,
+    "excess_vs_spy_store": 0.4633
    },
    {
     "tier": "3_aggressive",
     "ticker": "SNDK",
     "entry": "2026-05-20",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.2206,
-    "excess_vs_spy_store": 0.2154
+    "excess_vs_spy": 0.2531,
+    "excess_vs_spy_store": 0.2478
    },
    {
     "tier": "3_aggressive",
     "ticker": "NVDA",
     "entry": "2026-07-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.1333,
-    "excess_vs_spy_store": 0.1307
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "MS",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1161,
-    "excess_vs_spy_store": -0.1186
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "CRDO",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1144,
-    "excess_vs_spy_store": -0.1169
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "ARM",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": 0.2051,
-    "excess_vs_spy_store": 0.2026
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "AVGO",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1112,
-    "excess_vs_spy_store": -0.1137
+    "excess_vs_spy": 0.144,
+    "excess_vs_spy_store": 0.1414
    },
    {
     "tier": "3_aggressive",
     "ticker": "LLY",
     "entry": "2026-08-03",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0253,
-    "excess_vs_spy_store": 0.0228
+    "excess_vs_spy": 0.0171,
+    "excess_vs_spy_store": 0.0146
    },
    {
     "tier": "3_aggressive",
-    "ticker": "TXN",
+    "ticker": "CRDO",
     "entry": "2026-08-03",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0345,
-    "excess_vs_spy_store": 0.032
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "BKNG",
-    "entry": "2026-09-01",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1686,
-    "excess_vs_spy_store": -0.1711
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "GOOG",
-    "entry": "2026-09-01",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": 0.0251,
-    "excess_vs_spy_store": 0.0226
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "FSLR",
-    "entry": "2026-09-01",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1238,
-    "excess_vs_spy_store": -0.1263
-   },
-   {
-    "tier": "3_aggressive",
-    "ticker": "BX",
-    "entry": "2026-09-01",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1809,
-    "excess_vs_spy_store": -0.1834
+    "excess_vs_spy": -0.0458,
+    "excess_vs_spy_store": -0.0483
    },
    {
     "tier": "3_aggressive",
     "ticker": "NTAP",
     "entry": "2026-09-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.1459,
-    "excess_vs_spy_store": 0.1434
+    "excess_vs_spy": 0.1712,
+    "excess_vs_spy_store": 0.1687
    },
    {
     "tier": "3_aggressive",
-    "ticker": "EXPE",
-    "entry": "2026-09-01",
+    "ticker": "META",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1355,
-    "excess_vs_spy_store": -0.1379
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "PLTR",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "FTNT",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "MSFT",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "INCY",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "CPAY",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "ANET",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "VEEV",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "3_aggressive",
+    "ticker": "WDC",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "4_tactical",
@@ -2142,16 +2524,6 @@
    },
    {
     "tier": "4_tactical",
-    "ticker": "NEM",
-    "entry": "2026-05-20",
-    "exit": "2026-07-01",
-    "last_held": "2026-06-30",
-    "status": "closed",
-    "excess_vs_spy": -0.1377,
-    "excess_vs_spy_store": -0.1399
-   },
-   {
-    "tier": "4_tactical",
     "ticker": "AMP",
     "entry": "2026-06-01",
     "exit": "2026-07-01",
@@ -2162,13 +2534,13 @@
    },
    {
     "tier": "4_tactical",
-    "ticker": "FISV",
+    "ticker": "NEM",
     "entry": "2026-05-20",
     "exit": "2026-07-01",
     "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": -0.1379,
-    "excess_vs_spy_store": -0.1094
+    "excess_vs_spy": -0.1377,
+    "excess_vs_spy_store": -0.1399
    },
    {
     "tier": "4_tactical",
@@ -2192,23 +2564,13 @@
    },
    {
     "tier": "4_tactical",
-    "ticker": "APA",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
+    "ticker": "FISV",
+    "entry": "2026-05-20",
+    "exit": "2026-07-01",
+    "last_held": "2026-06-30",
     "status": "closed",
-    "excess_vs_spy": 0.1693,
-    "excess_vs_spy_store": 0.1409
-   },
-   {
-    "tier": "4_tactical",
-    "ticker": "NVDA",
-    "entry": "2026-07-01",
-    "exit": "2026-08-03",
-    "last_held": "2026-07-31",
-    "status": "closed",
-    "excess_vs_spy": 0.0143,
-    "excess_vs_spy_store": 0.0299
+    "excess_vs_spy": -0.1379,
+    "excess_vs_spy_store": -0.1094
    },
    {
     "tier": "4_tactical",
@@ -2222,13 +2584,23 @@
    },
    {
     "tier": "4_tactical",
-    "ticker": "CF",
+    "ticker": "NVDA",
     "entry": "2026-07-01",
     "exit": "2026-08-03",
     "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": 0.1557,
-    "excess_vs_spy_store": 0.0778
+    "excess_vs_spy": 0.0143,
+    "excess_vs_spy_store": 0.0299
+   },
+   {
+    "tier": "4_tactical",
+    "ticker": "APA",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
+    "status": "closed",
+    "excess_vs_spy": 0.1693,
+    "excess_vs_spy_store": 0.1409
    },
    {
     "tier": "4_tactical",
@@ -2242,13 +2614,13 @@
    },
    {
     "tier": "4_tactical",
-    "ticker": "MO",
-    "entry": "2026-08-03",
-    "exit": "2026-09-01",
-    "last_held": "2026-08-31",
+    "ticker": "CF",
+    "entry": "2026-07-01",
+    "exit": "2026-08-03",
+    "last_held": "2026-07-31",
     "status": "closed",
-    "excess_vs_spy": -0.0092,
-    "excess_vs_spy_store": 0.0138
+    "excess_vs_spy": 0.1557,
+    "excess_vs_spy_store": 0.0778
    },
    {
     "tier": "4_tactical",
@@ -2262,13 +2634,13 @@
    },
    {
     "tier": "4_tactical",
-    "ticker": "VRT",
+    "ticker": "MO",
     "entry": "2026-08-03",
     "exit": "2026-09-01",
     "last_held": "2026-08-31",
     "status": "closed",
-    "excess_vs_spy": -0.0288,
-    "excess_vs_spy_store": -0.0323
+    "excess_vs_spy": -0.0092,
+    "excess_vs_spy_store": 0.0138
    },
    {
     "tier": "4_tactical",
@@ -2282,83 +2654,133 @@
    },
    {
     "tier": "4_tactical",
+    "ticker": "VRT",
+    "entry": "2026-08-03",
+    "exit": "2026-09-01",
+    "last_held": "2026-08-31",
+    "status": "closed",
+    "excess_vs_spy": -0.0288,
+    "excess_vs_spy_store": -0.0323
+   },
+   {
+    "tier": "4_tactical",
+    "ticker": "FSLR",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1238,
+    "excess_vs_spy_store": -0.1433
+   },
+   {
+    "tier": "4_tactical",
+    "ticker": "BKNG",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.1686,
+    "excess_vs_spy_store": -0.1863
+   },
+   {
+    "tier": "4_tactical",
+    "ticker": "NTAP",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": 0.1459,
+    "excess_vs_spy_store": 0.1687
+   },
+   {
+    "tier": "4_tactical",
+    "ticker": "AVGO",
+    "entry": "2026-09-01",
+    "exit": "2026-10-01",
+    "last_held": "2026-09-30",
+    "status": "closed",
+    "excess_vs_spy": -0.0511,
+    "excess_vs_spy_store": -0.0758
+   },
+   {
+    "tier": "4_tactical",
     "ticker": "MU",
     "entry": "2026-05-20",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.4262,
-    "excess_vs_spy_store": 0.421
+    "excess_vs_spy": 0.4685,
+    "excess_vs_spy_store": 0.4633
    },
    {
     "tier": "4_tactical",
     "ticker": "SNDK",
     "entry": "2026-05-20",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.2206,
-    "excess_vs_spy_store": 0.2154
-   },
-   {
-    "tier": "4_tactical",
-    "ticker": "CRDO",
-    "entry": "2026-08-03",
-    "exit": null,
-    "last_held": "2026-09-30",
-    "status": "open",
-    "excess_vs_spy": -0.1144,
-    "excess_vs_spy_store": -0.1169
+    "excess_vs_spy": 0.2531,
+    "excess_vs_spy_store": 0.2478
    },
    {
     "tier": "4_tactical",
     "ticker": "LLY",
     "entry": "2026-08-03",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.0253,
-    "excess_vs_spy_store": 0.0228
+    "excess_vs_spy": 0.0171,
+    "excess_vs_spy_store": 0.0146
    },
    {
     "tier": "4_tactical",
-    "ticker": "FSLR",
-    "entry": "2026-09-01",
+    "ticker": "CRDO",
+    "entry": "2026-08-03",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1238,
-    "excess_vs_spy_store": -0.1263
+    "excess_vs_spy": -0.0458,
+    "excess_vs_spy_store": -0.0483
    },
    {
     "tier": "4_tactical",
-    "ticker": "BKNG",
-    "entry": "2026-09-01",
+    "ticker": "META",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.1686,
-    "excess_vs_spy_store": -0.1711
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "4_tactical",
-    "ticker": "AVGO",
-    "entry": "2026-09-01",
+    "ticker": "NVDA",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": -0.0511,
-    "excess_vs_spy_store": -0.0536
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    },
    {
     "tier": "4_tactical",
-    "ticker": "NTAP",
-    "entry": "2026-09-01",
+    "ticker": "ANET",
+    "entry": "2026-10-01",
     "exit": null,
-    "last_held": "2026-09-30",
+    "last_held": "2026-10-01",
     "status": "open",
-    "excess_vs_spy": 0.1459,
-    "excess_vs_spy_store": 0.1434
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
+   },
+   {
+    "tier": "4_tactical",
+    "ticker": "FTNT",
+    "entry": "2026-10-01",
+    "exit": null,
+    "last_held": "2026-10-01",
+    "status": "open",
+    "excess_vs_spy": 0.0,
+    "excess_vs_spy_store": 0.0
    }
   ],
   "note": "the spells were chosen on a handful of dates and share factor exposure; the effective sample is the number of decision dates, not spells; no inference is possible from these intervals"
