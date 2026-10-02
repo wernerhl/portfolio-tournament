@@ -474,10 +474,22 @@ def main() -> int:
                                         "reason": t["reason"], "groups": grp})
         names[tk] = rec
     counts = {s: sum(1 for v in names.values() if v.get("state") == s) for s in STATES}
+    validation = {"verdict": "NOT RUN", "summary": "the registered validation has not reported"}
+    vp = DATA / "entry_state_validation.json"
+    if vp.exists():
+        vj = json.loads(vp.read_text()); r_ = vj.get("result") or {}
+        dm, ds = r_.get("dMAE") or {}, r_.get("dSTOP20") or {}
+        pt = lambda x: f"{x * 100:+.2f}" if isinstance(x, (int, float)) else "?"
+        why = " (the registered test lacked power)" if vj.get("verdict") == "NO VERDICT" else ""
+        validation = {"verdict": vj.get("verdict"), "as_of": vj.get("as_of"), "report": "reports/entry_state_validation_2026-10-02.md",
+                      "summary": (f"registered test, 2010 to {vj.get('entries_through')}: {vj.get('verdict')}{why}. READY entries' median loss "
+                                  f"before 20 sessions {pt(dm.get('point'))} pt against month-start entries (90% interval {pt((dm.get('ci90') or [None])[0])} to "
+                                  f"{pt((dm.get('ci90') or [None, None])[1])}); stopped out within 20 sessions "
+                                  f"{(ds.get('mean_contestant') or 0) * 100:.0f}% against {(ds.get('mean_baseline') or 0) * 100:.0f}%")}
     payload = {
         "cadence": "daily", "session_date": session, "as_of": session,
         "computed_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-        "label": cfg["label"], "label_reason": cfg["label_reason"], "config_frozen_at": cfg["frozen_at"],
+        "label": cfg["label"], "label_reason": cfg["label_reason"], "config_frozen_at": cfg["frozen_at"], "validation": validation,
         "account_value": round(book.nav, 2), "holdings_as_of": book.as_of,
         "cards": cards, "counts": counts, "transitions_today": transitions,
         "definitions": {k: cfg[k]["rule"] for k in ("trend", "setup", "trigger", "event", "stop", "size")},
