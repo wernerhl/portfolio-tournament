@@ -56,6 +56,15 @@ def tickers_of_interest() -> list[str]:
     if sp.exists():
         w = json.load(open(sp)).get("watchlist", [])
         out |= {str(r["ticker"]).upper() for r in w if r.get("on_board_as") != "held"}
+    # entry-state order (2-Oct-2026, section 2): days to next earnings on every stock card, so the
+    # tournament tiers' current positions join as well.
+    tp = DATA / "tournament.json"
+    if tp.exists():
+        try:
+            for t in json.load(open(tp))["history"][-1]["tiers"].values():
+                out |= {str(x["ticker"]).upper() for x in t.get("positions", []) if (x.get("shares") or 0) > 0}
+        except (KeyError, IndexError, TypeError, AttributeError):
+            pass
     return sorted(out)
 
 

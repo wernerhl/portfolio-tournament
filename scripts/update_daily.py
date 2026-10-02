@@ -51,6 +51,7 @@ scripts = [
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
     "build_event_calendar.py",     # A2 (order 30-Sept): scheduled macro events with impact levels (official schedules; earnings preserved)
     "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh) + the cluster detector
+    "entry_state.py",              # E1 (order 2-Oct): entry state per name (AVOID/WAIT/WATCH/READY), stop, size; after earnings dates, before the brief
     "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
     # Order 30-Sept-2026 — read served data only, so they run last, before the referee:
     "compute_goals.py",            # D1/D2: the house goal in reais at the settled rate; the claims register's progress
@@ -396,6 +397,7 @@ SERVED_CADENCE = {
     "book.json": "daily",                                                      # 1.3 (order 16-Sept)
     "tournament/audit.json": "daily", "tournament/twins.json": "daily",       # T2 / T4 (audit order 30-Sept)
     "tournament/continuous_rules.json": "static",
+    "entry_state.json": "daily", "entry_state_config.json": "static",         # E1 (entry-state order 2-Oct)
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

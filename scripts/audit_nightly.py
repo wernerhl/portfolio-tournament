@@ -689,6 +689,59 @@ def main(troot, sroot, today=None):
             if hits: add('CRITICAL','options:language',f'{of} contains prohibited word(s) {hits} (order §9.8)')
             for tok in ('"action":"buy"','"action":"sell"','"recommendation":"buy"','"recommendation":"sell"','buy now','sell now'):
                 if tok in blob: add('CRITICAL','options:directive',f'{of} contains a buy/sell directive ({tok!r})')
+    # ---------- the entry state (order 2-Oct-2026, E1/E2) ----------
+    # States from the allowed set (or none, with a reason); every card name graded; the stop respects its
+    # 200-day floor; a size never leaves the name at or above 40% of the book's risk; the label stays
+    # DIAGNOSTIC until the registered validation reports a pass; the mean-reversion reference carries no
+    # buy-zone language anywhere served; the transition log parses and holds the session's transitions.
+    esp_=os.path.join(troot,'entry_state.json')
+    if os.path.exists(esp_):
+        ej_=json.load(open(esp_)); en_=ej_.get('names') or {}
+        allowed_={'AVOID','WAIT','WATCH','READY','READY-HALF'}
+        bad_=[f'{k}:{v.get("state")}' for k,v in en_.items() if v.get('state') is not None and v.get('state') not in allowed_]
+        if bad_: add('HIGH','entry:states',f'entry_state.json states outside the rule set: {bad_[:6]}')
+        nr_=[k for k,v in en_.items() if v.get('state') is None and not v.get('reason')]
+        if nr_: add('HIGH','entry:states',f'names without a state and without a reason: {nr_[:6]}')
+        cards_=ej_.get('cards') or {}
+        miss_=[k for g in ('held','board','tiers') for k in (cards_.get(g) or []) if k not in en_]
+        if miss_: add('HIGH','entry:cards',f'card names missing from entry_state.json: {sorted(set(miss_))[:8]}')
+        nos_=[k for k in (cards_.get('held') or []) if (en_.get(k) or {}).get('state') is None]
+        if nos_: add('MEDIUM','entry:held_ungraded',f'held names without an entry state: {[(k,(en_.get(k) or {}).get("reason")) for k in nos_]}')
+        flo_=[k for k,v in en_.items() if v.get('state') and v.get('stop') is not None and ((v.get('trend') or {}).get('ma200') or 0)-v['stop']>0.011]
+        if flo_: add('HIGH','entry:stop_floor',f'stops below their 200-day floor: {flo_[:6]}')
+        cap_=[]
+        for k,v in en_.items():
+            z_=v.get('size') or {}
+            if v.get('state') in ('WATCH','READY','READY-HALF') and z_.get('shares') is None and not z_.get('reason'): cap_.append(f'{k}: no size, no reason')
+            if (z_.get('shares') or 0)>0 and ((z_.get('book_after') or {}).get('risk_share_name') or 0)>=0.40: cap_.append(f'{k}: risk share {(z_.get("book_after") or {}).get("risk_share_name")}')
+        if cap_: add('HIGH','entry:size',f'sizes breaking the rule (40% risk-share cap or missing): {cap_[:6]}')
+        vp_=os.path.join(troot,'entry_state_validation.json')
+        verdict_=(json.load(open(vp_)).get('verdict') if os.path.exists(vp_) else None)
+        cfgp_=os.path.join(troot,'entry_state_config.json')
+        lab_=[str(ej_.get('label'))]+([str(json.load(open(cfgp_)).get('label'))] if os.path.exists(cfgp_) else [])
+        if any(l!='DIAGNOSTIC' for l in lab_) and verdict_!='PASS':
+            add('CRITICAL','entry:diagnostic_gate',f'entry state labelled {lab_} while the registered validation verdict is {verdict_!r} (DIAGNOSTIC until it reports a pass)')
+        _lang(esp_,'entry')
+        lgp_=os.path.join(troot,'entry_state_log.jsonl')
+        if os.path.exists(lgp_):
+            try:
+                keys_={(x['date'],x['ticker'],x['from'],x['to'],x['reason']) for x in (json.loads(l) for l in open(lgp_,encoding='utf-8') if l.strip())}
+                lost_=[t_['ticker'] for t_ in (ej_.get('transitions_today') or []) if (t_['date'],t_['ticker'],t_['from'],t_['to'],t_['reason']) not in keys_]
+                if lost_: add('MEDIUM','entry:log',f'transitions of the session not in entry_state_log.jsonl: {lost_[:6]}')
+            except Exception as e:
+                add('HIGH','entry:log',f'entry_state_log.jsonl unreadable ({e})')
+        elif ej_.get('transitions_today'): add('MEDIUM','entry:log','transitions reported but entry_state_log.jsonl is absent')
+    rroot_=os.path.abspath(os.path.join(troot,'..'))
+    bz_=[]
+    for fn_ in ('app.js','pages.js','screen.js','common.js','index.html','book.html','screen.html','tournament.html','guide.html','data/ticker_signals.json','data/brief_facts.json'):
+        fp_=os.path.join(rroot_,fn_)
+        if os.path.exists(fp_):
+            low_=open(fp_,encoding='utf-8').read().lower()
+            # the one sanctioned mention is the relabel itself (a .replace() of the old phrase)
+            low_=low_.replace('/rulebook entry zone/g','')
+            for ph_ in ('entry zone','buy zone','buy-zone','buy the dip','buying zone'):
+                if ph_ in low_: bz_.append(f'{fn_}: "{ph_}"')
+    if bz_: add('HIGH','entry:buy_zone_language',f'buy-zone language served for the mean-reversion reference (order 2-Oct §2): {bz_[:6]}')
     # ---------- the daily brief, the goals, the news feed, realized gains, ownership (order 30-Sept) ----------
     # (_lang, the language/directive scan, is defined at the top of main — it is used by the tournament block too)
     # the brief: append-only log with hashes; one entry for the last session; text under the validator's rules
