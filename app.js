@@ -1278,21 +1278,21 @@ function divergenceState(quality, qPct, trade, sig){
   if (S.includes("MONITOR"))           return {cls:"monitor",color:"#94a3b8", icon:"—",
                                                 text:"Several yellow flags (observation)."};
   if (S.startsWith("HOLD"))            return {cls:"hold",   color:"#737373", icon:"—",
-                                                text:"Few entry conditions met."};
+                                                text:"Few rulebook setup conditions met."};
   if (S.startsWith("WAIT") || S.startsWith("WATCH"))
                                        return {cls:"wait",   color:"#facc15", icon:"⏸",
-                                                text:"Extended above the rulebook's entry zone."};
+                                                text:"Extended above its mean-reversion reference (not an entry signal)."};
   // BUY / STRONG BUY → 4-quadrant divergence
   const hiQ = quality >= 38;
   const hiT = trade >= 70;
   if ( hiQ &&  hiT) return {cls:"clean", color:"#4ade80", icon:"★",
-                            text:"High quality score and the entry conditions met (descriptive; expectancy not validated)."};
+                            text:"High quality score and the rulebook's setup conditions met (descriptive; not an entry signal: the entry state reads timing)."};
   if ( hiQ && !hiT) return {cls:"watch", color:"#facc15", icon:"⚠",
-                            text:"High quality score; entry conditions not met at this price."};
+                            text:"High quality score; the rulebook's setup conditions not met."};
   if (!hiQ &&  hiT) return {cls:"momo",  color:"#60a5fa", icon:"↗",
-                            text:"Entry conditions met on a middling quality score."};
+                            text:"Setup conditions met on a middling quality score (not an entry signal)."};
   return                    {cls:"avoid", color:"#737373", icon:"·",
-                            text:"Neither the quality score nor the entry conditions."};
+                            text:"Neither the quality score nor the setup conditions."};
 }
 function tradeContext(s){
   // One short phrase that summarises the trade-now reading using existing data.
@@ -1311,6 +1311,68 @@ function tradeContext(s){
   if (d.ma200_dist != null && Math.abs(d.ma200_dist) < 5) bits.push("at 200-DMA");
   return bits.join(" · ");
 }
+// ── Order 2-Oct-2026 [E2]: the entry state on every stock card (screen, book, tournament) ──
+// A rule output (trend gate → setup → trigger → event gate; a defined stop and a risk-budget size), shown
+// DIAGNOSTIC until the registered validation reports. It states what the rule reads, not an instruction.
+const esD2 = v => v == null ? "—" : Number(v).toFixed(2);
+const ENTRY_CLS = {AVOID: "c-neg", WAIT: "c-3", WATCH: "c-warn", READY: "c-pos", "READY-HALF": "c-pos"};
+function entryRec(tk){ return (S.entryState && S.entryState.names && S.entryState.names[String(tk).toUpperCase()]) || null; }
+function entryLabel(){ return (S.entryState && S.entryState.label) || "DIAGNOSTIC"; }
+function entryBadge(tk){
+  const e = entryRec(tk);
+  if (!e || !e.state) return `<span class="es-badge c-3" title="${escText30((e && e.reason) || "no entry state computed")}">—</span>`;
+  const tip = `${e.state} · stop $${esD2(e.stop)}${e.armed_stop ? " (armed $" + esD2(e.armed_stop) + " since " + e.armed_since + ")" : ""}${e.trigger_level ? " · trigger: a close above $" + esD2(e.trigger_level) : ""} · ${entryLabel()}`;
+  return `<span class="es-badge ${ENTRY_CLS[e.state] || "c-3"}" title="${escText30(tip)}">${e.state}</span>`;
+}
+function entryEarnText(e){
+  if (!e) return "—";
+  if (e.sessions_to_earnings == null) return e.earnings_known ? "no date ahead" : "earnings date unknown";
+  return `earnings in ${e.sessions_to_earnings} session${e.sessions_to_earnings === 1 ? "" : "s"} (${e.next_earnings})`;
+}
+function entrySizeText(e){
+  const z = e && e.size;
+  if (!z) return "size shown for held, board and tier names";
+  if (z.shares == null) return z.reason || "no entry defined";
+  return `${z.shares} shares (≈${fmtMoney(z.value)}) · risk ${fmtMoney(z.risk_dollars)} = ${(z.risk_budget * 100).toFixed(2)}% of ${fmtMoney(z.account_value)}${z.capped_by ? " · capped by " + z.capped_by : ""}`;
+}
+function entryTriggerText(e){
+  if (!e || !e.state) return "—";
+  if (e.state === "AVOID") {
+    const t = e.trend || {}, why = [];
+    if (t.mom_12_1 != null && t.mom_12_1 <= 0) why.push(`12-month return excluding the last month ${(t.mom_12_1 * 100).toFixed(1)}%, not positive`);
+    if (t.ma200 != null && e.close <= t.ma200) why.push(`close $${esD2(e.close)} below the 200-day $${esD2(t.ma200)}`);
+    return `trend gate fails: ${why.join("; ") || "history short"}`;
+  }
+  if (e.state === "WAIT") return "no setup: the price is extended (no pullback to enter on)";
+  if (e.state.startsWith("READY")) return `triggered: ${e.trigger}`;
+  return `trigger: a close above $${esD2(e.trigger_level)} (today's high)${e.breakdown_level ? ` or back above $${esD2(e.breakdown_level)} (failed breakdown)` : ""}`;
+}
+function renderEntryState(tk){
+  const e = entryRec(tk);
+  if (!e) return "";
+  if (!e.state) return `<div class="es-block mono t1 c-3">ENTRY STATE — ${escText30(e.reason || "not computed")}</div>`;
+  const set = e.setup || {};
+  const setupTxt = [set.below_ma20_minus_atr ? "close below the 20-day average less 1 ATR" : null, set.rsi_le_40 ? `RSI ${e.rsi} ≤ 40` : null,
+                    set.lowest_quarter_of_range ? "close in the lowest quarter of the 40-session range" : null].filter(Boolean).join("; ") || "none";
+  const z = e.size || {}; const a = z.book_after || {}, b = z.book_before || {};
+  const pc = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
+  const noEntry = e.state === "AVOID" || e.state === "WAIT";
+  const ma200 = e.trend && e.trend.ma200, raw = (e.range_lo != null && e.atr != null) ? Math.round((e.range_lo - e.atr) * 100) / 100 : null;
+  const stopWhy = (ma200 != null && raw != null && ma200 > raw)
+    ? `40-session low $${esD2(e.range_lo)} less 1 ATR $${esD2(e.atr)} = $${esD2(raw)}, floored at the higher 200-day $${esD2(ma200)}`
+    : `40-session low $${esD2(e.range_lo)} less 1 ATR $${esD2(e.atr)}; the 200-day $${esD2(ma200)} is lower, no floor`;
+  const eff = (z.shares && a.vol_nav_ann != null) ? `<div class="c-3">after entry: book volatility ${pc(b.vol_nav_ann)} → ${pc(a.vol_nav_ann)} · beta ${b.beta_spy != null ? b.beta_spy.toFixed(2) : "—"} → ${a.beta_spy != null ? a.beta_spy.toFixed(2) : "—"} · largest risk share ${a.largest_risk_name || "—"} ${pc(a.largest_risk_share)} (this name ${pc(a.risk_share_name)})</div>` : "";
+  return `<div class="es-block mono t1 lh16">
+    <div><span class="c-3 w6 ls08">ENTRY STATE</span> <span class="es-badge ${ENTRY_CLS[e.state] || "c-3"} w7">${e.state}</span> <span class="mono t1 w6 r1 x2 c-warn ls06">${entryLabel()}</span> <span class="c-3">· as of ${e.date} · close $${esD2(e.close)}</span></div>
+    <div class="c-2">${entryTriggerText(e)}</div>
+    <div class="c-3">trend gate ${e.trend && e.trend.pass ? `passes (12-1 return ${pc(e.trend.mom_12_1)}; close above the 200-day $${esD2(e.trend.ma200)})` : "fails"} · setup: ${setupTxt}</div>
+    <div class="${noEntry ? "c-3" : "c-2"}">${noEntry ? "stop level (no entry at " + e.state + "; shown for reference)" : "stop"} $${esD2(e.stop)} <span class="c-3">(${stopWhy})</span>${e.stop >= e.close ? ` <span class="c-neg">· above the close: not a valid stop until the price recovers</span>` : ""}${e.armed_stop ? ` · armed stop $${esD2(e.armed_stop)} since ${e.armed_since}` : ""}${e.breach ? ` · <span class="c-neg">stop breached today ($${esD2(e.breach_stop)})</span>` : ""}</div>
+    <div class="c-2">size at the default risk budget: ${entrySizeText(e)}${z.basis ? ` <span class="c-3">(${z.basis})</span>` : ""}</div>
+    ${eff}
+    <div class="${e.sessions_to_earnings != null && e.sessions_to_earnings <= 20 ? "c-warn" : "c-3"}">${entryEarnText(e)}</div>
+  </div>`;
+}
+
 // ── Options lens (order 26-Sept-2026, Phase 3): the third column of every stock card ──
 // What the options market prices about the name and, for held names, the structure the
 // hedge selector ranks first. Descriptive; no directional implication anywhere.
@@ -2063,6 +2125,7 @@ function renderScanner(){
       </td>
       <td class="val">${r.trade == null ? `<span class="${cc(r.divColor)}">${r.sig.length > 22 ? r.sig.substring(0,20) + "…" : r.sig}</span>` : `<span class="${cc(tradeColorFor(r.trade))}">${r.sig.length > 18 ? r.sig.substring(0,16) + "…" : r.sig}</span> · ${r.trade}`}</td>
       <td class="flag ${cc(r.divColor)}">${r.divIcon} ${r.divCls}</td>
+      <td class="t1">${entryBadge(r.tk)}</td>
       <td class="opt" title="${r.optState ? `options: volatility ${r.optState}${r.optDays != null ? "; earnings in " + r.optDays + " days" : ""}${r.optImp != null ? "; market prices ±" + (r.optImp * 100).toFixed(1) + "%" : ""}` : "no chain vintage"}">${r.optState ? `<span class="${OPT_STATE_CLS[r.optState] || "c-warn"} w6">${OPT_GLYPH[r.optState] || "◌"}</span> <span class="c-3">${r.optState}</span>` : `<span class="c-3">—</span>`}${r.optRing ? ` <span class="c-warn" title="earnings release inside 30 days">◎ ${r.optDays}d</span>` : ""}</td>
     </tr>`;
   }
@@ -2085,6 +2148,7 @@ function renderScanner(){
         <th class="${sortCls("trade")}"   data-scsort="trade">SETUP READING</th>
         <th class="num"></th>
         <th class="${sortCls("quad")}"    data-scsort="quad">FLAG</th>
+        <th title="entry state (DIAGNOSTIC): AVOID · WAIT · WATCH · READY · READY-HALF">ENTRY STATE</th>
         <th class="${sortCls("opt")}"     data-scsort="opt" title="options: ◯ volatility cheap · ● rich · ◐ mixed · ◎ earnings inside 30 days">OPTIONS</th>
       </tr></thead>
       <tbody>${body}</tbody>
@@ -2149,12 +2213,12 @@ function renderEntryBox(sig){
     </div>
 
     <div class="gap2 mb3 x29">
-      ${cell("RULEBOOK ENTRY ZONE",
-        `<div class="mono t3 w7 c-info">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
-        `${sig.entry?.basis || ""}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)}`)}
-      ${cell("STOP",
+      ${cell("MEAN-REVERSION REFERENCE",
+        `<div class="mono t3 w7 c-2">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
+        `${(sig.entry?.basis || "").replace(/rulebook entry zone/g, "mean-reversion reference")}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)} · a reference level, not an entry signal (the entry state above reads timing)`)}
+      ${cell("RULEBOOK STOP",
         `<div class="mono t3 w7 c-neg">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
-        sig.stop?.category_rule || "")}
+        `${sig.stop?.category_rule || ""}${sig.stop?.category_rule ? "<br>" : ""}the rulebook's percentage stop (the entry state's stop above is a separate rule)`)}
       ${cell("RULEBOOK TARGET LEVELS",
         `<div class="mono t3 w7 c-pos">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
         `Cons: $${(sig.target?.conservative ?? 0).toFixed(2)}<br>Aggr: $${(sig.target?.aggressive ?? 0).toFixed(2)}`)}
@@ -2270,6 +2334,7 @@ function renderTickerDetail(tk){
 
     ${renderTwoScore(tk)}
 
+    ${renderEntryState(tk)}
     ${renderSignalBox(tk)}
 
     <div class="tk-grid">
@@ -2417,7 +2482,7 @@ function renderTierDetail(tid){
   </div>`;
 
   h += `<table class="h-table"><tr>
-    <th>TICKER</th><th>SECTOR</th><th class="num">PRICE</th><th class="num">VALUE</th>
+    <th>TICKER</th><th title="entry state (DIAGNOSTIC): AVOID · WAIT · WATCH · READY · READY-HALF">ENTRY STATE</th><th>SECTOR</th><th class="num">PRICE</th><th class="num">VALUE</th>
     ${tid==="5_werner" ? '<th class="num">COST</th><th class="num">GAIN</th>' : ''}
     <th class="num">WEIGHT</th><th></th>
   </tr>`;
@@ -2427,6 +2492,7 @@ function renderTierDetail(tid){
     const open = (S.expandedTicker === p.ticker);
     h += `<tr class="tk-row ${open?"open":""}" data-tk="${p.ticker}"${dim ? ' class="dim"' : ''}>
       <td><strong class="c-1">${p.ticker}</strong></td>
+      <td class="t1">${entryBadge(p.ticker)}</td>
       <td class="c-3 t1">${sector || "—"}</td>
       <td class="num">${p.price != null ? "$"+fmt2(p.price) : "—"}</td>
       <td class="num">${p.value != null ? "$"+fmt(p.value) : "—"}</td>
@@ -2437,7 +2503,7 @@ function renderTierDetail(tid){
       <td><span class="chev ${open?"open":""}">›</span></td>
     </tr>`;
     if (open) {
-      h += `<tr><td colspan="${tid==="5_werner"?8:6}" class="p0 x36">${renderTickerDetail(p.ticker)}</td></tr>`;
+      h += `<tr><td colspan="${tid==="5_werner"?9:7}" class="p0 x36">${renderTickerDetail(p.ticker)}</td></tr>`;   // +1: the entry-state column
     }
   });
   h += `</table>`;

@@ -60,7 +60,7 @@ function renderPositionsList(){   // book page: the held names' position reading
   const b = S.book; if (!b || !S.signals || !S.signals.signals) return "";
   const names = (b.positions || []).filter(p => p.value != null).sort((x, y) => y.value - x.value).map(p => p.ticker);
   const boxes = names.map(tk => { const sig = S.signals.signals[tk]; if (!sig) return `<div class="mono t1 c-3">${tk}: no signal record yet (written by the nightly)</div>`;
-    return `<div class="pos-box"><div class="mono t2 w7 c-1 mb1">${tk}</div>${renderTwoScore(tk)}${renderSignalBox(tk)}${renderNameNews(tk)}${renderInsiderBlock(tk)}${renderOwnershipBlock(tk)}</div>`; }).join("");
+    return `<div class="pos-box"><div class="mono t2 w7 c-1 mb1">${tk}</div>${renderTwoScore(tk)}${renderEntryState(tk)}${renderSignalBox(tk)}${renderNameNews(tk)}${renderInsiderBlock(tk)}${renderOwnershipBlock(tk)}</div>`; }).join("");
   return `<div class="rcc-card"><h3>POSITION READINGS · <span class="c-3 w5">each held name against the rulebook's levels — observations, not instructions · ${S.signals.label || "mechanical rulebook; expectancy not validated"}</span>${holdingsPill()}${asOfBadge(S.signals.session_date)}</h3><div class="pos-grid">${boxes}</div></div>`;
 }
 function renderUniverseCard(){   // system page: the one universe (6.2)
@@ -92,7 +92,7 @@ const PAGES = {
   },
   book: {
     title: "THE BOOK", sub: () => `${S.book ? "analytics through " + S.book.as_of : ""} · positions from data/holdings.json, the only holdings source · every panel descriptive`,
-    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f"],
+    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f","entryState"],
     compose(){
       const strip = renderStatusStrip();
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE BOOK</h2>${strip}${renderBookPanel()}</div>`;
@@ -117,7 +117,7 @@ const PAGES = {
   },
   tournament: {
     title: "THE TOURNAMENT", sub: () => `${updatedStr()} · 4 algorithmic tiers + Werner · monthly rescore + regime overlay · net of costs`,
-    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges","tournamentAudit","twins","trades","spells","c6Power"],
+    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges","tournamentAudit","twins","trades","spells","c6Power","entryState"],
     compose(){
       const lb = renderLeaderboardBlock(); this._allSeries = lb.allSeries;
       let h = `<div class="tier tier-1"><h2 class="tier-title">LEADERBOARD</h2>${lb.html}</div>`;

@@ -164,7 +164,7 @@ def trade_now_strength(setup_strength: int, price: float | None,
 def trade_now_note(price: float | None, entry: float | None, signal: str) -> str | None:
     if signal.startswith("ENTRY CONDITIONS") and not signal.startswith(("ENTRY CONDITIONS 2", "ENTRY CONDITIONS 1", "ENTRY CONDITIONS 0")) and entry and price and price > entry:
         pct = (price - entry) / entry * 100
-        return f"price ${price:.0f} is {pct:.0f}% above the rulebook entry zone ${entry:.0f}"
+        return f"price ${price:.0f} is {pct:.0f}% above its mean-reversion reference ${entry:.0f} (a reference, not an entry signal)"
     return None
 
 
@@ -446,7 +446,7 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
         pullback_pct = round((pullback / current - 1) * 100, 1)
         entry_primary = round(float(pullback), 2)
         entry_secondary = round(entry_primary * 0.95, 2)
-        entry_basis = f"rulebook entry zone ${entry_primary} ({pullback_basis}, {pullback_pct:+.1f}% from here)"
+        entry_basis = f"mean-reversion reference ${entry_primary} ({pullback_basis}, {pullback_pct:+.1f}% from here)"
         stop_price = round(entry_primary * (1 - stop_pct), 2)
         risk_per_share = max(0.0, entry_primary - stop_price)
         # Targets framed around CURRENT price, not the fantasy entry
@@ -565,7 +565,7 @@ def compute_entry_signal(ticker, scores, prices_df, fund_df, regime, portfolio_v
     # ---- WHY ----
     why = [f"Ranked #{rank} in universe ({composite:.1f}/50)"]
     if extended:
-        why.append(f"{ma200_dist:.0f}% above 200-DMA — extended; the rulebook's entry zone is ${entry_primary}")
+        why.append(f"{ma200_dist:.0f}% above 200-DMA — extended; its mean-reversion reference is ${entry_primary}")
     else:
         if   rsi < 30: why.append(f"deeply oversold (RSI {rsi:.0f})")
         elif rsi < 40: why.append(f"oversold (RSI {rsi:.0f})")

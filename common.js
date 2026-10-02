@@ -46,6 +46,8 @@ const FILES = {
   mistakes:["data/mistakes.jsonl","jsonl"], tournamentAudit:["data/tournament/audit.json","json"], twins:["data/tournament/twins.json","json"],
   trades:["data/tournament/trades.jsonl","jsonl"], spells:["data/tournament/spells.jsonl","jsonl"], reviews:["data/tournament/reviews.jsonl","jsonl"],
   c6Power:["data/tournament/c6_power_check.json","json"],
+  // the entry-state indicator (order 2-Oct-2026)
+  entryState:["data/entry_state.json","json"],
 };
 async function loadFiles(keys, into){
   const target = into || S;

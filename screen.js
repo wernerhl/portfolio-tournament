@@ -28,6 +28,28 @@ function optionsCell(tk){
   return st + ev;
 }
 
+// Order 2-Oct-2026 [E2]: the entry state on the board (DIAGNOSTIC until the registered validation reports)
+const ES_CLS = {AVOID: 'c-neg', WAIT: 'c-3', WATCH: 'c-warn', READY: 'c-pos', 'READY-HALF': 'c-pos'};
+const esRec = tk => (SC.entryState && SC.entryState.names && SC.entryState.names[tk]) || null;
+const esEsc = x => String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+// phones: the board scrolls sideways, so the state also sits under the ticker
+function esMini(tk){
+  const e = esRec(tk);
+  if (!e || !e.state) return '';
+  const extra = e.state === 'WATCH' ? ` > $${fmtD(e.trigger_level)}` : '';
+  return `<span class="only-mobile t1 mt1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'}">${e.state}</span><span class="c-3">${extra}</span></span>`;
+}
+function esCells(tk){
+  const e = esRec(tk);
+  if (!e || !e.state) return `<td class="t1 c-3" title="${esEsc((e && e.reason) || 'not computed')}">—</td><td class="num c-3">—</td><td class="num c-3">—</td><td class="num c-3">—</td><td class="num c-3">—</td>`;
+  const z = e.size || {};
+  const trig = e.state === 'WATCH' ? `$${fmtD(e.trigger_level)}` : e.state.startsWith('READY') ? '<span class="c-pos">triggered</span>' : '<span class="c-3">—</span>';
+  const size = z.shares != null ? `${z.shares}` : '<span class="c-3">—</span>';
+  const earn = e.sessions_to_earnings != null ? `<span class="${e.sessions_to_earnings <= 20 ? 'c-warn' : 'c-3'}">${e.sessions_to_earnings}</span>` : `<span class="c-3" title="${e.earnings_known ? 'no date ahead' : 'earnings date unknown'}">?</span>`;
+  const tip = `${e.state} · ${e.state === 'AVOID' ? 'trend gate fails' : e.state === 'WAIT' ? 'no setup (extended)' : e.state === 'WATCH' ? 'setup without trigger; trigger: a close above $' + e.trigger_level : 'triggered: ' + e.trigger} · stop $${e.stop}${e.armed_stop ? ' (armed $' + e.armed_stop + ')' : ''}${z.shares != null ? ' · ' + z.shares + ' shares at ' + ((z.risk_budget || 0.005) * 100).toFixed(2).replace(/0$/, '') + '% of the account at risk' + (z.capped_by ? ', capped by ' + z.capped_by : '') : ''} · ${(SC.entryState && SC.entryState.label) || 'DIAGNOSTIC'}`;
+  return `<td class="t1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'} w6" title="${esEsc(tip)}">${e.state}</span></td><td class="num">${trig}</td><td class="num ${e.state === 'AVOID' || e.state === 'WAIT' ? 'c-3' : 'c-neg'}">$${fmtD(e.stop)}</td><td class="num">${size}</td><td class="num">${earn}</td>`;
+}
+
 const sbar = r => `<span class="sbar" style="--f:${r.fundamental ?? 0};--t:${r.technical ?? 0};--v:${r.visibility ?? 0}"><span class="bg-cat-2"></span><span class="bg-cat-7"></span><span class="bg-cat-3"></span></span><span class="t1 c-3 nowrap">F${r.fundamental} T${r.technical} V${r.visibility}</span>`;
 const legend = full => `<div class="legend">
   <span><span class="sw bg-cat-2"></span>Fundamental</span>
@@ -36,7 +58,8 @@ const legend = full => `<div class="legend">
   <span>Scores: 0–25 per factor · 75 max composite · a ranking of names, not a forecast; name selection has no measured skill</span>${full ? `
   <span title="the board ranks names against the current book; held names are scored against the rest of the book">CORR = penalty for return overlap vs the book (weight-aware, held names vs rest-of-book) · n/a = failed, no penalty, reason recorded</span>
   <span>LEV = leverage penalty 0 to −5 (net-debt/EBITDA primary, D/E fallback) · financials exempt</span>
-  <span>LEVEL = the screen's base level (the higher of the 50-day average and 5% below price) · GAP = distance from that level to the price (negative = below)</span>` : ''}
+  <span>MR REF = the mean-reversion reference (the higher of the 50-day average and 5% below price), formerly "entry level"; a reference, not an entry signal · vs REF = the reference's distance from the price</span>
+  <span>ENTRY STATE (DIAGNOSTIC until its registered validation reports): AVOID trend gate fails · WAIT no setup, extended · WATCH setup without trigger · READY / READY-HALF triggered (half size with earnings inside 20 sessions) · TRIGGER the close the next session must exceed · STOP the 40-session low less 1 ATR, floored at the 200-day · SIZE shares at 0.5% of the account at risk (0.25% with earnings inside 20 sessions), capped below 40% of the book's risk · EARN sessions to earnings · a rule output, not an instruction</span>` : ''}
 </div>`;
 
 function sortBy(data, key, dir){
@@ -78,16 +101,16 @@ function renderWatchlist(W, U){
   if (!W.length) return `<div class="lbtable">${head}<div class="note">No board data</div></div>`;
   return `<div class="lbtable">${head}
   <div class="tbl-scroll"><table class="board-table"><thead><tr>
-    ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}${th('watch', 'entry_level', 'LEVEL', 1)}${th('watch', null, 'GAP', 1)}${th('watch', 'category', 'CAT')}${th('watch', null, 'OPTIONS')}
+    ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}<th title="entry state, DIAGNOSTIC">ENTRY STATE</th><th class="num">TRIGGER</th><th class="num">STOP</th><th class="num">SIZE</th><th class="num">EARN</th>${th('watch', 'entry_level', 'MR REF', 1)}${th('watch', null, 'vs REF', 1)}${th('watch', 'category', 'CAT')}${th('watch', null, 'OPTIONS')}
   </tr></thead><tbody>
     ${rows.map(r => {
       const gap = r.entry_level && r.current_price ? ((r.entry_level / r.current_price - 1) * 100) : 0;
-      const gapCls = gap <= -2 ? 'pos' : gap >= 2 ? 'neg' : 'neut';
+      const gapCls = 'neut';   // 2-Oct-2026: the reference is not coloured as a place to enter
       const corrT = r.corr_status === 'unavailable' ? 'correlation unavailable — computation failed, no penalty applied' : (r.max_corr_with ? `highest overlap ${r.max_corr_with} |ρ|=${r.max_corr ?? '—'} · vs book ρ=${r.portfolio_corr ?? '—'}` : '');
       const levT = r.lev_status === 'financial_na' ? 'financial — leverage n/a by construction' : r.lev_status === 'unavailable' ? 'leverage unavailable — no penalty applied' : r.nd_ebitda != null ? `net-debt/EBITDA ${r.nd_ebitda}` : (r.lev_status || '');
       return `<tr${r.on_board_as === 'held' ? ' class="dim"' : ''}>
       <td class="num c-3">${r.rank ?? ''}</td>
-      <td class="tk">${r.ticker}${r.held ? ' ' + HELD : ''}${r.broken_base ? ' ' + BB : ''}</td>
+      <td class="tk">${r.ticker}${r.held ? ' ' + HELD : ''}${r.broken_base ? ' ' + BB : ''}${esMini(r.ticker)}</td>
       <td class="nm">${r.name}</td>
       <td class="t1 c-3">${(r.sector || '').substring(0, 18)}</td>
       <td class="num w7 ${scoreCls(r.composite)}">${r.composite}</td>
@@ -95,7 +118,8 @@ function renderWatchlist(W, U){
       <td class="num ${penCls(r.corr_penalty, -4)}" title="${corrT}">${r.corr_penalty == null ? 'n/a' : r.corr_penalty}</td>
       <td class="num ${penCls(r.leverage_penalty, -3)}" title="${levT}">${r.leverage_penalty == null ? 'n/a' : r.leverage_penalty}</td>
       <td class="num">$${fmtD(r.current_price)}</td>
-      <td class="num c-info">$${fmtD(r.entry_level)}</td>
+      ${esCells(r.ticker)}
+      <td class="num c-3" title="mean-reversion reference; not an entry signal">$${fmtD(r.entry_level)}</td>
       <td class="num ${gapCls}">${gap.toFixed(1)}%</td>
       <td>${badge(r.category)}</td>
       <td class="t1 nowrap">${optionsCell(r.ticker)}</td>
@@ -254,7 +278,7 @@ function render(){
 }
 
 async function init(){
-  await loadFiles(['screen', 'screenStatus', 'visReg', 'reconciliation', 'universeMeta', 'optionsLens'], SC);
+  await loadFiles(['screen', 'screenStatus', 'visReg', 'reconciliation', 'universeMeta', 'optionsLens', 'entryState'], SC);
   SC.data = SC.screen; SC.status = SC.screenStatus; SC.recon = SC.reconciliation;
   render();
 }

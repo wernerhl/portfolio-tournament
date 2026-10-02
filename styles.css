@@ -1045,3 +1045,12 @@ tr.cluster td{background:color-mix(in srgb,var(--warn) 10%,transparent)}
 /* order 1-Oct-2026 [R1.3/R1.4]: the regime cards' scale line and legend */
 .ind-scale{margin-top:2px;line-height:1.4}
 .ind-legend{line-height:1.5}
+/* order 2-Oct-2026 [E2]: the entry-state badge and block */
+.es-badge{display:inline-block;padding:0 var(--s1);border:1px solid currentColor;border-radius:var(--radius-1);font:600 var(--t1) var(--mono);letter-spacing:.04em;white-space:nowrap}
+.es-block{margin:var(--s2) 0;padding:var(--s2) var(--s3);border-left:3px solid var(--hairline-hi);background:var(--surface-2);border-radius:0 var(--radius-1) var(--radius-1) 0}
+@media (max-width:820px){
+  /* a drill-down inside a sideways-scrolling table stays pinned to the screen width and wraps,
+     so the entry state and the signal box read without scrolling the table */
+  .lbtable .tk-detail,.tbl-scroll .tk-detail{position:sticky;left:0;width:calc(100vw - 56px);box-sizing:border-box;white-space:normal}
+  .es-block{overflow-wrap:anywhere}
+}

@@ -320,15 +320,28 @@ def facts_payload(session: str, rules: dict) -> dict:
     next_events = [{"date": e["date"], "type": e["type"], "label": e.get("label"), "name": e.get("name"), "impact": e.get("impact"),
                     "ticker": e.get("ticker")} for e in nxt[:3]]
     clusters = [c for c in cal.get("clusters", []) if c.get("date", "") >= session][:3]
+    # Order 2-Oct-2026 [E2]: the entry state's changes today for the held names and the top-40 board
+    # (DIAGNOSTIC rule output; data/entry_state.json, written earlier in the nightly)
+    entry_changes, entry_label = [], None
+    try:
+        es_ = json.loads((DATA / "entry_state.json").read_text())
+        entry_label = es_.get("label")
+        if es_.get("session_date") == session:
+            entry_changes = [{"ticker": t["ticker"], "from": t.get("from"), "to": t.get("to"), "reason": t.get("reason"),
+                              "groups": [g for g in t.get("groups", []) if g in ("held", "board")]}
+                             for t in es_.get("transitions_today", []) if set(t.get("groups", [])) & {"held", "board"}]
+    except Exception:  # noqa: BLE001
+        pass
     payload = {"session": session, "indices": indices, "sectors": {k: v for k, v in sectors.items()},
                "sectors_weakest": sec_sorted[:2], "sectors_strongest": sec_sorted[-2:][::-1],
                "regime": regime, "flags": flags, "volatility": volatility, "rates": rates, "credit": credit, "book": book,
                "held_levels": levels, "releases_today": releases, "upcoming_two_sessions": upcoming, "next_events": next_events,
                "clusters_ahead": clusters, "tickers": sorted(held_set | set(INDEX_ETFS.values())), "notes": notes,
+               "entry_state_changes": entry_changes, "entry_state_label": entry_label,
                "sources": ["data/source/prices_daily.parquet", "data/source/sector_etfs.parquet", "data/source/vol_indicators.parquet",
                            "data/source/fred_indicators.parquet", "data/regime_daily.csv", "data/regime_daily_published.csv",
                            "data/intraday.json", "data/bonds/states.json", "data/holdings.json", "data/ticker_signals.json",
-                           "data/event_calendar.json"]}
+                           "data/event_calendar.json", "data/entry_state.json"]}
     return payload
 
 
