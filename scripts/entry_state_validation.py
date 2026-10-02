@@ -9,10 +9,15 @@ run if the rules file no longer matches the sha256 registered beside them.
 
     .venv/bin/python scripts/entry_state_validation.py --stage power   # SETUP_ONLY vs BASELINE, reported first
     .venv/bin/python scripts/entry_state_validation.py --stage ready   # READY vs BASELINE; needs the committed power check
+    (--registration selects the registration; default v2. A registration superseded by a later one is refused.)
 
-Stages:
-  power  → data/entry_state_power_check.json
+Stages (output paths from the registration's "artifacts"):
+  power  → the power-check JSON (v1: data/entry_state_power_check.json; v2: data/entry_state_power_check_v2.json)
   ready  → data/entry_state_validation.json (verdict PASS / FAIL / NO VERDICT, with full distributions)
+
+Pairing: v1 "common cells" (entry month, ticker), superseded because a later entry in the same month conditions the
+month-start baseline on a pullback after its entry; v2 "common names, joint months": both contestants restricted to
+their common tickers, every entry counted, the months resampled jointly.
 
 Price history: yfinance daily OHLC (auto_adjust=False) from the registered start, fetched once into the
 git-ignored scratch/entry_validation/ohlc.parquet; its sha256 and fetch time go into every result.
@@ -36,9 +41,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 REPO = HERE.parent
 DATA = REPO / "data"
-REG = DATA / "entry_state_validation_registration.json"
-POWER_OUT = DATA / "entry_state_power_check.json"
-READY_OUT = DATA / "entry_state_validation.json"
+REG_DEFAULT = DATA / "entry_state_validation_registration_v2.json"
 CACHE = REPO / "scratch" / "entry_validation"
 PRICES = CACHE / "ohlc.parquet"
 QS = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
@@ -235,6 +238,69 @@ def paired(ent: pd.DataFrame, a: str, b: str, reg: dict) -> dict:
     return out
 
 
+def paired_names(ent: pd.DataFrame, a: str, b: str, reg: dict) -> dict:
+    """v2: both contestants on their common tickers, every entry counted; the entry months are resampled jointly
+    (each drawn month brings all entries of both contestants), so the two share every resampled history."""
+    A, B = ent[ent["contestant"] == a], ent[ent["contestant"] == b]
+    names = sorted(set(A["ticker"]) & set(B["ticker"]))
+    A, B = A[A["ticker"].isin(names)], B[B["ticker"].isin(names)]
+    months_all = sorted(set(A["month"]) | set(B["month"]))
+    M = len(months_all); midx = {m: i for i, m in enumerate(months_all)}
+    rng = np.random.default_rng(int(reg["bootstrap"]["seed"]))
+    nb = int(reg["bootstrap"]["resamples"])
+    draws = rng.integers(0, M, size=(nb, M))
+    W = np.zeros((nb, M), dtype=np.int64)
+    for r in range(nb):
+        W[r] = np.bincount(draws[r], minlength=M)
+    out = {"pair": f"{a} vs {b}", "construction": "common names, joint month blocks", "common_names": len(names),
+           "entries_contestant": int(len(A)), "entries_baseline": int(len(B)), "months": M}
+
+    def arrays(X, key):
+        x = X[["month", key]].dropna()
+        return x[key].to_numpy(float), np.array([midx[m] for m in x["month"]])
+
+    def mean_diff(key):
+        va, ma = arrays(A, key); vb, mb = arrays(B, key)
+        sa, ca = np.bincount(ma, weights=va, minlength=M), np.bincount(ma, minlength=M).astype(float)
+        sb, cb = np.bincount(mb, weights=vb, minlength=M), np.bincount(mb, minlength=M).astype(float)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            boot = (W @ sa) / (W @ ca) - (W @ sb) / (W @ cb)
+        return {"n_contestant": int(len(va)), "n_baseline": int(len(vb)), "point": float(va.mean() - vb.mean()),
+                "mean_contestant": float(va.mean()), "mean_baseline": float(vb.mean()),
+                "ci90": [float(np.nanpercentile(boot, 5)), float(np.nanpercentile(boot, 95))],
+                "boot_percentiles": {str(q): float(np.nanpercentile(boot, q * 100)) for q in QS}}
+
+    def median_diff(key):
+        va, ma = arrays(A, key); vb, mb = arrays(B, key)
+        oa, ob = np.argsort(va, kind="stable"), np.argsort(vb, kind="stable")
+        va_s, vb_s, ma_s, mb_s = va[oa], vb[ob], ma[oa], mb[ob]
+        boot = np.empty(nb)
+        for r in range(nb):
+            w = W[r]
+            boot[r] = wmedian(va_s, w[ma_s]) - wmedian(vb_s, w[mb_s])
+        return {"n_contestant": int(len(va)), "n_baseline": int(len(vb)), "point": float(np.median(va) - np.median(vb)),
+                "median_contestant": float(np.median(va)), "median_baseline": float(np.median(vb)),
+                "ci90": [float(np.nanpercentile(boot, 5)), float(np.nanpercentile(boot, 95))],
+                "boot_percentiles": {str(q): float(np.nanpercentile(boot, q * 100)) for q in QS}}
+
+    out["dMAE"] = median_diff("MAE20")
+    out["dX60"] = mean_diff("X60")
+    out["dX20"] = mean_diff("X20")
+    out["dSTOP20"] = mean_diff("STOP20")
+    out["dX60_median"] = median_diff("X60")
+    lo, hi = out["dMAE"]["ci90"]; lx, hx = out["dX60"]["ci90"]
+    out["rule"] = {"dMAE_interval_below_zero": bool(hi < 0), "dX60_lower_bound_at_least_minus_1pt": bool(lx >= -0.010),
+                   "passes": bool(hi < 0 and lx >= -0.010),
+                   "dMAE_excludes_zero": "below" if hi < 0 else "above" if lo > 0 else "no"}
+    out["resolution"] = {"dMAE_half_width": float((hi - lo) / 2), "dX60_half_width": float((hx - lx) / 2)}
+    return out
+
+
+def compare(ent: pd.DataFrame, a: str, b: str, reg: dict) -> dict:
+    mode = (reg.get("pairing") or {}).get("mode", "common_cells")
+    return paired_names(ent, a, b, reg) if mode == "common_names_joint_months" else paired(ent, a, b, reg)
+
+
 def distributions(ent: pd.DataFrame) -> dict:
     out = {}
     for c, g in ent.groupby("contestant"):
@@ -276,14 +342,25 @@ def main() -> int:
     ap.add_argument("--stage", choices=["power", "ready"], required=True)
     ap.add_argument("--refetch", action="store_true")
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--registration", default=str(REG_DEFAULT.relative_to(REPO)))
     a = ap.parse_args()
+    REG = REPO / a.registration
     reg = json.loads(REG.read_text())
+    POWER_OUT = REPO / reg["artifacts"]["power_check"]
+    READY_OUT = REPO / reg["artifacts"]["result"]
+    rel = str(REG.relative_to(REPO))
+    for other in sorted(DATA.glob("entry_state_validation_registration*.json")):
+        if other != REG and (json.loads(other.read_text()).get("supersedes") or {}).get("path") == rel:
+            log(f"{rel} is superseded by {other.relative_to(REPO)}: refusing"); return 2
     import entry_state as es
     cfg_path = DATA / "entry_state_config.json"
     if sha(cfg_path) != reg["rules_config"]["sha256"]:
         log("the rules file no longer matches the registered sha256: refusing (a change needs a new registration)"); return 2
     if not committed_clean(REG):
         log("the registration is not committed (or has local edits): refusing (registered before any run)"); return 2
+    done = POWER_OUT if a.stage == "power" else READY_OUT
+    if done.exists() and committed_clean(done) and json.loads(done.read_text()).get("registration", {}).get("path") == rel:
+        log(f"{done.relative_to(REPO)} is already committed for this registration: a rerun needs a new registration"); return 2
     if a.stage == "ready":
         if not POWER_OUT.exists() or not committed_clean(POWER_OUT):
             log("the power check must be run, reported and committed before READY is evaluated"); return 2
@@ -303,22 +380,24 @@ def main() -> int:
             "prices": pmeta, "computed_at": datetime.now().astimezone().isoformat(timespec="seconds"),
             "entries_through": str(ent["entry_date"].max().date()), "label": "DIAGNOSTIC"}
     if a.stage == "power":
-        res = paired(ent, "SETUP_ONLY", "BASELINE", reg)
+        res = compare(ent, "SETUP_ONLY", "BASELINE", reg)
         hp = reg["power_check"]
         has_power = res["resolution"]["dMAE_half_width"] <= 0.0025 and res["resolution"]["dX60_half_width"] <= 0.010
         out = {"cadence": "static", "as_of": meta["computed_at"][:10], **meta, "stage": "power check (SETUP_ONLY vs BASELINE)",
+               "registration_version": reg.get("version", 1),
                "criterion": hp["has_power"], "has_power": bool(has_power), "result": res,
                "distributions": distributions(ent[ent["contestant"].isin(["SETUP_ONLY", "BASELINE"])])}
         POWER_OUT.write_text(json.dumps(clean(out), indent=1, allow_nan=False, default=str))
         log(f"power check: has_power={has_power}; dMAE {res['dMAE']['point']:+.4f} {res['dMAE']['ci90']}; dX60 {res['dX60']['point']:+.4f} {res['dX60']['ci90']}")
         return 0
     power = json.loads(POWER_OUT.read_text())
-    res = paired(ent, "READY", "BASELINE", reg)
+    res = compare(ent, "READY", "BASELINE", reg)
     if not power["has_power"]:
         verdict = "NO VERDICT"
     else:
         verdict = "PASS" if res["rule"]["passes"] else "FAIL"
     out = {"cadence": "static", "as_of": meta["computed_at"][:10], **meta, "stage": "READY vs BASELINE",
+           "registration_version": reg.get("version", 1),
            "verdict": verdict, "power_check": {"has_power": power["has_power"], "path": str(POWER_OUT.relative_to(REPO))},
            "decision_rule": reg["decision_rule"], "result": res, "distributions": distributions(ent),
            "expected_result": reg["expected_result"]["READY_vs_BASELINE"]}
