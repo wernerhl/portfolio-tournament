@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-01",
- "fetched_at": "2026-10-02T06:14:57-04:00",
+ "fetched_at": "2026-10-02T14:58:42-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,11 +57,11 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=3 (parsed 20)",
+  "fed_press": "ok n=4 (parsed 20)",
   "fed_speeches": "ok n=8 (parsed 15)",
   "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
-  "bls_release_day": "ok n=1 (constructed 1)",
+  "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=54 (parsed 41 names)",
@@ -81,17 +81,47 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 10,
+  "irrelevant": 9,
   "out_of_window": 27215,
   "unparseable": 0
  },
  "counts": {
-  "items": 119,
-  "tier1": 80,
+  "items": 120,
+  "tier1": 81,
   "tier2": 39,
-  "last24h": 12
+  "last24h": 9
  },
  "items": [
+  {
+   "id": "59322cafa4d9f76dca8bc4850eda31b90807cc87",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board issues enforcement action with Ontario Bancorporation, Inc.",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261002a.htm",
+   "timestamp": "2026-10-02T11:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "41fc3bba10375d65288d084c3a41157b578ee87c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "BLS release: Employment Situation (September 2026)",
+   "source": "BLS (release page)",
+   "source_id": "bls_release_day",
+   "url": "https://www.bls.gov/news.release/empsit.nr0.htm#2026-10-02",
+   "timestamp": "2026-10-02T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "NFP"
+   ],
+   "summary": "scheduled release at 08:30 ET; print not fetched",
+   "disclosure_lag_label": null
+  },
   {
    "id": "8b63440eac4a2cbb0a0ac5603d00afd1abbdd0c7",
    "tier": 1,
@@ -1965,22 +1995,6 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "a15559ffc0f2a2628624f12f989f101378001299",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by FACTSET RESEARCH SYSTEMS INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063495/fds-20260923.htm",
-   "timestamp": "2026-09-25T07:01:25-04:00",
-   "tickers": [
-    "FDS"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-09-25 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -2021,17 +2035,14 @@
   ]
  },
  "last24h": [
+  "59322cafa4d9f76dca8bc4850eda31b90807cc87",
+  "41fc3bba10375d65288d084c3a41157b578ee87c",
   "8b63440eac4a2cbb0a0ac5603d00afd1abbdd0c7",
   "a96858cbb7c8ed2fcbc2211ebdc354f6a30478e6",
   "947501f044bbc0fe59a13ec7ff6cc7922cb42d23",
   "7247ca16ab526a06af874d5d8e249b66178abfeb",
   "6c42783210b99589e2a6340d366592435ca4e08e",
   "9f4d944355b24780cd67eed1c27941383d8bb7cd",
-  "bc6d5ff2ab1b9fe9ea3b8222d2a5affb5aac5aa3",
-  "0f8a88c617254ec8dc118909e39dc7fb46ab7166",
-  "6ae1556d4d693e5cd5f07e009f9570a7e6d0395d",
-  "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
-  "e1dfff34bb8cf81e2b9d143955df0d6d65f6ed42",
-  "c577d18370c2c869cebc76af66887180cfd65652"
+  "bc6d5ff2ab1b9fe9ea3b8222d2a5affb5aac5aa3"
  ]
 }
