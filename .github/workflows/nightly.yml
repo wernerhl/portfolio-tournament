@@ -21,7 +21,9 @@ on:
   schedule:
     - cron: '0 22 * * 1-5'
     - cron: '30 3 * * 2-6'   # 23:30 ET late retry (1-Oct-2026): the provider posted the 29- and 30-Sept closes after 21:00 ET both nights; publishes the same evening instead of waiting for the morning run
+    - cron: '17 5 * * 2-6'   # 01:17 ET second retry (2-Oct-2026): GitHub did not deliver the 03:30 UTC run on 2 Oct; an off-the-hour minute is delivered more reliably
     - cron: '0 8 * * 2-6'    # 04:00 ET morning publish (lands 04:00–07:00 ET with GitHub's delay, before the open) when the evening run found no close bar
+    - cron: '41 10 * * 2-6'  # 06:41 ET last pre-open retry (2-Oct-2026)
   workflow_dispatch:
 
 permissions:
@@ -55,7 +57,7 @@ jobs:
           import sys
           sys.path.insert(0, "scripts")
           from trading_calendar import last_completed_session
-          late = os.environ.get("GITHUB_SCHEDULE", "") in ("0 8 * * 2-6", "30 3 * * 2-6")   # both retries publish only an unpublished session
+          late = os.environ.get("GITHUB_SCHEDULE", "") in ("0 8 * * 2-6", "30 3 * * 2-6", "17 5 * * 2-6", "41 10 * * 2-6")   # every retry publishes only an unpublished session
           st = {}
           try: st = json.load(open("data/status.json"))
           except Exception: pass
@@ -66,10 +68,19 @@ jobs:
           # arriving hours after the close (none at 21:14 ET on 29-Sept), so the evening run
           # may reject; the morning run finds the bar and publishes before the open.
           last_ok = str(st.get("last_success") or "")[:10]
-          needs_publish = (not last_ok) or (last_ok < last_completed_session())
+          # 2-Oct-2026 repair: judge by the SESSION published (the tournament history's last row), not by
+          # the calendar date of the last success. A dispatch at 00:16 ET on 1 Oct published 30 Sept, so
+          # last_success read "2026-10-01" and the 2-Oct morning run wrongly found 1 Oct already published.
+          pub = ""
+          try:
+              h = json.load(open("data/tournament.json")).get("history") or []
+              pub = str(h[-1].get("date") or "")[:10] if h else ""
+          except Exception:
+              pub = ""
+          needs_publish = (not pub) or (pub < last_completed_session())
           run = (not late) or needs_publish or os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
           print(f"run={'true' if run else 'false'}")
-          print(f"reason={'close run' if not late else ('morning publish: last success ' + (last_ok or 'none') + ' < last completed session ' + last_completed_session() if needs_publish else 'no morning run needed (last session published)')}")
+          print(f"reason={'close run' if not late else ('retry publish: published session ' + (pub or 'none') + ' < last completed session ' + last_completed_session() if needs_publish else 'no retry needed (session ' + pub + ' published)')}")
           EOF
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
