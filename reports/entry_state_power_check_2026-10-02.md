@@ -44,3 +44,23 @@ Without the conditioning, SETUP-ONLY carries a slightly larger early loss (media
 
 1. v1 stands as committed. Its READY stage does not run, and the script refuses it once a later registration supersedes v1.
 2. v2 (`reports/entry_state_validation_registration_v2_2026-10-02.md`) uses the order's wording: both contestants restricted to their common names, every entry counted, the months resampled jointly for both contestants, and no pairing on cells. It is committed before any v2 run, and its power check runs first.
+
+---
+
+# Registration v2 — the discriminating-power check, run 2 October 2026
+
+Registration `reports/entry_state_validation_registration_v2_2026-10-02.md` (commit e8f7bd8), same price file (sha256 `fbe21a4b…`). Result file: `data/entry_state_power_check_v2.json`, committed as produced.
+
+SETUP-ONLY (30,334 entries) against BASELINE (47,812), 526 common names, 202 entry months, 10,000 joint month-block resamples:
+
+| statistic | SETUP-ONLY | BASELINE | difference | 90% interval | half-width | threshold |
+|---|---|---|---|---|---|---|
+| median MAE20 | 3.92% | 3.77% | +0.15 pt | [−0.12, +0.42] | **0.27 pt** | ≤ 0.25 ✘ |
+| mean X60 | +0.79% | +0.55% | +0.23 pt | [−0.03, +0.50] | 0.26 pt | ≤ 1.0 ✔ |
+| median X60 | +0.02% | −0.13% | +0.15 pt | [−0.10, +0.40] | | |
+| mean X20 | +0.22% | +0.04% | +0.17 pt | [−0.03, +0.37] | | |
+| stopped out within 20 sessions | 31.7% | 21.0% | +10.7 pt | [+8.9, +12.5] | | |
+
+**Verdict of the check: the v2 rule lacks power.** The ΔMAE half-width, 0.27 point, misses the registered 0.25 by 0.02 point; the ΔX60 resolution is ample. The rule's outcome on this pair: no ΔMAE interval excludes zero, and SETUP-ONLY would fail. The point estimate (+0.15 point) is where the registration expected it.
+
+**Consequence, as registered:** READY is still computed and its full distributions reported, but the verdict is **NO VERDICT (rule lacks power)**. A new registration is needed before anything judges the state machine, and that choice is left to the operator. The badge stays DIAGNOSTIC. Options a v3 could register, none chosen here: a mean rather than a median for MAE20 (a mean resamples more tightly), or the 0.25-point threshold relaxed with the reason stated. Either would be checked for power on SETUP-ONLY against BASELINE first, with the same seed.
