@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-01",
- "fetched_at": "2026-10-02T14:58:42-04:00",
+ "as_of": "2026-10-02",
+ "fetched_at": "2026-10-02T19:33:40-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,14 +57,14 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=4 (parsed 20)",
+  "fed_press": "ok n=5 (parsed 20)",
   "fed_speeches": "ok n=8 (parsed 15)",
   "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=54 (parsed 41 names)",
+  "edgar": "ok n=81 (parsed 41 names)",
   "ir_avgo": "ok n=1 (parsed 10)",
   "ir_nvda": "ok n=2 (parsed 20)",
   "ir_gev": "ok n=4 (parsed 20)",
@@ -81,17 +81,685 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 9,
-  "out_of_window": 27215,
+  "irrelevant": 10,
+  "out_of_window": 27226,
   "unparseable": 0
  },
  "counts": {
-  "items": 120,
-  "tier1": 81,
+  "items": 147,
+  "tier1": 108,
   "tier2": 39,
-  "last24h": 9
+  "last24h": 48
  },
  "items": [
+  {
+   "id": "6ddeeb2f3658c3f9fc0f34f18ec494fd866fa9e0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by QUALCOMM INC/DE",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000099/xslF345X06/edgardoc.xml",
+   "timestamp": "2026-10-02T18:43:19-04:00",
+   "tickers": [
+    "QCOM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "90a7ce3f91b42d38d1bbf260f768006d41cf9ab2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000110465926113405/xslF345X06/tm2626967-1_4seq1.xml",
+   "timestamp": "2026-10-02T18:13:44-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · OWNERSHIP DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "36f921eed4fe550b89ce248a4b75b183a4e325f3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526412669/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-02T18:05:42-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e00cad86bad4f4347d7669678d302e1a257ddd65",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INCYTE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/879169/000119312526412653/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-02T17:54:32-04:00",
+   "tickers": [
+    "INCY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cadde35138dce92c97864c9226f119fb70f625b6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces approval of application by Fleur Capital Corporation",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20261002a.htm",
+   "timestamp": "2026-10-02T16:45:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Orders on Banking Applications · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "309b2403fd8ed544ee852245759f4a0dfc94218b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000131/xslF345X06/wk-form4_1790973660.xml",
+   "timestamp": "2026-10-02T16:41:02-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e88523e2d9b2316940a5d9863e378a77ffbe1f87",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000129/xslF345X06/wk-form4_1790973463.xml",
+   "timestamp": "2026-10-02T16:37:46-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f367c3fdb4680ed7000a87ddd576cffc628f9537",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000127/xslF345X06/wk-form4_1790973422.xml",
+   "timestamp": "2026-10-02T16:37:04-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b33d7dafb5e76ef625921fbee0a9d0d05e78a740",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000125/xslF345X06/wk-form4_1790973339.xml",
+   "timestamp": "2026-10-02T16:35:43-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "455d8d6604d5739255cb404a4c3792c7ace3c40d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000123/xslF345X06/wk-form4_1790973227.xml",
+   "timestamp": "2026-10-02T16:33:51-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cf743bfa3b88ca749576816a4ec716204c2c2c1b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000121/xslF345X06/wk-form4_1790973140.xml",
+   "timestamp": "2026-10-02T16:32:23-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "333f7a5eaf120feafe0bef81bb02220b6fe6a24c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000119/xslF345X06/wk-form4_1790973103.xml",
+   "timestamp": "2026-10-02T16:31:46-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8377540fdb35be9b1d95f99e26de3e88ce530aea",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000117/xslF345X06/wk-form4_1790973070.xml",
+   "timestamp": "2026-10-02T16:31:13-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1f475336a9831c441da1f14a758c2d30b128a066",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000115/xslF345X06/wk-form4_1790973035.xml",
+   "timestamp": "2026-10-02T16:30:37-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "11d73affb21ccfdaefcdce82f6d2f1254aeb8f37",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000113/xslF345X06/wk-form4_1790972991.xml",
+   "timestamp": "2026-10-02T16:29:53-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9aeacaea8a62d187a5d657e31d0dffc596d6b411",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000374/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:16:43-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "22f9a97a9add119bd85f69105ea9c9fee29e9d59",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000373/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:15:14-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "26e8eb1fc27a04a1f3893248f8630e9792cbd1ab",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000372/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:13:19-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dab94ae251f1644cfbf316ad0fac9e55a112d16a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000371/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:11:48-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "adf400e64ae44f26d54b6c07c7aa30d62c59b743",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000370/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:10:18-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4beee92dc55de2f6d1c06dfc44a2d29f598838cb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000369/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:08:19-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b448812a97e0fa034165af12666c6b63ee5b7bc1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GENERAL ELECTRIC CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/40545/000121650326000009/xslF345X06/wk-form4_1790971644.xml",
+   "timestamp": "2026-10-02T16:07:27-04:00",
+   "tickers": [
+    "GE"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2671ed3f4fadd9a533d0e015d0191b5216dea9d4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GENERAL ELECTRIC CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/40545/000167173026000007/xslF345X06/wk-form4_1790971616.xml",
+   "timestamp": "2026-10-02T16:06:59-04:00",
+   "tickers": [
+    "GE"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e59c4068950a0beca1102d7fe975ba146aa5ff8f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000368/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:06:38-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3c7c6989ce31defc61d9e3dd5237d494f04fa992",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GENERAL ELECTRIC CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/40545/000186875826000013/xslF345X06/wk-form4_1790971588.xml",
+   "timestamp": "2026-10-02T16:06:36-04:00",
+   "tickers": [
+    "GE"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e0f82c3bead1a8a1769294c98747e8cc16dfb72a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Constellation Energy Corp",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1868275/000090514826004335/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:06:31-04:00",
+   "tickers": [
+    "CEG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bcc50ee3bacd369dd89412fdb7db4235e788ed2d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000289/xslF345X06/wk-form4_1790971582.xml",
+   "timestamp": "2026-10-02T16:06:24-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a65fe673ebd2db46710c8868a4fce7ec06a6ec38",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000288/xslF345X06/wk-form4_1790971553.xml",
+   "timestamp": "2026-10-02T16:05:56-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "689b30ab095cb209ec9d0a77d376c8b293f8cd7b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000287/xslF345X06/wk-form4_1790971512.xml",
+   "timestamp": "2026-10-02T16:05:31-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5755bd9ad72be70019c0cf9d54389163e31229ab",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Constellation Energy Corp",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1868275/000090514826004333/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:05:20-04:00",
+   "tickers": [
+    "CEG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6676b018220a1d2087774cc7e2453da3ce948959",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000286/xslF345X06/wk-form4_1790971495.xml",
+   "timestamp": "2026-10-02T16:04:57-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "340922c7d9bb7fbf534f765156fb30c34a5a889e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by MOODYS CORP /DE/",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1059556/000206205026000009/xslF345X06/wk-form4_1790971485.xml",
+   "timestamp": "2026-10-02T16:04:48-04:00",
+   "tickers": [
+    "MCO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "eacf36ffa94d7cd35360f976dccb3f170d98d780",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000285/xslF345X06/wk-form4_1790971474.xml",
+   "timestamp": "2026-10-02T16:04:37-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f1ba22ad121278f7bd98028cfa18621e5cfd0369",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000284/xslF345X06/wk-form4_1790971453.xml",
+   "timestamp": "2026-10-02T16:04:15-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b3a83f59e043078fdea6ae9862d94286ca8baae4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000366/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T16:04:05-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "70ab53c82aa1c4fdad5d56af09754a83be1e56ba",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by MOODYS CORP /DE/",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1059556/000148115326000018/xslF345X06/wk-form4_1790971440.xml",
+   "timestamp": "2026-10-02T16:04:03-04:00",
+   "tickers": [
+    "MCO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "70530c161e07603cc46163dbb4bf29b0e7e559a2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000283/xslF345X06/wk-form4_1790971431.xml",
+   "timestamp": "2026-10-02T16:03:54-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9f582eaa61ef12334256ba33aa1ed031f5891203",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000282/xslF345X06/wk-form4_1790971407.xml",
+   "timestamp": "2026-10-02T16:03:30-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f85cc7326e153bb653c8a02418840aa39cf1bba0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000281/xslF345X06/wk-form4_1790971385.xml",
+   "timestamp": "2026-10-02T16:03:08-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "34cef9ab3994d23406b9272ab1cd1f0259a35761",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INCYTE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/879169/000140960126000015/xslF345X06/wk-form4_1790971354.xml",
+   "timestamp": "2026-10-02T16:02:39-04:00",
+   "tickers": [
+    "INCY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9587076141bc55f2e3ca03920651c14a29806594",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INCYTE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/879169/000117791726000014/xslF345X06/wk-form4_1790971323.xml",
+   "timestamp": "2026-10-02T16:02:07-04:00",
+   "tickers": [
+    "INCY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fe551cc7e923e4e8c2f5dc7a89c7503545a1eee4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces it will extend, until November 4, the comment period on its proposal to modernize Regulation O",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20261002a.htm",
+   "timestamp": "2026-10-02T16:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
+   "disclosure_lag_label": null
+  },
   {
    "id": "59322cafa4d9f76dca8bc4850eda31b90807cc87",
    "tier": 1,
@@ -1757,244 +2425,6 @@
    "topics": [],
    "summary": "Tier 2 headline · CoinGape · about BMNR",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "0751924929e8f64aac2dd5c5c64e780b58234200",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000096/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-09-25T17:48:06-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a7c9cf0c992f506b351ec1ac2516dd58a3acadb2",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by SCHWAB CHARLES CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/316709/000156156326000023/xslF345X06/wk-form4_1790370888.xml",
-   "timestamp": "2026-09-25T17:14:51-04:00",
-   "tickers": [
-    "SCHW"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "680d4dba74e73713c49bce091c963b59f6d07b22",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by FACTSET RESEARCH SYSTEMS INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1013237/000162828026063595/xslF345X06/wk-form4_1790368792.xml",
-   "timestamp": "2026-09-25T16:39:55-04:00",
-   "tickers": [
-    "FDS"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5a0ccfacc36b1ea631401f47416e5a1f662573a5",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board announces approval of application by Peoples Bancorp Inc.",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260925a.htm",
-   "timestamp": "2026-09-25T16:30:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Orders on Banking Applications · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f9006d54915ffb400c87b2c148f3ea2f6877ff07",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Broadcom Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1730168/000110465926110983/xslF345X06/tm2626134-1_4seq1.xml",
-   "timestamp": "2026-09-25T16:15:18-04:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · OWNERSHIP DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3a49ef742bad67127a2ccebc10a92da11870fa21",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063571/xslF345X06/wk-form4_1790366876.xml",
-   "timestamp": "2026-09-25T16:07:59-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "77fc09ceb741210b7537562dbe31ff49d3fd5c40",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063570/xslF345X06/wk-form4_1790366869.xml",
-   "timestamp": "2026-09-25T16:07:51-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "43801b8a3629072cd9a1e0f47181f5e191d61e80",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063569/xslF345X06/wk-form4_1790366861.xml",
-   "timestamp": "2026-09-25T16:07:44-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9d6987510318f7311e2fe8a0e6849196cc5bd9dc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063568/xslF345X06/wk-form4_1790366852.xml",
-   "timestamp": "2026-09-25T16:07:36-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "105e428fe9ea07fd9139d066bf1b66dbac77aa48",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063567/xslF345X06/wk-form4_1790366843.xml",
-   "timestamp": "2026-09-25T16:07:26-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "47aa7b3f242ac5e895f186cf41e7967dd8675450",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063566/xslF345X06/wk-form4_1790366835.xml",
-   "timestamp": "2026-09-25T16:07:18-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8392ae66897082aead5251b12ab1ab940edf6cf1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063565/xslF345X06/wk-form4_1790366828.xml",
-   "timestamp": "2026-09-25T16:07:11-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3bd8b23b491e82864ef026100db5e9621bc646a8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063564/xslF345X06/wk-form4_1790366820.xml",
-   "timestamp": "2026-09-25T16:07:03-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f6e58735ee4692a3ef811454e4861e85f99579a7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063562/xslF345X06/wk-form4_1790366786.xml",
-   "timestamp": "2026-09-25T16:06:29-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "aeaa70bedfe4e4c3c1f70d4692e89927d0a3e2da",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063561/xslF345X06/wk-form4_1790366779.xml",
-   "timestamp": "2026-09-25T16:06:22-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-25 · FORM 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -2020,11 +2450,11 @@
    "cdbf6d8623e87effd5c365455dae3a03c55d3614"
   ],
   "GOOG": [
+   "36f921eed4fe550b89ce248a4b75b183a4e325f3",
    "04680932e761ce4bb3e9f335a584f70121944102",
    "c9ea7169cdca70f27aa560e1309b87b6143c869e",
    "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
-   "87f489c49538e82cbc8c2e47234bece5259a7348",
-   "3497859a5603e636b9b4c7cc8a941fbb59e05a7c"
+   "87f489c49538e82cbc8c2e47234bece5259a7348"
   ],
   "BMNR": [
    "eb4f84bf4af6f6fc9450b379afb6f6ae12de5952",
@@ -2035,14 +2465,53 @@
   ]
  },
  "last24h": [
+  "6ddeeb2f3658c3f9fc0f34f18ec494fd866fa9e0",
+  "90a7ce3f91b42d38d1bbf260f768006d41cf9ab2",
+  "36f921eed4fe550b89ce248a4b75b183a4e325f3",
+  "e00cad86bad4f4347d7669678d302e1a257ddd65",
+  "cadde35138dce92c97864c9226f119fb70f625b6",
+  "309b2403fd8ed544ee852245759f4a0dfc94218b",
+  "e88523e2d9b2316940a5d9863e378a77ffbe1f87",
+  "f367c3fdb4680ed7000a87ddd576cffc628f9537",
+  "b33d7dafb5e76ef625921fbee0a9d0d05e78a740",
+  "455d8d6604d5739255cb404a4c3792c7ace3c40d",
+  "cf743bfa3b88ca749576816a4ec716204c2c2c1b",
+  "333f7a5eaf120feafe0bef81bb02220b6fe6a24c",
+  "8377540fdb35be9b1d95f99e26de3e88ce530aea",
+  "1f475336a9831c441da1f14a758c2d30b128a066",
+  "11d73affb21ccfdaefcdce82f6d2f1254aeb8f37",
+  "9aeacaea8a62d187a5d657e31d0dffc596d6b411",
+  "22f9a97a9add119bd85f69105ea9c9fee29e9d59",
+  "26e8eb1fc27a04a1f3893248f8630e9792cbd1ab",
+  "dab94ae251f1644cfbf316ad0fac9e55a112d16a",
+  "adf400e64ae44f26d54b6c07c7aa30d62c59b743",
+  "4beee92dc55de2f6d1c06dfc44a2d29f598838cb",
+  "b448812a97e0fa034165af12666c6b63ee5b7bc1",
+  "2671ed3f4fadd9a533d0e015d0191b5216dea9d4",
+  "e59c4068950a0beca1102d7fe975ba146aa5ff8f",
+  "3c7c6989ce31defc61d9e3dd5237d494f04fa992",
+  "e0f82c3bead1a8a1769294c98747e8cc16dfb72a",
+  "bcc50ee3bacd369dd89412fdb7db4235e788ed2d",
+  "a65fe673ebd2db46710c8868a4fce7ec06a6ec38",
+  "689b30ab095cb209ec9d0a77d376c8b293f8cd7b",
+  "5755bd9ad72be70019c0cf9d54389163e31229ab",
+  "6676b018220a1d2087774cc7e2453da3ce948959",
+  "340922c7d9bb7fbf534f765156fb30c34a5a889e",
+  "eacf36ffa94d7cd35360f976dccb3f170d98d780",
+  "f1ba22ad121278f7bd98028cfa18621e5cfd0369",
+  "b3a83f59e043078fdea6ae9862d94286ca8baae4",
+  "70ab53c82aa1c4fdad5d56af09754a83be1e56ba",
+  "70530c161e07603cc46163dbb4bf29b0e7e559a2",
+  "9f582eaa61ef12334256ba33aa1ed031f5891203",
+  "f85cc7326e153bb653c8a02418840aa39cf1bba0",
+  "34cef9ab3994d23406b9272ab1cd1f0259a35761",
+  "9587076141bc55f2e3ca03920651c14a29806594",
+  "fe551cc7e923e4e8c2f5dc7a89c7503545a1eee4",
   "59322cafa4d9f76dca8bc4850eda31b90807cc87",
   "41fc3bba10375d65288d084c3a41157b578ee87c",
   "8b63440eac4a2cbb0a0ac5603d00afd1abbdd0c7",
   "a96858cbb7c8ed2fcbc2211ebdc354f6a30478e6",
   "947501f044bbc0fe59a13ec7ff6cc7922cb42d23",
-  "7247ca16ab526a06af874d5d8e249b66178abfeb",
-  "6c42783210b99589e2a6340d366592435ca4e08e",
-  "9f4d944355b24780cd67eed1c27941383d8bb7cd",
-  "bc6d5ff2ab1b9fe9ea3b8222d2a5affb5aac5aa3"
+  "7247ca16ab526a06af874d5d8e249b66178abfeb"
  ]
 }
