@@ -1,11 +1,13 @@
-last trading session: 2026-10-01
-[HIGH    ] xfile:vol_single_source      intraday vix 15.96 vs canonical 16.39
+last trading session: 2026-10-02
+[HIGH    ] xfile:vol_single_source      intraday vix 15.31 vs canonical 16.39
 [HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
 [HIGH    ] governance:coverage          1_cap_pres: unclassified share 42% > 15%
 [HIGH    ] governance:coverage          2_balanced: unclassified share 30% > 15%
 [HIGH    ] governance:coverage          3_aggressive: unclassified share 27% > 15%
 [HIGH    ] governance:coverage          4_tactical: unclassified share 18% > 15%
 [HIGH    ] governance:coverage          5_werner: unclassified share 17% > 15%
+[HIGH    ] options:lens_spot_stale      held names whose lens spot is not the last session 2026-10-02: ['AVGO: provider 1-minute tape', 'BMNR: provider 1-minute tape', 'GEV: provider 1-minute tape', 'GOOG: provider 1-minute tape', 'NVDA: provider 1-minute tape']
+[HIGH    ] brief:missing                no brief entry for the last session 2026-10-02 (last: 2026-10-01)
 [HIGH    ] governance:review_overdue    visibility override AMZN review_by 2026-08-13 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override ANET review_by 2026-08-18 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override AVGO review_by 2026-09-17 passed (decay should be active)
@@ -27,4 +29,4 @@ last trading session: 2026-10-01
 [INFO    ] tournament:backfilled        12 history row(s) are backfilled under the as-published convention (marked backfilled: true)
 [INFO    ] book:export                  no brokerage export on record (holdings_export.json absent); holdings.json source: brokerage positions, 2026-09-30 (manual transcription from the account summary; replaced by export ingestion per B-series)
 
-27 findings; 0 CRITICAL
+29 findings; 0 CRITICAL
