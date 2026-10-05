@@ -739,7 +739,7 @@ def main(troot, sroot, today=None):
             low_=open(fp_,encoding='utf-8').read().lower()
             # the one sanctioned mention is the relabel itself (a .replace() of the old phrase)
             low_=low_.replace('/rulebook entry zone/g','')
-            for ph_ in ('entry zone','buy zone','buy-zone','buy the dip','buying zone'):
+            for ph_ in ('entry zone','buy zone','buy-zone','buy the dip','buying zone','at the zone','in the zone'):
                 if ph_ in low_: bz_.append(f'{fn_}: "{ph_}"')
     if bz_: add('HIGH','entry:buy_zone_language',f'buy-zone language served for the mean-reversion reference (order 2-Oct §2): {bz_[:6]}')
     # ---------- the daily brief, the goals, the news feed, realized gains, ownership (order 30-Sept) ----------

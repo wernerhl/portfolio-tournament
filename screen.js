@@ -97,7 +97,7 @@ function renderStrips(D){
 function renderWatchlist(W, U){
   const rows = ordered('watch', W);
   const nTop = W.filter(r => r.on_board_as !== 'held').length, nHeld = W.length - nTop;
-  const head = `<div class="lb-h"><h2>THE BOARD</h2><div class="lb-h-sub">top ${nTop} of ${U.total || 0} by composite${nHeld ? ` + ${nHeld} held name${nHeld === 1 ? '' : 's'} outside the top 40 (always on the board)` : ''} · HELD = in the book · descriptive ranking</div></div>`;
+  const head = `<div class="lb-h"><h2>THE BOARD${SC.optionsLens ? optionsAgeBadge(SC.optionsLens.session_date) : ''}</h2><div class="lb-h-sub">top ${nTop} of ${U.total || 0} by composite${nHeld ? ` + ${nHeld} held name${nHeld === 1 ? '' : 's'} outside the top 40 (always on the board)` : ''} · HELD = in the book · descriptive ranking</div></div>`;
   if (!W.length) return `<div class="lbtable">${head}<div class="note">No board data</div></div>`;
   return `<div class="lbtable">${head}
   <div class="tbl-scroll"><table class="board-table"><thead><tr>

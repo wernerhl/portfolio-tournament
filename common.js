@@ -132,6 +132,17 @@ function asOfBadge(dateStr, opt){
   return `<span class="asof mono t1 w5 c-3 ml2"${opt && opt.lag ? ` title="this source publishes ${opt.lag} session${opt.lag > 1 ? "s" : ""} after the close"` : ""}>as of ${d}</span>`;
 }
 
+// Order 5-Oct-2026, 2.5: every options panel names the chain vintage it was computed from. When that
+// date is older than the last trading day (the last session whose 16:00 close has passed), the badge is
+// amber, "options data from {date}" (the 30-Sept defect, a 25-Sept spot shown on 30 Sept, made visible).
+function optionsAgeBadge(vintageDate){
+  const d = vintageDate ? String(vintageDate).slice(0, 10) : null;
+  const last = lastTradingSessionISO();
+  if (!d) return `<span class="asof asof-stale mono t1 w6 r1 c-warn ml2 x2" title="no chain vintage on record">options data: no vintage</span>`;
+  if (d < last) return `<span class="asof asof-stale mono t1 w6 r1 c-warn ml2 x2" title="the options figures come from the ${d} chain snapshot; the last trading day is ${last} (captured and missed days: data/options/vintages/_index.json)">options data from ${d}</span>`;
+  return `<span class="asof mono t1 w5 c-3 ml2" title="computed from the ${d} chain snapshot (15:30–16:00 ET)">options as of ${d}</span>`;
+}
+
 // Phone pass (1-Oct-2026): a table wider than its box gets a one-line "swipe" hint under it, and
 // the navigation row is scrolled so the current page's tab is visible.
 function phoneTidy(){

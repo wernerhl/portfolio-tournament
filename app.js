@@ -1410,7 +1410,7 @@ function optionsRowHtml(tk, isPos){
   const gamma = `<details class="mt1"><summary class="mono t1 c-3 ptr ls05">dealer gamma (descriptive, assumption-flagged)</summary><div class="mono t1 c-3 mt1">net gamma per 1% move ${g.per_1pct != null ? fmtMoney(g.per_1pct) : "—"} · flip level ${g.flip_level != null ? "$" + g.flip_level : "—"} · convention: ${g.convention || "dealers long calls, short puts"}. ${g.caveat || ""}</div></details>`;
   return `<div class="ts-row">
       <div class="ts-label">Options</div>
-      <div class="ts-sub">${ivLine}</div>
+      <div class="ts-sub">${ivLine}${optionsAgeBadge(S.optionsLens && S.optionsLens.session_date)}</div>
       <div class="ts-val">${pill}</div>
       <div class="ts-sub">${optEventText(o)} · ${skewLine}</div>
     </div>${hedge}${gamma}`;
@@ -2098,7 +2098,7 @@ function renderScanner(){
   const filterChips = [
     {k:"all",       lbl:`All (${rows0.length})`},
     {k:"clean",     lbl:`★ Conditions met (${rows0.filter(r=>r.divCls==="clean").length})`},
-    {k:"watch",     lbl:`⚠ Quality, not at the zone (${rows0.filter(r=>r.divCls==="watch").length})`},
+    {k:"watch",     lbl:`⚠ Quality, extended from the reference (${rows0.filter(r=>r.divCls==="watch").length})`},
     {k:"exit",      lbl:`▽ Below a rulebook level (${rows0.filter(r=>r.divCls==="exit"||r.divCls==="trim").length})`},
     {k:"quality",   lbl:`Top quality (${rows0.filter(r=>r.quality>=38).length})`},
     {k:"positions", lbl:`Owned (${rows0.filter(r=>r.mode==="position").length})`},
@@ -2134,7 +2134,7 @@ function renderScanner(){
   return `<section class="scanner">
     <div class="scanner-head">
       <div>
-        <h2>SCANNER — BUSINESS QUALITY × SETUP READING${asOfBadge(S.signals && S.signals.updated)}</h2>
+        <h2>SCANNER — BUSINESS QUALITY × SETUP READING${asOfBadge(S.signals && S.signals.updated)}${S.optionsLens ? optionsAgeBadge(S.optionsLens.session_date) : ""}</h2>
         <div class="sc-sub">${rows.length} of ${rows0.length} names · top of list = best divergence quadrant</div>
       </div>
       <div class="filter-row">
@@ -3451,7 +3451,7 @@ function renderEventBoard(){
         <td class="num c-2">${optPct(h.median_abs)}</td><td class="num c-3">${optPct(h.max_abs)}</td>
         <td class="num c-2">${l8.n_exceeding_implied != null ? `${l8.n_exceeding_implied} of ${l8.n}` : "—"}</td>
         <td class="num c-1">${p.risk_share != null ? (p.risk_share * 100).toFixed(0) + "%" : "—"}</td></tr>`; }).join("");
-  return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${holdingsPill()}${asOfBadge(L.session_date)}</h3>
+  return `<div class="rcc-card"><h3>EVENT BOARD · <span class="c-3 w5">every held name with an earnings release in the next 45 days — where the next binary exposure sits and what the market prices for it</span>${holdingsPill()}${optionsAgeBadge(L.session_date)}</h3>
     ${rows ? `<div class="tbl-scroll"><table class="th-table stack-m"><tr><th>NAME</th><th>RELEASE</th><th class="num">IMPLIED MOVE</th><th class="num">ON THE POSITION</th><th class="num">MEDIAN PAST</th><th class="num">MAX PAST</th><th class="num">LAST 8 EXCEEDED</th><th class="num">SHARE OF BOOK RISK</th></tr>${rows}</table></div>`
            : `<div class="mono t1 c-3">no held name reports inside 45 days</div>`}
     <div class="chart-meta">implied move: bracketing method — the last expiry before the release against the first after it, event variance = post total variance − pre total variance − the pre-expiry base over the non-event sessions (fallback without a pre-event expiry flagged; lens definitions) · past reactions: close before the release to close after · descriptive; no directional implication</div></div>`;
@@ -3475,7 +3475,7 @@ function renderHedgeSelector(){
         <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>#</th><th>STRUCTURE</th><th class="num">NET / SH</th><th class="num">ON POSITION</th><th class="num">FLOOR</th><th class="num">CAP</th><th class="num">BREAKEVEN</th><th class="num">Δ</th><th class="num">BOOK LOSS WITH STRUCTURE</th><th>RANKED BY</th><th></th></tr>${rows}</table></div></div>`; }).join("");
     return `<details class="mt2" open><summary class="mono t2 w7 c-1 ptr">${tk} <span class="mono t1 w5 c-3">· ${ctx}</span></summary>${p.embedded_gain_note ? `<div class="mono t1 c-3 mt1">${p.embedded_gain_note}</div>` : ""}${tenors}</details>`;
   }).join("");
-  return `<div class="rcc-card"><h3>THE HEDGE SELECTOR <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">four structures priced and ranked on the live chain for each held name, at the first expiry beyond earnings and at about 90 days</span>${holdingsPill()}${asOfBadge(H.session_date)}</h3>
+  return `<div class="rcc-card"><h3>THE HEDGE SELECTOR <span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span> · <span class="c-3 w5">four structures priced and ranked on the live chain for each held name, at the first expiry beyond earnings and at about 90 days</span>${holdingsPill()}${optionsAgeBadge(H.session_date)}</h3>
     <div class="mono t1 c-warn">${H.label}</div>
     ${cards}
     <div class="chart-meta">${H.pricing} · ${H.stress_method} · selection rules fixed in data/options/hedge_rules.json (${(H.rules || []).length} rules, pre-registered) · ${H.note}</div></div>`;
@@ -3587,7 +3587,7 @@ function renderEventsBoard(){   // home, below the log: the next 45 days by week
     const extra = boardEarn.length ? `<tr><td colspan="5" class="mono t1 c-3">+ ${boardEarn.length} other names' earnings (board and register): ${boardEarn.map(e => `${e.ticker} ${e.date.slice(5)}`).join(", ")}</td></tr>` : "";
     return `<tr><td colspan="5" class="ev-week">WEEK OF ${k}</td></tr>${rows}${extra}`;
   }).join("");
-  return `<div class="rcc-card events-card"><h3>EVENTS · NEXT 45 DAYS · <span class="c-3 w5">scheduled releases by week with their impact level; held-name earnings with the options lens's implied move; a high-impact release on a held name's earnings date is a cluster</span>${holdingsPill()}${asOfBadge(cal.as_of)}</h3>
+  return `<div class="rcc-card events-card"><h3>EVENTS · NEXT 45 DAYS · <span class="c-3 w5">scheduled releases by week with their impact level; held-name earnings with the options lens's implied move; a high-impact release on a held name's earnings date is a cluster</span>${holdingsPill()}${asOfBadge(cal.as_of)}${S.optionsLens ? optionsAgeBadge(S.optionsLens.session_date) : ""}</h3>
     <div class="tbl-scroll"><table class="th-table events-table"><tr><th>DATE</th><th>TIME</th><th>EVENT</th><th>IMPACT</th><th>DETAIL</th></tr>${body}</table></div>
     <div class="chart-meta">calendar from the agencies' published schedules (provenance per event in data/event_calendar.json) · earnings dates from the provider, estimated until confirmed · descriptive; no directional implication</div></div>`;
 }
