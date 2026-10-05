@@ -68,6 +68,7 @@ def setup(tmp: Path) -> tuple[Path, Path, Path]:
     shutil.copytree(REPO / "scripts", seed / "scripts", ignore=shutil.ignore_patterns("__pycache__"))
     (seed / "data" / "options" / "vintages").mkdir(parents=True)
     (seed / "data" / "options" / "vintages" / ".keep").write_text("")
+    (seed / ".gitignore").write_text("__pycache__/\n")          # CI has no global ignore for bytecode
     sh("git add -A && git -c user.name=t -c user.email=t@t commit -q -m seed && git push -q origin HEAD:main", cwd=seed)
     a, b = tmp / "a", tmp / "b"
     sh(f"git clone -q {origin} {a}"); sh(f"git clone -q {origin} {b}")
