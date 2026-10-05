@@ -1,14 +1,14 @@
 {
   "cadence": "daily",
-  "session_date": "2026-10-01",
-  "as_of": "2026-10-02",
-  "computed_at": "2026-10-02T15:47:35-04:00",
+  "session_date": "2026-10-05",
+  "as_of": "2026-10-05",
+  "computed_at": "2026-10-05T17:29:07-04:00",
   "history_years": 6,
   "reaction_rule": "close on the last session before the release to close on the first session after; after-close releases (provider stamp hour \u2265 12) react close(D)\u2192close(D+1), before-open releases close(D\u22121)\u2192close(D)",
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
     "store_through": "2026-10-01",
-    "overlay": null
+    "overlay": "provider daily closes merged in memory through 2026-10-05 (store ended 2026-10-01; missing in store: none)"
   },
   "names": {
     "ADBE": {
@@ -198,7 +198,7 @@
         "mean_abs_last8": 0.06379
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "ADSK": {
@@ -388,7 +388,7 @@
         "mean_abs_last8": 0.04503
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "ANET": {
@@ -1177,7 +1177,7 @@
           "time_of_day": "after_close",
           "pre_date": "2021-06-03",
           "post_date": "2021-06-04",
-          "reaction": 0.02195
+          "reaction": 0.02194
         },
         {
           "date": "2021-09-02",
@@ -1338,7 +1338,7 @@
         "mean_abs_last8": 0.0988
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "AXP": {
@@ -1528,7 +1528,7 @@
         "mean_abs_last8": 0.03147
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "BLK": {
@@ -1719,7 +1719,7 @@
         "mean_abs_last8": 0.07825
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "BRO": {
@@ -1909,7 +1909,7 @@
         "mean_abs_last8": 0.05483
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "BX": {
@@ -2099,7 +2099,7 @@
         "mean_abs_last8": 0.03574
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "CDNS": {
@@ -2444,7 +2444,7 @@
         "mean_abs_last8": 0.04652
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "EXPE": {
@@ -2634,7 +2634,7 @@
         "mean_abs_last8": 0.08691
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "FDS": {
@@ -3007,7 +3007,7 @@
         "mean_abs_last8": 0.09146
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "GEV": {
@@ -3057,7 +3057,7 @@
           "time_of_day": "before_open",
           "pre_date": "2025-07-22",
           "post_date": "2025-07-23",
-          "reaction": 0.1458
+          "reaction": 0.14579
         },
         {
           "date": "2025-10-22",
@@ -3092,14 +3092,14 @@
         "n": 10,
         "mean_abs": 0.05424,
         "median_abs": 0.029,
-        "max_abs": 0.1458,
+        "max_abs": 0.14579,
         "max_date": "2025-07-23",
         "n_last8": 8,
         "median_abs_last8": 0.029,
-        "mean_abs_last8": 0.06042
+        "mean_abs_last8": 0.06041
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "GOOG": {
@@ -3289,7 +3289,7 @@
         "mean_abs_last8": 0.04016
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "GS": {
@@ -3669,14 +3669,14 @@
         "mean_abs_last8": 0.06614
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "LMT": {
       "next": {
-        "date": "2026-10-20",
+        "date": "2026-10-22",
         "time_of_day": "before_open",
-        "provider_stamp": "2026-10-20T08:00:00"
+        "provider_stamp": "2026-10-22T08:00:00"
       },
       "history": [
         {
@@ -3859,7 +3859,7 @@
         "mean_abs_last8": 0.06195
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "MAS": {
@@ -4239,7 +4239,7 @@
         "mean_abs_last8": 0.03106
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "MU": {
@@ -4619,7 +4619,7 @@
         "mean_abs_last8": 0.0708
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "NOC": {
@@ -4809,7 +4809,7 @@
         "mean_abs_last8": 0.04524
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "NVDA": {
@@ -4866,7 +4866,7 @@
           "time_of_day": "after_close",
           "pre_date": "2022-05-25",
           "post_date": "2022-05-26",
-          "reaction": 0.05161
+          "reaction": 0.0516
         },
         {
           "date": "2022-08-24",
@@ -4991,7 +4991,7 @@
       "stats": {
         "n": 24,
         "mean_abs": 0.06054,
-        "median_abs": 0.04587,
+        "median_abs": 0.04586,
         "max_abs": 0.2437,
         "max_date": "2023-05-24",
         "n_last8": 8,
@@ -4999,14 +4999,14 @@
         "mean_abs_last8": 0.04021
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "NXPI": {
       "next": {
-        "date": "2026-10-26",
+        "date": "2026-10-27",
         "time_of_day": "after_close",
-        "provider_stamp": "2026-10-26T16:00:00"
+        "provider_stamp": "2026-10-27T16:00:00"
       },
       "history": [
         {
@@ -5063,7 +5063,7 @@
           "time_of_day": "after_close",
           "pre_date": "2022-07-25",
           "post_date": "2022-07-26",
-          "reaction": 0.00189
+          "reaction": 0.0019
         },
         {
           "date": "2022-10-31",
@@ -5189,7 +5189,7 @@
         "mean_abs_last8": 0.06788
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "ORCL": {
@@ -5379,7 +5379,7 @@
         "mean_abs_last8": 0.11164
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "PATH": {
@@ -5555,7 +5555,7 @@
         "mean_abs_last8": 0.09472
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "POWL": {
@@ -5745,7 +5745,7 @@
         "mean_abs_last8": 0.09349
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "PTC": {
@@ -7075,7 +7075,7 @@
         "mean_abs_last8": 0.03299
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "TSM": {
@@ -7265,7 +7265,7 @@
         "mean_abs_last8": 0.03573
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "UBER": {
@@ -7455,7 +7455,7 @@
         "mean_abs_last8": 0.05451
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "VRT": {
@@ -7645,7 +7645,7 @@
         "mean_abs_last8": 0.08619
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-09-26T13:11:11-04:00",
+      "retrieved_at": "2026-10-05T17:29:07-04:00",
       "history_years": 6
     },
     "ABNB": {
