@@ -42,6 +42,7 @@ scripts = [
     "bonds/build_sleeve_metrics.py", # FI 1.3: per-sleeve yield, duration, yield/duration, vol, 1y return, corr to book
     "bonds/compute_bonds.py",      # FI 2/3/4: curve/credit/breakeven states, allocation reads, book integration, whole-portfolio stress
     "options/build_earnings_reactions.py",  # options lens 1.3: per-name earnings dates + six-year reaction history (weekly refresh)
+    "options/vintage_index.py",    # 5-Oct order 2.3: captured / missing (with the reason) per trading day → data/options/vintages/_index.json
     "options/compute_lens.py",     # options lens 2: per-stock features from the session's 15:45 chain vintage → data/options/lens.json
     "options/hedge_selector.py",   # options lens 4: the hedge selector for held names (DIAGNOSTIC) → data/options/hedges.json
     "compute_factor_exposure.py",  # P3.3: per-name factor betas → book + tiers
@@ -408,6 +409,7 @@ SERVED_CADENCE = {
     "tournament/audit.json": "daily", "tournament/twins.json": "daily",       # T2 / T4 (audit order 30-Sept)
     "tournament/continuous_rules.json": "static",
     "entry_state.json": "daily", "entry_state_config.json": "static",         # E1 (entry-state order 2-Oct)
+    "options/vintages/_index.json": "daily",                                   # 5-Oct order 2.3
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

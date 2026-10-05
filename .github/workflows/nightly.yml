@@ -31,6 +31,7 @@ permissions:
   pages: write
   id-token: write
   issues: write   # signal_alerts.py opens/closes labelled issues with the job token
+  actions: read   # 5-Oct order 2.3: vintage_index.py reads the options-snapshot run history (gh api, job token)
 
 jobs:
   update:
@@ -111,6 +112,8 @@ jobs:
           # 1-Oct-2026: the operator's choice — the brief's sentence runs on the Claude subscription through
           # Claude Code (token from `claude setup-token`); preferred over the API key when both are set
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # 5-Oct order 2.3: the vintage index reads the snapshot workflow's run history through gh
+          GH_TOKEN: ${{ github.token }}
         run: python scripts/update_daily.py
 
       - name: Referee (one sweep over data/ and data/screen/)

@@ -1,0 +1,48 @@
+name: Options snapshot check (16:05 ET)
+run-name: "Options snapshot check · ${{ github.event_name == 'schedule' && github.event.schedule || inputs.trigger || github.event_name }}"
+
+# Execution Order: Make the Daily Options Snapshot Reliable (5 October 2026), items 2.3 and 2.4.
+# At 16:05 ET (dispatched by the external scheduler, docs/scheduling.md) the day is decided: the
+# vintage index (data/options/vintages/_index.json) records it as captured, with the snapshot time,
+# or missing, with the reason read from the snapshot workflow's run history. The nightly rebuilds the
+# same index. The GitHub cron below is only a backup: a late check still records and reports the day.
+
+on:
+  schedule:
+    - cron: '30 21 * * 1-5'   # backup: 17:30 EDT / 16:30 EST
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched (the external scheduler writes 'external HH:MM ET')"
+        required: false
+        default: manual
+
+permissions:
+  contents: write
+  actions: read     # the snapshot workflow's run history, for the reason of a missed day
+  issues: write     # the missed-snapshot issue (item 2.4)
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install pandas numpy scipy pyarrow
+      - name: Decide the day (captured / missing with the reason)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/options/vintage_index.py
+      - name: Commit the index
+        run: |
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/options/vintages/_index.json
+          git diff --cached --quiet && exit 0
+          git commit -m "🗂 options vintage index $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push && exit 0; sleep $((i * 3)); done
+          exit 1

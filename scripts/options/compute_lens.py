@@ -174,10 +174,10 @@ def name_lens(tk: str, df: pd.DataFrame, meta_tk: dict, session: str, closes: pd
         arr = np.array(hist, dtype=float)
         iv_rank = float((iv_front - arr.min()) / (arr.max() - arr.min())) if arr.max() > arr.min() else None
         iv_pct = float((arr < iv_front).mean())
-        rank_note = f"archive of {len(hist)} sessions"
+        rank_note = f"archive of {len(hist)} captured sessions"
     else:
         iv_rank = iv_pct = None
-        rank_note = f"null until the archive holds {ARCHIVE_MIN_SESSIONS} sessions (has {len(hist)}); a purchased history would supply it earlier (item 1.4)"
+        rank_note = f"null until the archive holds {ARCHIVE_MIN_SESSIONS} captured sessions (has {len(hist)}); a purchased history would supply it earlier (item 1.4)"
 
     # event
     nxt = (earn or {}).get("next") or {}
@@ -356,9 +356,9 @@ def build_archive(sessions: list[str], names: list[str]) -> dict:
 
 
 def build(session: str | None = None) -> dict:
-    sessions = oc.vintage_sessions()
+    sessions = oc.captured_sessions()          # captured days only (order 5-Oct-2026, 2.3); missed days never filled
     if not sessions:
-        raise SystemExit("[compute_lens] no chain vintage on disk — run snapshot_chains.py first")
+        raise SystemExit("[compute_lens] no captured chain vintage on disk — run snapshot_chains.py first")
     session = session or sessions[-1]
     meta = oc.vintage_meta(session)
     vint = oc.load_vintage(session)
@@ -367,6 +367,8 @@ def build(session: str | None = None) -> dict:
     cl, prov = oc.closes(names, session)
     earn = json.loads((oc.OPT / "earnings_reactions.json").read_text()).get("names", {}) if (oc.OPT / "earnings_reactions.json").exists() else {}
     archive = build_archive(sessions, names)
+    log(f"IV rank and percentile: {len(sessions[-300:])} captured sessions used ({sessions[0]} to {sessions[-1]}); "
+        f"rank needs {ARCHIVE_MIN_SESSIONS}")
     out_names, warns = {}, []
     for tk in names:
         try:
@@ -377,7 +379,8 @@ def build(session: str | None = None) -> dict:
         "cadence": "daily", "session_date": session, "as_of": now_et().date().isoformat(),
         "computed_at": now_et().isoformat(timespec="seconds"),
         "snapshot_kind": meta.get("snapshot_kind"), "pulled_at": meta.get("pulled_at"), "risk_free": r,
-        "archive_sessions": len(sessions),
+        "archive_sessions": len(sessions), "archive_sessions_used": len(sessions[-300:]),
+        "archive_rule": "captured days only (data/options/vintages/_index.json); a missed day is never filled with after-hours data",
         "definitions": {
             "iv": "Black-Scholes inversion (Brent on [0.01, 5.0]) from bid-ask mids (else last, flagged); the provider's IV field is never used",
             "sessions_to_expiry": "trading sessions strictly after the snapshot session (the pull day's close, minutes away at 15:45, is not a session of variance); T = sessions/252, identical for the inversion and the event subtraction",

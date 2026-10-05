@@ -13,10 +13,11 @@ The primary trigger is a **Cloudflare Worker** (`scheduler/worker/`). Its cron t
 | ET | workflow | purpose |
 |---|---|---|
 | 15:40, 15:46, 15:52 | `options_snapshot.yml` | the daily option-chain vintage; the first run to start writes it, the others exit with "already written" |
+| 16:05 | `options_snapshot_check.yml` | decides the day: `data/options/vintages/_index.json` records it captured or missing (with the reason); a miss opens a GitHub issue |
 
 The routes live in `scheduler/worker/src/index.js` (`ROUTES`) and are written in Eastern time. The Worker converts its scheduled UTC time to America/New_York, so nothing changes at the daylight-saving switches. Its single cron trigger (`wrangler.toml`) is `0,5,30,40,46,52 13-21 * * mon-fri` UTC. That wakes it on every minute a route can fall on. A new route must use one of those minutes, and a test in `scheduler/worker/test/` fails if it does not. Market holidays are not in the Worker: the workflows exit on a closed market.
 
-**GitHub backup crons:** `options_snapshot.yml` keeps `0 13 * * 1-5` and `0 17 * * 1-5` (UTC). A backup run that lands before the window sleeps until 15:44 ET; one that lands after it exits. The 13:00 UTC cron only helps when GitHub delivers it at least about 1.2 hours late, because a job may sleep at most 5.6 hours.
+**GitHub backup crons:** `options_snapshot_check.yml` has `30 21 * * 1-5` (17:30 EDT / 16:30 EST); a late check still records and reports the day, and the nightly rebuilds the same index. `options_snapshot.yml` keeps `0 13 * * 1-5` and `0 17 * * 1-5` (UTC). A backup run that lands before the window sleeps until 15:44 ET; one that lands after it exits. The 13:00 UTC cron only helps when GitHub delivers it at least about 1.2 hours late, because a job may sleep at most 5.6 hours.
 
 ## Setting it up (the operator; about 15 minutes)
 

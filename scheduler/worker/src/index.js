@@ -18,6 +18,8 @@ export const REPO = "wernerhl/portfolio-tournament";
 export const ROUTES = [
   // 2.1: the options snapshot inside 15:30–16:00 ET; the first run to start writes, the rest exit
   { workflow: "options_snapshot.yml", et: ["15:40", "15:46", "15:52"] },
+  // 2.3/2.4: decide the day at 16:05 ET (the vintage index; the missed-snapshot issue)
+  { workflow: "options_snapshot_check.yml", et: ["16:05"] },
 ];
 
 const pad = n => String(n).padStart(2, "0");

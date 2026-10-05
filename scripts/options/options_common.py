@@ -287,6 +287,19 @@ def vintage_sessions() -> list[str]:
     return sorted(p.name for p in VINTAGES.iterdir() if p.is_dir() and len(p.name) == 10)
 
 
+def captured_sessions() -> list[str]:
+    """Vintages that count as captured (order 5-Oct-2026, 2.3): complete (their _meta.json exists) and not
+    recorded missing in vintages/_index.json. The IV-rank and percentile archive uses only these."""
+    idx_p = VINTAGES / "_index.json"
+    missing = set()
+    if idx_p.exists():
+        try:
+            missing = {e["date"] for e in json.loads(idx_p.read_text()).get("days", []) if e.get("status") == "missing"}
+        except (ValueError, KeyError):
+            missing = set()
+    return [s for s in vintage_sessions() if s not in missing and (vintage_dir(s) / "_meta.json").exists()]
+
+
 def load_vintage(session: str) -> dict[str, pd.DataFrame]:
     d = vintage_dir(session)
     out = {}

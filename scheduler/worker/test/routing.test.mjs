@@ -18,6 +18,11 @@ test("the same Eastern times under standard time (UTC-5), and nothing an hour of
   assert.deepEqual(due(at("2026-10-06T20:40:00Z")), []);          // 16:40 EDT
 });
 
+test("16:05 ET decides the day (the options snapshot check), in both seasons", () => {
+  assert.deepEqual(wf(due(at("2026-10-06T20:05:00Z"))), ["options_snapshot_check.yml external 16:05 ET"]);
+  assert.deepEqual(wf(due(at("2026-12-07T21:05:00Z"))), ["options_snapshot_check.yml external 16:05 ET"]);
+});
+
 test("weekends dispatch nothing", () => {
   assert.deepEqual(due(at("2026-10-10T19:40:00Z")), []);          // Saturday
   assert.deepEqual(due(at("2026-10-11T19:46:00Z")), []);          // Sunday

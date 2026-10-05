@@ -153,7 +153,7 @@ def rank(structs: list[dict], ctx: dict) -> list[dict]:
 
 
 def build() -> dict:
-    sessions = oc.vintage_sessions()
+    sessions = oc.captured_sessions()          # captured days only (order 5-Oct-2026, 2.3)
     if not sessions:
         raise SystemExit("[hedge_selector] no chain vintage on disk")
     session = sessions[-1]
