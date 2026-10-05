@@ -1,4 +1,5 @@
 name: Options snapshot (15:45 ET)
+run-name: "Options snapshot · ${{ github.event_name == 'schedule' && github.event.schedule || inputs.trigger || github.event_name }}"
 
 # Order 26-Sept-2026, item 1.2: the daily option-chain vintage, pulled ONCE at about 15:45 ET on
 # trading days for every held name, the screen board's top 40 and SPY/QQQ/SMH, written
@@ -14,16 +15,18 @@ name: Options snapshot (15:45 ET)
 # Source data only: the nightly computes lens.json from the vintage and deploys.
 
 on:
+  # 5-Oct-2026 order, 2.1: the primary trigger is external. A Cloudflare Worker dispatches this
+  # workflow at 15:40, 15:46 and 15:52 ET on weekdays (scheduler/worker, docs/scheduling.md).
+  # Two GitHub crons remain as a backup; they sleep until the window when they land early.
   schedule:
-    - cron: '0 13 * * 1-5'    # 09:00 EDT / 08:00 EST — early starters that sleep until 15:44 ET
-    - cron: '0 14 * * 1-5'
-    - cron: '0 15 * * 1-5'
-    - cron: '0 16 * * 1-5'
-    - cron: '0 17 * * 1-5'
-    - cron: '0 18 * * 1-5'
-    - cron: '0 19 * * 1-5'    # 15:00 EDT / 14:00 EST
-    - cron: '30 19 * * 1-5'   # 15:30 EDT
+    - cron: '0 13 * * 1-5'    # 09:00 EDT / 08:00 EST: useful only when delivered >= ~1.2 h late (the sleep cap is 5.6 h)
+    - cron: '0 17 * * 1-5'    # 13:00 EDT / 12:00 EST
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched (the external scheduler writes 'external HH:MM ET')"
+        required: false
+        default: manual
 
 permissions:
   contents: write
