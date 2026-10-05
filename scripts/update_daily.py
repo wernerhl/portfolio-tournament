@@ -85,9 +85,19 @@ def _run_guard():
     # standard line BEFORE any sub-script runs — nothing written, no
     # failure notification. (Labor Day 2026-09-07 ran the full pipeline,
     # got rejected by validation, and paged as a failure.)
+    # 5-Oct-2026 repair: "nothing to do" only when the last completed session is already published.
+    # Friday 2 Oct's close run failed (bar missing at 20:59 ET) and all four Saturday retries exited
+    # here on the wall-clock day, so the session stayed unpublished through the weekend.
     if not trading and args.force_publish is None:
-        print(f"[update_daily] market closed, nothing to do ({now_et:%Y-%m-%d})", flush=True)
-        sys.exit(0)
+        S_ = last_completed_session(now_et)
+        try:
+            pub_ = str(json.load(open(DATA / "tournament.json"))["history"][-1]["date"])[:10]
+        except Exception:
+            pub_ = ""
+        if pub_ and pub_ >= S_:
+            print(f"[update_daily] market closed, nothing to do ({now_et:%Y-%m-%d}; session {S_} published)", flush=True)
+            sys.exit(0)
+        print(f"[update_daily] market closed today ({now_et:%Y-%m-%d}) but session {S_} is unpublished (last {pub_ or 'none'}): publishing it", flush=True)
     # Reconciliation memo 8-Sept, decision 3 (mechanics): the guard keys on the
     # SESSION being published, not on the wall-clock date. A run may publish
     # session S when S is the most recent completed trading session and the
