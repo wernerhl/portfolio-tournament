@@ -612,21 +612,53 @@ def main(troot, sroot, today=None):
     if os.path.exists(hp_):
         held_={str(h.get('ticker','')).upper() for h in json.load(open(hp_)).get('holdings',[]) if (h.get('shares') or 0)>0}
     if os.path.isdir(vroot):
-        vints=sorted(d for d in os.listdir(vroot) if len(d)==10 and os.path.isdir(os.path.join(vroot,d)))
+        vints=sorted(d for d in os.listdir(vroot) if len(d)==10 and os.path.isdir(os.path.join(vroot,d)) and os.path.exists(os.path.join(vroot,d,'_meta.json')))
+        # Order 5-Oct-2026, section 3: (1) the trading day's vintage exists (HIGH, with the reason the index
+        # records); (2) the captured share of the last 20 trading days is at least 90% (HIGH); (3) every
+        # scheduled vintage was pulled inside 15:30–16:00 ET: pulled_at, completed_at and each ticker's
+        # written_at (CRITICAL: an after-hours pull). A new after-hours backfill is CRITICAL as well; the
+        # 25-Sept seed is the one flagged backfill. The index must agree with the folders (HIGH).
+        ip_=os.path.join(vroot,'_index.json')
+        idx_={e.get('date'):e for e in (json.load(open(ip_)).get('days',[]) if os.path.exists(ip_) else [])}
+        if not os.path.exists(ip_):
+            add('HIGH','options:index','data/options/vintages/_index.json absent (vintage_index.py runs at 16:05 ET and in the nightly)')
         if not vints or vints[-1]<ls.isoformat():
-            add('HIGH','options:vintage_missing',f'no chain vintage for the last session {ls} (latest: {vints[-1] if vints else "none"})')
+            e_=idx_.get(ls.isoformat()) or {}
+            why_=f"reason {e_.get('reason')} ({e_.get('evidence','')})" if e_.get('status')=='missing' else 'not yet recorded in _index.json'
+            add('HIGH','options:vintage_missing',f'no chain vintage for the last session {ls} (latest: {vints[-1] if vints else "none"}); {why_}')
+        if idx_:
+            last20=[e for d_,e in sorted(idx_.items()) if d_<=ls.isoformat()][-20:]
+            cap_=sum(1 for e in last20 if e.get('status')=='captured')
+            if last20 and cap_/len(last20)<0.90:
+                miss_=[f"{e['date']} {e.get('reason')}" for e in last20 if e.get('status')!='captured']
+                add('HIGH','options:captured_share',f'{cap_} of the last {len(last20)} trading days captured ({cap_/len(last20)*100:.0f}% < 90%); missing: {miss_[:8]}')
+            for d_,e in idx_.items():
+                has_=d_ in vints
+                if e.get('status')=='captured' and not has_: add('HIGH','options:index',f'_index.json says {d_} captured but no vintage folder with _meta.json exists')
+                if e.get('status')=='missing' and has_: add('HIGH','options:index',f'_index.json says {d_} missing but its vintage exists (rerun vintage_index.py)')
+        for v_ in vints:
+            meta_v=json.load(open(os.path.join(vroot,v_,'_meta.json')))
+            kind_v=str(meta_v.get('snapshot_kind',''))
+            if kind_v=='backfill':
+                if v_!='2026-09-25': add('CRITICAL','options:backfill',f'vintage {v_} is an after-hours backfill (pulled {meta_v.get("pulled_at")}); missed days are never backfilled (order 5-Oct-2026)')
+                continue
+            stamps=[('pulled_at',meta_v.get('pulled_at')),('completed_at',meta_v.get('completed_at'))]+[(f'{tk}.written_at',m.get('written_at')) for tk,m in (meta_v.get('tickers') or {}).items()]
+            bad_=[]
+            for nm_,ts_ in stamps:
+                if not ts_:
+                    if nm_=='pulled_at': bad_.append('pulled_at missing')
+                    continue
+                ts_=str(ts_); hm_=(int(ts_[11:13]),int(ts_[14:16])) if len(ts_)>=16 else None
+                if ts_[:10]!=v_ or not hm_ or not ((15,30)<=hm_<(16,0)): bad_.append(f'{nm_} {ts_[:16]}')
+            if bad_ or not is_trading_day(to_date(v_)):
+                add('CRITICAL','options:snapshot_window',f'vintage {v_} has timestamps outside 15:30–16:00 ET on its trading day: {bad_[:4]} (an after-hours pull is prohibited)')
         if vints:
             vd=os.path.join(vroot,vints[-1]); mp=os.path.join(vd,'_meta.json')
             meta=json.load(open(mp)) if os.path.exists(mp) else {}
-            kind=str(meta.get('snapshot_kind','')); pulled=str(meta.get('pulled_at',''))
-            pd_=to_date(pulled[:10]) if pulled else None
-            hm=(int(pulled[11:13]),int(pulled[14:16])) if len(pulled)>=16 else None
-            if kind=='scheduled':
-                if not pd_ or not is_trading_day(pd_) or not hm or not ((15,30)<=hm<(16,0)):
-                    add('CRITICAL','options:snapshot_window',f'vintage {vints[-1]} pulled at {pulled or "unknown"} — outside 15:30–16:00 ET on a trading day (after-hours pulls are prohibited)')
-            elif kind=='backfill':
-                add('INFO','options:snapshot_backfill',f'vintage {vints[-1]} is a flagged backfill pulled {pulled[:16]} (post-close quotes as retained by the provider), not a 15:45 snapshot')
-            else:
+            kind=str(meta.get('snapshot_kind',''))
+            if kind=='backfill':
+                add('INFO','options:snapshot_backfill',f'vintage {vints[-1]} is the flagged 25-Sept backfill (post-close quotes as retained by the provider), not a 15:45 snapshot')
+            elif kind!='scheduled':
                 add('HIGH','options:snapshot_kind',f'vintage {vints[-1]} has no snapshot_kind in _meta.json')
             tk_meta=meta.get('tickers',{})
             try:

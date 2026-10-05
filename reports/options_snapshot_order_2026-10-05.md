@@ -1,0 +1,41 @@
+# Execution Order: Make the Daily Options Snapshot Reliable (5 October 2026) — report
+
+All eight items are built, committed as [S1]–[S8], pushed, and exercised on GitHub where possible. Four acceptance criteria need trading days that have not happened yet. Three of them also need the external scheduler, which the operator sets up (about 15 minutes, `docs/scheduling.md`). Until the scheduler is live, a day is captured only if GitHub's 13:00 UTC backup cron lands late enough to sleep into the window.
+
+## What was built
+
+| item | what |
+|---|---|
+| [S1] 2.1 | `scheduler/worker`: a Cloudflare Worker with one UTC cron trigger, routes written in Eastern time (no daylight-saving edits), weekends skipped. It dispatches `options_snapshot.yml` at 15:40, 15:46 and 15:52 ET, and retries only on 5xx/429. `DOUBLE_DISPATCH_ON` and `FORCE_MISS_ON` exist for acceptance tests 2 and 5. `docs/scheduling.md` covers the schedule, the fine-grained token (this repository only, Actions read-write, a Worker secret, never committed), setup, verification, rotation and the cron-job.org fallback. The options workflow keeps two backup crons (13:00 and 17:00 UTC); the other six are removed. |
+| [S2] 2.2 | The concurrency block is removed. `snapshot_chains.py --publish` checks `origin/main` first and exits "already written". Otherwise it pulls into a temporary folder, moves it into place and pushes. On a rejected push it discards its vintage if `origin` now has the day and does not retry; if the rejection came from an unrelated bot commit, it rebases and pushes. It stops at 16:00 ET, and the after-hours backfill mode is removed. A dispatch pulls at once; the backup crons sleep to 15:49 ET. Earnings reactions commit separately, and only after a written vintage. `tests/test_snapshot_guard.py` (throwaway repos) covers the second run, the race, the unrelated commit and outside the window: 4 pass. |
+| [S3] 2.3 | `data/options/vintages/_index.json` records each trading day as captured (with the snapshot time) or missing (with the reason, read from the run history). The day is decided at 16:05 ET by the new `options_snapshot_check.yml`, dispatched by the Worker, with a 17:30 EDT backup cron; the nightly rebuilds the same index. The IV rank and percentile and the hedge selector use captured days only and print the count (`archive_sessions_used`). |
+| [S4] 2.4 | `snapshot_alerts.py` runs on the signal alerts' mechanism. A missed day (from 5 Oct) opens one issue labelled `options-snapshot-missed`; the next written vintage closes it, from the snapshot workflow, the check and the nightly. A forced-miss input supports the acceptance test. |
+| [S5] 2.5 | Every options panel shows "options as of {date}", or an amber "options data from {date}" when the vintage is older than the last trading day. That covers the stock cards' options row, the event board, the hedge selector, the home events board, the scanner and the screen board. Checked in the preview on desktop and at phone width. |
+| [S6] 2.6 | All workflows are pinned to `ubuntu-24.04` and moved to the Node 24 majors (checkout v7, setup-python v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5). Both runner notices are gone from the new runs. The Ubuntu 26 canary on branch `ci/ubuntu-26-canary` passes on Ubuntu 26.04.1 LTS: every test suite, the Worker tests, the front-end parse check and a referee sweep with 0 CRITICAL (run 37390519874). |
+| [S7] 2.7 | `scripts/ops/schedule_delays.py` measures every scheduled workflow; the table is in `reports/schedule_delays_2026-10-05.md`. 0–5% of crons arrive within 15 minutes, delays are typically 4–5 hours, and 87% of the intraday crons never ran. Market Open Refresh, Intraday analytics and Intraday Refresh move to the Worker. Their deploying routes are staggered at least 10 minutes apart, because the Pages-deploy group cancels a second pending deploy. Their crons stay as backups behind a gate job. Every scheduled workflow's run title now carries its cron. |
+| [S8] 3 | Referee checks:<br>• `options:vintage_missing` (HIGH, now with the reason from the index);<br>• `options:captured_share` (HIGH below 90% of the last 20 trading days);<br>• `options:snapshot_window` (CRITICAL; every scheduled vintage's `pulled_at`, `completed_at` and each ticker's `written_at` must be inside 15:30–16:00 ET);<br>• `options:backfill` (CRITICAL for any after-hours backfill but the flagged 25-Sept seed);<br>• `options:index` (HIGH when the index disagrees with the folders).<br>Each was caught by a mutation on a scratch copy. |
+
+## Acceptance
+
+| # | criterion | status |
+|---|---|---|
+| 1 | the scheduler dispatches at 15:40/15:46/15:52 ET on three consecutive trading days, with exactly one in-window vintage per day | **Pending the operator's setup** (token and Cloudflare account, `docs/scheduling.md`), then three trading days. The routing is tested (11 Worker tests), and dispatch was exercised by hand. A dispatch outside the window exited `outside_window` and wrote nothing (run 37389520087). |
+| 2 | a double dispatch at 15:40 gives one vintage, one push, one "already written" exit | **Pending a trading day.** Shown on throwaway repositories (`tests/test_snapshot_guard.py`, scenario B). Live: set `DOUBLE_DISPATCH_ON`, or run `gh workflow run options_snapshot.yml` twice at 15:40 ET. |
+| 3 | no cancellation emails on those three days | **Pending the three days.** The cause, the concurrency group, is removed from the workflow. |
+| 4 | `_index.json`: 25 Sep, 30 Sep, 1 Oct and 2 Oct captured; 28 Sep, 29 Sep and 5 Oct missing, `no_run_in_window` | **Met.** Committed by the check run on GitHub (d23b2f8). The first runs on the missed days were created at 19:52, 19:06 and 17:01 ET. |
+| 5 | a forced miss opens the issue at 16:05 ET; the next capture closes it | **Pending** the Worker (`FORCE_MISS_ON`) and a trading day. Meanwhile the real 5 October miss opened [wernerhl/portfolio-tournament#3](https://github.com/wernerhl/portfolio-tournament/issues/3) through the same path; the next captured day closes it. |
+| 6 | every options panel shows its vintage date, amber when stale | **Met** in the preview; deployed with this report. |
+| 7 | `ubuntu-24.04` and Node 24 action versions everywhere; the delay table in the report | **Met.** The delay table is in `reports/schedule_delays_2026-10-05.md`. |
+| 8 | referee before and after; the three new checks run and pass on the three acceptance days | Before: 55 findings, 0 CRITICAL. After: 56 findings, 0 CRITICAL; the new one is `options:captured_share`, which is true today (4 of 7). Passing on the acceptance days is pending. `captured_share` stays HIGH until enough captured days push the 20-day share to 90%. |
+
+## Found and fixed along the way
+
+- **The 2 October session never published.** Friday's close run failed at 20:59 ET because the price bar was not in yet. All four Saturday retries then exited in `update_daily.py`'s run guard ("market closed, nothing to do"), which judged the wall-clock day. Fixed in 99d32bd: a non-trading-day run publishes an unpublished last session. Tonight's run publishes 5 October and backfills 2 October.
+- **Mislabelled commits.** The old snapshot workflow committed `earnings_reactions.json` under an "options vintage" message from runs that pulled nothing (5 October, 17:29 and 17:42 ET). That step now runs only after a written vintage.
+- **Stale tests.** The Ubuntu 26 canary found two failures on every machine: a guard test that assumed a global `__pycache__` ignore, and a twins test reading the live history. Both are fixed; they were test-only.
+
+## Left for the operator
+
+1. **Set up the external scheduler before 15:40 ET on the next trading day**: the token, the Cloudflare account, `wrangler deploy` and `wrangler secret put GH_TOKEN` (`docs/scheduling.md`). Without it, a day is captured only when the 13:00 UTC backup cron happens to land late enough to sleep into the window.
+2. Whether the Nightly should get an external trigger too. It is not a narrow-window workflow, and the report says why it stays on its crons.
+3. The Ubuntu 26 canary passed. Whether to move the pin to `ubuntu-26.04` now, or keep `ubuntu-24.04` until a reason to move appears. Nothing breaks on 19 October either way, because every workflow is pinned.
