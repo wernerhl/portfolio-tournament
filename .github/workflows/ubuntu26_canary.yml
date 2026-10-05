@@ -1,0 +1,39 @@
+name: Ubuntu 26 canary
+# Order 5-Oct-2026, 2.6: ubuntu-latest moves to Ubuntu 26 from 19 October. Every workflow on main is
+# pinned to ubuntu-24.04; this branch runs the repository's checks on ubuntu-26.04 first. Read-only:
+# nothing is committed, pushed or deployed from here. The pin on main changes only after this passes.
+on:
+  push:
+    branches: [ci/ubuntu-26-canary]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  canary:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - name: Runner
+        run: cat /etc/os-release | head -3; python --version; node --version; git --version
+      - name: Install deps (the nightly's set)
+        run: pip install yfinance fredapi pandas numpy scipy pyarrow lxml pyyaml
+      - name: Compile every script (CI Python)
+        run: python -m compileall -q scripts tests
+      - name: Front-end parse check
+        run: for f in app.js common.js pages.js charts.js screen.js; do node --check "$f"; done
+      - name: Scheduler Worker tests
+        run: cd scheduler/worker && node --test test/routing.test.mjs
+      - name: Test suites
+        run: |
+          git config --global user.name canary; git config --global user.email canary@example.invalid
+          fail=0
+          for t in tests/test_*.py; do
+            echo "::group::$t"; python "$t" || { echo "::error::$t failed"; fail=1; }; echo "::endgroup::"
+          done
+          exit $fail
+      - name: Referee (read-only sweep)
+        run: python scripts/audit_nightly.py data data/screen | tail -5
