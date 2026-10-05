@@ -1,0 +1,202 @@
+{
+ "window_utc": [
+  "2026-09-22T00:00:00+00:00",
+  "2026-10-05T21:00:00+00:00"
+ ],
+ "max_delay_h": 10.0,
+ "workflows": {
+  "intraday.yml": {
+   "name": "Intraday Refresh",
+   "crons": [
+    "*/30 13-21 * * 1-5"
+   ],
+   "n_crons": 178,
+   "n_runs": 23,
+   "runs_with_known_cron": 0,
+   "lower_bound": {
+    "matched": 23,
+    "never_produced_share": 0.871,
+    "median_min": 28.9,
+    "p90_min": 147.4,
+    "max_min": 178.3,
+    "within_15min_share": 0.039,
+    "over_60min_share": 0.039
+   },
+   "upper_bound": {
+    "matched": 23,
+    "never_produced_share": 0.871,
+    "median_min": 463.4,
+    "p90_min": 592.7,
+    "max_min": 598.4,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.129
+   }
+  },
+  "intraday_analytics.yml": {
+   "name": "Intraday analytics",
+   "crons": [
+    "0 14,16,18,20 * * 1-5"
+   ],
+   "n_crons": 40,
+   "n_runs": 18,
+   "runs_with_known_cron": 0,
+   "lower_bound": {
+    "matched": 18,
+    "never_produced_share": 0.55,
+    "median_min": 78.9,
+    "p90_min": 209.2,
+    "max_min": 220.9,
+    "within_15min_share": 0.05,
+    "over_60min_share": 0.3
+   },
+   "upper_bound": {
+    "matched": 18,
+    "never_produced_share": 0.55,
+    "median_min": 349.7,
+    "p90_min": 449.2,
+    "max_min": 460.9,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.45
+   }
+  },
+  "market_open.yml": {
+   "name": "Market Open Refresh",
+   "crons": [
+    "0 14 * * 1-5",
+    "0 15 * * 1-5"
+   ],
+   "n_crons": 20,
+   "n_runs": 20,
+   "runs_with_known_cron": 0,
+   "lower_bound": {
+    "matched": 20,
+    "never_produced_share": 0.0,
+    "median_min": 283.4,
+    "p90_min": 383.7,
+    "max_min": 442.2,
+    "within_15min_share": 0.0,
+    "over_60min_share": 1.0
+   },
+   "upper_bound": {
+    "matched": 20,
+    "never_produced_share": 0.0,
+    "median_min": 283.4,
+    "p90_min": 383.7,
+    "max_min": 442.2,
+    "within_15min_share": 0.0,
+    "over_60min_share": 1.0
+   }
+  },
+  "monthly_rebalance.yml": {
+   "name": "Monthly Rebalance",
+   "crons": [
+    "0 14 1 * *"
+   ],
+   "n_crons": 1,
+   "n_runs": 1,
+   "runs_with_known_cron": 0,
+   "lower_bound": {
+    "matched": 1,
+    "never_produced_share": 0.0,
+    "median_min": 322.4,
+    "p90_min": 322.4,
+    "max_min": 322.4,
+    "within_15min_share": 0.0,
+    "over_60min_share": 1.0
+   },
+   "upper_bound": {
+    "matched": 1,
+    "never_produced_share": 0.0,
+    "median_min": 322.4,
+    "p90_min": 322.4,
+    "max_min": 322.4,
+    "within_15min_share": 0.0,
+    "over_60min_share": 1.0
+   }
+  },
+  "nightly.yml": {
+   "name": "Nightly",
+   "crons": [
+    "0 22 * * 1-5",
+    "30 1 * * 2-6",
+    "0 8 * * 2-6",
+    "30 3 * * 2-6",
+    "17 5 * * 2-6",
+    "41 10 * * 2-6"
+   ],
+   "n_crons": 26,
+   "n_runs": 25,
+   "runs_with_known_cron": 15,
+   "exact_known_runs": {
+    "matched": 15,
+    "never_produced_share": 0.423,
+    "median_min": 310.5,
+    "p90_min": 400.9,
+    "max_min": 429.8,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.577,
+    "note": "15 of 25 runs carry their cron; delays exact for those, never-produced share a lower bound when some runs are unknown"
+   },
+   "lower_bound": {
+    "matched": 24,
+    "never_produced_share": 0.077,
+    "median_min": 291.2,
+    "p90_min": 390.5,
+    "max_min": 429.8,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.923
+   },
+   "upper_bound": {
+    "matched": 24,
+    "never_produced_share": 0.077,
+    "median_min": 293.4,
+    "p90_min": 429.8,
+    "max_min": 553.5,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.923
+   }
+  },
+  "options_snapshot.yml": {
+   "name": "Options snapshot (15:45 ET)",
+   "crons": [
+    "32 19 * * 1-5",
+    "40 19 * * 1-5",
+    "48 19 * * 1-5",
+    "55 19 * * 1-5",
+    "32 20 * * 1-5",
+    "40 20 * * 1-5",
+    "48 20 * * 1-5",
+    "55 20 * * 1-5",
+    "0 13 * * 1-5",
+    "0 14 * * 1-5",
+    "0 15 * * 1-5",
+    "0 16 * * 1-5",
+    "0 17 * * 1-5",
+    "0 18 * * 1-5",
+    "0 19 * * 1-5",
+    "30 19 * * 1-5"
+   ],
+   "n_crons": 48,
+   "n_runs": 46,
+   "runs_with_known_cron": 0,
+   "lower_bound": {
+    "matched": 46,
+    "never_produced_share": 0.042,
+    "median_min": 244.7,
+    "p90_min": 317.4,
+    "max_min": 361.4,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.958
+   },
+   "upper_bound": {
+    "matched": 46,
+    "never_produced_share": 0.042,
+    "median_min": 249.7,
+    "p90_min": 345.0,
+    "max_min": 481.4,
+    "within_15min_share": 0.0,
+    "over_60min_share": 0.958
+   }
+  }
+ }
+}

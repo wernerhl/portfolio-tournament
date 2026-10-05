@@ -22,7 +22,17 @@ export const ROUTES = [
   { workflow: "options_snapshot.yml", et: ["15:40", "15:46", "15:52"] },
   // 2.3/2.4: decide the day at 16:05 ET (the vintage index; the missed-snapshot issue)
   { workflow: "options_snapshot_check.yml", et: ["16:05"] },
+  // 2.7: the other time-window workflows. They deploy Pages through one shared concurrency group,
+  // which keeps a single pending deploy and cancels the rest, so no two deploying routes fall within
+  // 10 minutes of each other: market open 10:00, analytics at :10, intraday at :20 and :50.
+  { workflow: "market_open.yml", et: ["10:00"] },
+  { workflow: "intraday_analytics.yml", et: ["10:10", "12:10", "14:10", "16:10"] },
+  { workflow: "intraday.yml", et: ["09:50", "10:20", "10:50", "11:20", "11:50", "12:20", "12:50", "13:20", "13:50",
+                                   "14:20", "14:50", "15:20", "15:50"] },
 ];
+
+// Workflows that deploy GitHub Pages (the shared pages-deploy concurrency group).
+export const DEPLOYERS = new Set(["market_open.yml", "intraday_analytics.yml", "intraday.yml"]);
 
 const pad = n => String(n).padStart(2, "0");
 

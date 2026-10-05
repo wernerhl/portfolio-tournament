@@ -1,4 +1,5 @@
 name: Monthly Rebalance
+run-name: "Monthly Rebalance · ${{ github.event_name == 'schedule' && github.event.schedule || inputs.trigger || github.event_name }}"
 
 on:
   schedule:

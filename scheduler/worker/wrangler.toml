@@ -8,7 +8,7 @@ compatibility_date = "2026-10-01"
 [triggers]
 # UTC. Wakes on every minute any route can fall on, Monday-Friday, 13:00-21:59 UTC (09:00-17:59 EDT,
 # 08:00-16:59 EST); src/index.js converts to Eastern time and dispatches only the routes due.
-crons = ["0,5,30,40,46,52 13-21 * * mon-fri"]
+crons = ["0,5,10,20,40,46,50,52 13-21 * * mon-fri"]
 
 [vars]
 # "YYYY-MM-DD" to dispatch the 15:40 options run twice on that date (acceptance test 2); empty otherwise.

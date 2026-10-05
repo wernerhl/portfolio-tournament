@@ -1,4 +1,5 @@
 name: Market Open Refresh
+run-name: "Market Open Refresh · ${{ github.event_name == 'schedule' && github.event.schedule || inputs.trigger || github.event_name }}"
 
 # Dedicated morning intraday snapshot ~30 min after the open.
 #
@@ -22,14 +23,37 @@ on:
     - cron: '0 14 * * 1-5'
     - cron: '0 15 * * 1-5'
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched (the external scheduler writes 'external HH:MM ET')"
+        required: false
+        default: manual
 
 permissions:
   contents: write
   pages: write
   id-token: write
+  actions: read     # the backup-cron gate reads this workflow's run history
 
 jobs:
+  # 5-Oct-2026 order, 2.7: the external scheduler dispatches this workflow (docs/scheduling.md); a GitHub
+  # cron run is a backup and proceeds only when no successful run already covers its slot.
+  gate:
+    runs-on: ubuntu-24.04
+    outputs:
+      run: ${{ steps.g.outputs.run }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts/ops
+      - id: g
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/ops/backup_cron_gate.py --workflow market_open.yml --since-et 09:30
+
   snapshot:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7

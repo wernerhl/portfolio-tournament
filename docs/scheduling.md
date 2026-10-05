@@ -14,10 +14,15 @@ The primary trigger is a **Cloudflare Worker** (`scheduler/worker/`). Its cron t
 |---|---|---|
 | 15:40, 15:46, 15:52 | `options_snapshot.yml` | the daily option-chain vintage; the first run to start writes it, the others exit with "already written" |
 | 16:05 | `options_snapshot_check.yml` | decides the day: `data/options/vintages/_index.json` records it captured or missing (with the reason); a miss opens a GitHub issue |
+| 10:00 | `market_open.yml` | the market-open snapshot (live VIX/SPX/SKEW, shock and complacency, live card values) |
+| 10:10, 12:10, 14:10, 16:10 | `intraday_analytics.yml` | the book and bond panels recomputed on the live tape |
+| 09:50, then every 30 min at :20 and :50 until 15:50 | `intraday.yml` | the intraday refresh (shock watch) |
 
-The routes live in `scheduler/worker/src/index.js` (`ROUTES`) and are written in Eastern time. The Worker converts its scheduled UTC time to America/New_York, so nothing changes at the daylight-saving switches. Its single cron trigger (`wrangler.toml`) is `0,5,30,40,46,52 13-21 * * mon-fri` UTC. That wakes it on every minute a route can fall on. A new route must use one of those minutes, and a test in `scheduler/worker/test/` fails if it does not. Market holidays are not in the Worker: the workflows exit on a closed market.
+The last three deploy GitHub Pages through one shared concurrency group. That group keeps a single pending deploy and cancels the rest, so the routes are staggered: no two deploying dispatches fall within 10 minutes of each other. A test enforces it.
 
-**GitHub backup crons:** `options_snapshot_check.yml` has `30 21 * * 1-5` (17:30 EDT / 16:30 EST); a late check still records and reports the day, and the nightly rebuilds the same index. `options_snapshot.yml` keeps `0 13 * * 1-5` and `0 17 * * 1-5` (UTC). A backup run that lands before the window sleeps until 15:44 ET; one that lands after it exits. The 13:00 UTC cron only helps when GitHub delivers it at least about 1.2 hours late, because a job may sleep at most 5.6 hours.
+The routes live in `scheduler/worker/src/index.js` (`ROUTES`) and are written in Eastern time. The Worker converts its scheduled UTC time to America/New_York, so nothing changes at the daylight-saving switches. Its single cron trigger (`wrangler.toml`) is `0,5,10,20,40,46,50,52 13-21 * * mon-fri` UTC. That wakes it on every minute a route can fall on. A new route must use one of those minutes, and a test in `scheduler/worker/test/` fails if it does not. Market holidays are not in the Worker: the workflows exit on a closed market.
+
+**GitHub backup crons:** `market_open.yml`, `intraday.yml` and `intraday_analytics.yml` keep their crons as a backup. A gate job (`scripts/ops/backup_cron_gate.py`) lets a cron run proceed only when no successful run already covers its slot: since 09:30 ET for the market open, within 25 minutes for the intraday refresh, within 100 minutes for the analytics. Before the Worker exists, nothing else has run, and the crons behave as before. `options_snapshot_check.yml` has `30 21 * * 1-5` (17:30 EDT / 16:30 EST); a late check still records and reports the day, and the nightly rebuilds the same index. `options_snapshot.yml` keeps `0 13 * * 1-5` and `0 17 * * 1-5` (UTC). A backup run that lands before the window sleeps until 15:44 ET; one that lands after it exits. The 13:00 UTC cron only helps when GitHub delivers it at least about 1.2 hours late, because a job may sleep at most 5.6 hours.
 
 ## Setting it up (the operator; about 15 minutes)
 
@@ -37,7 +42,7 @@ The agent wrote the Worker and these instructions. The operator creates the toke
 2. On the Mac: `npm install -g wrangler`, then `wrangler login` (opens the browser).
 3. `cd scheduler/worker && wrangler deploy`. Wrangler prints the Worker name and the cron trigger.
 4. `wrangler secret put GH_TOKEN` and paste the token at the prompt. The secret is stored encrypted in Cloudflare; it is not in `wrangler.toml` and not in git.
-5. In the Cloudflare dashboard → Workers → `portfolio-tournament-scheduler` → Settings → Triggers, check that the cron reads `0,5,30,40,46,52 13-21 * * mon-fri`.
+5. In the Cloudflare dashboard → Workers → `portfolio-tournament-scheduler` → Settings → Triggers, check that the cron reads `0,5,10,20,40,46,50,52 13-21 * * mon-fri`.
 
 ### 3. Check that it works
 
@@ -65,6 +70,10 @@ A trading day with no vintage at 16:05 ET is recorded as missing in `data/option
 4. Check the next dispatch (`wrangler tail` or `gh run list … --event workflow_dispatch`).
 
 If the token expires unnoticed, the Worker's dispatches fail with 401. The GitHub backup crons still run, the missed-snapshot issue opens (item 2.4), and the referee reports the captured share.
+
+## Measuring the delays
+
+`python scripts/ops/schedule_delays.py --start YYYY-MM-DD --end YYYY-MM-DDTHH:MM` reports, per scheduled workflow, how late GitHub delivered each cron and how many never ran (reports/schedule_delays_2026-10-05.md). Since 5 October every scheduled workflow's run title (`run-name`) carries the cron that fired it, so later measurements are exact.
 
 ## Fallback if Cloudflare Workers is not available: cron-job.org
 
