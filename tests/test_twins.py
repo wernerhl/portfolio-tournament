@@ -375,7 +375,10 @@ def test_10_followups_at_20_and_60_sessions_after_exit():
 def test_11_backfill_is_idempotent_and_finds_the_four_reconstitutions():
     bt = TMP / "backfill"
     bt.mkdir(exist_ok=True)
-    shutil.copy(DATA / "tournament.json", bt / "tournament.json")
+    # the history as of the test's session (29 Sept): later reconstitutions (1 Oct on) are not part of it
+    tj = json.loads((DATA / "tournament.json").read_text())
+    tj["history"] = [r for r in tj["history"] if str(r.get("date", ""))[:10] <= "2026-09-29"]
+    (bt / "tournament.json").write_text(json.dumps(tj))
     args = [PY, str(SCRIPTS / "backfill_tier_logs.py"), "--tournament", str(bt / "tournament.json"),
             "--trades", str(bt / "trades.jsonl"), "--spells", str(bt / "spells.jsonl"), "--no-git", "--session", "2026-09-29"]
     cp = subprocess.run(args, capture_output=True, text=True, cwd=str(TMP))
