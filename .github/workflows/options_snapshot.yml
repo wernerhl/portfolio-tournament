@@ -6,11 +6,16 @@ run-name: "Options snapshot · ${{ github.event_name == 'schedule' && github.eve
 # immutably to data/options/vintages/YYYY-MM-DD/. After-hours pulls are prohibited, so the
 # snapshot step only writes inside 15:30–16:00 ET on a trading day.
 #
-# GitHub delivers this repository's scheduled runs 1–5 hours late (every cron on 28/29-Sept
-# landed at 19:00–20:40 ET, all no-ops). A fixed-minute cron cannot hit a 30-minute window,
-# so the job is scheduled EARLY, from 09:00 ET on, and SLEEPS until 15:44 ET before pulling;
-# a run that lands after the window is a no-op. The concurrency group serializes the waiting
-# runs: the first to reach 15:44 ET pulls, the rest find the vintage written and skip.
+# GitHub delivers this repository's scheduled runs minutes to hours late, or never (28/29-Sept and
+# 5-Oct: no cron arrived before the window). The primary trigger is therefore external
+# (docs/scheduling.md): dispatches at 15:40, 15:46 and 15:52 ET pull at once. The two backup crons
+# sleep until 15:49 ET when they land early (after the 15:40 dispatch has normally pushed).
+#
+# One writer per day, without a concurrency queue (5-Oct order, 2.2): GitHub keeps ONE pending run
+# per concurrency group and cancels the others, so the old group cancelled runs and mailed about it.
+# snapshot_chains.py --publish fetches origin/main first and exits "already written" if today's
+# vintage is there; it pulls into a temporary folder, moves it into place and pushes; if the push
+# is rejected because another run pushed first, it discards its vintage and does not retry.
 #
 # Source data only: the nightly computes lens.json from the vintage and deploys.
 
@@ -31,10 +36,6 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: options-snapshot
-  cancel-in-progress: false
-
 jobs:
   snapshot:
     runs-on: ubuntu-latest
@@ -47,8 +48,10 @@ jobs:
       - name: Install deps
         run: pip install yfinance pandas numpy scipy pyarrow lxml
 
-      - name: Wait for 15:44 ET (a late-delivered schedule still lands inside the window)
+      - name: Wait for the window (backup crons only; a dispatch pulls at once)
         id: wait
+        env:
+          EVENT: ${{ github.event_name }}
         run: |
           python - <<'EOF' >> "$GITHUB_OUTPUT"
           import os, sys, time
@@ -57,35 +60,36 @@ jobs:
           n = now_et()
           if not is_trading_day(n.strftime("%Y-%m-%d")):
               print("go=false"); print(f"why=market closed ({n:%Y-%m-%d})"); sys.exit(0)
-          if os.path.isdir(f"data/options/vintages/{n:%Y-%m-%d}") and os.path.exists(f"data/options/vintages/{n:%Y-%m-%d}/_meta.json"):
-              print("go=false"); print("why=today's vintage already exists"); sys.exit(0)
-          target = n.replace(hour=15, minute=44, second=0, microsecond=0)
+          if os.environ.get("EVENT") != "schedule":
+              print("go=true"); print(f"why=dispatched, {n:%H:%M} ET (the snapshot step enforces the 15:30–16:00 window)"); sys.exit(0)
+          target = n.replace(hour=15, minute=49, second=0, microsecond=0)
           wait = (target - n).total_seconds()
           if wait > 5.6 * 3600:
               print("go=false"); print(f"why=landed {wait/3600:.1f} h before the pull time, beyond the sleep cap"); sys.exit(0)
           if wait > 0:
-              print(f"::notice::landed {n:%H:%M} ET; sleeping {wait/60:.0f} min until 15:44 ET", file=sys.stderr)
+              print(f"::notice::backup cron landed {n:%H:%M} ET; sleeping {wait/60:.0f} min until 15:49 ET", file=sys.stderr)
               time.sleep(wait)
-          print("go=true"); print(f"why=at {now_et():%H:%M} ET (the snapshot step enforces the 15:30–16:00 window)")
+          print("go=true"); print(f"why=backup cron at {now_et():%H:%M} ET")
           EOF
       - name: Report
         run: echo "go=${{ steps.wait.outputs.go }} — ${{ steps.wait.outputs.why }}"
 
-      - name: Snapshot chains (writes only inside 15:30–16:00 ET on a trading day; never rewrites a vintage)
+      - name: Snapshot chains (one writer per day; writes only inside 15:30–16:00 ET; commits and pushes itself)
+        id: snap
         if: steps.wait.outputs.go == 'true'
-        run: python scripts/options/snapshot_chains.py
+        env:
+          SNAPSHOT_TRIGGER: ${{ github.event_name == 'schedule' && format('backup cron {0}', github.event.schedule) || inputs.trigger || github.event_name }}
+        run: python scripts/options/snapshot_chains.py --publish
 
-      - name: Earnings dates and reaction history (weekly refresh per name)
-        if: steps.wait.outputs.go == 'true'
+      - name: Earnings dates and reaction history (weekly refresh per name; only after this run wrote the vintage)
+        if: steps.snap.outputs.outcome == 'written'
         continue-on-error: true
-        run: python scripts/options/build_earnings_reactions.py
-
-      - name: Commit the vintage
-        if: steps.wait.outputs.go == 'true'
         run: |
+          python scripts/options/build_earnings_reactions.py
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
-          git add data/options/vintages data/options/earnings_reactions.json 2>/dev/null || true
-          git diff --cached --quiet || git commit -m "🧾 options vintage $(date -u +%Y-%m-%dT%H:%MZ)"
-          git pull --rebase --strategy-option=ours origin main || true
-          git push
+          git add data/options/earnings_reactions.json
+          git diff --cached --quiet && exit 0
+          git commit -m "🧾 earnings reactions $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push && exit 0; sleep $((i * 3)); done
+          exit 1
