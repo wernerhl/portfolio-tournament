@@ -16,6 +16,10 @@ on:
         description: "who dispatched (the external scheduler writes 'external HH:MM ET')"
         required: false
         default: manual
+      force_miss_date:
+        description: "acceptance test 5: open a [TEST] missed-snapshot issue for this date (YYYY-MM-DD); the index is not changed"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -46,3 +50,8 @@ jobs:
           git commit -m "🗂 options vintage index $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3; do git pull --rebase -q origin main && git push && exit 0; sleep $((i * 3)); done
           exit 1
+      - name: Missed-snapshot issue (open for a missed day; close once a later day is captured)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE_MISS: ${{ inputs.force_miss_date }}
+        run: python scripts/options/snapshot_alerts.py sync ${FORCE_MISS:+--force-miss "$FORCE_MISS"}

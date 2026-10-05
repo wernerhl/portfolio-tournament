@@ -35,6 +35,7 @@ on:
 
 permissions:
   contents: write
+  issues: write     # 2.4: closes the missed-snapshot issue once a later day's vintage is written
 
 jobs:
   snapshot:
@@ -80,6 +81,12 @@ jobs:
         env:
           SNAPSHOT_TRIGGER: ${{ github.event_name == 'schedule' && format('backup cron {0}', github.event.schedule) || inputs.trigger || github.event_name }}
         run: python scripts/options/snapshot_chains.py --publish
+
+      - name: Close the missed-snapshot issue (a later day's vintage now exists)
+        if: steps.snap.outputs.outcome == 'written'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/options/snapshot_alerts.py sync --close-only
 
       - name: Earnings dates and reaction history (weekly refresh per name; only after this run wrote the vintage)
         if: steps.snap.outputs.outcome == 'written'

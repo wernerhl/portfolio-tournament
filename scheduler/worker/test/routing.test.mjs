@@ -64,3 +64,10 @@ test("dispatch posts to the workflow's dispatches endpoint and retries only on 5
   r = await dispatch(env, "options_snapshot.yml", { trigger: "t" }, mk([422]), async () => {});
   assert.equal(r.ok, false); assert.equal(calls.length, 1);
 });
+
+test("forced-miss test date: the 16:05 check carries force_miss_date, only on that date", () => {
+  const env = { FORCE_MISS_ON: "2026-10-07" };
+  assert.deepEqual(due(at("2026-10-07T20:05:00Z"), ROUTES, env)[0].inputs, { trigger: "external 16:05 ET", force_miss_date: "2026-10-07" });
+  assert.deepEqual(due(at("2026-10-08T20:05:00Z"), ROUTES, env)[0].inputs, { trigger: "external 16:05 ET" });
+  assert.deepEqual(due(at("2026-10-07T19:40:00Z"), ROUTES, env)[0].inputs, { trigger: "external 15:40 ET" });
+});

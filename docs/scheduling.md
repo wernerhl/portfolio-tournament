@@ -49,6 +49,14 @@ The agent wrote the Worker and these instructions. The operator creates the toke
 
 Set `DOUBLE_DISPATCH_ON = "YYYY-MM-DD"` (a coming trading day) in `wrangler.toml` and run `wrangler deploy`. At 15:40 ET that day the Worker dispatches the options snapshot twice. Expect one vintage, one push, and one run ending "already written". Then set it back to `""` and deploy again.
 
+### Acceptance test 5 (a forced miss)
+
+Set `FORCE_MISS_ON = "YYYY-MM-DD"` (a coming trading day) in `wrangler.toml` and run `wrangler deploy`. At 16:05 ET that day the check opens an issue titled `[TEST] Options snapshot missed: YYYY-MM-DD`, labelled `options-snapshot-missed`; the index is not changed. The next trading day's vintage closes it. Then set the variable back to `""` and deploy again. Without the Worker the same test is a manual dispatch: `gh workflow run options_snapshot_check.yml -f force_miss_date=YYYY-MM-DD`.
+
+## Missed snapshots
+
+A trading day with no vintage at 16:05 ET is recorded as missing in `data/options/vintages/_index.json`, with the reason (`no_run_in_window`, `runner_failure`, `provider_error` or `push_conflict`), and opens one GitHub issue labelled `options-snapshot-missed`. The issue closes itself when the next day's vintage is written. The day is never filled with after-hours data, and the IV rank uses captured days only.
+
 ## Rotation (every 90 days, or at once if the token may have leaked)
 
 1. Create a new fine-grained token exactly as in step 1.

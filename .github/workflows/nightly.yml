@@ -154,6 +154,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python scripts/signal_alerts.py --write-state || true
+          python scripts/options/snapshot_alerts.py sync || true   # 5-Oct order 2.4: the missed-snapshot issue, re-synced nightly
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
           if git add data/alert_state.json 2>/dev/null && ! git diff --cached --quiet; then

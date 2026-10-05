@@ -11,6 +11,8 @@
 // with Actions read-and-write and nothing else (docs/scheduling.md). Never committed.
 // Optional var: DOUBLE_DISPATCH_ON = "YYYY-MM-DD" dispatches the 15:40 options run twice on that
 // date (acceptance test 2: one vintage, one push, one "already written" exit).
+// Optional var: FORCE_MISS_ON = "YYYY-MM-DD" passes force_miss_date to that day's 16:05 check (acceptance
+// test 5: a [TEST] missed-snapshot issue opens at 16:05 ET; the next day's capture closes it).
 
 export const REPO = "wernerhl/portfolio-tournament";
 
@@ -39,6 +41,9 @@ export function due(when, routes = ROUTES, env = {}) {
   const { date, hm, weekday } = etParts(when);
   if (weekday === "Sat" || weekday === "Sun") return [];
   const jobs = routes.filter(r => r.et.includes(hm)).map(r => ({ workflow: r.workflow, inputs: { trigger: `external ${hm} ET` } }));
+  if (env.FORCE_MISS_ON && env.FORCE_MISS_ON === date) {
+    for (const j of jobs.filter(j => j.workflow === "options_snapshot_check.yml")) j.inputs.force_miss_date = date;
+  }
   if (env.DOUBLE_DISPATCH_ON && env.DOUBLE_DISPATCH_ON === date && hm === "15:40") {
     for (const j of jobs.filter(j => j.workflow === "options_snapshot.yml")) {
       jobs.push({ workflow: j.workflow, inputs: { trigger: `external ${hm} ET (double-dispatch test)` } });
