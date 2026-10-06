@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-10-02",
+  "rebuilt_at": "2026-10-05",
   "cadence": "weekly",
-  "as_of": "2026-10-02",
+  "as_of": "2026-10-05",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule; Treasury auctions from TreasuryDirect TA_WS and Treasury's tentative auction schedule, never a weekday pattern). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -25,7 +25,7 @@
     "ta_ws_upcoming": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-02",
+      "retrieved_at": "2026-10-05",
       "items": [
         {
           "date": "2026-10-06",
@@ -68,7 +68,7 @@
     "ta_ws_auctioned": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/search?startDate={start}&endDate={end}&dateFieldName=auctionDate&type={kind}&format=json",
-      "retrieved_at": "2026-10-02",
+      "retrieved_at": "2026-10-05",
       "start": "2024-01-01",
       "n": 264
     },
@@ -76,7 +76,7 @@
       "source": "live",
       "url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
       "pdf": "https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf",
-      "retrieved_at": "2026-10-02",
+      "retrieved_at": "2026-10-05",
       "parse": "XML (xml.etree), fetched at build time",
       "name": "Aug2026 Refunding Auction Calendar Official Ver 2",
       "start": "2026-08-05",
@@ -85,7 +85,7 @@
     "refunding": {
       "source": "live",
       "url": "https://home.treasury.gov/policy-issues/financing-the-government/quarterly-refunding/most-recent-quarterly-refunding-documents",
-      "retrieved_at": "2026-10-02",
+      "retrieved_at": "2026-10-05",
       "latest": "2026-08-05",
       "next": "2026-11-04"
     },
@@ -6599,6 +6599,17 @@
     },
     {
       "date": "2026-08-27",
+      "type": "EARNINGS",
+      "ticker": "WDAY",
+      "name": "Earnings \u00b7 WDAY",
+      "label": "WDAY",
+      "source_url": "https://finance.yahoo.com/quote/WDAY/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-08-27",
       "type": "TREASURY",
       "name": "7-Year Note auction",
       "label": "7Y",
@@ -7161,6 +7172,17 @@
     {
       "date": "2026-10-20",
       "type": "EARNINGS",
+      "ticker": "MMM",
+      "name": "Earnings \u00b7 MMM",
+      "label": "MMM",
+      "source_url": "https://finance.yahoo.com/quote/MMM/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-20",
+      "type": "EARNINGS",
       "ticker": "NFLX",
       "name": "Earnings \u00b7 NFLX",
       "label": "NFLX",
@@ -7334,6 +7356,17 @@
     },
     {
       "date": "2026-10-26",
+      "type": "EARNINGS",
+      "ticker": "HIG",
+      "name": "Earnings \u00b7 HIG",
+      "label": "HIG",
+      "source_url": "https://finance.yahoo.com/quote/HIG/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-26",
       "type": "TREASURY",
       "name": "2-Year Note auction",
       "label": "2Y",
@@ -7352,6 +7385,17 @@
       "announcement_date": "2026-10-22",
       "tentative": true,
       "status": "tentative"
+    },
+    {
+      "date": "2026-10-27",
+      "type": "EARNINGS",
+      "ticker": "BKNG",
+      "name": "Earnings \u00b7 BKNG",
+      "label": "BKNG",
+      "source_url": "https://finance.yahoo.com/quote/BKNG/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
     },
     {
       "date": "2026-10-27",
@@ -7486,6 +7530,17 @@
     },
     {
       "date": "2026-10-28",
+      "type": "EARNINGS",
+      "ticker": "RJF",
+      "name": "Earnings \u00b7 RJF",
+      "label": "RJF",
+      "source_url": "https://finance.yahoo.com/quote/RJF/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-28",
       "type": "FOMC",
       "name": "FOMC Statement",
       "label": "FOMC",
@@ -7525,6 +7580,17 @@
       "label": "AMZN",
       "source_url": "https://finance.yahoo.com/quote/AMZN/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-09-29T22:47:28-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-29",
+      "type": "EARNINGS",
+      "ticker": "ARES",
+      "name": "Earnings \u00b7 ARES",
+      "label": "ARES",
+      "source_url": "https://finance.yahoo.com/quote/ARES/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -7762,6 +7828,17 @@
       "label": "ETN",
       "source_url": "https://finance.yahoo.com/quote/ETN/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-09-29T22:47:28-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-11-03",
+      "type": "EARNINGS",
+      "ticker": "IT",
+      "name": "Earnings \u00b7 IT",
+      "label": "IT",
+      "source_url": "https://finance.yahoo.com/quote/IT/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -8575,6 +8652,17 @@
       "retrieved_at": "2026-09-30",
       "provenance": "release rule: Thursdays 08:30 ET; Wednesday in Thanksgiving week and when Thursday is a federal holiday (the weekly release states each week's embargo time)",
       "time_et": "08:30"
+    },
+    {
+      "date": "2026-12-17",
+      "type": "EARNINGS",
+      "ticker": "FDS",
+      "name": "Earnings \u00b7 FDS",
+      "label": "FDS",
+      "source_url": "https://finance.yahoo.com/quote/FDS/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
     },
     {
       "date": "2026-12-18",

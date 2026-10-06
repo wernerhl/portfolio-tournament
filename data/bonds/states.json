@@ -1,62 +1,62 @@
 {
-  "cadence": "intraday",
-  "mode": "intraday",
-  "intraday": true,
-  "intraday_as_of": "2026-10-05T17:26:51-04:00",
-  "intraday_note": "intraday: the book-integration figures (NAV, the conditional message, the whole-portfolio stress) are on the live tape; the curve, credit and breakeven states are the daily FRED vintage and do not move intraday",
-  "session_date": "2026-10-01",
-  "as_of": "2026-10-05",
-  "computed_at": "2026-10-05T17:26:51-04:00",
+  "cadence": "daily",
+  "mode": "close",
+  "intraday": false,
+  "intraday_as_of": null,
+  "intraday_note": null,
+  "session_date": "2026-10-05",
+  "as_of": "2026-10-06",
+  "computed_at": "2026-10-06T02:13:26+00:00",
   "vintage": {
     "store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
-    "fred_through": "2026-10-01",
+    "fred_through": "2026-10-05",
     "history_years": 10
   },
   "config_frozen_at": "2026-09-16",
   "curve": {
     "series": "yield_2s10s",
     "label": "2s10s slope (10y minus 2y Treasury)",
-    "slope_2s10s_pct": 0.41,
-    "slope_2s10s_bps": 41.0,
-    "slope_2s10s_pctile_10y": 51.0,
+    "slope_2s10s_pct": 0.45,
+    "slope_2s10s_bps": 45.0,
+    "slope_2s10s_pctile_10y": 53.7,
     "slope_3m10y_pct": 1.09,
     "state": "normal",
-    "as_of": "2026-09-30",
+    "as_of": "2026-10-02",
     "maturities": [
       {
         "maturity": "3m",
         "series": "us03m",
-        "level_pct": 4.2,
-        "pctile_10y": 71.4,
-        "as_of": "2026-09-30"
+        "level_pct": 4.19,
+        "pctile_10y": 71.3,
+        "as_of": "2026-10-02"
       },
       {
         "maturity": "2y",
         "series": "us02y",
-        "level_pct": 4.88,
-        "pctile_10y": 95.8,
-        "as_of": "2026-09-30"
+        "level_pct": 4.83,
+        "pctile_10y": 94.8,
+        "as_of": "2026-10-02"
       },
       {
         "maturity": "5y",
         "series": "us05y",
-        "level_pct": 5.09,
-        "pctile_10y": 100.0,
-        "as_of": "2026-09-30"
+        "level_pct": 5.06,
+        "pctile_10y": 99.8,
+        "as_of": "2026-10-02"
       },
       {
         "maturity": "10y",
         "series": "us10y",
-        "level_pct": 5.29,
-        "pctile_10y": 100.0,
-        "as_of": "2026-09-30"
+        "level_pct": 5.28,
+        "pctile_10y": 99.9,
+        "as_of": "2026-10-02"
       },
       {
         "maturity": "30y",
         "series": "us30y",
-        "level_pct": 5.64,
-        "pctile_10y": 100.0,
-        "as_of": "2026-09-30"
+        "level_pct": 5.63,
+        "pctile_10y": 99.9,
+        "as_of": "2026-10-02"
       }
     ],
     "chart": {
@@ -71,31 +71,31 @@
         {
           "label": "today",
           "yields": [
-            4.2,
-            4.88,
-            5.09,
-            5.29,
-            5.64
+            4.19,
+            4.83,
+            5.06,
+            5.28,
+            5.63
           ]
         },
         {
           "label": "3 months ago",
           "yields": [
-            3.85,
-            4.17,
-            4.24,
+            3.87,
+            4.13,
+            4.21,
             4.48,
-            4.97
+            4.99
           ]
         },
         {
           "label": "1 year ago",
           "yields": [
             4.02,
-            3.63,
-            3.76,
-            4.2,
-            4.77
+            3.6,
+            3.74,
+            4.16,
+            4.73
           ]
         }
       ]
@@ -129,22 +129,22 @@
   "credit": {
     "method": "option-adjusted spread (OAS) series \u2014 IG BAMLC0A0CM, HY BAMLH0A0HYM2 \u2014 which are duration-controlled by construction; NOT an ETF price ratio",
     "ig": {
-      "oas_pct": 0.84,
-      "oas_bps": 84.0,
-      "pctile_10y": 41.9,
+      "oas_pct": 0.85,
+      "oas_bps": 85.0,
+      "pctile_10y": 44.9,
       "state": "normal",
       "pctile_window_from": "2023-06-05",
       "pctile_window_years": 3.3,
-      "as_of": "2026-09-30"
+      "as_of": "2026-10-02"
     },
     "hy": {
-      "oas_pct": 3.12,
-      "oas_bps": 312.0,
-      "pctile_10y": 51.5,
+      "oas_pct": 3.1,
+      "oas_bps": 310.0,
+      "pctile_10y": 49.7,
       "state": "normal",
       "pctile_window_from": "2023-06-05",
       "pctile_window_years": 3.3,
-      "as_of": "2026-09-30"
+      "as_of": "2026-10-02"
     },
     "bands": [
       {
@@ -175,12 +175,12 @@
   },
   "real_nominal": {
     "breakeven_10y_pct": 2.36,
-    "breakeven_10y_pctile_10y": 78.1,
+    "breakeven_10y_pctile_10y": 78.0,
     "priced_inflation": 2.36,
     "priced_inflation_note": "the 10-year breakeven is the market's priced average inflation over ten years",
     "fwd_5y5y_infl_pct": 2.36,
-    "real_10y_yield_pct": 2.93,
-    "as_of": "2026-10-01",
+    "real_10y_yield_pct": 2.92,
+    "as_of": "2026-10-05",
     "footnote": "This read decides only whether TIPS or nominal Treasuries carry better at a given maturity; it is not an inflation forecast."
   },
   "allocation_questions": {
@@ -189,54 +189,54 @@
       "basis": "curve-implied yields (FRED CMT par yields at each sleeve's weighted-average maturity); not distribution yields",
       "cash": {
         "series": "DGS3MO",
-        "yield_pct": 4.2,
-        "date": "2026-09-30"
+        "yield_pct": 4.19,
+        "date": "2026-10-02"
       },
       "short": {
         "ticker": "SHY",
-        "curve_implied_yield_pct": 4.843,
+        "curve_implied_yield_pct": 4.789,
         "avg_maturity_years": 1.89,
         "duration": 1.85,
-        "pickup_bp": 64.3,
-        "breakeven_rise_bp": 34.8,
-        "breakeven_rise_typical_moves": 7.9,
-        "inputs_date": "2026-09-30",
+        "pickup_bp": 59.9,
+        "breakeven_rise_bp": 32.4,
+        "breakeven_rise_typical_moves": 7.3,
+        "inputs_date": "2026-10-02",
         "curve_implied_reason": null,
-        "trailing_distribution_yield_pct": 3.63
+        "trailing_distribution_yield_pct": 3.65
       },
       "intermediate": {
         "ticker": "IEF",
-        "curve_implied_yield_pct": 5.237,
+        "curve_implied_yield_pct": 5.222,
         "avg_maturity_years": 8.42,
         "duration": 7.3,
-        "pickup_bp": 103.7,
-        "breakeven_rise_bp": 14.2,
+        "pickup_bp": 103.2,
+        "breakeven_rise_bp": 14.1,
         "breakeven_rise_typical_moves": 3.2,
-        "inputs_date": "2026-09-30",
+        "inputs_date": "2026-10-02",
         "curve_implied_reason": null,
-        "trailing_distribution_yield_pct": 3.97
+        "trailing_distribution_yield_pct": 4.14
       },
       "long": {
         "ticker": "TLT",
-        "curve_implied_yield_pct": 5.656,
+        "curve_implied_yield_pct": 5.646,
         "avg_maturity_years": 26.03,
         "duration": 16.5,
         "pickup_bp": 145.6,
         "breakeven_rise_bp": 8.8,
         "breakeven_rise_typical_moves": 2.0,
-        "inputs_date": "2026-09-30",
+        "inputs_date": "2026-10-02",
         "curve_implied_reason": null,
-        "trailing_distribution_yield_pct": 4.73
+        "trailing_distribution_yield_pct": 5.0
       },
-      "sigma_10y_daily_bp": 4.43,
+      "sigma_10y_daily_bp": 4.45,
       "sigma_window_sessions": 126,
       "term_premium_proxy": {
         "definition": "long-minus-cash yield spread (10y minus 3m)",
         "value_pct": 1.09,
         "value_bps": 109.0,
-        "pctile_10y": 71.6
+        "pctile_10y": 71.7
       },
-      "read": "Bills yield 4.20%. IEF's curve-implied yield is 5.24% at duration 7.3: 104bp over bills, erased by a 14bp rise over a year (3 typical daily moves of the 10-year). TLT: 5.66% at duration 16.5: 146bp over bills, erased by a 9bp rise over a year (2 typical daily moves of the 10-year).",
+      "read": "Bills yield 4.19%. IEF's curve-implied yield is 5.22% at duration 7.3: 103bp over bills, erased by a 14bp rise over a year (3 typical daily moves of the 10-year). TLT: 5.65% at duration 16.5: 146bp over bills, erased by a 9bp rise over a year (2 typical daily moves of the 10-year).",
       "footnotes": [
         "CMT yields are par yields on a semiannual basis; a fund's portfolio yield differs by coupon, convexity and composition, so the yield is named curve-implied.",
         "The breakeven rise is pickup / duration, from dP/P = -D dy; roll-down and convexity are omitted.",
@@ -248,26 +248,26 @@
       "question": "Are you paid to take credit?",
       "ig": {
         "index": "IG (BAMLC0A0CM)",
-        "pickup_bps": 84.0,
-        "pctile_10y": 41.9,
+        "pickup_bps": 85.0,
+        "pctile_10y": 44.9,
         "state": "normal"
       },
       "hy": {
         "index": "HY (BAMLH0A0HYM2)",
-        "pickup_bps": 312.0,
-        "pctile_10y": 51.5,
+        "pickup_bps": 310.0,
+        "pctile_10y": 49.7,
         "state": "normal"
       },
-      "read": "IG spreads pick up 84.0bp over duration-matched Treasuries (41.9th percentile, normal); HY 312.0bp (51.5th percentile, normal).",
+      "read": "IG spreads pick up 85.0bp over duration-matched Treasuries (44.9th percentile, normal); HY 310.0bp (49.7th percentile, normal).",
       "note": "The pickup is the option-adjusted spread over duration-matched Treasuries. Credit spreads mean-revert slowly; a tight percentile means little compensation for default and illiquidity risk. Descriptive; no spread-direction prediction."
     },
     "real_vs_nominal": {
       "question": "TIPS or nominal Treasuries?",
       "maturity": "10y",
       "breakeven_pct": 2.36,
-      "breakeven_pctile_10y": 78.1,
-      "real_10y_yield_pct": 2.93,
-      "read": "At the 10-year maturity, TIPS and nominal Treasuries carry the same real yield when inflation runs at the 2.36% breakeven; TIPS out-carry nominal if realized inflation exceeds 2.36%, nominal out-carry if it runs below. The breakeven sits at its 78.1th percentile over ten years \u2014 the inflation compensation priced into nominals is historically high.",
+      "breakeven_pctile_10y": 78.0,
+      "real_10y_yield_pct": 2.92,
+      "read": "At the 10-year maturity, TIPS and nominal Treasuries carry the same real yield when inflation runs at the 2.36% breakeven; TIPS out-carry nominal if realized inflation exceeds 2.36%, nominal out-carry if it runs below. The breakeven sits at its 78.0th percentile over ten years \u2014 the inflation compensation priced into nominals is historically high.",
       "note": "Descriptive; decides only which carries better at the breakeven, not an inflation forecast."
     }
   },
@@ -310,33 +310,33 @@
     "gate": "DIAGNOSTIC: not read by R, the headline, the overlay scalar, any sizing or the brief's colours. Using it needs a registered test that passes and the operator's written authorization (reports/rates_stress_registration_2026-10-01.md, proposed, not run).",
     "window_change_sessions": 60,
     "move": {
-      "level": 108.13,
-      "date": "2026-10-01",
+      "level": 113.6,
+      "date": "2026-10-05",
       "series": "^MOVE",
       "provider": "yfinance",
-      "pctile_1y": 97.6,
-      "pctile_10y": 78.9,
-      "change_60": 35.72,
-      "level_60_sessions_earlier": 72.41,
+      "pctile_1y": 99.2,
+      "pctile_10y": 83.6,
+      "change_60": 44.05,
+      "level_60_sessions_earlier": 69.55,
       "note": "ICE publishes no free official close; a session without a yfinance bar is unavailable, not substituted"
     },
     "real_10y": {
-      "level_pct": 2.93,
-      "date": "2026-09-30",
+      "level_pct": 2.92,
+      "date": "2026-10-02",
       "series": "DFII10",
       "provider": "FRED",
-      "pctile_10y": 100.0,
-      "change_60_bp": 63.0
+      "pctile_10y": 99.9,
+      "change_60_bp": 61.0
     },
     "nominal_10y": {
-      "level_pct": 5.29,
-      "date": "2026-09-30",
+      "level_pct": 5.28,
+      "date": "2026-10-02",
       "series": "DGS10",
       "provider": "FRED",
-      "pctile_10y": 100.0,
+      "pctile_10y": 99.9,
       "change_60_bp": 74.0
     },
-    "real_share_of_nominal_change": 0.851,
+    "real_share_of_nominal_change": 0.824,
     "real_share_definition": "60-session change in DFII10 / 60-session change in DGS10 (the rest is the breakeven)"
   },
   "book_integration": {
@@ -348,27 +348,27 @@
           "ticker": "SHV",
           "asset_class": "bills",
           "role": "0-1y Treasury bills (cash proxy)",
-          "correlation_to_book": 0.092,
-          "curve_implied_yield_pct": 4.218,
+          "correlation_to_book": 0.0956,
+          "curve_implied_yield_pct": 4.204,
           "real_yield_pct": null,
-          "pickup_bp": 1.8,
-          "breakeven_rise_bp": 5.1,
+          "pickup_bp": 1.4,
+          "breakeven_rise_bp": 4.0,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 3.73,
+          "distribution_yield_pct": 3.69,
           "effective_duration": 0.35,
-          "vol_126_ann": 0.0021
+          "vol_126_ann": 0.002
         },
         {
           "ticker": "FLOT",
           "asset_class": "ig_credit_float",
           "role": "floating-rate investment-grade",
-          "correlation_to_book": 0.2452,
+          "correlation_to_book": 0.2403,
           "curve_implied_yield_pct": null,
           "real_yield_pct": null,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "floating-rate notes: the coupon resets with short rates, so no public spread series matches the sleeve; never substituted",
-          "distribution_yield_pct": 4.4,
+          "distribution_yield_pct": 4.34,
           "effective_duration": 0.1,
           "vol_126_ann": 0.0064
         },
@@ -376,55 +376,55 @@
           "ticker": "TLT",
           "asset_class": "treasury",
           "role": "20y+ Treasury",
-          "correlation_to_book": 0.2907,
-          "curve_implied_yield_pct": 5.656,
+          "correlation_to_book": 0.2854,
+          "curve_implied_yield_pct": 5.646,
           "real_yield_pct": null,
           "pickup_bp": 145.6,
           "breakeven_rise_bp": 8.8,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 4.73,
+          "distribution_yield_pct": 5.0,
           "effective_duration": 16.5,
-          "vol_126_ann": 0.0943
+          "vol_126_ann": 0.094
         },
         {
           "ticker": "TIP",
           "asset_class": "tips",
           "role": "TIPS (inflation-linked Treasury)",
-          "correlation_to_book": 0.2998,
+          "correlation_to_book": 0.2956,
           "curve_implied_yield_pct": null,
-          "real_yield_pct": 2.82,
+          "real_yield_pct": 2.8,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "a real yield (TIPS curve): excluded from nominal comparisons",
-          "distribution_yield_pct": 4.98,
+          "distribution_yield_pct": 4.71,
           "effective_duration": 6.8,
-          "vol_126_ann": 0.037
+          "vol_126_ann": 0.0366
         },
         {
           "ticker": "MUB",
           "asset_class": "municipal",
           "role": "municipal (tax-exempt)",
-          "correlation_to_book": 0.3171,
+          "correlation_to_book": 0.3105,
           "curve_implied_yield_pct": null,
           "real_yield_pct": null,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "tax-exempt: compare at the holder's marginal tax rate, and no rate is assumed; no public spread series matches the sleeve; never substituted",
-          "distribution_yield_pct": 3.25,
+          "distribution_yield_pct": 3.4,
           "effective_duration": 6.3,
-          "vol_126_ann": 0.0378
+          "vol_126_ann": 0.0381
         },
         {
           "ticker": "SHY",
           "asset_class": "treasury",
           "role": "1-3y Treasury",
-          "correlation_to_book": 0.3468,
-          "curve_implied_yield_pct": 4.843,
+          "correlation_to_book": 0.3469,
+          "curve_implied_yield_pct": 4.789,
           "real_yield_pct": null,
-          "pickup_bp": 64.3,
-          "breakeven_rise_bp": 34.8,
+          "pickup_bp": 59.9,
+          "breakeven_rise_bp": 32.4,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 3.63,
+          "distribution_yield_pct": 3.65,
           "effective_duration": 1.85,
           "vol_126_ann": 0.0148
         },
@@ -432,169 +432,169 @@
           "ticker": "IEF",
           "asset_class": "treasury",
           "role": "7-10y Treasury",
-          "correlation_to_book": 0.3559,
-          "curve_implied_yield_pct": 5.237,
+          "correlation_to_book": 0.3511,
+          "curve_implied_yield_pct": 5.222,
           "real_yield_pct": null,
-          "pickup_bp": 103.7,
-          "breakeven_rise_bp": 14.2,
+          "pickup_bp": 103.2,
+          "breakeven_rise_bp": 14.1,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 3.97,
+          "distribution_yield_pct": 4.14,
           "effective_duration": 7.3,
-          "vol_126_ann": 0.0512
+          "vol_126_ann": 0.0511
         },
         {
           "ticker": "GOVT",
           "asset_class": "treasury",
           "role": "broad Treasury",
-          "correlation_to_book": 0.358,
-          "curve_implied_yield_pct": 5.202,
+          "correlation_to_book": 0.3536,
+          "curve_implied_yield_pct": 5.184,
           "real_yield_pct": null,
-          "pickup_bp": 100.2,
-          "breakeven_rise_bp": 17.0,
+          "pickup_bp": 99.4,
+          "breakeven_rise_bp": 16.8,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 3.65,
+          "distribution_yield_pct": 3.78,
           "effective_duration": 5.9,
-          "vol_126_ann": 0.0378
-        },
-        {
-          "ticker": "BKLN",
-          "asset_class": "bank_loans",
-          "role": "senior bank loans (floating rate)",
-          "correlation_to_book": 0.3613,
-          "curve_implied_yield_pct": null,
-          "real_yield_pct": null,
-          "pickup_bp": null,
-          "breakeven_rise_bp": null,
-          "curve_implied_reason": "floating-rate senior loans: no public spread series matches the sleeve; never substituted",
-          "distribution_yield_pct": 6.42,
-          "effective_duration": 0.2,
-          "vol_126_ann": 0.0208
+          "vol_126_ann": 0.0377
         },
         {
           "ticker": "MBB",
           "asset_class": "agency_mbs",
           "role": "agency mortgage-backed",
-          "correlation_to_book": 0.3681,
+          "correlation_to_book": 0.3605,
           "curve_implied_yield_pct": null,
           "real_yield_pct": null,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "no public spread series matches the sleeve (agency MBS, prepayment-sensitive cash flows); never substituted",
-          "distribution_yield_pct": 4.34,
+          "distribution_yield_pct": 4.51,
           "effective_duration": 5.9,
-          "vol_126_ann": 0.0518
+          "vol_126_ann": 0.0519
+        },
+        {
+          "ticker": "BKLN",
+          "asset_class": "bank_loans",
+          "role": "senior bank loans (floating rate)",
+          "correlation_to_book": 0.3644,
+          "curve_implied_yield_pct": null,
+          "real_yield_pct": null,
+          "pickup_bp": null,
+          "breakeven_rise_bp": null,
+          "curve_implied_reason": "floating-rate senior loans: no public spread series matches the sleeve; never substituted",
+          "distribution_yield_pct": 6.39,
+          "effective_duration": 0.2,
+          "vol_126_ann": 0.0207
         },
         {
           "ticker": "BND",
           "asset_class": "aggregate",
           "role": "US aggregate",
-          "correlation_to_book": 0.374,
+          "correlation_to_book": 0.3694,
           "curve_implied_yield_pct": null,
           "real_yield_pct": null,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "a mixed aggregate (Treasuries, MBS, corporates): no single curve or public spread series matches the sleeve; never substituted",
-          "distribution_yield_pct": 4.04,
+          "distribution_yield_pct": 4.17,
           "effective_duration": 5.9,
-          "vol_126_ann": 0.0414
+          "vol_126_ann": 0.0413
         },
         {
           "ticker": "AGG",
           "asset_class": "aggregate",
           "role": "US aggregate",
-          "correlation_to_book": 0.3833,
+          "correlation_to_book": 0.3792,
           "curve_implied_yield_pct": null,
           "real_yield_pct": null,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "a mixed aggregate (Treasuries, MBS, corporates): no single curve or public spread series matches the sleeve; never substituted",
-          "distribution_yield_pct": 4.05,
+          "distribution_yield_pct": 4.19,
           "effective_duration": 6.0,
-          "vol_126_ann": 0.0426
-        },
-        {
-          "ticker": "LQD",
-          "asset_class": "ig_credit",
-          "role": "broad investment-grade corporate",
-          "correlation_to_book": 0.4001,
-          "curve_implied_yield_pct": 6.402,
-          "real_yield_pct": null,
-          "pickup_bp": 220.2,
-          "breakeven_rise_bp": 26.2,
-          "curve_implied_reason": null,
-          "distribution_yield_pct": 4.67,
-          "effective_duration": 8.4,
-          "vol_126_ann": 0.0567
+          "vol_126_ann": 0.0425
         },
         {
           "ticker": "VCSH",
           "asset_class": "ig_credit",
           "role": "short investment-grade corporate",
-          "correlation_to_book": 0.4022,
-          "curve_implied_yield_pct": 5.707,
+          "correlation_to_book": 0.399,
+          "curve_implied_yield_pct": 5.674,
           "real_yield_pct": null,
-          "pickup_bp": 150.7,
-          "breakeven_rise_bp": 58.0,
+          "pickup_bp": 148.4,
+          "breakeven_rise_bp": 57.1,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 4.47,
+          "distribution_yield_pct": 4.56,
           "effective_duration": 2.6,
-          "vol_126_ann": 0.0219
+          "vol_126_ann": 0.022
+        },
+        {
+          "ticker": "LQD",
+          "asset_class": "ig_credit",
+          "role": "broad investment-grade corporate",
+          "correlation_to_book": 0.3997,
+          "curve_implied_yield_pct": 6.402,
+          "real_yield_pct": null,
+          "pickup_bp": 221.2,
+          "breakeven_rise_bp": 26.3,
+          "curve_implied_reason": null,
+          "distribution_yield_pct": 4.91,
+          "effective_duration": 8.4,
+          "vol_126_ann": 0.0564
         },
         {
           "ticker": "VCIT",
           "asset_class": "ig_credit",
           "role": "intermediate investment-grade corporate",
-          "correlation_to_book": 0.4161,
-          "curve_implied_yield_pct": 6.23,
+          "correlation_to_book": 0.4147,
+          "curve_implied_yield_pct": 6.222,
           "real_yield_pct": null,
-          "pickup_bp": 203.0,
-          "breakeven_rise_bp": 32.7,
+          "pickup_bp": 203.2,
+          "breakeven_rise_bp": 32.8,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 4.89,
+          "distribution_yield_pct": 5.08,
           "effective_duration": 6.2,
-          "vol_126_ann": 0.0462
+          "vol_126_ann": 0.0461
         },
         {
           "ticker": "JNK",
           "asset_class": "high_yield",
           "role": "high yield corporate",
-          "correlation_to_book": 0.5189,
-          "curve_implied_yield_pct": 8.213,
+          "correlation_to_book": 0.5238,
+          "curve_implied_yield_pct": 8.164,
           "real_yield_pct": null,
-          "pickup_bp": 401.3,
-          "breakeven_rise_bp": 121.6,
+          "pickup_bp": 397.4,
+          "breakeven_rise_bp": 120.4,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 6.61,
+          "distribution_yield_pct": 6.83,
           "effective_duration": 3.3,
-          "vol_126_ann": 0.036
+          "vol_126_ann": 0.0358
         },
         {
           "ticker": "EMB",
           "asset_class": "em_sovereign",
           "role": "emerging-market USD sovereign",
-          "correlation_to_book": 0.5267,
+          "correlation_to_book": 0.5259,
           "curve_implied_yield_pct": null,
           "real_yield_pct": null,
           "pickup_bp": null,
           "breakeven_rise_bp": null,
           "curve_implied_reason": "no public spread series matches the sleeve (USD emerging-market sovereigns); never substituted",
-          "distribution_yield_pct": 5.14,
+          "distribution_yield_pct": 5.36,
           "effective_duration": 7.0,
-          "vol_126_ann": 0.0614
+          "vol_126_ann": 0.0615
         },
         {
           "ticker": "HYG",
           "asset_class": "high_yield",
           "role": "high yield corporate",
-          "correlation_to_book": 0.5386,
-          "curve_implied_yield_pct": 8.159,
+          "correlation_to_book": 0.541,
+          "curve_implied_yield_pct": 8.104,
           "real_yield_pct": null,
-          "pickup_bp": 395.9,
-          "breakeven_rise_bp": 123.7,
+          "pickup_bp": 391.4,
+          "breakeven_rise_bp": 122.3,
           "curve_implied_reason": null,
-          "distribution_yield_pct": 5.88,
+          "distribution_yield_pct": 6.14,
           "effective_duration": 3.2,
-          "vol_126_ann": 0.0366
+          "vol_126_ann": 0.0364
         }
       ]
     },
@@ -602,132 +602,132 @@
       "fires": false,
       "top_name": {
         "ticker": "GEV",
-        "risk_share": 0.359172,
-        "share_nav": 0.104157
+        "risk_share": 0.357424,
+        "share_nav": 0.104136
       },
       "threshold": 0.4,
-      "book_vol_with_cash": 0.1146,
+      "book_vol_with_cash": 0.1149,
       "reference_stress": {
         "id": "spy_-20",
-        "loss": -34150.61,
+        "loss": -34156.3,
         "share_nav": -0.1437
       },
       "add_fraction_of_nav": 0.1,
-      "add_dollars": 23772.37,
+      "add_dollars": 23766.99,
       "representative_diversifier": "IEF",
-      "book_vol_with_representative": 0.1199,
+      "book_vol_with_representative": 0.1159,
       "trim_comparison": {
         "action": "halve GEV to cash",
-        "spy20_loss": -29563.72,
-        "spy20_share_nav": -0.1244,
-        "improvement_vs_current_share": 0.0193
+        "spy20_loss": -29601.93,
+        "spy20_share_nav": -0.1246,
+        "improvement_vs_current_share": 0.0192
       },
       "marginal": [
         {
           "ticker": "SHV",
-          "d_vol": 0.0034,
+          "d_vol": -0.0009,
           "beta_spy": -0.003,
           "d_stress_spy20_share": 0.0001
         },
         {
           "ticker": "SHY",
-          "d_vol": 0.0039,
+          "d_vol": -0.0004,
           "beta_spy": -0.017,
           "d_stress_spy20_share": 0.0003
         },
         {
           "ticker": "IEF",
-          "d_vol": 0.0053,
+          "d_vol": 0.001,
           "beta_spy": -0.101,
           "d_stress_spy20_share": 0.002
         },
         {
           "ticker": "TLT",
-          "d_vol": 0.0063,
+          "d_vol": 0.0021,
           "beta_spy": -0.228,
           "d_stress_spy20_share": 0.0046
         },
         {
           "ticker": "GOVT",
-          "d_vol": 0.0048,
+          "d_vol": 0.0005,
           "beta_spy": -0.05,
           "d_stress_spy20_share": 0.001
         },
         {
           "ticker": "TIP",
-          "d_vol": 0.0045,
+          "d_vol": 0.0002,
           "beta_spy": -0.031,
           "d_stress_spy20_share": 0.0006
         },
         {
           "ticker": "VCSH",
-          "d_vol": 0.0044,
+          "d_vol": -0.0,
           "beta_spy": 0.033,
           "d_stress_spy20_share": -0.0007
         },
         {
           "ticker": "VCIT",
-          "d_vol": 0.0055,
+          "d_vol": 0.0011,
           "beta_spy": 0.051,
           "d_stress_spy20_share": -0.001
         },
         {
           "ticker": "LQD",
-          "d_vol": 0.0059,
+          "d_vol": 0.0015,
           "beta_spy": 0.09,
           "d_stress_spy20_share": -0.0018
         },
         {
           "ticker": "HYG",
-          "d_vol": 0.0057,
+          "d_vol": 0.0011,
           "beta_spy": 0.376,
           "d_stress_spy20_share": -0.0075
         },
         {
           "ticker": "JNK",
-          "d_vol": 0.0056,
+          "d_vol": 0.001,
           "beta_spy": 0.354,
           "d_stress_spy20_share": -0.0071
         },
         {
           "ticker": "BKLN",
-          "d_vol": 0.0043,
+          "d_vol": -0.0001,
           "beta_spy": 0.2,
           "d_stress_spy20_share": -0.004
         },
         {
           "ticker": "FLOT",
-          "d_vol": 0.0036,
+          "d_vol": -0.0007,
           "beta_spy": 0.068,
           "d_stress_spy20_share": -0.0014
         },
         {
           "ticker": "EMB",
-          "d_vol": 0.007,
+          "d_vol": 0.0024,
           "beta_spy": 0.216,
           "d_stress_spy20_share": -0.0043
         },
         {
           "ticker": "MUB",
-          "d_vol": 0.0047,
+          "d_vol": 0.0003,
           "beta_spy": 0.037,
           "d_stress_spy20_share": -0.0007
         },
         {
           "ticker": "MBB",
-          "d_vol": 0.0054,
+          "d_vol": 0.0011,
           "beta_spy": 0.007,
           "d_stress_spy20_share": -0.0001
         },
         {
           "ticker": "AGG",
-          "d_vol": 0.0051,
+          "d_vol": 0.0008,
           "beta_spy": 0.001,
           "d_stress_spy20_share": -0.0
         },
         {
           "ticker": "BND",
-          "d_vol": 0.005,
+          "d_vol": 0.0007,
           "beta_spy": 0.0,
           "d_stress_spy20_share": -0.0
         }
@@ -740,30 +740,30 @@
         {
           "id": "smh_-30",
           "label": "Semiconductors (SMH) \u221230%",
-          "loss": -14781.94,
+          "loss": -14784.28,
           "share_nav": -0.0622,
-          "share_equity": -0.1653
+          "share_equity": -0.1655
         },
         {
           "id": "spy_-20",
           "label": "Market (SPY) \u221220%",
-          "loss": -34150.61,
+          "loss": -34156.3,
           "share_nav": -0.1437,
-          "share_equity": -0.382
+          "share_equity": -0.3823
         },
         {
           "id": "spy_-34",
           "label": "Market (SPY) \u221234%, 2020-scale",
-          "loss": -58056.03,
-          "share_nav": -0.2442,
-          "share_equity": -0.6493
+          "loss": -58065.72,
+          "share_nav": -0.2443,
+          "share_equity": -0.6498
         },
         {
           "id": "ai_infra_-30",
           "label": "AI infrastructure basket \u221230%",
-          "loss": -20694.35,
-          "share_nav": -0.0871,
-          "share_equity": -0.2315
+          "loss": -20680.68,
+          "share_nav": -0.087,
+          "share_equity": -0.2314
         },
         {
           "id": "memory_-40",
@@ -775,7 +775,7 @@
         {
           "id": "bmnr_0",
           "label": "BMNR to zero",
-          "loss": -5363.88,
+          "loss": -5359.88,
           "share_nav": -0.0226,
           "share_equity": -0.06
         }
@@ -788,14 +788,14 @@
         "spread_shock": {
           "magnitude": "index OAS widened to its 90th percentile over ten years",
           "ig": {
-            "current_bps": 84.0,
+            "current_bps": 85.0,
             "p90_bps": 123.0,
-            "widen_decimal": 0.0039
+            "widen_decimal": 0.0038
           },
           "hy": {
-            "current_bps": 312.0,
+            "current_bps": 310.0,
             "p90_bps": 396.0,
-            "widen_decimal": 0.0084
+            "widen_decimal": 0.0086
           },
           "method": "credit sleeve return \u2248 \u2212 spread duration \u00d7 spread widening"
         },
@@ -861,7 +861,7 @@
             "rate_down_100bp": 0.026,
             "credit_index": "ig",
             "spread_duration": 2.6,
-            "spread_widen_return": -0.0101
+            "spread_widen_return": -0.0099
           },
           {
             "ticker": "VCIT",
@@ -870,7 +870,7 @@
             "rate_down_100bp": 0.062,
             "credit_index": "ig",
             "spread_duration": 6.2,
-            "spread_widen_return": -0.0242
+            "spread_widen_return": -0.0236
           },
           {
             "ticker": "LQD",
@@ -879,7 +879,7 @@
             "rate_down_100bp": 0.084,
             "credit_index": "ig",
             "spread_duration": 8.4,
-            "spread_widen_return": -0.0328
+            "spread_widen_return": -0.0319
           },
           {
             "ticker": "HYG",
@@ -888,7 +888,7 @@
             "rate_down_100bp": 0.032,
             "credit_index": "hy",
             "spread_duration": 3.2,
-            "spread_widen_return": -0.0269
+            "spread_widen_return": -0.0275
           },
           {
             "ticker": "JNK",
@@ -897,7 +897,7 @@
             "rate_down_100bp": 0.033,
             "credit_index": "hy",
             "spread_duration": 3.3,
-            "spread_widen_return": -0.0277
+            "spread_widen_return": -0.0284
           },
           {
             "ticker": "BKLN",
@@ -906,7 +906,7 @@
             "rate_down_100bp": 0.002,
             "credit_index": "hy",
             "spread_duration": 2.5,
-            "spread_widen_return": -0.021
+            "spread_widen_return": -0.0215
           },
           {
             "ticker": "FLOT",
@@ -924,7 +924,7 @@
             "rate_down_100bp": 0.07,
             "credit_index": "hy",
             "spread_duration": 7.0,
-            "spread_widen_return": -0.0588
+            "spread_widen_return": -0.0602
           },
           {
             "ticker": "MUB",
@@ -933,7 +933,7 @@
             "rate_down_100bp": 0.063,
             "credit_index": "ig",
             "spread_duration": 6.3,
-            "spread_widen_return": -0.0246
+            "spread_widen_return": -0.0239
           },
           {
             "ticker": "MBB",
