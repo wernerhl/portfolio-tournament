@@ -1439,10 +1439,21 @@ function optEventText(o){
   if (l8.n_exceeding_implied != null) parts.push(`${l8.n_exceeding_implied} of last ${l8.n} exceeded`);
   return parts.join("; ");
 }
+// Order 6-Oct-2026, section 6: the main view shows a field only if it can change a state, a size or an exit.
+// Of the options lens that is the earnings line (an earnings release within 20 sessions halves the size); the
+// rest is descriptive and sits in one collapsed drawer: the volatility state, term structure, skew, the past
+// reactions with their release timing, the hedge structure, dealer gamma and max pain.
+function optReactionsText(tk){
+  const R = (S.earningsRx && S.earningsRx.names && S.earningsRx.names[tk]) || null;
+  const h = (R && R.history) || [];
+  if (!h.length) return "";
+  const rows = h.slice(-9).map(x => `${x.date.slice(0, 7)} ${x.time_of_day === "after_close" ? "after close" : "before open"} <span class="${x.reaction >= 0 ? "c-pos" : "c-neg"}">${x.reaction >= 0 ? "+" : ""}${(x.reaction * 100).toFixed(1)}%</span>`).join(" · ");
+  return `<div class="mono t1 c-3 mt1">past reactions (before open: prior close to the release-day close; after close: the release-day close to the next close; timing from the 8-K filing or the provider's stamp): ${rows}</div>`;
+}
 function optionsRowHtml(tk, isPos){
   const o = optLens(tk);
   if (!o) return `<div class="ts-row"><div class="ts-label">Options</div><div class="ts-sub c-3">no chain vintage for this name</div><div class="ts-val"><span class="c-3">—</span></div><div class="ts-sub"></div></div>`;
-  const v = o.volatility || {}, t = o.term_structure || {}, sk = o.skew || {}, g = o.dealer_gamma || {};
+  const v = o.volatility || {}, t = o.term_structure || {}, sk = o.skew || {}, g = o.dealer_gamma || {}, ps = o.positioning || {};
   const pill = o.impaired ? `<span class="c-warn w6" title="fewer than 70% of front-expiry strikes carry live bid-ask quotes">IMPAIRED</span>`
                           : `<span class="${OPT_STATE_CLS[v.state] || "c-3"} w6">${OPT_GLYPH[v.state] || ""} ${(v.state || "—").toUpperCase()}</span>`;
   const ivLine = `IV30 <span class="c-1">${optPct(v.iv30)}</span> · RV21 ${optPct(v.rv21)} · RV63 ${optPct(v.rv63)}${t.inverted ? ` · <span class="c-warn">term inverted</span>${t.reason ? ` <span class="c-3">(${t.reason})</span>` : ""}` : ""}`;
@@ -1451,15 +1462,22 @@ function optionsRowHtml(tk, isPos){
   const hp = isPos && S.optionsHedges && S.optionsHedges.positions && S.optionsHedges.positions[tk];
   if (hp && hp.tenors && hp.tenors.length){
     const ten = hp.tenors[0]; const top = (ten.structures || []).find(s => s.rank === 1);
-    if (top) hedge = `<div class="mono t1 c-3 mt1">structure ranked first, ${ten.expiry} (${ten.tenor.replace("_", " ")}): <span class="c-2">${top.label}</span>, ${top.net_kind} $${Math.abs(top.net_per_share).toFixed(2)}/sh (${fmtMoney(Math.abs(top.net_on_position))} on the position) · <span class="c-warn">${S.optionsHedges.label}</span></div>`;
+    if (top) hedge = `<div class="mono t1 c-3 mt1">hedge structure ranked first, ${ten.expiry} (${ten.tenor.replace("_", " ")}): <span class="c-2">${top.label}</span>, ${top.net_kind} $${Math.abs(top.net_per_share).toFixed(2)}/sh (${fmtMoney(Math.abs(top.net_on_position))} on the position) · <span class="c-warn">${S.optionsHedges.label}</span></div>`;
   }
-  const gamma = `<details class="mt1"><summary class="mono t1 c-3 ptr ls05">dealer gamma (descriptive, assumption-flagged)</summary><div class="mono t1 c-3 mt1">net gamma per 1% move ${g.per_1pct != null ? fmtMoney(g.per_1pct) : "—"} · flip level ${g.flip_level != null ? "$" + g.flip_level : "—"} · convention: ${g.convention || "dealers long calls, short puts"}. ${g.caveat || ""}</div></details>`;
+  const drawer = `<details class="mt1 opt-detail"><summary class="mono t1 c-3 ptr ls05">options detail (descriptive: none of these changes a state, a size or an exit)</summary>
+      <div class="mono t1 c-3 mt1">volatility ${pill} · ${ivLine}</div>
+      <div class="mono t1 c-3 mt1">${skewLine}</div>
+      ${optReactionsText(tk)}
+      ${hedge}
+      <div class="mono t1 c-3 mt1">dealer gamma (assumption-flagged): net gamma per 1% move ${g.per_1pct != null ? fmtMoney(g.per_1pct) : "—"} · flip level ${g.flip_level != null ? "$" + g.flip_level : "—"} · convention: ${g.convention || "dealers long calls, short puts"}. ${g.caveat || ""}</div>
+      <div class="mono t1 c-3 mt1">max pain ${ps.max_pain != null ? "$" + ps.max_pain : "—"}${ps.max_pain_vs_spot != null ? ` (${optPct(ps.max_pain_vs_spot)} vs spot)` : ""}${ps.expiry ? ` at the ${ps.expiry} expiry` : ""} · put/call open interest ${ps.put_call_oi_ratio != null ? ps.put_call_oi_ratio : "—"} · ${ps.note || "descriptive only"}</div>
+    </details>`;
   return `<div class="ts-row">
       <div class="ts-label">Options</div>
-      <div class="ts-sub">${ivLine}${optionsAgeBadge(S.optionsLens && S.optionsLens.session_date)}</div>
-      <div class="ts-val">${pill}</div>
-      <div class="ts-sub">${optEventText(o)} · ${skewLine}</div>
-    </div>${hedge}${gamma}`;
+      <div class="ts-sub">${optEventText(o)}${optionsAgeBadge(S.optionsLens && S.optionsLens.session_date)}</div>
+      <div class="ts-val"></div>
+      <div class="ts-sub"></div>
+    </div>${drawer}`;
 }
 function optEventLine(tk){   // 3.3: the event line for held names when a release falls within 10 sessions
   const o = optLens(tk); const e = o && o.event;
@@ -2260,19 +2278,22 @@ function renderEntryBox(sig){
     </div>
 
     <div class="gap2 mb3 x29">
-      ${cell("MEAN-REVERSION REFERENCE",
-        `<div class="mono t3 w7 c-2">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
-        `${(sig.entry?.basis || "").replace(/rulebook entry zone/g, "mean-reversion reference")}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)} · a reference level, not an entry signal (the entry state above reads timing)`)}
       ${cell("RULEBOOK STOP",
         `<div class="mono t3 w7 c-neg">$${(sig.stop?.price ?? 0).toFixed(2)}</div>`,
         `${sig.stop?.category_rule || ""}${sig.stop?.category_rule ? "<br>" : ""}the rulebook's percentage stop (the entry state's stop above is a separate rule)`)}
       ${cell("RULEBOOK TARGET LEVELS",
         `<div class="mono t3 w7 c-pos">$${(sig.target?.base ?? 0).toFixed(2)}</div>`,
         `Cons: $${(sig.target?.conservative ?? 0).toFixed(2)}<br>Aggr: $${(sig.target?.aggressive ?? 0).toFixed(2)}`)}
+    </div>
+    <details class="mb2"><summary class="mono t1 c-3 ptr ls05">rulebook reference (descriptive): the mean-reversion reference and the rulebook's 1%-risk size, which the entry state's size supersedes</summary>
+    <div class="gap2 mt2 x29">
+      ${cell("MEAN-REVERSION REFERENCE",
+        `<div class="mono t3 w7 c-2">$${(sig.entry?.primary ?? 0).toFixed(2)}</div>`,
+        `${(sig.entry?.basis || "").replace(/rulebook entry zone/g, "mean-reversion reference")}<br>2nd: $${(sig.entry?.secondary ?? 0).toFixed(2)} · a reference level, not an entry signal (the entry state above reads timing)`)}
       ${cell("RULEBOOK SIZE FORMULA",
         `<div class="mono t3 w7 c-1">${fmtMoney(sig.size?.dollars)}</div>`,
         `${sig.size?.shares ?? 0} shares · ${sig.size?.pct_portfolio ?? 0}% (1% risk budget, 5% cap)<br>loss at the stop: ${fmtMoney(sig.size?.max_loss)}`)}
-    </div>
+    </div></details>
 
     <div class="mb2">
       <span class="mono t1 w6 c-3 ls16">WHY</span>
