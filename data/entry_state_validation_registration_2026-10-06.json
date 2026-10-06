@@ -1,0 +1,77 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-06",
+ "registered_at": "2026-10-06",
+ "version": 3,
+ "order": "Execution Order: Revision of the Entry-State Indicator and Related Fixes (6 October 2026), section 7",
+ "status": "REGISTERED - NOT RUN (waiting for the survivorship-free data: Sharadar/Norgate access pending receipt)",
+ "report": "reports/entry_state_validation_registration_2026-10-06.md",
+ "rules": {
+  "a_revised": {
+   "path": "data/entry_state_config.json",
+   "sha256": "4aa58cc46c9d4c5da1f8782bdd5ffc9871ae2d893c3270a79190e2778f1036ad",
+   "version": 2
+  },
+  "b_2_october": {
+   "path": "data/entry_state_config_2026-10-02.json",
+   "sha256": "0f438215fdfe69509792e0132da5327578b76748e7b03dd30f6eaaaa97ed36d7",
+   "version": 1,
+   "module": "scripts/entry_state_v1.py"
+  }
+ },
+ "universe": {
+  "source": "point-in-time S&P 500 constituents from the purchased survivorship-free data (Sharadar or Norgate), delisted names included",
+  "events_from": "2005-01-03",
+  "history_from": "2004-01-02"
+ },
+ "event": {
+  "rsi_sessions": 14,
+  "rsi_method": "simple-average (Cutler)",
+  "rsi_below": 30.0,
+  "min_sessions_between_events": 20
+ },
+ "entry": {
+  "primary": "the event session's close",
+  "sensitivity": "the next session's open",
+  "costs_one_way_bps": 10,
+  "cost_model": "C1"
+ },
+ "outcomes": {
+  "horizons": [
+   60,
+   120
+  ],
+  "excess": "stock total return minus SPY total return over the same sessions, net of costs",
+  "beats_index": "excess > 0",
+  "worst_10pct": "10th percentile of the excess return",
+  "drawdown_20": "max(0, -(lowest close in sessions 1..20 / entry - 1)); the median is reported"
+ },
+ "contestants": {
+  "a": "events at which the revised machine reads READY or READY-HALF at the event close (trend gate not failed, setup, no ceiling cap from yearly highs known at the time, modifiers at or above a quarter); heavily_shorted not applied (no historical days-to-cover); the earnings modifier applied only if the data carries report dates",
+  "b": "the first session within 10 sessions after the event at which the version-1 machine reads READY (trend, setup, trigger); outcomes from that session's close",
+  "c": "all oversold events"
+ },
+ "bootstrap": {
+  "blocks": "event months resampled with replacement; each drawn month brings all its events from every contestant",
+  "resamples": 10000,
+  "seed": 20261006,
+  "interval": "90 percent percentile"
+ },
+ "power_check": {
+  "pair": "(c) split at random into two halves by event, seed 20261006, same statistics and bootstrap",
+  "passes": "every difference's 90 percent interval (five statistics, two horizons) includes zero",
+  "if_fails": "the real comparison is descriptive only; a new registration is required"
+ },
+ "decision_rule": {
+  "supported": "power check passes AND the 90% interval of (a)-(c) in mean 60-session excess lies entirely above zero AND the lower bound of (a)-(c) in the worst 10% at 60 sessions is no worse than -0.010",
+  "label": "DIAGNOSTIC until this test reports; on 'supported' the operator decides whether to lift it; (b) vs (c) decides nothing"
+ },
+ "expected_result": "not supported: (a)-(c) mean 60-session excess within plus or minus 1 point with an interval including zero; worst 10% similar; (b)-(c) similar with fewer events; median 20-session drawdowns within 1 point",
+ "seen_before_registration": "the order's section 1 table (about 80 large companies, 2011-2026, 4,540 oversold events)",
+ "artifacts": {
+  "script": "scripts/entry_state_validation_v3.py (written when the data arrives)",
+  "power_check": "data/entry_state_power_check_v3.json",
+  "result": "data/entry_state_validation_v3.json"
+ },
+ "do_not_touch": "nothing above changes once a run begins; a change requires a new registration with a stated reason, and both results are reported"
+}
