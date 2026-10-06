@@ -91,6 +91,8 @@ jobs:
       - name: Earnings dates and reaction history (weekly refresh per name; only after this run wrote the vintage)
         if: steps.snap.outputs.outcome == 'written'
         continue-on-error: true
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}   # 6-Oct order §5: release timing from the 8-K filing time in EDGAR
         run: |
           python scripts/options/build_earnings_reactions.py
           git config user.name "Tournament Bot"

@@ -28,6 +28,7 @@ scripts = [
     "score_regime_v4_daily.py",    # graduated model, daily scorer (AUDIT FIX 2a)
     "compute_vol_regime.py",       # volatility layer: VIX term-structure regime + attribution
     "build_canonical.py",          # #92 canonical fundamentals artifact — ONE fetch, consumed by both scoring views
+    "provider_checks.py",          # 6-Oct order §4: provider-data sanity checks (EDGAR) → data/provider_flags.json; flagged fields leave the screen's scores
     "score_universe.py",           # scoring view 1 (tournament): technical + fundamental, nightly (selection stays monthly)
     "screen/build_json.py",        # scoring view 2 (the screen): 4-factor board, vintages, tripwires (relocated, 6.1)
     "screen/reconcile_views.py",   # 6.3: rank correlation of the two views and the ten largest divergences
@@ -52,7 +53,9 @@ scripts = [
     "compute_conditional_scores.py", # regime-conditional sleeve scores (JS-shrunk)
     "build_event_calendar.py",     # A2 (order 30-Sept): scheduled macro events with impact levels (official schedules; earnings preserved)
     "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh) + the cluster detector
-    "entry_state.py",              # E1 (order 2-Oct): entry state per name (AVOID/WAIT/WATCH/READY), stop, size; after earnings dates, before the brief
+    "earnings_dates.py",           # 6-Oct order §5: the next earnings date across sources, conflicts flagged, investor relations deciding
+    "long_range.py",               # 6-Oct order §3: yearly highs, multi-year ceilings, 5-year and all-time highs (rolling weekly refresh)
+    "entry_state.py",              # entry state per name, rules version 2 (6-Oct order): gate, setup, modifiers, ceiling cap, stop, size
     "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
     # Order 30-Sept-2026 — read served data only, so they run last, before the referee:
     "compute_goals.py",            # D1/D2: the house goal in reais at the settled rate; the claims register's progress
@@ -410,6 +413,8 @@ SERVED_CADENCE = {
     "tournament/continuous_rules.json": "static",
     "entry_state.json": "daily", "entry_state_config.json": "static",         # E1 (entry-state order 2-Oct)
     "options/vintages/_index.json": "daily",                                   # 5-Oct order 2.3
+    "long_range.json": "daily", "provider_flags.json": "daily", "earnings_dates.json": "daily",   # 6-Oct order §3–§5
+    "review_names.json": "static", "earnings_date_sources.json": "static", "entry_state_config_2026-10-02.json": "static",
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

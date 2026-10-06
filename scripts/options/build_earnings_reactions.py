@@ -52,23 +52,80 @@ def fetch_dates(tk: str) -> list[pd.Timestamp]:
     return sorted(set(idx))
 
 
-def reactions(dates: list[pd.Timestamp], closes: pd.Series, session: pd.Timestamp) -> list[dict]:
+def edgar_release_times(tk: str) -> dict[str, str] | None:
+    """{release date: acceptance time "HH:MM"} from the company's 8-K filings with Item 2.02 (results of
+    operations) in EDGAR: the filing time is the primary record of when a release reached the market (order
+    6-Oct-2026, section 5). None without the declared contact (SEC_USER_AGENT) or on any EDGAR failure."""
+    import os
+    if not os.environ.get("SEC_USER_AGENT"):
+        return None
+    try:
+        sys.path.insert(0, str(HERE.parent / "ownership"))
+        import edgar_common as ec
+        global _EC, _TABLE
+        if "_EC" not in globals():
+            _EC = ec.EdgarClient(); _TABLE = ec.company_tickers(_EC)
+        cik = ec.cik_for(tk.replace(".", "-"), _TABLE) or ec.cik_for(tk, _TABLE)
+        if not cik:
+            return None
+        sub = _EC.get_json(ec.submissions_url(cik), max_age_s=86400)
+        r = (sub or {}).get("filings", {}).get("recent", {})
+        out = {}
+        for form, items, acc in zip(r.get("form", []), r.get("items", []), r.get("acceptanceDateTime", [])):
+            if form not in ("8-K", "8-K/A") or "2.02" not in str(items) or not acc:
+                continue
+            t = pd.Timestamp(acc)
+            t = (t.tz_localize("UTC") if t.tzinfo is None else t).tz_convert("America/New_York")
+            out.setdefault(str(t.date()), t.strftime("%H:%M"))       # the first 2.02 filing of the day
+        return out
+    except Exception as e:  # noqa: BLE001
+        log(f"{tk}: EDGAR release times unavailable ({type(e).__name__})")
+        return None
+
+
+def timing_of(d: pd.Timestamp, edgar: dict[str, str] | None) -> tuple[str, str]:
+    """(time_of_day, source). Before the open: prior close to the release-day close; after the close: release-day
+    close to the next close. An 8-K accepted on the release day decides; a filing during the session counts as
+    before the open (the market reacts that day). Otherwise the provider's time stamp (hour 12 or later = after
+    the close)."""
+    day = str(d.date())
+    stamp = d.strftime("%H:%M")
+    hm = (edgar or {}).get(day)
+    # the 8-K is filed at or after the release, so its time is an upper bound on when the release was public:
+    # a filing before 09:30 proves a before-open release; a later filing does not prove an after-close one
+    # (Schwab released before the open in 2021 and filed its 8-K after the close), so the provider's stamp
+    # decides then, and the filing time only when the stamp is missing
+    if hm and hm < "09:30":
+        return "before_open", f"EDGAR 8-K item 2.02 accepted {hm} ET (before the open)"
+    if stamp != "00:00":
+        return ("after_close" if d.hour >= 12 else "before_open"), f"provider stamp {stamp}" + (f"; 8-K accepted {hm} ET" if hm else "")
+    if hm:
+        return ("after_close" if hm >= "16:00" else "before_open"), f"EDGAR 8-K item 2.02 accepted {hm} ET (provider stamp missing)"
+    return "before_open", "provider stamp missing (before the open assumed)"
+
+
+def reactions(dates: list[pd.Timestamp], closes: pd.Series, session: pd.Timestamp, edgar: dict[str, str] | None = None) -> list[dict]:
     out = []
     lo = session - pd.DateOffset(years=YEARS)
     c = closes.dropna()
     for d in dates:
         if d > session or d < lo:
             continue
-        day = d.normalize(); after_close = d.hour >= 12
-        if after_close:
+        day = d.normalize()
+        tod, src = timing_of(d, edgar)
+        provider_tod = "after_close" if d.hour >= 12 else "before_open"
+        if tod == "after_close":
             pre, post = c.loc[:day], c.loc[day + pd.Timedelta(days=1):]
         else:
             pre, post = c.loc[:day - pd.Timedelta(days=1)], c.loc[day:]
         if not len(pre) or not len(post):
             continue
-        out.append({"date": str(day.date()), "time_of_day": "after_close" if after_close else "before_open",
-                    "pre_date": str(pre.index[-1].date()), "post_date": str(post.index[0].date()),
-                    "reaction": round(float(post.iloc[0] / pre.iloc[-1] - 1.0), 5)})
+        rec = {"date": str(day.date()), "time_of_day": tod, "timing_source": src,
+               "pre_date": str(pre.index[-1].date()), "post_date": str(post.index[0].date()),
+               "reaction": round(float(post.iloc[0] / pre.iloc[-1] - 1.0), 5)}
+        if src.startswith("EDGAR") and provider_tod != tod:
+            rec["provider_disagreed"] = f"the provider's stamp ({d.strftime('%H:%M')}) implies {provider_tod.replace('_', ' ')}"
+        out.append(rec)
     return out
 
 
@@ -114,7 +171,8 @@ def main() -> int:
             failed.append(f"{tk}: no earnings dates from the provider"); continue
         fut = [d for d in dates if d > session]
         nxt = fut[0] if fut else None
-        rx = reactions(dates, cl[tk], session) if tk in cl.columns else []
+        edgar = edgar_release_times(tk)
+        rx = reactions(dates, cl[tk], session, edgar) if tk in cl.columns else []
         names[tk] = {
             "next": ({"date": str(nxt.date()), "time_of_day": "after_close" if nxt.hour >= 12 else "before_open",
                       "provider_stamp": nxt.isoformat()} if nxt is not None else None),
@@ -124,9 +182,10 @@ def main() -> int:
         fetched.append(tk)
     payload = {"cadence": "daily", "session_date": str(session.date()), "as_of": today.isoformat(),
                "computed_at": retrieved, "history_years": YEARS,
-               "reaction_rule": ("close on the last session before the release to close on the first session after; "
-                                 "after-close releases (provider stamp hour ≥ 12) react close(D)→close(D+1), before-open "
-                                 "releases close(D−1)→close(D)"),
+               "reaction_rule": ("before-open releases: prior close to the release-day close; after-close releases: release-day close to "
+                                 "the next close. The timing comes from the company's 8-K (Item 2.02) acceptance time in EDGAR when one "
+                                 "was filed on the release day, otherwise from the provider's stamp (hour 12 or later = after the close); "
+                                 "each release records its source (order 6-Oct-2026, section 5)"),
                "closes_provenance": prov, "names": names,
                "note": "descriptive; the market's priced move and the past reactions are compared by the lens; no recommendation"}
     OUT.parent.mkdir(parents=True, exist_ok=True)
