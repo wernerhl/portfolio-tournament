@@ -739,8 +739,23 @@ def main(troot, sroot, today=None):
         if miss_: add('HIGH','entry:cards',f'card names missing from entry_state.json: {sorted(set(miss_))[:8]}')
         nos_=[k for k in (cards_.get('held') or []) if (en_.get(k) or {}).get('state') is None]
         if nos_: add('MEDIUM','entry:held_ungraded',f'held names without an entry state: {[(k,(en_.get(k) or {}).get("reason")) for k in nos_]}')
-        flo_=[k for k,v in en_.items() if v.get('state') and v.get('stop') is not None and ((v.get('trend') or {}).get('ma200') or 0)-v['stop']>0.011]
-        if flo_: add('HIGH','entry:stop_floor',f'stops below their 200-day floor: {flo_[:6]}')
+        # rules version 2 (order 6-Oct-2026): the stop is the 40-session low less 1 ATR (no 200-day floor); READY
+        # needs a size factor of at least a quarter, READY-HALF the earnings modifier; a ceiling flag caps at WATCH;
+        # AVOID only below the 200-day with negative momentum
+        stp_,mod_,cap_g,gate_=[],[],[],[]
+        for k,v in en_.items():
+            st_=v.get('state')
+            if not st_: continue
+            if v.get('stop') is not None and v.get('range_lo') is not None and v.get('atr') is not None and abs(v['stop']-(v['range_lo']-v['atr']))>0.011: stp_.append(k)
+            if st_ in ('READY','READY-HALF') and (v.get('size_factor') is None or v['size_factor']<0.25-1e-9): mod_.append(f'{k}: {st_} at size factor {v.get("size_factor")}')
+            if st_=='READY-HALF' and 'earnings' not in [m.get('name') for m in (v.get('modifiers') or [])]: mod_.append(f'{k}: READY-HALF without the earnings modifier')
+            if v.get('ceiling_flag') and st_ in ('READY','READY-HALF'): cap_g.append(k)
+            t_=v.get('trend') or {}
+            if st_=='AVOID' and not (t_.get('below_200d') and (t_.get('mom_12_1') or 0)<0): gate_.append(k)
+        if stp_: add('HIGH','entry:stop_rule',f'stops that are not the 40-session low less 1 ATR: {stp_[:6]}')
+        if mod_: add('HIGH','entry:modifiers',f'states inconsistent with the size modifiers: {mod_[:6]}')
+        if cap_g: add('HIGH','entry:ceiling_cap',f'READY although the ceiling flag is set (it caps at WATCH): {cap_g[:6]}')
+        if gate_: add('HIGH','entry:trend_gate',f'AVOID without the gate condition (below the 200-day AND negative momentum): {gate_[:6]}')
         cap_=[]
         for k,v in en_.items():
             z_=v.get('size') or {}

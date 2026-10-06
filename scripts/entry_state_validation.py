@@ -105,7 +105,7 @@ def load_history(reg: dict, refetch: bool) -> tuple[pd.DataFrame, dict]:
 # ── per-ticker states and entries ─────────────────────────────────────────────────────────────
 def _one(args):
     tk, df, cfg_, reg_ = args
-    import entry_state as es
+    import entry_state_v1 as es        # the 2-Oct rules (version 1, frozen); the registrations reference them
     df = df[~df.index.duplicated(keep="last")].sort_index()
     if len(df) < 300:
         return tk, None
@@ -352,8 +352,8 @@ def main() -> int:
     for other in sorted(DATA.glob("entry_state_validation_registration*.json")):
         if other != REG and (json.loads(other.read_text()).get("supersedes") or {}).get("path") == rel:
             log(f"{rel} is superseded by {other.relative_to(REPO)}: refusing"); return 2
-    import entry_state as es
-    cfg_path = DATA / "entry_state_config.json"
+    import entry_state_v1 as es        # the 2-Oct rules (version 1, frozen); the registrations reference them
+    cfg_path = DATA / "entry_state_config_2026-10-02.json"     # version 1 (the 6-Oct revision is version 2)
     if sha(cfg_path) != reg["rules_config"]["sha256"]:
         log("the rules file no longer matches the registered sha256: refusing (a change needs a new registration)"); return 2
     if not committed_clean(REG):

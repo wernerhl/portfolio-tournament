@@ -20,7 +20,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
-import entry_state as es  # noqa: E402
+import entry_state_v1 as es  # noqa: E402   (the 2-Oct rules, frozen)
 
 CFG = es.load_config()
 FX = REPO / "tests" / "fixtures" / "entry"

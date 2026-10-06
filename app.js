@@ -1315,62 +1315,82 @@ function tradeContext(s){
 // A rule output (trend gate → setup → trigger → event gate; a defined stop and a risk-budget size), shown
 // DIAGNOSTIC until the registered validation reports. It states what the rule reads, not an instruction.
 const esD2 = v => v == null ? "—" : Number(v).toFixed(2);
+const esPct = (v, d) => v == null ? "—" : (v * 100).toFixed(d == null ? 1 : d) + "%";
 const ENTRY_CLS = {AVOID: "c-neg", WAIT: "c-3", WATCH: "c-warn", READY: "c-pos", "READY-HALF": "c-pos"};
 function entryRec(tk){ return (S.entryState && S.entryState.names && S.entryState.names[String(tk).toUpperCase()]) || null; }
 function entryLabel(){ return (S.entryState && S.entryState.label) || "DIAGNOSTIC"; }
+// Order 6-Oct-2026 (version 2 of the rules): the flags a card carries, each of which can change a state, a size or an exit.
+function entryFlags(e){
+  const out = [];
+  if (!e) return out;
+  if (e.trend && e.trend.below_200d && e.trend.pass) out.push({k: "below_200d", cls: "c-warn", t: "below the 200-day average", tip: `close $${esD2(e.close)} under the 200-day $${esD2(e.trend.ma200)} with 12-month momentum ${esPct(e.trend.mom_12_1)}: size halved`});
+  if (e.ceiling_flag) { const c = (e.long_range || {}).ceiling || {}; out.push({k: "ceiling", cls: "c-warn", t: `ceiling $${esD2(c.level)}`, tip: `a multi-year ceiling ${esPct(-(e.long_range || {}).dist_ceiling)} above the close caps the state at WATCH until a close above it`}); }
+  if (e.heavily_shorted) { const s = e.short_interest || {}; out.push({k: "shorted", cls: "c-warn", t: "heavily shorted", tip: `days-to-cover ${s.days_to_cover} (7 or more): size halved`}); }
+  const ec = e.earnings || {};
+  if (ec.conflict) out.push({k: "earn_conflict", cls: "c-warn", t: "earnings date conflict", tip: ec.conflict_text || "sources disagree on the next earnings date"});
+  if ((e.provider_flags || []).length) out.push({k: "provider", cls: "c-neg", t: "provider data suspect", tip: e.provider_flags.map(f => `${f.field}: ${f.reason}`).join("; ")});
+  return out;
+}
 function entryBadge(tk){
   const e = entryRec(tk);
   if (!e || !e.state) return `<span class="es-badge c-3" title="${escText30((e && e.reason) || "no entry state computed")}">—</span>`;
-  const tip = `${e.state} · stop $${esD2(e.stop)}${e.armed_stop ? " (armed $" + esD2(e.armed_stop) + " since " + e.armed_since + ")" : ""}${e.trigger_level ? " · trigger: a close above $" + esD2(e.trigger_level) : ""} · ${entryLabel()}`;
+  const fl = entryFlags(e).map(f => f.t).join(" · ");
+  const tip = `${e.state} · stop $${esD2(e.stop)}${e.size_factor != null && e.size_factor < 1 ? " · size ×" + e.size_factor : ""}${fl ? " · " + fl : ""} · ${entryLabel()}`;
   return `<span class="es-badge ${ENTRY_CLS[e.state] || "c-3"}" title="${escText30(tip)}">${e.state}</span>`;
 }
 function entryEarnText(e){
   if (!e) return "—";
-  if (e.sessions_to_earnings == null) return e.earnings_known ? "no date ahead" : "earnings date unknown";
-  return `earnings in ${e.sessions_to_earnings} session${e.sessions_to_earnings === 1 ? "" : "s"} (${e.next_earnings})`;
+  const ec = e.earnings || {};
+  const base = e.sessions_to_earnings == null ? (e.earnings_known ? "no earnings date ahead" : "earnings date unknown")
+    : `earnings in ${e.sessions_to_earnings} session${e.sessions_to_earnings === 1 ? "" : "s"} (${e.next_earnings}${ec.time_of_day ? ", " + String(ec.time_of_day).replace("_", " ") : ""})`;
+  return base + (ec.decided_by ? ` · date from ${escText30(ec.decided_by)}` : "") + (ec.conflict ? ` · <span class="c-warn">conflict: ${escText30(ec.conflict_text || "")}</span>` : "");
 }
 function entrySizeText(e){
   const z = e && e.size;
-  if (!z) return "size shown for held, board and tier names";
-  if (z.shares == null) return z.reason || "no entry defined";
-  return `${z.shares} shares (≈${fmtMoney(z.value)}) · risk ${fmtMoney(z.risk_dollars)} = ${(z.risk_budget * 100).toFixed(2)}% of ${fmtMoney(z.account_value)}${z.capped_by ? " · capped by " + z.capped_by : ""}`;
+  if (!z) return "—";
+  if (z.shares == null) return escText30(z.reason || "no entry defined");
+  const mods = (e.modifiers || []).map(m => m.name.replace("_", " ") + " ×½").join(", ");
+  return `${z.shares} shares (≈${fmtMoney(z.value)}) · risk ${fmtMoney(z.risk_dollars)} = ${(z.risk_budget * 100).toFixed(3).replace(/0+$/, "")}% of ${fmtMoney(z.account_value)}` +
+    (mods ? ` · ${mods} → ${z.size_factor === 0.25 ? "a quarter" : z.size_factor === 0.5 ? "half" : "×" + z.size_factor} of the base ${z.base_shares} shares` : "") + (z.capped_by ? " · capped by " + z.capped_by : "");
 }
-function entryTriggerText(e){
+function entryStateText(e){
   if (!e || !e.state) return "—";
-  if (e.state === "AVOID") {
-    const t = e.trend || {}, why = [];
-    if (t.mom_12_1 != null && t.mom_12_1 <= 0) why.push(`12-month return excluding the last month ${(t.mom_12_1 * 100).toFixed(1)}%, not positive`);
-    if (t.ma200 != null && e.close <= t.ma200) why.push(`close $${esD2(e.close)} below the 200-day $${esD2(t.ma200)}`);
-    return `trend gate fails: ${why.join("; ") || "history short"}`;
-  }
-  if (e.state === "WAIT") return "no setup: the price is extended (no pullback to enter on)";
-  if (e.state.startsWith("READY")) return `triggered: ${e.trigger}`;
-  return `trigger: a close above $${esD2(e.trigger_level)} (today's high)${e.breakdown_level ? ` or back above $${esD2(e.breakdown_level)} (failed breakdown)` : ""}`;
+  const t = e.trend || {};
+  if (e.state === "AVOID") return `trend gate fails: close $${esD2(e.close)} below the 200-day $${esD2(t.ma200)} and 12-month momentum ${esPct(t.mom_12_1)}`;
+  if (e.state === "WAIT") return "no setup: the price is extended (no pullback)";
+  if (e.state === "WATCH") return escText30(e.watch_reason || "watch");
+  return "setup with a passing trend gate" + (e.state === "READY-HALF" ? " · earnings within 20 sessions: half size" : "");
 }
 function renderEntryState(tk){
   const e = entryRec(tk);
   if (!e) return "";
   if (!e.state) return `<div class="es-block mono t1 c-3">ENTRY STATE — ${escText30(e.reason || "not computed")}</div>`;
-  const set = e.setup || {};
+  const set = e.setup || {}, t = e.trend || {}, cf = e.confirmation || {}, lr = e.long_range, si = e.short_interest;
   const setupTxt = [set.below_ma20_minus_atr ? "close below the 20-day average less 1 ATR" : null, set.rsi_le_40 ? `RSI ${e.rsi} ≤ 40` : null,
                     set.lowest_quarter_of_range ? "close in the lowest quarter of the 40-session range" : null].filter(Boolean).join("; ") || "none";
   const z = e.size || {}; const a = z.book_after || {}, b = z.book_before || {};
-  const pc = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
-  const noEntry = e.state === "AVOID" || e.state === "WAIT";
-  const ma200 = e.trend && e.trend.ma200, raw = (e.range_lo != null && e.atr != null) ? Math.round((e.range_lo - e.atr) * 100) / 100 : null;
-  const stopWhy = (ma200 != null && raw != null && ma200 > raw)
-    ? `40-session low $${esD2(e.range_lo)} less 1 ATR $${esD2(e.atr)} = $${esD2(raw)}, floored at the higher 200-day $${esD2(ma200)}`
-    : `40-session low $${esD2(e.range_lo)} less 1 ATR $${esD2(e.atr)}; the 200-day $${esD2(ma200)} is lower, no floor`;
-  const eff = (z.shares && a.vol_nav_ann != null) ? `<div class="c-3">after entry: book volatility ${pc(b.vol_nav_ann)} → ${pc(a.vol_nav_ann)} · beta ${b.beta_spy != null ? b.beta_spy.toFixed(2) : "—"} → ${a.beta_spy != null ? a.beta_spy.toFixed(2) : "—"} · largest risk share ${a.largest_risk_name || "—"} ${pc(a.largest_risk_share)} (this name ${pc(a.risk_share_name)})</div>` : "";
+  const noEntry = !String(e.state).startsWith("READY");
+  const flags = entryFlags(e).map(f => `<span class="es-badge ${f.cls}" title="${escText30(f.tip)}">${f.t}</span>`).join(" ");
+  const eff = (z.shares && a.vol_nav_ann != null) ? `<div class="c-3">after entry: book volatility ${esPct(b.vol_nav_ann)} → ${esPct(a.vol_nav_ann)} · beta ${b.beta_spy != null ? b.beta_spy.toFixed(2) : "—"} → ${a.beta_spy != null ? a.beta_spy.toFixed(2) : "—"} · largest risk share ${a.largest_risk_name || "—"} ${esPct(a.largest_risk_share)} (this name ${esPct(a.risk_share_name)})</div>` : "";
+  const conf = `confirmation (information, not required): ${cf.close_above_prior_high ? `closed above the prior high $${esD2(cf.prior_high)}` : `no close above the prior high $${esD2(cf.prior_high)}`}${cf.failed_breakdown_recovered ? " · failed breakdown recovered" : ""} · volume ${cf.volume_ratio != null ? cf.volume_ratio.toFixed(2) + "× the 50-day average" + (cf.volume_confirms ? " (above 1.5×)" : "") : "—"}`;
+  const ceil = lr && lr.ceiling ? lr.ceiling : null;
+  const longTxt = lr ? `long range: 5-year closing high $${esD2(lr.high_5y)} (${lr.high_5y_date || "—"}, ${esPct(-lr.dist_5y)} above) · all-time closing high $${esD2(lr.ath)} (${lr.ath_date || "—"}, ${esPct(-lr.dist_ath)} above)` +
+    (ceil ? ` · ceiling $${esD2(ceil.level)} (${(ceil.pair || []).map(p => `${p.date.slice(0, 7)} $${esD2(p.close)}, then ${esPct(p.decline)}`).join("; ")})${e.ceiling_flag ? ` <span class="c-warn">· within 15% below: state capped at WATCH</span>` : ""}` : " · no multi-year ceiling") : "";
+  const siTxt = si ? `days to cover ${si.days_to_cover}${si.change_vs_prior_month != null ? ` · short interest ${si.change_vs_prior_month >= 0 ? "+" : ""}${(si.change_vs_prior_month * 100).toFixed(1)}% vs the prior month` : ""}${si.as_of ? ` (as of ${si.as_of})` : ""}${e.heavily_shorted ? ` <span class="c-warn">· heavily shorted: size halved</span>` : ""}` : "days to cover —";
+  const pf = (e.provider_flags || []).length ? `<div class="c-neg">provider data suspect: ${e.provider_flags.map(f => escText30(`${f.field} (${f.reason})`)).join("; ")}</div>` : "";
   return `<div class="es-block mono t1 lh16">
-    <div><span class="c-3 w6 ls08">ENTRY STATE</span> <span class="es-badge ${ENTRY_CLS[e.state] || "c-3"} w7">${e.state}</span> <span class="mono t1 w6 r1 x2 c-warn ls06">${entryLabel()}</span> <span class="c-3">· as of ${e.date} · close $${esD2(e.close)}</span></div>
+    <div><span class="c-3 w6 ls08">ENTRY STATE</span> <span class="es-badge ${ENTRY_CLS[e.state] || "c-3"} w7">${e.state}</span> <span class="mono t1 w6 r1 x2 c-warn ls06">${entryLabel()}</span> <span class="c-3">· as of ${e.date} · close $${esD2(e.close)}</span> ${flags}</div>
     ${S.entryState && S.entryState.validation ? `<div class="c-3">validation: ${escText30(S.entryState.validation.summary || S.entryState.validation.verdict || "")}</div>` : ""}
-    <div class="c-2">${entryTriggerText(e)}</div>
-    <div class="c-3">trend gate ${e.trend && e.trend.pass ? `passes (12-1 return ${pc(e.trend.mom_12_1)}; close above the 200-day $${esD2(e.trend.ma200)})` : "fails"} · setup: ${setupTxt}</div>
-    <div class="${noEntry ? "c-3" : "c-2"}">${noEntry ? "stop level (no entry at " + e.state + "; shown for reference)" : "stop"} $${esD2(e.stop)} <span class="c-3">(${stopWhy})</span>${e.stop >= e.close ? ` <span class="c-neg">· above the close: not a valid stop until the price recovers</span>` : ""}${e.armed_stop ? ` · armed stop $${esD2(e.armed_stop)} since ${e.armed_since}` : ""}${e.breach ? ` · <span class="c-neg">stop breached today ($${esD2(e.breach_stop)})</span>` : ""}</div>
-    <div class="c-2">size at the default risk budget: ${entrySizeText(e)}${z.basis ? ` <span class="c-3">(${z.basis})</span>` : ""}</div>
+    <div class="c-2">${entryStateText(e)}</div>
+    <div class="c-3">trend gate ${t.pass ? "passes" : "fails"} (12-1 return ${esPct(t.mom_12_1)}; 200-day $${esD2(t.ma200)}${t.below_200d ? ", close below it" : ", close above it"}) · setup: ${setupTxt}</div>
+    <div class="c-3">${conf}</div>
+    <div class="${noEntry ? "c-3" : "c-2"}">${noEntry ? "stop level (no entry at " + e.state + "; shown for reference)" : "stop"} $${esD2(e.stop)} <span class="c-3">(40-session low $${esD2(e.range_lo)} less 1 ATR $${esD2(e.atr)})</span></div>
+    <div class="c-2">size at the default risk budget: ${entrySizeText(e)}</div>
     ${eff}
     <div class="${e.sessions_to_earnings != null && e.sessions_to_earnings <= 20 ? "c-warn" : "c-3"}">${entryEarnText(e)}</div>
+    <div class="c-3">${siTxt}</div>
+    ${longTxt ? `<div class="c-3">${longTxt}</div>` : ""}
+    ${pf}
   </div>`;
 }
 

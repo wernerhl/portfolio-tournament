@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 """
-entry_state.py — the entry-state indicator (Execution Order: Entry-State Indicator, 2 October 2026, E1).
+entry_state.py — the entry-state indicator, version 2 (Execution Order: Revision of the Entry-State Indicator
+and Related Fixes, 6 October 2026; revises the 2-Oct rules, which stay frozen in scripts/entry_state_v1.py).
 
-The screen answers what is worth owning; this answers whether the tape confirms an entry now, and gives
-every name a defined stop and a risk-budget size. Per name, nightly, parameters in
-data/entry_state_config.json:
+The screen answers what is worth owning; this reads the tape for an entry and gives every name a stop and a
+risk-budget size. Per name, nightly, parameters in data/entry_state_config.json (version 2):
 
-  trend gate   12-month return excluding the last month > 0 and close > 200-day average; else AVOID
+  trend gate   AVOID only when the close is below the 200-day average AND the 12-month return excluding the
+               last month is negative. Below the 200-day with positive momentum passes, flag below_200d
   setup        close < MA20 - 1 ATR(14), or RSI(14) <= 40, or close in the lowest quarter of the 40-session
-               range; absent: WAIT ("extended; buying strength")
-  trigger      while the setup holds: close > prior session's high, or the first close back above the prior
-               40-session low after a close below it (failed breakdown); setup without trigger: WATCH
-  event gate   earnings within 20 sessions: READY-HALF (half size); else READY
-  invalidation stop = max(40-session low - 1 ATR, 200-day average); a READY arms its stop; a later close below
-               the armed stop is logged as a stop breach and the name re-evaluates to AVOID or WATCH
-  size         shares = 0.5% x account / (entry - stop), halved at READY-HALF, capped so the name's post-entry
-               share of book risk stays below 40%; the post-entry volatility, beta and largest risk share shown
+               range; absent: WAIT
+  entry        setup + passing gate = READY. The confirmation (close above the prior session's high, or a
+               failed breakdown recovered) and its volume (> 1.5 x the 50-day average) are information only
+  modifiers    in order: below_200d x0.5; earnings within 20 sessions x0.5 (READY-HALF); days-to-cover >= 7
+               x0.5 (heavily shorted). Never below a quarter of the base size: deeper than that is WATCH
+  ceiling      a multi-year ceiling (data/long_range.json, scripts/long_range.py) within 15% above the close
+               caps the state at WATCH until a close above it
+  stop         the 40-session low minus 1 ATR(14) (no 200-day floor)
+  size         0.5% of the account at risk / (entry - stop) x the modifiers, capped below 40% of book risk
 
-DIAGNOSTIC until the registered validation (reports/entry_state_validation_registration_2026-10-02.md) reports.
+DIAGNOSTIC until the registered validation (reports/entry_state_validation_registration_2026-10-06.md) reports.
 Descriptive rule output: it states what the rule reads, not an instruction to trade.
 
-Outputs: data/entry_state.json (every name in the union universe, the held names and the tier holdings; the
-card names carry size and book effect), data/entry_state_log.jsonl (append-only transitions of the card names),
-data/source/ohlc_daily.parquet (split-adjusted daily OHLC plus the adjusted close, about two years).
+Outputs: data/entry_state.json, data/entry_state_log.jsonl (append-only state changes of the card names),
+data/source/ohlc_daily.parquet (split-adjusted daily OHLC, the adjusted close and volume, about two years).
 """
 from __future__ import annotations
 
@@ -46,6 +47,7 @@ OUT = DATA / "entry_state.json"
 LOG = DATA / "entry_state_log.jsonl"
 STATES = ("AVOID", "WAIT", "WATCH", "READY", "READY-HALF")
 KEEP_SESSIONS = 520
+COLS = ["open", "high", "low", "close", "adj_close", "volume"]
 
 
 def log(m: str) -> None:
@@ -58,9 +60,9 @@ def load_config(path: Path = CONFIG) -> dict:
 
 # ── indicators (one ticker) ──────────────────────────────────────────────────────────────────
 def indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
-    """df: columns open, high, low, close (split-adjusted), index sessions ascending."""
+    """df: columns open, high, low, close (split-adjusted) and, when present, volume; index sessions ascending."""
     c, h, l = df["close"].astype(float), df["high"].astype(float), df["low"].astype(float)
-    t, s, st, tg = cfg["trend"], cfg["setup"], cfg["stop"], cfg["trigger"]
+    t, s, st, en = cfg["trend"], cfg["setup"], cfg["stop"], cfg["entry"]
     out = pd.DataFrame(index=df.index)
     out["close"], out["high"], out["low"] = c, h, l
     out["ma_short"] = c.rolling(s["ma_short"]).mean()
@@ -78,13 +80,22 @@ def indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     out["range_hi"] = h.rolling(n).max()
     out["range_lo"] = l.rolling(n).min()
     out["prior_lo"] = l.shift(1).rolling(st["range_sessions"]).min()               # the 40-session low before today
-    out["trend"] = (out["mom_12_1"] > 0) & (c > out["ma_long"])
+    out["below_200d"] = c < out["ma_long"]
+    out["trend"] = ~(out["below_200d"] & (out["mom_12_1"] < 0))                  # fails only below the 200-day AND negative momentum
     out["setup_atr"] = c < out["ma_short"] - s["atr_mult"] * out["atr"]
     out["setup_rsi"] = out["rsi"] <= s["rsi_max"]
     out["setup_range"] = c <= out["range_lo"] + s["range_quantile"] * (out["range_hi"] - out["range_lo"])
     out["setup"] = out["setup_atr"] | out["setup_rsi"] | out["setup_range"]
-    out["trig_high"] = c > h.shift(1)
-    out["stop"] = np.maximum(l.rolling(st["range_sessions"]).min() - st["atr_mult"] * out["atr"], out["ma_long"])
+    out["prior_high"] = h.shift(1)
+    out["trig_high"] = c > out["prior_high"]
+    out["stop"] = l.rolling(st["range_sessions"]).min() - st["atr_mult"] * out["atr"]   # no 200-day floor (version 2)
+    if "volume" in df.columns:
+        v = pd.to_numeric(df["volume"], errors="coerce").astype(float)
+        out["volume"] = v
+        out["volume_avg"] = v.rolling(en["volume_avg_sessions"]).mean()
+        out["volume_ratio"] = v / out["volume_avg"]
+    else:
+        out["volume"] = out["volume_avg"] = out["volume_ratio"] = np.nan
     # failed breakdown: a close below the prior 40-session low, then the first close back above that low
     lvl = np.full(len(c), np.nan); fb = np.zeros(len(c), dtype=bool)
     active, age = None, 0
@@ -95,7 +106,7 @@ def indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
             if cv[i] > active:
                 fb[i], lvl[i], active = True, active, None
                 continue
-            if age > tg["failed_breakdown_window_sessions"]:
+            if age > en["failed_breakdown_window_sessions"]:
                 active = None
         if active is None and not math.isnan(plv[i]) and cv[i] < plv[i]:
             active, age = plv[i], 0
@@ -118,63 +129,93 @@ def sessions_until(d0: date, d1: date) -> int:
     return n
 
 
-def evaluate(ind: pd.DataFrame, cfg: dict, earnings: list[date] | None = None, armed: dict | None = None,
-             earnings_known: bool = True) -> pd.DataFrame:
-    """Sequential state machine. `armed` = {"stop": x, "date": iso} carried from the previous run.
-    The state is read from each session's conditions (the order's section 1); READY marks the trigger
-    session. A trigger arms that session's stop; the armed stop is carried until a close falls below it (a
-    stop breach: logged, the stop disarmed, the name re-evaluated to WATCH or AVOID), until the trend gate
-    fails, or until a new trigger replaces it. (A persisting READY was tried and rejected: the order's
-    reference reads Corpay WATCH on 1 Oct although it triggered six sessions earlier without a breach.)
-    Returns one row per session: state, trigger kind, armed stop, breach."""
-    ev = cfg["event"]
-    rows, armed = [], dict(armed or {})
+def ceiling_capped(close: float, levels, cfg: dict) -> float | None:
+    """The ceiling the close sits within flag_within_pct below (the nearest such), or None. A close above a
+    ceiling lifts its cap. `levels` is one level or a list (data/long_range.json, every qualifying ceiling)."""
+    if levels is None or close is None or not np.isfinite(close):
+        return None
+    lv = [levels] if isinstance(levels, (int, float)) else list(levels)
+    hit = [x for x in lv if x and x * (1 - cfg["ceiling"]["flag_within_pct"]) <= close < x]
+    return min(hit) if hit else None
+
+
+def active_ceilings(lr: dict | None, closes: pd.Series | None = None) -> list[dict]:
+    """The ceilings still standing: none broken by a close above it since it formed, in the long-range history
+    (refreshed weekly) or in the recent closes (`closes`, the daily store)."""
+    out = []
+    for c in ((lr or {}).get("ceilings") or []):
+        if not c.get("level") or c.get("broken"):
+            continue
+        if closes is not None and c.get("formed"):
+            rec = closes[closes.index > pd.Timestamp(c["formed"])]
+            if len(rec) and float(rec.max()) > c["level"]:
+                continue
+        out.append(c)
+    return out
+
+
+def nearest_ceiling(close: float, lr: dict | None, closes: pd.Series | None = None) -> dict | None:
+    """The lowest standing ceiling above the close (the one the price meets first)."""
+    above = [c for c in active_ceilings(lr, closes) if c["level"] > close]
+    return min(above, key=lambda c: c["level"]) if above else None
+
+
+def evaluate(ind: pd.DataFrame, cfg: dict, earnings: list[date] | None = None, days_to_cover: float | None = None,
+             ceilings=None) -> pd.DataFrame:
+    """The state per session, a pure function of the session's data and the name's inputs (the next earnings
+    date, the current days-to-cover, the ceiling level). Returns state, the modifiers and their product, the
+    ceiling cap, the reason for a WATCH, and the earnings distance."""
+    m = cfg["modifiers"]
     earn = sorted(earnings or [])
-
-    def gate(d0):
-        nxt = next((e for e in earn if e > d0), None)
-        sess = sessions_until(d0, nxt) if nxt else None
-        return sess, (sess is not None and sess <= ev["earnings_sessions"])
-
+    rows = []
     for ts, r in ind.iterrows():
         d0 = ts.date()
-        rec = {"date": str(d0), "state": None, "trigger": None, "breach": False, "breach_stop": None,
-               "armed_stop": armed.get("stop"), "armed_since": armed.get("date"), "earnings_in_sessions": None}
+        rec = {"date": str(d0), "state": None, "modifiers": [], "size_factor": None, "ceiling_capped": False,
+               "watch_reason": None, "earnings_in_sessions": None}
         if not r["complete"]:
-            rec["state"] = None; rows.append(rec); continue
-        if armed.get("stop") is not None and r["close"] < armed["stop"]:
-            rec.update(breach=True, breach_stop=armed["stop"]); armed = {}
+            rows.append(rec); continue
+        nxt = next((e for e in earn if e > d0), None)
+        sess = sessions_until(d0, nxt) if nxt else None
+        rec["earnings_in_sessions"] = sess
+        cap_at = ceiling_capped(float(r["close"]), ceilings, cfg)
+        capped = cap_at is not None
+        rec["ceiling_capped"] = capped
         if not r["trend"]:
-            st, armed = "AVOID", {}
+            st = "AVOID"
         elif not r["setup"]:
             st = "WAIT"
-        elif r["trig_high"] or r["trig_failed_breakdown"]:
-            kind = "close above the prior session's high" if r["trig_high"] else "failed breakdown recovered"
-            sess, half = gate(d0)
-            st = "READY-HALF" if half else "READY"
-            rec.update(trigger=kind, earnings_in_sessions=sess)
-            armed = {"stop": float(r["stop"]), "date": str(d0)}
         else:
-            st = "WATCH"
+            mods, f = [], 1.0
+            if r["below_200d"]:
+                mods.append("below_200d"); f *= m["factor"]
+            if sess is not None and sess <= m["earnings_sessions"]:
+                mods.append("earnings"); f *= m["factor"]
+            if days_to_cover is not None and days_to_cover >= m["days_to_cover_min"]:
+                mods.append("heavily_shorted"); f *= m["factor"]
+            rec["modifiers"], rec["size_factor"] = mods, f
+            if f < m["min_size_factor"] - 1e-9:
+                st, rec["watch_reason"] = "WATCH", f"the size modifiers ({', '.join(mods)}) would take the size below a quarter of the base"
+            elif capped:
+                st, rec["watch_reason"] = "WATCH", f"capped by the long-term ceiling at {cap_at:.2f} until a close above it"
+            else:
+                st = "READY-HALF" if "earnings" in mods else "READY"
         rec["state"] = st
-        rec["armed_stop"], rec["armed_since"] = armed.get("stop"), armed.get("date")
         rows.append(rec)
     return pd.DataFrame(rows).set_index("date")
 
 
 def transitions_of(ev: pd.DataFrame, prev: str | None = None) -> list[dict]:
-    """Every state change in an evaluated series, and every stop breach, with its reason. `prev` is the
-    state the series starts from (the previous run's), so a change on the first session is caught."""
+    """Every state change in an evaluated series with its reason. `prev` is the state the series starts from."""
     out = []
     for d, r in ev.iterrows():
         st = r["state"]
         if not isinstance(st, str):          # incomplete history: no state (None becomes NaN in the frame)
             continue
-        if r["breach"]:
-            out.append({"date": d, "from": prev, "to": st, "reason": f"stop breach (close below the armed stop {round(float(r['breach_stop']), 2)})"})
-        elif prev is not None and st != prev:
-            reason = (r["trigger"] if st.startswith("READY") else "trend gate failed" if st == "AVOID"
-                      else "setup absent (extended)" if st == "WAIT" else "setup without trigger")
+        if prev is not None and st != prev:
+            reason = ("trend gate failed: below the 200-day average with negative 12-month momentum" if st == "AVOID"
+                      else "setup absent" if st == "WAIT"
+                      else (r["watch_reason"] or "watch") if st == "WATCH"
+                      else "setup with a passing trend gate" + (" (earnings within 20 sessions: half size)" if st == "READY-HALF" else ""))
             out.append({"date": d, "from": prev, "to": st, "reason": reason})
         prev = st
     return out
@@ -195,7 +236,7 @@ def _yf_ohlc(tickers: list[str], start: str) -> dict[str, pd.DataFrame]:
             try:
                 x = d[tk] if isinstance(d.columns, pd.MultiIndex) else d
                 x = x.rename(columns=str.lower).rename(columns={"adj close": "adj_close"})
-                x = x[["open", "high", "low", "close", "adj_close"]].dropna(subset=["close"])
+                x = x[COLS].dropna(subset=["close"])
                 if len(x):
                     x.index = pd.to_datetime(x.index).tz_localize(None)
                     out[tk] = x
@@ -205,12 +246,16 @@ def _yf_ohlc(tickers: list[str], start: str) -> dict[str, pd.DataFrame]:
 
 
 def update_store(tickers: list[str], full_start: str = "2024-06-01") -> pd.DataFrame:
-    """Long-format store (date, ticker, open, high, low, close, adj_close). New tickers get the full window;
-    the rest the last 30 calendar days, overlaid. Non-session and partial-today rows are dropped."""
+    """Long-format store (date, ticker, open, high, low, close, adj_close, volume). New tickers get the full
+    window; the rest the last 30 calendar days, overlaid. Non-session and partial-today rows are dropped. A
+    store written before volume was kept (6-Oct-2026) is refetched in full once."""
     from trading_calendar import is_trading_day, last_completed_session
-    store = pd.read_parquet(OHLC) if OHLC.exists() else pd.DataFrame(columns=["ticker", "open", "high", "low", "close", "adj_close"])
+    store = pd.read_parquet(OHLC) if OHLC.exists() else pd.DataFrame(columns=["ticker", *COLS])
     if len(store):
         store.index = pd.to_datetime(store.index)
+    if len(store) and "volume" not in store.columns:
+        log("the store has no volume column: full refetch of every ticker (once)")
+        store = pd.DataFrame(columns=["ticker", *COLS])
     have = set(store["ticker"].unique()) if len(store) else set()
     new = [t for t in tickers if t not in have]
     old = [t for t in tickers if t in have]
@@ -267,7 +312,7 @@ def frame_for(store: pd.DataFrame, tk: str) -> pd.DataFrame:
     return x[~x.index.duplicated(keep="last")]
 
 
-# ── names, earnings, sizing ──────────────────────────────────────────────────────────────────
+# ── names and the per-name inputs ────────────────────────────────────────────────────────────
 def universe_and_cards() -> tuple[list[str], dict[str, list[str]]]:
     uni = [t.strip().upper() for t in (DATA / "universe.txt").read_text().split() if t.strip()] if (DATA / "universe.txt").exists() else []
     held = [str(h["ticker"]).upper() for h in json.loads((DATA / "holdings.json").read_text()).get("holdings", []) if (h.get("shares") or 0) > 0]
@@ -283,30 +328,69 @@ def universe_and_cards() -> tuple[list[str], dict[str, list[str]]]:
             tiers += [str(p["ticker"]).upper() for p in t.get("positions", []) if (p.get("shares") or 0) > 0]
     except Exception:  # noqa: BLE001
         pass
-    cards = {"held": sorted(set(held)), "board": board, "tiers": sorted(set(tiers))}
-    allt = sorted(set(uni) | set(held) | set(board) | set(tiers))
+    review = []
+    try:      # names the operator's orders discuss (data/review_names.json): a full card on the book page
+        review = [str(r["ticker"]).upper() for r in json.loads((DATA / "review_names.json").read_text()).get("names", [])]
+    except Exception:  # noqa: BLE001
+        pass
+    cards = {"held": sorted(set(held)), "board": board, "tiers": sorted(set(tiers)), "review": review}
+    allt = sorted(set(uni) | set(held) | set(board) | set(tiers) | set(review))
     return allt, cards
 
 
-def earnings_dates() -> dict[str, list[date]]:
+def _json(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text()) if path.exists() else {}
+    except ValueError:
+        return {}
+
+
+def earnings_inputs() -> tuple[dict[str, list[date]], dict[str, dict]]:
+    """The next-earnings date per name and its record. data/earnings_dates.json (the resolved date across
+    sources, with any conflict; scripts/earnings_dates.py) is preferred; otherwise every date on record."""
     out: dict[str, set] = {}
-    try:
-        for e in json.loads((DATA / "event_calendar.json").read_text()).get("events", []):
-            if e.get("type") == "EARNINGS" and e.get("ticker"):
-                out.setdefault(str(e["ticker"]).upper(), set()).add(date.fromisoformat(e["date"][:10]))
-    except Exception:  # noqa: BLE001
-        pass
-    try:
-        er = json.loads((DATA / "options" / "earnings_reactions.json").read_text()).get("names", {})
-        for tk, v in er.items():
-            nd = ((v or {}).get("next") or {}).get("date")
-            if nd:
-                out.setdefault(tk.upper(), set()).add(date.fromisoformat(nd[:10]))
-    except Exception:  # noqa: BLE001
-        pass
-    return {k: sorted(v) for k, v in out.items()}
+    recs: dict[str, dict] = {}
+    resolved = _json(DATA / "earnings_dates.json").get("names") or {}
+    for tk, v in resolved.items():
+        if v.get("date"):
+            out.setdefault(tk.upper(), set()).add(date.fromisoformat(v["date"][:10])); recs[tk.upper()] = v
+    for e in _json(DATA / "event_calendar.json").get("events", []):
+        tk = str(e.get("ticker") or "").upper()
+        if e.get("type") == "EARNINGS" and tk and tk not in recs:
+            out.setdefault(tk, set()).add(date.fromisoformat(e["date"][:10]))
+    for tk, v in (_json(DATA / "options" / "earnings_reactions.json").get("names") or {}).items():
+        nd = ((v or {}).get("next") or {}).get("date")
+        if nd and tk.upper() not in recs:
+            out.setdefault(tk.upper(), set()).add(date.fromisoformat(nd[:10]))
+    return {k: sorted(v) for k, v in out.items()}, recs
 
 
+def short_interest() -> dict[str, dict]:
+    """Days-to-cover and the month-on-month change in short interest per name, from the canonical
+    fundamentals fetch (the provider's shortRatio, sharesShort, sharesShortPriorMonth)."""
+    out = {}
+    for tk, f in (_json(DATA / "canonical" / "fundamentals.json").get("tickers") or {}).items():
+        f = f or {}
+        dtc = f.get("shortRatio")
+        if dtc is None:
+            continue
+        cur, prv = f.get("sharesShort"), f.get("sharesShortPriorMonth")
+        stamp = f.get("dateShortInterest")
+        out[tk.upper()] = {"days_to_cover": round(float(dtc), 2), "shares_short": cur, "shares_short_prior_month": prv,
+                           "change_vs_prior_month": round(cur / prv - 1, 4) if cur and prv else None,
+                           "as_of": datetime.fromtimestamp(stamp).date().isoformat() if isinstance(stamp, (int, float)) else None}
+    return out
+
+
+def long_range() -> dict[str, dict]:
+    return _json(DATA / "long_range.json").get("names") or {}
+
+
+def provider_flags() -> dict[str, list[dict]]:
+    return {k.upper(): v.get("flags", []) for k, v in (_json(DATA / "provider_flags.json").get("names") or {}).items() if v.get("flags")}
+
+
+# ── sizing ────────────────────────────────────────────────────────────────────────────────────
 class Book:
     """The current book (holdings.json at the last close) and the 126-session return window, for sizing."""
     def __init__(self, cfg: dict):
@@ -343,11 +427,13 @@ class Book:
                 "largest_risk_share": top[1], "largest_risk_name": top[0], "invested_share": sum(vals.values()) / self.nav}
 
 
-def size_for(book: Book, tk: str, entry: float, stop: float, half: bool, cfg: dict, extra_rets=None) -> dict:
+def size_for(book: Book, tk: str, entry: float, stop: float, factor: float, cfg: dict, extra_rets=None) -> dict:
     sz = cfg["size"]
     if not (entry and stop and entry > stop):
         return {"shares": None, "reason": "no entry above the stop"}
-    risk_dollars = sz["risk_budget"] * book.nav * (cfg["event"]["size_factor"] if half else 1.0)
+    base_risk = sz["risk_budget"] * book.nav
+    risk_dollars = base_risk * factor
+    base_shares = int(math.floor(base_risk / (entry - stop)))
     shares = int(math.floor(risk_dollars / (entry - stop)))
     cash_cap = int(math.floor(book.cash / entry)) if entry > 0 else 0
     capped_by = None
@@ -367,10 +453,9 @@ def size_for(book: Book, tk: str, entry: float, stop: float, half: bool, cfg: di
         shares, capped_by = lo, "risk share"
         eff = book.effect(tk, shares * entry, extra_rets)
     before = book.effect(tk, 0.0, extra_rets)
-    return {"shares": shares, "entry": round(entry, 2), "stop": round(stop, 2), "risk_per_share": round(entry - stop, 2),
-            "risk_dollars": round(shares * (entry - stop), 2), "value": round(shares * entry, 2),
-            "risk_budget": sz["risk_budget"] * (cfg["event"]["size_factor"] if half else 1.0), "account_value": round(book.nav, 2),
-            "capped_by": capped_by,
+    return {"shares": shares, "base_shares": base_shares, "size_factor": factor, "entry": round(entry, 2), "stop": round(stop, 2),
+            "risk_per_share": round(entry - stop, 2), "risk_dollars": round(shares * (entry - stop), 2), "value": round(shares * entry, 2),
+            "risk_budget": sz["risk_budget"] * factor, "account_value": round(book.nav, 2), "capped_by": capped_by,
             "book_before": {k: (round(v, 4) if isinstance(v, float) else v) for k, v in before.items()},
             "book_after": {k: (round(v, 4) if isinstance(v, float) else v) for k, v in eff.items()}}
 
@@ -379,31 +464,54 @@ def r2(x, nd=2):
     return None if x is None or (isinstance(x, float) and (math.isnan(x) or math.isinf(x))) else round(float(x), nd)
 
 
-def txt(x):
-    """A string field of the evaluation frame (None/NaN when empty) as str or None."""
-    return x if isinstance(x, str) else None
+MOD_TEXT = {"below_200d": "below the 200-day average (momentum positive)", "earnings": "earnings within 20 sessions",
+            "heavily_shorted": "heavily shorted (days-to-cover 7 or more)"}
 
 
-def card_record(tk: str, ind: pd.DataFrame, ev: pd.DataFrame, earn: list[date], cfg: dict) -> dict:
+def card_record(tk: str, ind: pd.DataFrame, ev: pd.DataFrame, earn: list[date], erec: dict | None, si: dict | None,
+                lr: dict | None, pflags: list[dict], cfg: dict) -> dict:
     r = ind.iloc[-1]; e = ev.iloc[-1]; d0 = ind.index[-1].date()
     nxt = next((x for x in earn if x > d0), None)
-    st = e["state"]
-    trig_level = r2(r["high"])                                  # the close the next session must exceed
+    close = float(r["close"])
+    vr = r.get("volume_ratio")
+    ceil = nearest_ceiling(close, lr, ind["close"])
+    ceil_level = ceil.get("level") if ceil else None
     rec = {
-        "state": st, "date": str(d0), "close": r2(r["close"]),
-        "trend": {"pass": bool(r["trend"]), "mom_12_1": r2(r["mom_12_1"], 4), "ma200": r2(r["ma_long"])},
+        "state": e["state"], "date": str(d0), "close": r2(close),
+        "trend": {"pass": bool(r["trend"]), "below_200d": bool(r["below_200d"]), "mom_12_1": r2(r["mom_12_1"], 4), "ma200": r2(r["ma_long"])},
         "setup": {"present": bool(r["setup"]), "below_ma20_minus_atr": bool(r["setup_atr"]), "rsi_le_40": bool(r["setup_rsi"]),
                   "lowest_quarter_of_range": bool(r["setup_range"])},
-        "trigger": txt(e["trigger"]), "trigger_level": trig_level,
-        "breakdown_level": r2(r["breakdown_level"]) if not pd.isna(r["breakdown_level"]) else None,
-        "stop": r2(r["stop"]), "armed_stop": r2(e["armed_stop"]), "armed_since": txt(e["armed_since"]),
-        "breach": bool(e["breach"]), "breach_stop": r2(e["breach_stop"]),
-        "ma20": r2(r["ma_short"]), "ma50": r2(r["ma50"]), "atr": r2(r["atr"]), "rsi": r2(r["rsi"], 1),
+        "confirmation": {"close_above_prior_high": bool(r["trig_high"]), "prior_high": r2(r["prior_high"]),
+                         "failed_breakdown_recovered": bool(r["trig_failed_breakdown"]),
+                         "breakdown_level": r2(r["breakdown_level"]) if not pd.isna(r["breakdown_level"]) else None,
+                         "volume_ratio": r2(vr, 2) if vr is not None and not pd.isna(vr) else None,
+                         "volume_confirms": bool(vr is not None and not pd.isna(vr) and vr > cfg["entry"]["volume_mult"]),
+                         "note": "information only: no longer required for READY"},
+        "modifiers": [{"name": m, "factor": cfg["modifiers"]["factor"], "text": MOD_TEXT[m]} for m in (e["modifiers"] or [])],
+        "size_factor": r2(e["size_factor"], 4) if e["size_factor"] is not None and not pd.isna(e["size_factor"]) else None,
+        "watch_reason": e["watch_reason"] if isinstance(e["watch_reason"], str) else None,
+        "stop": r2(r["stop"]), "ma20": r2(r["ma_short"]), "ma50": r2(r["ma50"]), "atr": r2(r["atr"]), "rsi": r2(r["rsi"], 1),
         "range_lo": r2(r["range_lo"]), "range_hi": r2(r["range_hi"]),
         "next_earnings": str(nxt) if nxt else None,
         "sessions_to_earnings": sessions_until(d0, nxt) if nxt else None,
         "earnings_known": bool(earn),
+        "earnings": erec or None,
+        "short_interest": si or None,
+        "heavily_shorted": bool(si and si.get("days_to_cover") is not None and si["days_to_cover"] >= cfg["modifiers"]["days_to_cover_min"]),
+        "long_range": None, "ceiling_flag": False,
+        "provider_flags": pflags or [],
     }
+    if lr:
+        h5, ath = dict(lr.get("high_5y") or {}), dict(lr.get("ath") or {})
+        for rec_hi in (h5, ath):                       # a close above the record's high (refreshed weekly) is the new high
+            if rec_hi.get("close") and close > rec_hi["close"]:
+                rec_hi.update(close=round(close, 2), date=str(d0))
+        rec["long_range"] = {
+            "high_5y": h5.get("close"), "high_5y_date": h5.get("date"), "dist_5y": r2(close / h5["close"] - 1, 4) if h5.get("close") else None,
+            "ath": ath.get("close"), "ath_date": ath.get("date"), "dist_ath": r2(close / ath["close"] - 1, 4) if ath.get("close") else None,
+            "ceiling": ceil, "dist_ceiling": r2(close / ceil_level - 1, 4) if ceil_level else None,
+            "ceilings": [c["level"] for c in active_ceilings(lr, ind["close"])], "as_of": lr.get("as_of")}
+        rec["ceiling_flag"] = ceiling_capped(close, [c["level"] for c in active_ceilings(lr, ind["close"])], cfg) is not None
     return rec
 
 
@@ -412,11 +520,14 @@ def main() -> int:
     cfg = load_config()
     allt, cards = universe_and_cards()
     store = update_store(allt)
-    earn = earnings_dates()
-    prev = json.loads(OUT.read_text()) if OUT.exists() else {}
-    prev_names = prev.get("names", {})
+    earn, erecs = earnings_inputs()
+    si_all, lr_all, pf_all = short_interest(), long_range(), provider_flags()
+    prev = _json(OUT)
+    # the changes reported are those after the previous run's session; a rerun of the same session keeps
+    # the baseline its first run used, so it reports the same changes
+    prev_session = prev.get("transitions_after") if prev.get("session_date") == str(store.index.max().date()) else prev.get("session_date")
     book = Book(cfg)
-    card_set = set(cards["held"]) | set(cards["board"]) | set(cards["tiers"])
+    card_set = set(cards["held"]) | set(cards["board"]) | set(cards["tiers"]) | set(cards["review"])
     groups = {tk: g.drop(columns=["ticker"]).sort_index() for tk, g in store.groupby("ticker")}
     names, transitions = {}, []
     # the session graded is the store's latest bar (a late provider bar leaves the payload dated the prior
@@ -425,10 +536,9 @@ def main() -> int:
     if session < str(pd.Timestamp(last_completed_session()).date()):
         log(f"store ends {session}, before the last completed session {last_completed_session()}: graded as of {session}")
     for tk in allt:
-        f = groups.get(tk, pd.DataFrame(columns=["open", "high", "low", "close", "adj_close"]))
+        f = groups.get(tk, pd.DataFrame(columns=COLS))
         f = f[~f.index.duplicated(keep="last")]
         if not len(f) or str(f.index[-1].date()) < session:
-            # no bar for the session (delisted, halted or a provider gap): no state on old prices
             lastb = str(f.index[-1].date()) if len(f) else None
             names[tk] = {"state": None, "date": lastb,
                          "reason": f"no bar for {session} from the provider (last bar {lastb or 'none'}); no state on stale prices"}
@@ -437,66 +547,44 @@ def main() -> int:
             names[tk] = {"state": None, "reason": f"insufficient history ({len(f)} sessions; the trend gate needs 253)"}
             continue
         ind = indicators(f, cfg)
-        # what this session is graded from: the previous run's state, armed stop and date. A rerun of the
-        # same session (the nightly's retry slots) reuses the inputs it was first graded from, so it
-        # reproduces the same record and transitions instead of re-grading on its own output.
-        p = prev_names.get(tk) or {}
-        if p.get("date") == session and p.get("graded_from"):
-            g = p["graded_from"]
-        else:
-            g = {"after": p.get("date") if p.get("state") else None, "state": p.get("state"),
-                 "armed": ({"stop": p["armed_stop"], "date": p.get("armed_since")} if p.get("armed_stop") is not None else None)}
-        sub = ind.loc[ind.index > pd.Timestamp(g["after"])] if g["after"] else ind.iloc[-60:]
-        if not len(sub):
-            sub = ind.iloc[-1:]
-        ev = evaluate(sub, cfg, earn.get(tk), g["armed"])
-        rec = card_record(tk, ind.loc[:sub.index[-1]], ev, earn.get(tk, []), cfg)
-        rec["graded_from"] = g
+        si = si_all.get(tk); lr = lr_all.get(tk)
+        ceil_levels = [c["level"] for c in active_ceilings(lr, ind["close"])]
+        # the state is a pure function of the data and the name's inputs, so a rerun of the session reproduces
+        # it; the last 60 sessions are evaluated and the changes after the previous run's session are reported
+        sub = ind.iloc[-60:]
+        ev = evaluate(sub, cfg, earn.get(tk), (si or {}).get("days_to_cover"), ceil_levels)
+        rec = card_record(tk, ind, ev, earn.get(tk, []), erecs.get(tk), si, lr, pf_all.get(tk, []), cfg)
         st = rec["state"]
-        if st in ("READY", "READY-HALF", "WATCH"):            # sized wherever a card can open (any graded name)
-            entry = rec["close"] if st.startswith("READY") else rec["trigger_level"]
-            stop = rec["armed_stop"] if st.startswith("READY") and rec["armed_stop"] else rec["stop"]
+        if st in ("READY", "READY-HALF"):
             extra = f["adj_close"].pct_change() if tk not in book.rets.columns else None
-            half = st == "READY-HALF" or (st == "WATCH" and rec["sessions_to_earnings"] is not None
-                                          and rec["sessions_to_earnings"] <= cfg["event"]["earnings_sessions"])
-            rec["size"] = size_for(book, tk, entry, stop, half, cfg, extra)
-            rec["size"]["basis"] = ("the close at READY" if st.startswith("READY") else
-                                    "the trigger level (today's high), as if the next session triggers") + \
-                                   (" · half size: earnings within 20 sessions" if half else "")
+            rec["size"] = size_for(book, tk, rec["close"], rec["stop"], rec["size_factor"] or 1.0, cfg, extra)
+            rec["size"]["basis"] = "the close; " + ("modifiers: " + ", ".join(m["name"] for m in rec["modifiers"]) if rec["modifiers"] else "no modifier")
         else:
-            rec["size"] = {"shares": None, "reason": "no entry defined at " + str(st)}
+            rec["size"] = {"shares": None, "reason": (rec["watch_reason"] or f"no entry at {st}")}
         if tk in card_set:
-            # transitions since the previous run (a first run reports only the session's own)
-            grp = [k for k in ("held", "board", "tiers") if tk in cards[k]]
-            for t in transitions_of(ev, g["state"]):
-                if g["after"] or t["date"] == session:
+            grp = [k for k in ("held", "board", "tiers", "review") if tk in cards[k]]
+            for t in transitions_of(ev):
+                if (prev_session and t["date"] > prev_session) or (not prev_session and t["date"] == session):
                     transitions.append({"date": t["date"], "ticker": tk, "from": t["from"], "to": t["to"],
                                         "reason": t["reason"], "groups": grp})
         names[tk] = rec
     counts = {s: sum(1 for v in names.values() if v.get("state") == s) for s in STATES}
-    validation = {"verdict": "NOT RUN", "summary": "the registered validation has not reported"}
-    vp = DATA / "entry_state_validation.json"
-    if vp.exists():
-        vj = json.loads(vp.read_text()); r_ = vj.get("result") or {}
-        dm, ds = r_.get("dMAE") or {}, r_.get("dSTOP20") or {}
-        pt = lambda x: f"{x * 100:+.2f}" if isinstance(x, (int, float)) else "?"
-        why = " (the registered test lacked power)" if vj.get("verdict") == "NO VERDICT" else ""
-        validation = {"verdict": vj.get("verdict"), "as_of": vj.get("as_of"), "report": "reports/entry_state_validation_2026-10-02.md",
-                      "summary": (f"registered test, 2010 to {vj.get('entries_through')}: {vj.get('verdict')}{why}. READY entries' median loss "
-                                  f"before 20 sessions {pt(dm.get('point'))} pt against month-start entries (90% interval {pt((dm.get('ci90') or [None])[0])} to "
-                                  f"{pt((dm.get('ci90') or [None, None])[1])}); stopped out within 20 sessions "
-                                  f"{(ds.get('mean_contestant') or 0) * 100:.0f}% against {(ds.get('mean_baseline') or 0) * 100:.0f}%")}
+    validation = {"verdict": "NOT RUN",
+                  "summary": ("version 2 of the rules (6 Oct 2026): the registered validation on survivorship-free S&P 500 constituents "
+                              "(reports/entry_state_validation_registration_2026-10-06.md) has not run; it waits for the purchased data. "
+                              "The 2-Oct rules' test returned no verdict (reports/entry_state_validation_2026-10-02.md)")}
     payload = {
         "cadence": "daily", "session_date": session, "as_of": session,
         "computed_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-        "label": cfg["label"], "label_reason": cfg["label_reason"], "config_frozen_at": cfg["frozen_at"], "validation": validation,
+        "rules_version": cfg.get("version", 1), "label": cfg["label"], "label_reason": cfg["label_reason"],
+        "config_frozen_at": cfg["frozen_at"], "validation": validation,
         "account_value": round(book.nav, 2), "holdings_as_of": book.as_of,
-        "cards": cards, "counts": counts, "transitions_today": transitions,
-        "definitions": {k: cfg[k]["rule"] for k in ("trend", "setup", "trigger", "event", "stop", "size")},
+        "cards": cards, "counts": counts, "transitions_today": transitions, "transitions_after": prev_session,
+        "definitions": {k: cfg[k]["rule"] for k in ("trend", "setup", "entry", "modifiers", "ceiling", "stop", "size")},
         "note": "a rule output for reading, not an instruction to trade; DIAGNOSTIC until the registered validation reports",
         "names": names,
     }
-    OUT.write_text(json.dumps(payload, indent=1, allow_nan=False))
+    OUT.write_text(json.dumps(payload, indent=1, allow_nan=False, default=str))
     if transitions:
         seen = set()
         if LOG.exists():

@@ -32,22 +32,34 @@ function optionsCell(tk){
 const ES_CLS = {AVOID: 'c-neg', WAIT: 'c-3', WATCH: 'c-warn', READY: 'c-pos', 'READY-HALF': 'c-pos'};
 const esRec = tk => (SC.entryState && SC.entryState.names && SC.entryState.names[tk]) || null;
 const esEsc = x => String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+// Order 6-Oct-2026 (rules version 2): the flags that change a state or a size
+function esFlags(e){
+  const f = [];
+  if (e.trend && e.trend.below_200d && e.trend.pass) f.push(['<200d', 'below the 200-day average (momentum positive): size halved']);
+  if (e.ceiling_flag) f.push(['ceiling', `a multi-year ceiling at $${fmtD(((e.long_range || {}).ceiling || {}).level)} within 15% above: capped at WATCH`]);
+  if (e.heavily_shorted) f.push(['shorted', `days-to-cover ${(e.short_interest || {}).days_to_cover}: size halved`]);
+  if ((e.earnings || {}).conflict) f.push(['date?', (e.earnings || {}).conflict_text || 'earnings date conflict']);
+  if ((e.provider_flags || []).length) f.push(['data?', 'provider data suspect: ' + e.provider_flags.map(x => x.field + ' (' + x.reason + ')').join('; ')]);
+  return f;
+}
 // phones: the board scrolls sideways, so the state also sits under the ticker
 function esMini(tk){
   const e = esRec(tk);
   if (!e || !e.state) return '';
-  const extra = e.state === 'WATCH' ? ` > $${fmtD(e.trigger_level)}` : '';
-  return `<span class="only-mobile t1 mt1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'}">${e.state}</span><span class="c-3">${extra}</span></span>`;
+  const fl = esFlags(e).map(x => x[0]).join(' ');
+  return `<span class="only-mobile t1 mt1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'}">${e.state}</span><span class="c-warn"> ${esEsc(fl)}</span></span>`;
 }
 function esCells(tk){
   const e = esRec(tk);
   if (!e || !e.state) return `<td class="t1 c-3" title="${esEsc((e && e.reason) || 'not computed')}">—</td><td class="num c-3">—</td><td class="num c-3">—</td><td class="num c-3">—</td><td class="num c-3">—</td>`;
   const z = e.size || {};
-  const trig = e.state === 'WATCH' ? `$${fmtD(e.trigger_level)}` : e.state.startsWith('READY') ? '<span class="c-pos">triggered</span>' : '<span class="c-3">—</span>';
-  const size = z.shares != null ? `${z.shares}` : '<span class="c-3">—</span>';
+  const fl = esFlags(e);
+  const flags = fl.length ? fl.map(x => `<span class="c-warn" title="${esEsc(x[1])}">${esEsc(x[0])}</span>`).join(' ') : '<span class="c-3">—</span>';
+  const size = z.shares != null ? `${z.shares}${e.size_factor != null && e.size_factor < 1 ? ` <span class="c-3">×${e.size_factor}</span>` : ''}` : '<span class="c-3">—</span>';
   const earn = e.sessions_to_earnings != null ? `<span class="${e.sessions_to_earnings <= 20 ? 'c-warn' : 'c-3'}">${e.sessions_to_earnings}</span>` : `<span class="c-3" title="${e.earnings_known ? 'no date ahead' : 'earnings date unknown'}">?</span>`;
-  const tip = `${e.state} · ${e.state === 'AVOID' ? 'trend gate fails' : e.state === 'WAIT' ? 'no setup (extended)' : e.state === 'WATCH' ? 'setup without trigger; trigger: a close above $' + e.trigger_level : 'triggered: ' + e.trigger} · stop $${e.stop}${e.armed_stop ? ' (armed $' + e.armed_stop + ')' : ''}${z.shares != null ? ' · ' + z.shares + ' shares at ' + ((z.risk_budget || 0.005) * 100).toFixed(2).replace(/0$/, '') + '% of the account at risk' + (z.capped_by ? ', capped by ' + z.capped_by : '') : ''} · ${(SC.entryState && SC.entryState.label) || 'DIAGNOSTIC'}`;
-  return `<td class="t1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'} w6" title="${esEsc(tip)}">${e.state}</span></td><td class="num">${trig}</td><td class="num ${e.state === 'AVOID' || e.state === 'WAIT' ? 'c-3' : 'c-neg'}">$${fmtD(e.stop)}</td><td class="num">${size}</td><td class="num">${earn}</td>`;
+  const why = e.state === 'AVOID' ? 'trend gate fails (below the 200-day with negative momentum)' : e.state === 'WAIT' ? 'no setup (extended)' : e.state === 'WATCH' ? (e.watch_reason || 'watch') : 'setup with a passing trend gate';
+  const tip = `${e.state} · ${why} · stop $${e.stop}${z.shares != null ? ' · ' + z.shares + ' shares, ' + ((z.risk_budget || 0.005) * 100).toFixed(3).replace(/0+$/, '') + '% of the account at risk' + (z.capped_by ? ', capped by ' + z.capped_by : '') : ''} · ${(SC.entryState && SC.entryState.label) || 'DIAGNOSTIC'}`;
+  return `<td class="t1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'} w6" title="${esEsc(tip)}">${e.state}</span></td><td class="t1">${flags}</td><td class="num ${e.state.startsWith('READY') ? 'c-neg' : 'c-3'}">$${fmtD(e.stop)}</td><td class="num">${size}</td><td class="num">${earn}</td>`;
 }
 
 const sbar = r => `<span class="sbar" style="--f:${r.fundamental ?? 0};--t:${r.technical ?? 0};--v:${r.visibility ?? 0}"><span class="bg-cat-2"></span><span class="bg-cat-7"></span><span class="bg-cat-3"></span></span><span class="t1 c-3 nowrap">F${r.fundamental} T${r.technical} V${r.visibility}</span>`;
@@ -59,7 +71,7 @@ const legend = full => `<div class="legend">
   <span title="the board ranks names against the current book; held names are scored against the rest of the book">CORR = penalty for return overlap vs the book (weight-aware, held names vs rest-of-book) · n/a = failed, no penalty, reason recorded</span>
   <span>LEV = leverage penalty 0 to −5 (net-debt/EBITDA primary, D/E fallback) · financials exempt</span>
   <span>MR REF = the mean-reversion reference (the higher of the 50-day average and 5% below price), formerly "entry level"; a reference, not an entry signal · vs REF = the reference's distance from the price</span>
-  <span>ENTRY STATE (DIAGNOSTIC until its registered validation reports): AVOID trend gate fails · WAIT no setup, extended · WATCH setup without trigger · READY / READY-HALF triggered (half size with earnings inside 20 sessions) · TRIGGER the close the next session must exceed · STOP the 40-session low less 1 ATR, floored at the 200-day · SIZE shares at 0.5% of the account at risk (0.25% with earnings inside 20 sessions), capped below 40% of the book's risk · EARN sessions to earnings · a rule output, not an instruction${SC.entryState && SC.entryState.validation ? ' · validation: ' + esEsc(SC.entryState.validation.summary || '') : ''}</span>` : ''}
+  <span>ENTRY STATE, rules version 2 (DIAGNOSTIC until its registered validation reports): AVOID below the 200-day with negative 12-month momentum · WAIT no setup · READY setup with a passing trend gate · READY-HALF the same with earnings inside 20 sessions · WATCH capped by a multi-year ceiling, or the size modifiers below a quarter · FLAGS &lt;200d (size ×½), shorted (days-to-cover 7+, ×½), ceiling, date? (earnings date conflict), data? (provider data suspect) · STOP the 40-session low less 1 ATR · SIZE shares at 0.5% of the account at risk × the modifiers, capped below 40% of the book's risk · EARN sessions to earnings · a rule output, not an instruction${SC.entryState && SC.entryState.validation ? ' · validation: ' + esEsc(SC.entryState.validation.summary || '') : ''}</span>` : ''}
 </div>`;
 
 function sortBy(data, key, dir){
@@ -101,7 +113,7 @@ function renderWatchlist(W, U){
   if (!W.length) return `<div class="lbtable">${head}<div class="note">No board data</div></div>`;
   return `<div class="lbtable">${head}
   <div class="tbl-scroll"><table class="board-table"><thead><tr>
-    ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}<th title="entry state, DIAGNOSTIC">ENTRY STATE</th><th class="num">TRIGGER</th><th class="num">STOP</th><th class="num">SIZE</th><th class="num">EARN</th>${th('watch', 'entry_level', 'MR REF', 1)}${th('watch', null, 'vs REF', 1)}${th('watch', 'category', 'CAT')}${th('watch', null, 'OPTIONS')}
+    ${th('watch', 'rank', '#', 1)}${th('watch', 'ticker', 'TICKER')}${th('watch', 'name', 'NAME')}${th('watch', 'sector', 'SECTOR')}${th('watch', 'composite', 'SCORE', 1)}${th('watch', null, 'BREAKDOWN')}${th('watch', 'corr_penalty', 'CORR', 1)}${th('watch', 'leverage_penalty', 'LEV', 1)}${th('watch', 'current_price', 'PRICE', 1)}<th title="entry state, DIAGNOSTIC">ENTRY STATE</th><th title="flags that change a state or a size">FLAGS</th><th class="num">STOP</th><th class="num">SIZE</th><th class="num">EARN</th>${th('watch', 'entry_level', 'MR REF', 1)}${th('watch', null, 'vs REF', 1)}${th('watch', 'category', 'CAT')}${th('watch', null, 'OPTIONS')}
   </tr></thead><tbody>
     ${rows.map(r => {
       const gap = r.entry_level && r.current_price ? ((r.entry_level / r.current_price - 1) * 100) : 0;

@@ -41,6 +41,11 @@ FIELDS = [
     "beta", "dividendYield",
     # ahead of the leverage module (#93):
     "totalDebt", "totalCash", "ebitda", "operatingCashflow",
+    # entry-state revision (order 6-Oct-2026, sections 2 and 6): days-to-cover and its monthly change
+    "shortRatio", "sharesShort", "sharesShortPriorMonth", "dateShortInterest", "sharesShortPreviousMonthDate",
+    "averageVolume",
+    # provider-data checks (order 6-Oct-2026, section 4): the quarter the provider's growth figures refer to
+    "mostRecentQuarter",
 ]
 
 
