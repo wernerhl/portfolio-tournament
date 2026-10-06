@@ -3445,6 +3445,13 @@ function renderGlobalRatesE(){
     ${tbl("WORSENING", E.worsening || [])}${tbl("REVERSAL", E.reversal || [])}
     <div class="chart-meta">${escText30(E.brent_note || "")} · thresholds in data/rates/global_rates_config.json</div></div>`;
 }
+// home: one line under the regime gauge
+function renderRatesStrip(){
+  const H = (S.globalRatesHome && S.globalRatesHome.home) || null; if (!H) return "";
+  const short = {us10: "U.S. 10y", us_real10: "real", us_be10: "breakeven", us_tp_kw: "term premium", jp10: "Japan 10y", brent_front: "Brent front-month"};
+  const cells = H.map(x => `<span class="nowrap"><span class="c-3">${short[x.series] || x.series}</span> <span class="c-1 w6">${x.unit === "usd" ? "$" + Number(x.value).toFixed(2) : grPct(x.value, x.series === "jp10" ? 3 : 2)}</span> <span class="c-2">${x.unit === "usd" ? grSgn(x.chg_1d, 2) : grBp(x.chg_1d)}</span> <span class="c-3 t1">${grDate(x.date).slice(5)}</span></span>`).join(' <span class="c-3">·</span> ');
+  return `<div class="rates-strip mono t1 mt2">${cells} <a class="c-3 t1" href="bonds.html">· global rates on the bonds page</a></div>`;
+}
 function renderGlobalRatesCharts(){
   const G = S.globalRates; if (!G) return;
   const CV = CHARTS.colors();

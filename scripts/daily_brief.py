@@ -332,16 +332,28 @@ def facts_payload(session: str, rules: dict) -> dict:
                              for t in es_.get("transitions_today", []) if set(t.get("groups", [])) & {"held", "board"}]
     except Exception:  # noqa: BLE001
         pass
+    # Order 6-Oct-2026 (global rates), section 7: the U.S. 10-year and its daily change, the real yield, the breakeven,
+    # the latest term premium with its date, Japan's 10-year, Brent, and any auction labelled weak that day
+    # (data/rates/global_rates_home.json, written earlier in the nightly); the colour rules are unchanged
+    global_rates = None
+    try:
+        gr_ = json.loads((DATA / "rates" / "global_rates_home.json").read_text()).get("facts") or {}
+        global_rates = {"us10": gr_.get("us10"), "us_real10": gr_.get("us_real10"), "us_breakeven10": gr_.get("us_be10"),
+                        "us_term_premium_kw": gr_.get("us_tp_kw"), "japan10": gr_.get("jp10"), "brent": gr_.get("brent_front"),
+                        "weak_auctions_today": [{"date": a.get("date"), "security": a.get("security"), "why": a.get("weak_why")}
+                                                for a in (gr_.get("weak_auctions_today") or [])]}
+    except Exception:  # noqa: BLE001
+        pass
     payload = {"session": session, "indices": indices, "sectors": {k: v for k, v in sectors.items()},
                "sectors_weakest": sec_sorted[:2], "sectors_strongest": sec_sorted[-2:][::-1],
                "regime": regime, "flags": flags, "volatility": volatility, "rates": rates, "credit": credit, "book": book,
                "held_levels": levels, "releases_today": releases, "upcoming_two_sessions": upcoming, "next_events": next_events,
                "clusters_ahead": clusters, "tickers": sorted(held_set | set(INDEX_ETFS.values())), "notes": notes,
-               "entry_state_changes": entry_changes, "entry_state_label": entry_label,
+               "entry_state_changes": entry_changes, "entry_state_label": entry_label, "global_rates": global_rates,
                "sources": ["data/source/prices_daily.parquet", "data/source/sector_etfs.parquet", "data/source/vol_indicators.parquet",
                            "data/source/fred_indicators.parquet", "data/regime_daily.csv", "data/regime_daily_published.csv",
                            "data/intraday.json", "data/bonds/states.json", "data/holdings.json", "data/ticker_signals.json",
-                           "data/event_calendar.json", "data/entry_state.json"]}
+                           "data/event_calendar.json", "data/entry_state.json", "data/rates/global_rates_home.json"]}
     return payload
 
 
