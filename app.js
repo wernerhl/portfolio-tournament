@@ -1423,6 +1423,54 @@ function renderReviewNames(){
   return `<div class="mono t1 c-3 mb2">${escText30(R.note || "")}</div>${cards}`;
 }
 
+// Order 6-Oct-2026 (revised), section 6b: the operator's individual-stock picks against a QQQ shadow (same dollars
+// in and out on the same dates), with the algorithmic tiers on the same terms. Descriptive; the number of
+// independent decisions (distinct entry dates) sits beside every figure.
+function renderPicksVsQQQ(){
+  const P = S.picksQQQ; if (!P || !(P.windows || []).length) return "";
+  const usd = v => v == null ? "—" : (v < 0 ? "−" : "+") + "$" + Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0});
+  const pct = v => v == null ? "—" : (v < 0 ? "−" : "+") + Math.abs(v * 100).toFixed(2) + "%";
+  const nn = n => ` <span class="c-3 t1 nowrap" title="independent decisions: distinct entry dates">n=${n}</span>`;
+  const cls = v => v == null ? "c-3" : v >= 0 ? "c-pos" : "c-neg";
+  const minN = P.min_decisions || 30;
+  const row = (w, label, x) => {
+    const m = x.summary || {}; const n = m.decisions;
+    const closed = m.closed ? `${m.closed_beat} of ${m.closed} (${Math.round((m.closed_beat_share || 0) * 100)}%)${nn(m.closed_decisions)}` : `no closed position${nn(0)}`;
+    return `<tr><td class="c-1 w6">${label}</td><td class="c-3 t1">${w.label}</td>
+      <td class="num ${cls(m.diff_usd)}">${usd(m.diff_usd)}${nn(n)}</td><td class="num ${cls(m.diff_pct)}">${pct(m.diff_pct)}${nn(n)}</td>
+      <td class="num ${cls(m.riskadj_usd)}">${usd(m.riskadj_usd)} <span class="c-3">(${pct(m.riskadj_pct)})</span>${nn(n)}</td>
+      <td class="num">${closed}</td><td class="num c-3">${m.positions} · $${Math.round(m.dollars_in || 0).toLocaleString("en-US")}${nn(n)}</td></tr>`;
+  };
+  const ws = P.windows.filter(w => w.operator);
+  const rows = ws.map(w => row(w, "Operator", w.operator) + row(w, "Algorithmic tiers", w.algorithmic)).join("");
+  const nOp = Math.max(0, ...ws.map(w => w.operator.summary.decisions || 0));
+  const nAl = Math.max(0, ...ws.map(w => w.algorithmic.summary.decisions || 0));
+  const winLines = ws.map(w => `${w.label}: from the close of ${w.opening_close} to ${w.as_of} (${w.sessions} sessions), QQQ ${pct(w.qqq_return)}`).join(" · ");
+  const posRows = ws.map(w => (w.operator.positions || []).map(x => `<tr><td class="c-1 w6">${x.ticker}</td><td class="c-3 t1">${w.label}</td>
+      <td class="t1 c-3">${escText30(x.entry_basis)}</td><td class="t1 c-3">${x.start} → ${x.end}${x.closed ? " (closed)" : ""}</td>
+      <td class="num">$${Math.round(x.dollars_in).toLocaleString("en-US")}</td><td class="num ${cls(x.pnl_usd)}">${usd(x.pnl_usd)}</td><td class="num ${cls(x.shadow_pnl_usd)}">${usd(x.shadow_pnl_usd)}</td>
+      <td class="num ${cls(x.diff_usd)}">${usd(x.diff_usd)}</td><td class="num c-3" title="${escText30(x.beta_basis)}">${x.beta}</td><td class="num ${cls(x.riskadj_usd)}">${usd(x.riskadj_usd)}</td></tr>`).join("")).join("");
+  const bad = ws.flatMap(w => (w.operator.not_measurable || []).map(b => `${b.ticker} (${w.label}): ${escText30(b.reason)}`));
+  const badU = [...new Set(bad)];
+  const excl = [...new Set(ws.flatMap(w => [...(w.operator.excluded || []), ...Object.values(w.algorithmic.tiers || {}).flatMap(t => t.excluded || [])]).map(e => `${e.ticker} (${e.category})`))];
+  const tierRows = ws.map(w => Object.entries(w.algorithmic.tiers || {}).map(([tid, t]) => { const m = t.summary || {}; const sp = tierSpec(tid) || {};
+      return `<tr><td class="${cc(sp.color)} w6">${sp.short || tid}</td><td class="c-3 t1">${w.label}</td><td class="num ${cls(m.diff_usd)}">${usd(m.diff_usd)}${nn(m.decisions)}</td><td class="num ${cls(m.diff_pct)}">${pct(m.diff_pct)}${nn(m.decisions)}</td><td class="num ${cls(m.riskadj_usd)}">${usd(m.riskadj_usd)}${nn(m.decisions)}</td><td class="num">${m.closed ? `${m.closed_beat} of ${m.closed}` : "none"}${nn(m.closed_decisions || 0)}</td><td class="num c-3">${m.positions}</td></tr>`; }).join("")).join("");
+  const D = P.definitions || {};
+  return `<div class="rcc-card"><h3>PICKS AGAINST QQQ · <span class="c-3 w5">the operator's individual-stock positions against a shadow that puts the same dollars into QQQ on the same dates and takes them out on the same dates · the algorithmic tiers on the same terms · ${P.label || "DESCRIPTIVE"}</span>${asOfBadge(P.as_of)}</h3>
+    <div class="mono t2 c-warn w6 mb2">${escText30(P.skill_note || "")} Operator: ${nOp} independent decision${nOp === 1 ? "" : "s"}; the algorithmic tiers: ${nAl}${nOp < minN || nAl < minN ? " — both below " + minN + "." : "."}</div>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>BOOK</th><th>WINDOW</th><th class="num">DIFFERENCE $</th><th class="num">DIFFERENCE %</th><th class="num">RISK-ADJUSTED $</th><th class="num">CLOSED THAT BEAT QQQ</th><th class="num">POSITIONS · DOLLARS IN</th></tr>${rows}</table></div>
+    <div class="chart-meta">${winLines} · n = independent decisions (distinct entry dates) behind each figure · index funds, sector funds and gold left out${excl.length ? ": " + excl.join(", ") : " (none held in the windows)"}</div>
+    <div class="mono t1 c-3 mt1">${escText30(P.data_basis || "")}</div>
+    ${badU.length ? `<div class="mono t1 c-warn mt1">not measurable from the log (in no figure): ${badU.join(" · ")}</div>` : ""}
+    <details class="mt2"><summary class="mono t1 c-3 ptr ls05">the operator's positions, one by one</summary>
+      <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>TICKER</th><th>WINDOW</th><th>ENTRY (HOW DATED)</th><th>MEASURED</th><th class="num">DOLLARS IN</th><th class="num">POSITION P&amp;L</th><th class="num">QQQ SHADOW P&amp;L</th><th class="num">DIFFERENCE</th><th class="num">BETA</th><th class="num">RISK-ADJ.</th></tr>${posRows}</table></div></details>
+    <details class="mt1"><summary class="mono t1 c-3 ptr ls05">the algorithmic tiers, one by one</summary>
+      <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>TIER</th><th>WINDOW</th><th class="num">DIFFERENCE $</th><th class="num">DIFFERENCE %</th><th class="num">RISK-ADJUSTED $</th><th class="num">CLOSED THAT BEAT QQQ</th><th class="num">POSITIONS</th></tr>${tierRows}</table></div>
+      <div class="mono t1 c-3 mt1">${escText30((ws[0] && ws[0].algorithmic.pooling) || "")}</div></details>
+    <details class="mt1"><summary class="mono t1 c-3 ptr ls05">definitions</summary><div class="mono t1 c-3 mt1 lh17">${Object.entries(D).map(([k, v]) => `<div><span class="c-2">${k.replace(/_/g, " ")}</span>: ${escText30(v)}</div>`).join("")}<div><span class="c-2">beta</span>: ${escText30(P.beta_rule || "")}</div><div><span class="c-2">exclusions</span>: ${escText30(P.exclusion_rule || "")}</div></div></details>
+  </div>`;
+}
+
 // ── Options lens (order 26-Sept-2026, Phase 3): the third column of every stock card ──
 // What the options market prices about the name and, for held names, the structure the
 // hedge selector ranks first. Descriptive; no directional implication anywhere.

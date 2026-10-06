@@ -39,6 +39,7 @@ scripts = [
     "compute_twins.py",            # T4: the continuous twins 1c–4c — daily evaluation, banded execution; trades and spells logged (after signals: the session's Trade-Now at decision)
     "compute_book.py",             # 1.3/1.5/1.6/5: book analytics, stress, sleeves
     "compute_comparators.py",      # 1.4/4: the C3 rules and every rule translated to the book's beta
+    "picks_vs_qqq.py",             # 6-Oct order (revised) 6b: the operator's picks and the algorithmic tiers against a QQQ shadow (after compute_nav)
     "bonds/fetch_sleeves.py",      # fixed-income module: sleeve prices + distribution yields (canonical provider)
     "bonds/build_sleeve_metrics.py", # FI 1.3: per-sleeve yield, duration, yield/duration, vol, 1y return, corr to book
     "bonds/compute_bonds.py",      # FI 2/3/4: curve/credit/breakeven states, allocation reads, book integration, whole-portfolio stress
@@ -419,6 +420,7 @@ SERVED_CADENCE = {
     "rates/global_rates.json": "daily", "rates/global_rates_home.json": "daily", "rates/series_meta.json": "daily",
     "rates/auctions.json": "daily", "rates/global_rates_config.json": "static",                 # 6-Oct order (global rates)
     "review_names.json": "static", "earnings_date_sources.json": "static", "entry_state_config_2026-10-02.json": "static", "entry_state_config_2026-10-06_v2.json": "static",
+    "picks_vs_qqq.json": "daily", "picks_vs_qqq_config.json": "static",                          # 6-Oct order (revised) 6b
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

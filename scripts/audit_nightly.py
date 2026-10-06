@@ -794,6 +794,45 @@ def main(troot, sroot, today=None):
             except Exception as e:
                 add('HIGH','entry:log',f'entry_state_log.jsonl unreadable ({e})')
         elif ej_.get('transitions_today'): add('MEDIUM','entry:log','transitions reported but entry_state_log.jsonl is absent')
+    # ---------- order 6-Oct-2026 (revised) 6b: the operator's picks against QQQ ----------
+    # The number of independent decisions accompanies every figure; index funds, sector funds and gold stay out;
+    # the summed difference is the sum of its positions; below about 30 decisions the panel says it cannot
+    # distinguish skill from chance; the window ends on the record's last session.
+    pqp_=os.path.join(troot,'picks_vs_qqq.json')
+    if os.path.exists(pqp_):
+        pq_=json.load(open(pqp_)); pcf_={}
+        try: pcf_=json.load(open(os.path.join(troot,'picks_vs_qqq_config.json')))
+        except Exception: pass
+        exl_={t.upper() for k,v in (pcf_.get('exclude') or {}).items() if isinstance(v,list) for t in v}
+        nod_,exin_,idn_=[],[],[]
+        mind_=pq_.get('min_decisions') or 30
+        for w_ in (pq_.get('windows') or []):
+            if 'operator' not in w_: continue
+            groups_=[('operator',w_['operator'])]+[(tid,t) for tid,t in ((w_.get('algorithmic') or {}).get('tiers') or {}).items()]
+            groups_.append(('algorithmic',w_.get('algorithmic') or {}))
+            for g_,x_ in groups_:
+                sm_=x_.get('summary') or {}
+                if not isinstance(sm_.get('decisions'),int): nod_.append(f"{w_['id']}:{g_}")
+                if sm_.get('closed') and not isinstance(sm_.get('closed_decisions'),int): nod_.append(f"{w_['id']}:{g_}:closed")
+                pos_=x_.get('positions')
+                if pos_ is None and g_=='algorithmic': pos_=[q for t in (x_.get('tiers') or {}).values() for q in (t.get('positions') or [])]
+                for q in (pos_ or []):
+                    if str(q.get('ticker','')).upper() in exl_: exin_.append(f"{w_['id']}:{g_}:{q.get('ticker')}")
+                if pos_ is not None and sm_:
+                    tot_=sum(q.get('diff_usd') or 0 for q in pos_)
+                    if abs(tot_-(sm_.get('diff_usd') or 0))>0.05*max(1,len(pos_)): idn_.append(f"{w_['id']}:{g_} positions {tot_:.2f} vs summary {sm_.get('diff_usd')}")
+                    if sm_.get('dollars_in') and sm_.get('diff_pct') is not None and abs(sm_['diff_usd']/sm_['dollars_in']-sm_['diff_pct'])>1e-4: idn_.append(f"{w_['id']}:{g_} percent")
+        low_=min([(w_['operator']['summary'].get('decisions') or 0) for w_ in (pq_.get('windows') or []) if 'operator' in w_] or [0])
+        if low_<mind_ and 'cannot distinguish skill from chance' not in str(pq_.get('skill_note','')):
+            add('HIGH','picks:skill_note',f'fewer than {mind_} independent decisions but the panel does not say the comparison cannot distinguish skill from chance')
+        if nod_: add('HIGH','picks:decisions',f'figures without the number of independent decisions: {nod_[:6]}')
+        if exin_: add('HIGH','picks:excluded',f'index funds, sector funds or gold inside the comparison: {exin_[:6]}')
+        if idn_: add('HIGH','picks:identity',f'summary figures that are not the sum of their positions: {idn_[:6]}')
+        if str(pq_.get('label'))!='DESCRIPTIVE': add('HIGH','picks:label',f"picks_vs_qqq.json labelled {pq_.get('label')!r}, not DESCRIPTIVE")
+        if str(pq_.get('as_of'))[:10]!=str(L.get('date'))[:10]: add('MEDIUM','picks:as_of',f"picks_vs_qqq.json as of {pq_.get('as_of')} but the tournament record ends {L.get('date')}")
+        _lang(pqp_,'picks')
+    elif os.path.exists(os.path.join(troot,'picks_vs_qqq_config.json')):
+        add('HIGH','picks:missing','picks_vs_qqq.json absent (the 6b panel has nothing to render)')
     # ---------- order 6-Oct-2026: provider checks, earnings dates and timing, the long range ----------
     pfp_=os.path.join(troot,'provider_flags.json')
     if os.path.exists(pfp_):

@@ -92,7 +92,7 @@ const PAGES = {
   },
   book: {
     title: "THE BOOK", sub: () => `${S.book ? "analytics through " + S.book.as_of : ""} · positions from data/holdings.json, the only holdings source · every panel descriptive`,
-    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f","entryState","reviewNames","providerFlags","earningsRx"],
+    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f","entryState","reviewNames","providerFlags","earningsRx","picksQQQ"],
     compose(){
       const strip = renderStatusStrip();
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE BOOK</h2>${strip}${renderBookPanel()}</div>`;
@@ -100,6 +100,8 @@ const PAGES = {
       h += `<div class="tier tier-1"><h2 class="tier-title">THE GOALS</h2><div class="goals-grid">${renderHouseGoalCard()}${renderClaimsCard()}</div></div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">SIZING, STRESS AND SLEEVES</h2>${renderEventBoard()}${renderPostureCard()}<div class="rcc-card">${renderStressPanel()}</div>${renderSleevesPanel()}</div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">POSITIONS</h2>${renderPositionsList()}${renderRealizedGainsCard()}</div>`;
+      // order 6-Oct-2026 (revised) 6b: the operator's selection against QQQ, the algorithmic tiers on the same terms
+      h += `<div class="tier tier-2"><h2 class="tier-title">PICKS AGAINST QQQ</h2>${renderPicksVsQQQ()}</div>`;
       // order 6-Oct-2026: names the orders discuss that have no other card
       h += `<div class="tier tier-3"><h2 class="tier-title">NAMES UNDER REVIEW</h2>${renderReviewNames()}</div>`;
       h += `<div class="tier tier-1"><h2 class="tier-title">THE HEDGE SELECTOR</h2>${renderHedgeSelector()}</div>`;

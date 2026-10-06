@@ -1,0 +1,32 @@
+{
+  "cadence": "static",
+  "as_of": "2026-10-06",
+  "order": "Execution Order: Revision of the Entry-State Indicator and Related Fixes (6 October 2026, revised), section 6b",
+  "benchmark": "QQQ",
+  "operator_tier": "5_werner",
+  "algorithmic_tiers": ["1_cap_pres", "2_balanced", "3_aggressive", "4_tactical"],
+  "windows": [
+    {"id": "from_2026-10-01", "label": "from 1 October 2026", "start": "2026-10-01"},
+    {"id": "since_first_trade", "label": "since the first logged trade", "start": "first_logged_trade"}
+  ],
+  "exclude": {
+    "index_funds": ["SPY", "VOO", "IVV", "VTI", "QQQ", "QQQM", "DIA", "IWM", "IWB", "IWV", "RSP", "MDY", "IJH", "IJR", "VTV", "VUG", "IWD", "IWF", "MTUM", "SCHD", "SCHX", "SCHB", "VXUS", "VEA", "VWO", "EFA", "EEM", "ACWI", "BND", "AGG", "TLT", "IEF", "SHY", "SGOV", "BIL", "TIP", "VTIP", "LQD", "HYG", "SSO", "UPRO", "TQQQ"],
+    "sector_funds": ["XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLRE", "XLU", "XLV", "XLY", "IGV", "SMH", "SOXX", "XBI", "IBB", "KRE", "KBE", "ITA", "XAR", "XHB", "ITB", "XME", "XOP", "OIH", "VGT", "VHT", "VFH", "VDE", "VNQ", "ARKK", "CIBR", "HACK", "TAN", "ICLN", "URA", "COPX"],
+    "gold": ["GLD", "IAU", "GLDM", "SGOL", "AAAU", "BAR", "PHYS", "GDX", "GDXJ"],
+    "rule": "a ticker on one of these lists is left out of both the operator's and the tiers' comparison and listed with its category; every other position is an individual stock"
+  },
+  "beta": {"sessions": 252, "min_sessions": 60, "fallback": 1.0,
+           "rule": "the slope of the stock's daily returns on QQQ's over the 252 sessions before the position's measured start (canonical closes); with fewer than 60 sessions the beta is 1 and the position says so"},
+  "min_decisions": 30,
+  "definitions": {
+    "shadow": "every dollar put into a position goes into QQQ at that session's QQQ close, and every dollar taken out comes out of QQQ on the same date; a position held when the window opens enters at that close's value",
+    "difference": "the position's value (or, once closed, nothing) less the QQQ shadow's value at the as-of close; for a closed position this is the dollars in times (the position's return minus QQQ's over the same dates)",
+    "difference_pct": "the summed difference divided by the dollars put in (the opening value of positions held at the window's start plus every purchase)",
+    "risk_adjusted": "the same with a shadow that holds beta dollars of QQQ per dollar in the position (beta measured before the position's start): each position's return in excess of beta times QQQ's return, in dollars, summed by position",
+    "closed_beat": "closed positions whose difference is positive, over all closed positions in the window",
+    "decisions": "independent decisions = distinct entry dates of the positions counted (a position held when the record begins counts its first recorded session; the algorithmic tiers pooled count distinct dates across tiers, since the tiers rebalance on the same scoring)",
+    "prices": "the tournament record's as-published closes for every session (positions and QQQ alike), a reported trade price where the log carries one; price returns, dividends left out",
+    "first_logged_trade": "the earliest date the transactions log allows for the operator's first trade row (a buy, sell, entry or exit; a reported date range counts from its first day); the window opens at the close before it"
+  },
+  "skill_note": "With fewer than about 30 independent decisions the comparison is descriptive: it cannot distinguish skill from chance."
+}
