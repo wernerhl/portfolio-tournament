@@ -686,6 +686,24 @@ def compute_technical_score(prices_df, ticker):
     return round(total, 1), details
 
 
+# Order 6-Oct-2026, section 4: a provider field flagged "provider data suspect" (data/provider_flags.json, written
+# nightly by scripts/provider_checks.py) is excluded from the scores until the next filing clears it. The field is
+# blanked for scoring only, so its component falls back to the neutral value used for any missing field.
+def load_provider_flags() -> dict:
+    try:
+        d = json.loads((ROOT / "data" / "provider_flags.json").read_text())
+    except (OSError, ValueError):
+        return {}
+    return {tk: [f["field"] for f in v.get("flags", [])] for tk, v in (d.get("names") or {}).items() if v.get("flags")}
+
+
+def without_flagged(fund_data: dict, ticker: str, flags: dict) -> tuple[dict, list]:
+    fields = [f for f in flags.get(ticker, []) if f in (fund_data or {})]
+    if not fields:
+        return fund_data, []
+    return {k: (None if k in fields else v) for k, v in fund_data.items()}, fields
+
+
 def compute_fundamental_score(fund_data):
     """
     Fundamental Quality Score (0-25)
@@ -1067,6 +1085,9 @@ def main():
     print("\n[4/5] Scoring universe...")
     rows = []
     scored = 0
+    PROVIDER_FLAGS = load_provider_flags()
+    if PROVIDER_FLAGS:
+        print(f"  provider data suspect (excluded from the scores): {len(PROVIDER_FLAGS)} names, e.g. {dict(list(PROVIDER_FLAGS.items())[:4])}")
     
     for ticker in universe:
         fund = fundamentals.get(ticker, {})
@@ -1079,9 +1100,12 @@ def main():
             continue
         
         # Fundamental score
-        fund_score, fund_details = compute_fundamental_score(fund)
+        fund_scored, excluded = without_flagged(fund, ticker, PROVIDER_FLAGS)
+        fund_score, fund_details = compute_fundamental_score(fund_scored)
         if fund_score is None:
             continue
+        if excluded:
+            fund_details["provider_excluded"] = excluded      # shown greyed, not scored (order 6-Oct-2026, section 4)
         
         # Visibility score
         vis_score, vis_details = compute_visibility_score(fund, ticker)
@@ -1167,6 +1191,8 @@ def main():
         if fcf_yield_val is not None and not (-60.0 <= fcf_yield_val <= 30.0):
             data_flags.append(f"fcf_yield_out_of_range({fcf_yield_val})")
             fcf_yield_val = None
+        for fld in fund_details.get('provider_excluded', []):      # order 6-Oct-2026 §4: left out of the scores
+            data_flags.append(f"provider_suspect({fld})")
 
         rows.append({
             'ticker': ticker,

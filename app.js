@@ -1394,6 +1394,32 @@ function renderEntryState(tk){
   </div>`;
 }
 
+// Order 6-Oct-2026: names the operator's orders discuss that are neither held, in a tier nor on the board get a
+// full card here (data/review_names.json): the entry state with its flags and the provider-checked fundamentals.
+function providerFieldsGrid(tk){
+  const P = (S.providerFlags && S.providerFlags.names && S.providerFlags.names[tk]) || null;
+  if (!P) return `<div class="mono t1 c-3">no provider record</div>`;
+  const f = P.fields || {}, fl = {}; (P.flags || []).forEach(x => { fl[x.field] = x; });
+  const num = (v, d) => v == null ? "—" : Number(v).toFixed(d == null ? 1 : d);
+  const bn = v => v == null ? "—" : (v < 0 ? "−" : "") + "$" + (Math.abs(v) >= 1e9 ? (Math.abs(v) / 1e9).toFixed(2) + "B" : (Math.abs(v) / 1e6).toFixed(0) + "M");
+  const cell = (label, field, txt) => fl[field]
+    ? `<div class="fund-card suspect" title="${escText30("provider data suspect: " + fl[field].reason + " · excluded from the screen's scores until the next filing clears it")}"><div class="k">${label} <span class="c-neg">?</span></div><div class="v c-3"><s>${txt}</s></div><div class="t1 c-3 lh14">${escText30(fl[field].reason)}</div></div>`
+    : `<div class="fund-card"><div class="k">${label}</div><div class="v">${txt}</div></div>`;
+  return `<div class="fund-grid">${cell("FWD P/E", "forwardPE", num(f.forwardPE))}${cell("TRAIL P/E", "trailingPE", num(f.trailingPE))}${cell("FCF", "freeCashflow", bn(f.freeCashflow))}${cell("OP CASH FLOW", "operatingCashflow", bn(f.operatingCashflow))}${cell("REV GROWTH", "revenueGrowth", f.revenueGrowth == null ? "—" : (f.revenueGrowth * 100).toFixed(1) + "%")}</div>`;
+}
+function renderReviewNames(){
+  const R = S.reviewNames; if (!R || !(R.names || []).length) return "";
+  const cards = R.names.map(r => {
+    const tk = String(r.ticker).toUpperCase();
+    const nm = (((S.providerFlags || {}).names || {})[tk] || {}).fields || {};
+    return `<div class="rcc-card"><h3>${tk} <span class="c-3 w5">· ${escText30(nm.shortName || "")} · ${escText30(r.why || "")}</span></h3>
+      ${renderEntryState(tk)}
+      <div class="mono t1 w6 c-3 ls18 mt2 mb2">FUNDAMENTALS · provider fields checked nightly (a flagged field is greyed and left out of the screen's scores)</div>
+      ${providerFieldsGrid(tk)}</div>`;
+  }).join("");
+  return `<div class="mono t1 c-3 mb2">${escText30(R.note || "")}</div>${cards}`;
+}
+
 // ── Options lens (order 26-Sept-2026, Phase 3): the third column of every stock card ──
 // What the options market prices about the name and, for held names, the structure the
 // hedge selector ranks first. Descriptive; no directional implication anywhere.
@@ -2336,7 +2362,12 @@ function renderTickerDetail(tk){
     </div>`;
   };
   // Fundamental card
-  const fundCard = (label, val, unit="") => {
+  // Order 6-Oct-2026, section 4: a field the provider checks flag is greyed out with the reason (and excluded
+  // from the screen's scores until the next filing clears it)
+  const pflags = {}; ((entryRec(tk) || {}).provider_flags || []).forEach(f => { pflags[f.field] = f; });
+  const fundCard = (label, val, unit="", field=null) => {
+    const fl = field && pflags[field];
+    if (fl) return `<div class="fund-card suspect" title="${escText30("provider data suspect: " + fl.reason + " · excluded from the screen's scores until the next filing clears it")}"><div class="k">${label} <span class="c-neg">?</span></div><div class="v c-3"><s>${val == null ? "—" : val + unit}</s></div><div class="t1 c-3 lh14">${escText30(fl.reason)}</div></div>`;
     if (val == null) return `<div class="fund-card"><div class="k">${label}</div><div class="v c-3">—</div></div>`;
     return `<div class="fund-card"><div class="k">${label}</div><div class="v">${val}${unit}</div></div>`;
   };
@@ -2390,17 +2421,17 @@ function renderTickerDetail(tk){
       <div>
         <div class="mono t1 w6 c-3 ls18 mb2">FUNDAMENTALS (snapshot)</div>
         <div class="fund-grid">
-          ${fundCard("FWD P/E",   F.fwd_pe)}
+          ${fundCard("FWD P/E",   F.fwd_pe, "", "forwardPE")}
           ${fundCard("TRAIL P/E", F.trail_pe)}
           ${fundCard("P/B",       F.pb)}
           ${fundCard("P/S",       F.ps)}
           ${fundCard("EV/EBITDA", F.ev_ebitda)}
           ${fundCard("PEG",       F.peg)}
-          ${fundCard("REV GROWTH", F.rev_growth, "%")}
+          ${fundCard("REV GROWTH", F.rev_growth, "%", "revenueGrowth")}
           ${fundCard("GROSS MGN",  F.gross_mgn, "%")}
           ${fundCard("OP MGN",     F.op_mgn, "%")}
           ${fundCard("ROE",        F.roe, "%")}
-          ${fundCard("FCF",        F.fcf_B ? "$" + F.fcf_B + "B" : null)}
+          ${fundCard("FCF",        F.fcf_B ? "$" + F.fcf_B + "B" : null, "", "freeCashflow")}
           ${fundCard("MCAP",       F.mcap_B ? "$" + F.mcap_B + "B" : null)}
         </div>
       </div>
