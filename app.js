@@ -3396,6 +3396,21 @@ function renderGlobalRatesA(){
     <div class="mono t1 c-2 mt1">co-movement: the average pairwise correlation of monthly yield changes over the ${cm.months || 36} months to ${cm.through || "—"} is <span class="c-1 w6">${cm.avg_pairwise == null ? "—" : Number(cm.avg_pairwise).toFixed(2)}</span>; each country with the United States: ${vs}</div>
     <div class="chart-meta">${escText30(cm.basis || "")} · percentiles from the OECD monthly averages · ${escText30((G.footnotes || {}).uk || "")} · ${escText30((G.footnotes || {}).monthly || "")}</div></div>`;
 }
+function renderGlobalRatesB(){
+  const G = S.globalRates; const B = G && G.panel_b; if (!B) return "";
+  const c = B.current || {}, h = B.term_premium_history || {}, id = B.identities || {};
+  const row = (lab, x) => x ? `<tr><td class="c-2">${lab}</td><td class="num c-1 w6">${grPct(x.value)}</td><td class="c-3">${grDate(x.date)}</td><td class="num">${grBp(x.chg_1m)}</td><td class="num">${grBp(x.chg_12m)}</td></tr>` : "";
+  const idOk = (g) => g == null ? "—" : (Math.abs(g) <= (id.tolerance_pp || 0.02) ? `<span class="c-pos">holds</span> (${(g * 100).toFixed(1)}bp)` : `<span class="c-warn">off by ${(g * 100).toFixed(1)}bp</span>`);
+  return `<div class="rcc-card"><h3>THE U.S. 10-YEAR, SPLIT INTO ITS PARTS · <span class="c-3 w5">real yield plus breakeven inflation; expected average short rate plus term premium</span>${asOfBadge((c.nominal || {}).date, {lag: 1})}</h3>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>PART</th><th class="num">LATEST</th><th>AS OF</th><th class="num">1 MONTH</th><th class="num">12 MONTHS</th></tr>
+      ${row("nominal 10-year (DGS10)", c.nominal)}${row("real yield (DFII10)", c.real)}${row("breakeven inflation (T10YIE)", c.breakeven)}
+      ${row("term premium, Kim-Wright (THREEFYTP10)", c.term_premium_kw)}${row("term premium, ACM (New York Fed)", c.term_premium_acm)}${row("expected average short rate (10-year less Kim-Wright)", c.expected_short_rate)}</table></div>
+    <div class="dd-body mt2"><div class="dd-wrap"><div class="mono t1 c-3">B1 · nominal = real + breakeven (the shaded band between the real yield and the nominal yield is the breakeven)</div><canvas id="gr-b1" height="230"></canvas></div>
+      <div class="dd-wrap"><div class="mono t1 c-3">B2 · nominal = expected average short rate + term premium (the band is the Kim-Wright term premium; both term premiums as lines)</div><canvas id="gr-b2" height="230"></canvas></div></div>
+    <div class="mono t1 c-2 mt1">${escText30(h.text || "")}</div>
+    <div class="mono t1 c-3 mt1">identities on the latest common dates: nominal = real + breakeven on ${grDate(id.b1_date)}: ${idOk(id.b1_gap_pp)} · nominal = expected short rate + term premium on ${grDate(id.b2_date)}: ${idOk(id.b2_gap_pp)} (by construction)</div>
+    <div class="chart-meta">${escText30(B.caption || "")}</div></div>`;
+}
 function renderGlobalRatesCharts(){
   const G = S.globalRates; if (!G) return;
   const CV = CHARTS.colors();
@@ -3412,6 +3427,22 @@ function renderGlobalRatesCharts(){
       options: {parsing: true, scales: {x: xTime, y: {ticks: {callback: v => Number(v).toFixed(1) + "%"}}}, plugins: {tooltip: {callbacks: {title: it => new Date(it[0].parsed.x).toISOString().slice(0, 10), label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}}}});
     make("gr-a-change", "grAChange", {type: "line", data: {datasets: Object.entries(A.change_since || {}).map(([c, o]) => ({label: name(c), data: o.points.map(p => ({x: ts(p[0]), y: p[1]})), borderColor: pal[c], borderWidth: c === "US" ? 2 : 1.5, pointRadius: 0, tension: 0.1}))},
       options: {scales: {x: xTime, y: {ticks: {callback: v => (v >= 0 ? "+" : "") + v + "bp"}}}, plugins: {tooltip: {callbacks: {title: it => new Date(it[0].parsed.x).toISOString().slice(0, 10), label: c => ` ${c.dataset.label}: ${c.parsed.y >= 0 ? "+" : ""}${Math.round(c.parsed.y)}bp`}}}}});
+  }
+  const B = G.panel_b;
+  if (B){
+    const pts = (o, k) => o.dates.map((d, i) => ({x: ts(d), y: o[k][i]})).filter(p => p.y != null);
+    const fillA = c => CHARTS.alpha(c, 0.18);
+    make("gr-b1", "grB1", {type: "line", data: {datasets: [
+        {label: "real yield", data: pts(B.b1, "real"), borderColor: CV.info, backgroundColor: fillA(CV.info), fill: "origin", borderWidth: 1.5, pointRadius: 0},
+        {label: "nominal 10-year", data: pts(B.b1, "nominal"), borderColor: CV.accent, backgroundColor: fillA(CV.warn), fill: {target: 0}, borderWidth: 2, pointRadius: 0},
+        {label: "breakeven", data: pts(B.b1, "breakeven"), borderColor: CV.warn, borderWidth: 1, borderDash: [4, 3], pointRadius: 0, fill: false}]},
+      options: {scales: {x: xTime, y: {ticks: {callback: v => Number(v).toFixed(1) + "%"}}}, plugins: {tooltip: {callbacks: {title: it => new Date(it[0].parsed.x).toISOString().slice(0, 10), label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}}}});
+    make("gr-b2", "grB2", {type: "line", data: {datasets: [
+        {label: "expected short rate", data: pts(B.b2, "expected_short_rate"), borderColor: CV.info, backgroundColor: fillA(CV.info), fill: "origin", borderWidth: 1.5, pointRadius: 0},
+        {label: "nominal 10-year", data: B.b2.dates.map((d, i) => (B.b2.expected_short_rate[i] != null && B.b2.nominal[i] != null) ? {x: ts(d), y: B.b2.nominal[i]} : null).filter(Boolean), borderColor: CV.accent, backgroundColor: fillA(CV.neg), fill: {target: 0}, borderWidth: 2, pointRadius: 0},
+        {label: "term premium (Kim-Wright)", data: pts(B.b2, "term_premium_kw"), borderColor: CV.neg, borderWidth: 1.5, pointRadius: 0, fill: false},
+        {label: "term premium (ACM)", data: pts(B.b2, "term_premium_acm"), borderColor: CV.n1, borderWidth: 1, borderDash: [4, 3], pointRadius: 0, fill: false}]},
+      options: {scales: {x: xTime, y: {ticks: {callback: v => Number(v).toFixed(1) + "%"}}}, plugins: {tooltip: {callbacks: {title: it => new Date(it[0].parsed.x).toISOString().slice(0, 10), label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}}}});
   }
 }
 
