@@ -778,6 +778,49 @@ def main(troot, sroot, today=None):
             except Exception as e:
                 add('HIGH','entry:log',f'entry_state_log.jsonl unreadable ({e})')
         elif ej_.get('transitions_today'): add('MEDIUM','entry:log','transitions reported but entry_state_log.jsonl is absent')
+    # ---------- order 6-Oct-2026: provider checks, earnings dates and timing, the long range ----------
+    pfp_=os.path.join(troot,'provider_flags.json')
+    if os.path.exists(pfp_):
+        pf_=json.load(open(pfp_)); pn_=pf_.get('names') or {}
+        badf_=[f'{k}:{f.get("field")}' for k,v in pn_.items() for f in (v.get('flags') or []) if f.get('field') not in ('forwardPE','freeCashflow','revenueGrowth') or not f.get('reason')]
+        if badf_: add('HIGH','provider:flags',f'provider flags without a known field or a reason: {badf_[:6]}')
+        scp_=os.path.join(troot,'screen','scores.json')
+        if os.path.exists(scp_):
+            rows_=(json.load(open(scp_)).get('watchlist') or [])
+            built_with_=any('provider_suspect(' in str(r.get('data_flags','')) for r in rows_)
+            miss_=[]
+            for r in rows_:
+                fl_=[f['field'] for f in ((pn_.get(str(r.get('ticker')).upper()) or {}).get('flags') or [])]
+                for fld in fl_:
+                    if f'provider_suspect({fld})' not in str(r.get('data_flags','')): miss_.append(f"{r.get('ticker')}:{fld}")
+            if miss_:
+                if built_with_: add('HIGH','provider:excluded',f'flagged provider fields still in the screen scores: {miss_[:6]}')
+                else: add('INFO','provider:excluded',f'the screen has not been rebuilt with the provider checks yet ({len(miss_)} flagged fields on the board await the next nightly)')
+    edp_=os.path.join(troot,'earnings_dates.json')
+    if os.path.exists(edp_):
+        en2_=(json.load(open(edp_)).get('names') or {})
+        badc_=[k for k,v in en2_.items() if v.get('conflict') and not (v.get('conflict_text') and v.get('date'))]
+        if badc_: add('HIGH','earnings:conflict',f'earnings-date conflicts without the sources shown or a decided date: {badc_[:6]}')
+        if os.path.exists(esp_):
+            esn_=(json.load(open(esp_)).get('names') or {})
+            hid_=[k for k,v in en2_.items() if v.get('conflict') and k in esn_ and esn_[k].get('state') and not ((esn_[k].get('earnings') or {}).get('conflict'))]
+            if hid_: add('HIGH','earnings:conflict',f'an earnings-date conflict not carried to the card: {hid_[:6]}')
+    erp_=os.path.join(troot,'options','earnings_reactions.json'); scp2_=os.path.join(troot,'screen','scores.json')
+    if os.path.exists(erp_):
+        # the names the reaction history covers: the held names and the screen board (options_common.analyzed_universe)
+        an_=set(held_)|({str(r.get('ticker')).upper() for r in (json.load(open(scp2_)).get('watchlist') or [])} if os.path.exists(scp2_) else set())
+        rx_=(json.load(open(erp_)).get('names') or {})
+        untimed_=[f'{k} {h.get("date")}' for k in sorted(an_) for h in ((rx_.get(k) or {}).get('history') or []) if h.get('time_of_day') not in ('before_open','after_close') or not h.get('timing_source')]
+        if untimed_: add('HIGH','earnings:timing',f'reactions without a release timing and its source (before open: prior close to release-day close; after close: release-day close to next): {untimed_[:6]}')
+    lrp_=os.path.join(troot,'long_range.json')
+    if os.path.exists(lrp_) and os.path.exists(esp_):
+        lrn_=(json.load(open(lrp_)).get('names') or {})
+        cards2_=(json.load(open(esp_)).get('cards') or {})
+        cn_=sorted({k for g in ('held','board','tiers','review') for k in (cards2_.get(g) or [])})
+        nolr_=[k for k in cn_ if k not in lrn_]
+        old_=[k for k in cn_ if k in lrn_ and lrn_[k].get('fetched_at') and to_date(lrn_[k]['fetched_at'][:10]) and (to_date(ls.isoformat())-to_date(lrn_[k]['fetched_at'][:10])).days>14]
+        if nolr_: add('HIGH','long_range:coverage',f'card names without a long-range record (5-year and all-time highs, ceilings): {nolr_[:8]}')
+        if old_: add('MEDIUM','long_range:stale',f'card names whose long-range history is more than 14 days old: {old_[:8]}')
     rroot_=os.path.abspath(os.path.join(troot,'..'))
     bz_=[]
     for fn_ in ('app.js','pages.js','screen.js','common.js','index.html','book.html','screen.html','tournament.html','guide.html','data/ticker_signals.json','data/brief_facts.json'):
