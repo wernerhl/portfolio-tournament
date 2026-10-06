@@ -45,7 +45,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
-        run: pip install yfinance fredapi pandas numpy scipy pyarrow lxml   # lxml: the options lens's earnings-date scrape
+        run: pip install yfinance fredapi pandas numpy scipy pyarrow lxml xlrd openpyxl   # lxml: the options lens's earnings-date scrape; xlrd/openpyxl: the ACM and Bank of England files (global rates)
 
       - name: Decide (the late schedule retries only a rejected close run)
         id: decide

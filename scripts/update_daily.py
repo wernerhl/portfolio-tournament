@@ -42,6 +42,8 @@ scripts = [
     "bonds/fetch_sleeves.py",      # fixed-income module: sleeve prices + distribution yields (canonical provider)
     "bonds/build_sleeve_metrics.py", # FI 1.3: per-sleeve yield, duration, yield/duration, vol, 1y return, corr to book
     "bonds/compute_bonds.py",      # FI 2/3/4: curve/credit/breakeven states, allocation reads, book integration, whole-portfolio stress
+    "rates/fetch_global_rates.py", # 6-Oct order (global rates) §1: official G7 and U.S. series, Treasury auctions, the day's write-once vintage
+    "rates/build_global_rates.py", # §2-§7: panels A-E for bonds.html, the home strip and the daily log's facts
     "options/build_earnings_reactions.py",  # options lens 1.3: per-name earnings dates + six-year reaction history (weekly refresh)
     "options/vintage_index.py",    # 5-Oct order 2.3: captured / missing (with the reason) per trading day → data/options/vintages/_index.json
     "options/compute_lens.py",     # options lens 2: per-stock features from the session's 15:45 chain vintage → data/options/lens.json
@@ -414,6 +416,8 @@ SERVED_CADENCE = {
     "entry_state.json": "daily", "entry_state_config.json": "static",         # E1 (entry-state order 2-Oct)
     "options/vintages/_index.json": "daily",                                   # 5-Oct order 2.3
     "long_range.json": "daily", "provider_flags.json": "daily", "earnings_dates.json": "daily",   # 6-Oct order §3–§5
+    "rates/global_rates.json": "daily", "rates/global_rates_home.json": "daily", "rates/series_meta.json": "daily",
+    "rates/auctions.json": "daily", "rates/global_rates_config.json": "static",                 # 6-Oct order (global rates)
     "review_names.json": "static", "earnings_date_sources.json": "static", "entry_state_config_2026-10-02.json": "static",
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
