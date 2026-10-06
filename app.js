@@ -3411,6 +3411,20 @@ function renderGlobalRatesB(){
     <div class="mono t1 c-3 mt1">identities on the latest common dates: nominal = real + breakeven on ${grDate(id.b1_date)}: ${idOk(id.b1_gap_pp)} · nominal = expected short rate + term premium on ${grDate(id.b2_date)}: ${idOk(id.b2_gap_pp)} (by construction)</div>
     <div class="chart-meta">${escText30(B.caption || "")}</div></div>`;
 }
+function renderGlobalRatesC(){
+  const G = S.globalRates; const C = G && G.panel_c; if (!C) return "";
+  const money = v => v == null ? "—" : "$" + (v / 1e9).toFixed(0) + "B";
+  const rows = (C.last || []).map(r => { const k = r.comparison || {};
+    return `<tr class="${r.weak ? "" : ""}"><td class="c-2">${r.date}</td><td class="c-1">${escText30(r.security)}</td><td class="num">${money(r.size)}</td><td class="num">${grPct(r.high_yield, 3)}</td>
+      <td class="num">${r.bid_to_cover == null ? "—" : r.bid_to_cover.toFixed(2)} <span class="c-3 t1">(${k.btc_diff == null ? "—" : grSgn(k.btc_diff, 2)})</span></td>
+      <td class="num">${r.indirect_share == null ? "—" : r.indirect_share.toFixed(1) + "%"} <span class="c-3 t1">(${k.indirect_diff_pp == null ? "—" : grSgn(k.indirect_diff_pp, 1, "pp")})</span></td>
+      <td>${r.weak == null ? '<span class="c-3">fewer than six prior</span>' : r.weak ? `<span class="c-warn w6" title="${escText30(r.weak_why || "")}">weak</span>` : '<span class="c-3">—</span>'}</td></tr>`; }).join("");
+  const up = (C.upcoming || []).map(u => `${u.date} ${escText30(u.security)}${u.size ? " (" + money(u.size) + ")" : ""}`).join(" · ");
+  return `<div class="rcc-card"><h3>TREASURY AUCTIONS · <span class="c-3 w5">the last 12 note and bond auctions against the average of the prior six of the same maturity</span>${asOfBadge((C.last && C.last[0] && C.last[0].date) || null, {cadence: "weekly"})}</h3>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>DATE</th><th>SECURITY</th><th class="num">SIZE</th><th class="num">HIGH YIELD</th><th class="num">BID-TO-COVER (vs prior 6)</th><th class="num">INDIRECT (vs prior 6)</th><th>LABEL</th></tr>${rows}</table></div>
+    <div class="mono t1 c-2 mt1">announced: ${up || "none listed"}${C.next_refunding ? ` · next quarterly refunding: <span class="c-1">${C.next_refunding.date}</span>` : ""}</div>
+    <div class="chart-meta">${escText30(C.rule || "")} · indirect share of the competitive accepted amount · ${escText30(C.source || "")}, retrieved ${grDate(C.retrieved_at)}</div></div>`;
+}
 function renderGlobalRatesCharts(){
   const G = S.globalRates; if (!G) return;
   const CV = CHARTS.colors();

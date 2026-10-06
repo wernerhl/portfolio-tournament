@@ -112,7 +112,7 @@ const PAGES = {
     compose(){
       let h = `<div class="tier tier-1"><h2 class="tier-title">THE CURVE</h2>${renderBondsCurve()}</div>`;
       // order 6-Oct-2026: why long-term yields are rising across the G7 (descriptive; no forecast, no recommendation)
-      h += `<div class="tier tier-1"><h2 class="tier-title">GLOBAL RATES</h2>${renderGlobalRatesA()}${renderGlobalRatesB()}</div>`;
+      h += `<div class="tier tier-1"><h2 class="tier-title">GLOBAL RATES</h2>${renderGlobalRatesA()}${renderGlobalRatesB()}${renderGlobalRatesC()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">CREDIT, INFLATION AND THE RATES REGIME</h2>${renderBondsCredit()}${renderBondsBreakeven()}${renderBondsRatesRegime()}${renderBondsRatesStress()}</div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">THE SLEEVE MENU AND THE ALLOCATION READS</h2>${renderBondsSleeveMenu()}${renderBondsAllocationReads()}</div>`;
       h += `<div class="tier tier-1"><h2 class="tier-title">BOOK INTEGRATION AND WHOLE-PORTFOLIO STRESS</h2>${renderBondsConditional()}${renderBondsWholeStress()}</div>`;
