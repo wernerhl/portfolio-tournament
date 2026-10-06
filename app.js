@@ -3425,6 +3425,15 @@ function renderGlobalRatesC(){
     <div class="mono t1 c-2 mt1">announced: ${up || "none listed"}${C.next_refunding ? ` · next quarterly refunding: <span class="c-1">${C.next_refunding.date}</span>` : ""}</div>
     <div class="chart-meta">${escText30(C.rule || "")} · indirect share of the competitive accepted amount · ${escText30(C.source || "")}, retrieved ${grDate(C.retrieved_at)}</div></div>`;
 }
+function renderGlobalRatesD(){
+  const G = S.globalRates; const D = G && G.panel_d; if (!D) return "";
+  const lab = {brent: "Brent spot (EIA via FRED)", brent_front: "Brent front-month (provider), same-day", usdjpy: "yen per dollar", jp10: "Japan 10-year", uk30: "UK 30-year (zero-coupon)", us2: "U.S. 2-year (expected Fed policy)", effr: "effective fed funds"};
+  const val = x => x.value == null ? "—" : x.unit === "usd" ? "$" + x.value.toFixed(2) : x.unit === "fx" ? x.value.toFixed(2) : grPct(x.value, 3);
+  const chg = x => x.chg_1m == null ? "—" : x.chg_1m_unit === "%" ? grSgn(x.chg_1m, 1, "%") : grBp(x.chg_1m);
+  const cells = D.map(x => `<div class="gr-cell"><div class="mono t1 c-3">${lab[x.series] || x.series}</div><div class="mono t3 w7 c-1">${val(x)}</div><div class="mono t1 c-2">1 month ${chg(x)}</div><div class="mono t1 c-3">as of ${grDate(x.date)}${grStale(x.date, x.series === "brent" || x.series === "usdjpy" ? 10 : 5) ? ' <span class="c-warn">late</span>' : ""}</div></div>`).join("");
+  return `<div class="rcc-card"><h3>DRIVERS · <span class="c-3 w5">the values the 6 October analysis linked to the rise; each with its one-month change and date</span></h3>
+    <div class="gr-strip">${cells}</div><div class="chart-meta">${escText30((G.footnotes || {}).brent || "")}</div></div>`;
+}
 function renderGlobalRatesCharts(){
   const G = S.globalRates; if (!G) return;
   const CV = CHARTS.colors();
