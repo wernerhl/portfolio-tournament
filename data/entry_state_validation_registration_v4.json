@@ -1,0 +1,88 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-06",
+ "registered_at": "2026-10-06",
+ "version": 4,
+ "order": "Execution Order: Revision of the Entry-State Indicator and Related Fixes (6 October 2026, revised the same day), section 7",
+ "status": "REGISTERED - NOT RUN (waiting for the survivorship-free data: Sharadar/Norgate access pending receipt)",
+ "report": "reports/entry_state_validation_registration_v4_2026-10-06.md",
+ "supersedes": {
+  "path": "reports/entry_state_validation_registration_2026-10-06.md",
+  "params": "data/entry_state_validation_registration_2026-10-06.json",
+  "reason": "the order was revised the same day, before any run: the WAIT state removed (a passing trend gate is READY, extended or pulling back), short interest of 20% or more of the float added as a heavily-shorted trigger, and contestant (d), all overbought events, added. The superseded registration never ran and stays unedited; the version-2 configuration it pinned (sha 4aa58cc4) is kept byte-identical at data/entry_state_config_2026-10-06_v2.json"
+ },
+ "rules": {
+  "a_revised": {
+   "path": "data/entry_state_config.json",
+   "sha256": "962fe81cf48b33370e1caf85e28f15a0413b9a8029f4ca031373fb8ebd87cdf0",
+   "version": 3,
+   "module": "scripts/entry_state.py",
+   "module_sha256": "286c0f9054457613d341c00efe2760ffde6e87c3c133e7752434b96bc63a3d2d"
+  },
+  "b_2_october": {
+   "path": "data/entry_state_config_2026-10-02.json",
+   "sha256": "0f438215fdfe69509792e0132da5327578b76748e7b03dd30f6eaaaa97ed36d7",
+   "version": 1,
+   "module": "scripts/entry_state_v1.py",
+   "module_sha256": "d880a072455161f9d85cd401a04a81c24b3f89d78ba20c476411a87b2192125e"
+  }
+ },
+ "universe": {
+  "source": "point-in-time S&P 500 constituents from the purchased survivorship-free data (Sharadar or Norgate), delisted names included",
+  "events_from": "2005-01-03",
+  "history_from": "2004-01-02"
+ },
+ "events": {
+  "oversold": {"rsi_sessions": 14, "rsi_method": "simple-average (Cutler)", "rule": "the close's RSI(14) below 30", "min_sessions_between_events": 20},
+  "overbought": {"rsi_sessions": 14, "rsi_method": "simple-average (Cutler)", "rule": "the close's RSI(14) above 70", "min_sessions_between_events": 20},
+  "spacing": "per stock and per event type: a later trigger inside 20 sessions of the last counted event of the same type is skipped"
+ },
+ "entry": {
+  "primary": "the event session's close",
+  "sensitivity": "the next session's open",
+  "costs_one_way_bps": 10,
+  "cost_model": "C1"
+ },
+ "outcomes": {
+  "horizons": [60, 120],
+  "excess": "stock total return minus SPY total return over the same sessions, net of costs",
+  "beats_index": "excess > 0",
+  "worst_10pct": "10th percentile of the excess return",
+  "drawdown_20": "max(0, -(lowest close in sessions 1..20 / entry - 1)); the median is reported"
+ },
+ "contestants": {
+  "a": "the revised rules (version 3) at the event close, for each event type: (a1) oversold events and (a2) overbought events at which the version-3 machine reads READY or READY-HALF (trend gate not failed; no ceiling cap from yearly closing highs known at the time; modifiers at or above a quarter). heavily_shorted not applied (neither days-to-cover nor short interest of the float exists point-in-time); the earnings modifier applied only if the data carries report dates",
+  "b": "the 2-October rules (version 1): from each oversold event, the first session within 10 sessions at which the version-1 machine reads READY (trend, setup, trigger); outcomes from that session's close",
+  "c": "all oversold events",
+  "d": "all overbought events"
+ },
+ "comparisons": {
+  "primary": "(a1)-(c): does the version-3 gate improve oversold entries",
+  "secondary": ["(a2)-(d): the same gate on overbought entries", "(c)-(d): buying pullbacks against buying strength (the basis for removing WAIT)", "(b)-(c) and (a1)-(b): the 2-October rules"],
+  "subgroups_descriptive": ["overbought with positive 12-month momentum within 5% of the 52-week high", "oversold with positive 12-month momentum"]
+ },
+ "bootstrap": {
+  "blocks": "event months resampled with replacement; each drawn month brings all its events from every contestant and both event types",
+  "resamples": 10000,
+  "seed": 20261006,
+  "interval": "90 percent percentile"
+ },
+ "power_check": {
+  "pair": "(c) split at random into two halves by event, seed 20261006, same statistics and bootstrap",
+  "passes": "every difference's 90 percent interval (five statistics, two horizons) includes zero",
+  "if_fails": "the real comparison is descriptive only; a new registration is required"
+ },
+ "decision_rule": {
+  "supported": "power check passes AND the 90% interval of (a1)-(c) in mean 60-session excess lies entirely above zero AND the lower bound of (a1)-(c) in the worst 10% at 60 sessions is no worse than -0.010",
+  "wait_removal": "the removal of WAIT stands unless the 90% interval of (c)-(d) in mean 60-session excess lies entirely above zero (pullbacks better than strength); then it is reported for the operator's decision",
+  "label": "DIAGNOSTIC until this test reports; on 'supported' the operator decides whether to lift it; (b) decides nothing"
+ },
+ "expected_result": "not supported: (a1)-(c) mean 60-session excess within plus or minus 1 point with an interval including zero; worst 10% similar; (c)-(d) within plus or minus 1 point with an interval including zero; median 20-session drawdowns within 1 point",
+ "seen_before_registration": "the order's section 1 tables (about 80 large companies, 2011-2026: 4,540 oversold and 6,593 overbought events) and the 5-Oct states of LMT, MU, POWL, INCY, TPL and ONDS",
+ "artifacts": {
+  "script": "scripts/entry_state_validation_v4.py (written when the data arrives)",
+  "power_check": "data/entry_state_power_check_v4.json",
+  "result": "data/entry_state_validation_v4.json"
+ },
+ "do_not_touch": "nothing above changes once a run begins; a change requires a new registration with a stated reason, and both results are reported"
+}
