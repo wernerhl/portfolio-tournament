@@ -3323,6 +3323,7 @@ function drawCharts(allSeries){
     renderC3PathChart();        // P2.2 (tier two)
     renderCalibrationChart();   // P4.2 (tier three)
     renderBondsCurveChart();    // fixed-income module (bonds page; guarded by canvas id)
+    renderGlobalRatesCharts();  // global rates (order 6-Oct-2026; guarded by canvas ids)
     if (S.expandedTicker) renderTickerChart(S.expandedTicker);
     if (S.expandedIndicator) {
       // Scroll FIRST so the panel area is committed to layout, then render
@@ -3365,6 +3366,54 @@ function _bnum(v, d){ return v == null ? "—" : (+v).toFixed(d == null ? 2 : d)
 function _diagChip(){ return `<span class="mono t1 w6 r1 x2 c-warn ls06">DIAGNOSTIC</span>`; }
 const _CURVE_STATE_CLR = {inverted:"c-neg", flat:"c-warn", normal:"c-2", steep:"c-pos"};
 const _CREDIT_STATE_CLR = {tight:"c-warn", normal:"c-2", wide:"c-warn", stressed:"c-neg"};
+
+// ── Global rates (order 6-Oct-2026): why long-term yields are rising across the G7, the U.S. 10-year split into its
+// parts, Treasury auctions, the drivers, and rule-based conditions. Descriptive throughout: no forecast, no recommendation.
+const grPct = (v, d) => v == null ? "—" : Number(v).toFixed(d == null ? 2 : d) + "%";
+const grBp = v => v == null ? "—" : (v >= 0 ? "+" : "") + Math.round(v * 100) + "bp";
+const grSgn = (v, d, u) => v == null ? "—" : (v >= 0 ? "+" : "") + Number(v).toFixed(d == null ? 1 : d) + (u || "");
+const grDate = d => d ? String(d).slice(0, 10) : "—";
+function grSrc(m){ return m ? `${escText30(m.label || "")} · ${escText30(m.source || "")}${m.id ? " " + escText30(m.id) : ""} · as of ${grDate(m.as_of)}${m.error ? ` · <span class="c-warn">last fetch failed (${escText30(m.error)})</span>` : ""}` : ""; }
+function grStale(dateStr, lagDays){
+  if (!dateStr) return true;
+  const age = (Date.now() - new Date(String(dateStr).slice(0, 10) + "T12:00:00Z").getTime()) / 864e5;
+  return age > lagDays;
+}
+function renderGlobalRatesA(){
+  const G = S.globalRates; if (!G || !G.panel_a) return `<div class="rcc-card"><h3>G7 10-YEAR YIELDS</h3><div class="mono t1 c-3">data/rates/global_rates.json not published yet</div></div>`;
+  const A = G.panel_a, cm = A.comovement || {};
+  const rows = A.rows.map(r => `<tr><td class="c-1 w6">${r.name}</td>
+      <td class="num c-1 w6">${grPct(r.level)}</td><td class="c-3">${grDate(r.date)}${r.kind !== "daily" ? ' <span class="c-warn">monthly average</span>' : ""}</td>
+      <td class="num">${r.chg_1w == null ? "—" : grBp(r.chg_1w)}</td><td class="num">${grBp(r.chg_1m)}</td><td class="num">${grBp(r.chg_12m)}</td>
+      <td class="num c-2">${r.pctile_20y == null ? "—" : Math.round(r.pctile_20y) + "th"}</td>
+      <td class="num c-3">${grPct(r.monthly_level)} <span class="t1">(${r.monthly_date || "—"})</span></td>
+      <td class="c-3 t1">${escText30(r.src_source || "")}${r.src_as_of ? " · " + grDate(r.src_as_of) : ""}</td></tr>`).join("");
+  const vs = Object.entries(cm.vs_us || {}).map(([k, v]) => `${(A.rows.find(r => r.code === k) || {}).name || k} ${Number(v).toFixed(2)}`).join(", ");
+  return `<div class="rcc-card"><h3>G7 10-YEAR YIELDS · <span class="c-3 w5">level, change over a week, a month and twelve months, and the level's place in each country's last 20 years of monthly data</span>${asOfBadge(G.as_of, {lag: 1})}</h3>
+    <div class="tbl-scroll"><table class="th-table stack-m"><tr><th>COUNTRY</th><th class="num">10-YEAR</th><th>AS OF</th><th class="num">1 WEEK</th><th class="num">1 MONTH</th><th class="num">12 MONTHS</th><th class="num">20-YEAR %ILE</th><th class="num">LATEST MONTHLY AVG</th><th>SOURCE</th></tr>${rows}</table></div>
+    <div class="dd-body mt2"><div class="dd-wrap"><div class="mono t1 c-3">10-year yields since January 2021 (weekly; France and Italy monthly averages)</div><canvas id="gr-a-levels" height="230"></canvas></div>
+      <div class="dd-wrap"><div class="mono t1 c-3">change since 1 January 2026, basis points</div><canvas id="gr-a-change" height="230"></canvas></div></div>
+    <div class="mono t1 c-2 mt1">co-movement: the average pairwise correlation of monthly yield changes over the ${cm.months || 36} months to ${cm.through || "—"} is <span class="c-1 w6">${cm.avg_pairwise == null ? "—" : Number(cm.avg_pairwise).toFixed(2)}</span>; each country with the United States: ${vs}</div>
+    <div class="chart-meta">${escText30(cm.basis || "")} · percentiles from the OECD monthly averages · ${escText30((G.footnotes || {}).uk || "")} · ${escText30((G.footnotes || {}).monthly || "")}</div></div>`;
+}
+function renderGlobalRatesCharts(){
+  const G = S.globalRates; if (!G) return;
+  const CV = CHARTS.colors();
+  const pal = {US: CV.accent, DE: CV.info, GB: CV.warn, JP: CV.neg, FR: CV.pos, IT: CV.n1, CA: CV.n2};
+  const ts = d => new Date(d + "T12:00:00Z").getTime();
+  const xTime = {type: "linear", ticks: {callback: v => new Date(v).toISOString().slice(0, 7), maxTicksLimit: 7}};
+  const make = (id, key, cfg) => { const ctx = document.getElementById(id); if (!ctx) return;
+    if (S[key]) { try { S[key].destroy(); } catch(e){} }
+    try { S[key] = CHARTS.make(ctx, cfg); } catch(e){ console.error("[global-rates]", id, e); } };
+  const A = G.panel_a;
+  if (A){
+    const name = c => (A.rows.find(r => r.code === c) || {}).name || c;
+    make("gr-a-levels", "grALevels", {type: "line", data: {datasets: Object.entries(A.chart || {}).map(([c, pts]) => ({label: name(c), data: pts.map(p => ({x: ts(p[0]), y: p[1]})), borderColor: pal[c], borderWidth: c === "US" ? 2 : 1.5, pointRadius: 0, tension: 0.1}))},
+      options: {parsing: true, scales: {x: xTime, y: {ticks: {callback: v => Number(v).toFixed(1) + "%"}}}, plugins: {tooltip: {callbacks: {title: it => new Date(it[0].parsed.x).toISOString().slice(0, 10), label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}}}});
+    make("gr-a-change", "grAChange", {type: "line", data: {datasets: Object.entries(A.change_since || {}).map(([c, o]) => ({label: name(c), data: o.points.map(p => ({x: ts(p[0]), y: p[1]})), borderColor: pal[c], borderWidth: c === "US" ? 2 : 1.5, pointRadius: 0, tension: 0.1}))},
+      options: {scales: {x: xTime, y: {ticks: {callback: v => (v >= 0 ? "+" : "") + v + "bp"}}}, plugins: {tooltip: {callbacks: {title: it => new Date(it[0].parsed.x).toISOString().slice(0, 10), label: c => ` ${c.dataset.label}: ${c.parsed.y >= 0 ? "+" : ""}${Math.round(c.parsed.y)}bp`}}}}});
+  }
+}
 
 function renderBondsCurve(){
   const s = S.bondsStates; if (!s || !s.curve) return `<div class="rcc-card"><h3>THE CURVE</h3><div class="mono t1 c-3">data/bonds/states.json not loaded</div></div>`;
