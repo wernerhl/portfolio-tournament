@@ -44,6 +44,8 @@ FIELDS = [
     # entry-state revision (order 6-Oct-2026, sections 2 and 6): days-to-cover and its monthly change
     "shortRatio", "sharesShort", "sharesShortPriorMonth", "dateShortInterest", "sharesShortPreviousMonthDate",
     "averageVolume",
+    # the revised order (6-Oct-2026, section 2): short interest as a share of the float, the second heavily-shorted test
+    "shortPercentOfFloat", "floatShares", "sharesPercentSharesOut",
     # provider-data checks (order 6-Oct-2026, section 4): the quarter the provider's growth figures refer to
     "mostRecentQuarter",
 ]
@@ -150,7 +152,16 @@ def main() -> int:
     if not uni_file.exists():
         print("ERROR: data/canonical/universe.txt missing")
         return 1
-    universe = sorted({t.strip() for t in uni_file.read_text().split() if t.strip()})
+    universe = {t.strip() for t in uni_file.read_text().split() if t.strip()}
+    # names under review (data/review_names.json, added by the operator's orders) get the same fetch, so their cards
+    # carry checked fundamentals and short interest; they do not enter the screen (data/universe.txt decides that)
+    try:
+        review = {str(r["ticker"]).upper() for r in json.loads((REPO / "data" / "review_names.json").read_text()).get("names", [])}
+    except Exception:  # noqa: BLE001
+        review = set()
+    if review - universe:
+        print(f"  names under review added to the fetch: {sorted(review - universe)}")
+    universe = sorted(universe | review)
     print(f"Canonical build: {len(universe)} tickers")
 
     prices = pd.read_parquet(REPO / "data" / "source" / "prices_daily.parquet")

@@ -1,25 +1,28 @@
 #!/usr/bin/env python3
 """
-entry_state.py — the entry-state indicator, version 2 (Execution Order: Revision of the Entry-State Indicator
-and Related Fixes, 6 October 2026; revises the 2-Oct rules, which stay frozen in scripts/entry_state_v1.py).
+entry_state.py — the entry-state indicator, version 3 (Execution Order: Revision of the Entry-State Indicator
+and Related Fixes, 6 October 2026, as revised the same day; revises the 2-Oct rules, which stay frozen in
+scripts/entry_state_v1.py. Version 2, the morning's text, differed only in the WAIT state and the
+days-to-cover-only shorting flag; its configuration is kept in data/entry_state_config_2026-10-06_v2.json).
 
 The screen answers what is worth owning; this reads the tape for an entry and gives every name a stop and a
-risk-budget size. Per name, nightly, parameters in data/entry_state_config.json (version 2):
+risk-budget size. Per name, nightly, parameters in data/entry_state_config.json (version 3):
 
   trend gate   AVOID only when the close is below the 200-day average AND the 12-month return excluding the
                last month is negative. Below the 200-day with positive momentum passes, flag below_200d
-  setup        close < MA20 - 1 ATR(14), or RSI(14) <= 40, or close in the lowest quarter of the 40-session
-               range; absent: WAIT
-  entry        setup + passing gate = READY. The confirmation (close above the prior session's high, or a
-               failed breakdown recovered) and its volume (> 1.5 x the 50-day average) are information only
+  entry        a passing gate = READY, extended or pulling back (no WAIT state). The setup measures (distance
+               from MA20 in ATR units, RSI(14), position in the 40-session range) and the confirmation (close
+               above the prior session's high, or a failed breakdown recovered, with its volume against 1.5 x
+               the 50-day average) are information only
   modifiers    in order: below_200d x0.5; earnings within 20 sessions x0.5 (READY-HALF); days-to-cover >= 7
-               x0.5 (heavily shorted). Never below a quarter of the base size: deeper than that is WATCH
+               or short interest >= 20% of the float x0.5 (heavily shorted). Never below a quarter of the base
+               size: deeper than that is WATCH
   ceiling      a multi-year ceiling (data/long_range.json, scripts/long_range.py) within 15% above the close
                caps the state at WATCH until a close above it
   stop         the 40-session low minus 1 ATR(14) (no 200-day floor)
   size         0.5% of the account at risk / (entry - stop) x the modifiers, capped below 40% of book risk
 
-DIAGNOSTIC until the registered validation (reports/entry_state_validation_registration_2026-10-06.md) reports.
+DIAGNOSTIC until the registered validation (reports/entry_state_validation_registration_v4_2026-10-06.md) reports.
 Descriptive rule output: it states what the rule reads, not an instruction to trade.
 
 Outputs: data/entry_state.json, data/entry_state_log.jsonl (append-only state changes of the card names),
@@ -45,7 +48,7 @@ CONFIG = DATA / "entry_state_config.json"
 OHLC = SOURCE / "ohlc_daily.parquet"
 OUT = DATA / "entry_state.json"
 LOG = DATA / "entry_state_log.jsonl"
-STATES = ("AVOID", "WAIT", "WATCH", "READY", "READY-HALF")
+STATES = ("AVOID", "WATCH", "READY", "READY-HALF")      # version 3: no WAIT state
 KEEP_SESSIONS = 520
 COLS = ["open", "high", "low", "close", "adj_close", "volume"]
 
@@ -82,10 +85,10 @@ def indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     out["prior_lo"] = l.shift(1).rolling(st["range_sessions"]).min()               # the 40-session low before today
     out["below_200d"] = c < out["ma_long"]
     out["trend"] = ~(out["below_200d"] & (out["mom_12_1"] < 0))                  # fails only below the 200-day AND negative momentum
-    out["setup_atr"] = c < out["ma_short"] - s["atr_mult"] * out["atr"]
-    out["setup_rsi"] = out["rsi"] <= s["rsi_max"]
-    out["setup_range"] = c <= out["range_lo"] + s["range_quantile"] * (out["range_hi"] - out["range_lo"])
-    out["setup"] = out["setup_atr"] | out["setup_rsi"] | out["setup_range"]
+    # the setup measures (version 3: information only, no state depends on them)
+    out["dist_ma20_atr"] = (c - out["ma_short"]) / out["atr"]
+    rng = out["range_hi"] - out["range_lo"]
+    out["range_pos"] = ((c - out["range_lo"]) / rng).where(rng > 0)
     out["prior_high"] = h.shift(1)
     out["trig_high"] = c > out["prior_high"]
     out["stop"] = l.rolling(st["range_sessions"]).min() - st["atr_mult"] * out["atr"]   # no 200-day floor (version 2)
@@ -160,12 +163,20 @@ def nearest_ceiling(close: float, lr: dict | None, closes: pd.Series | None = No
     return min(above, key=lambda c: c["level"]) if above else None
 
 
-def evaluate(ind: pd.DataFrame, cfg: dict, earnings: list[date] | None = None, days_to_cover: float | None = None,
-             ceilings=None) -> pd.DataFrame:
-    """The state per session, a pure function of the session's data and the name's inputs (the next earnings
-    date, the current days-to-cover, the ceiling level). Returns state, the modifiers and their product, the
-    ceiling cap, the reason for a WATCH, and the earnings distance."""
+def heavily_shorted(days_to_cover: float | None, short_pct_float: float | None, cfg: dict) -> bool:
+    """Days-to-cover of 7 or more, or short interest of 20% or more of the float (version 3: either measure)."""
     m = cfg["modifiers"]
+    return bool((days_to_cover is not None and days_to_cover >= m["days_to_cover_min"]) or
+                (short_pct_float is not None and short_pct_float >= m.get("short_pct_float_min", float("inf"))))
+
+
+def evaluate(ind: pd.DataFrame, cfg: dict, earnings: list[date] | None = None, days_to_cover: float | None = None,
+             ceilings=None, short_pct_float: float | None = None) -> pd.DataFrame:
+    """The state per session, a pure function of the session's data and the name's inputs (the next earnings
+    date, the current days-to-cover and short interest as a share of the float, the ceiling level). Returns
+    state, the modifiers and their product, the ceiling cap, the reason for a WATCH, and the earnings distance."""
+    m = cfg["modifiers"]
+    shorted = heavily_shorted(days_to_cover, short_pct_float, cfg)
     earn = sorted(earnings or [])
     rows = []
     for ts, r in ind.iterrows():
@@ -182,15 +193,13 @@ def evaluate(ind: pd.DataFrame, cfg: dict, earnings: list[date] | None = None, d
         rec["ceiling_capped"] = capped
         if not r["trend"]:
             st = "AVOID"
-        elif not r["setup"]:
-            st = "WAIT"
-        else:
+        else:                                    # version 3: a passing gate is an entry, extended or not
             mods, f = [], 1.0
             if r["below_200d"]:
                 mods.append("below_200d"); f *= m["factor"]
             if sess is not None and sess <= m["earnings_sessions"]:
                 mods.append("earnings"); f *= m["factor"]
-            if days_to_cover is not None and days_to_cover >= m["days_to_cover_min"]:
+            if shorted:
                 mods.append("heavily_shorted"); f *= m["factor"]
             rec["modifiers"], rec["size_factor"] = mods, f
             if f < m["min_size_factor"] - 1e-9:
@@ -213,9 +222,8 @@ def transitions_of(ev: pd.DataFrame, prev: str | None = None) -> list[dict]:
             continue
         if prev is not None and st != prev:
             reason = ("trend gate failed: below the 200-day average with negative 12-month momentum" if st == "AVOID"
-                      else "setup absent" if st == "WAIT"
                       else (r["watch_reason"] or "watch") if st == "WATCH"
-                      else "setup with a passing trend gate" + (" (earnings within 20 sessions: half size)" if st == "READY-HALF" else ""))
+                      else "a passing trend gate" + (" (earnings within 20 sessions: half size)" if st == "READY-HALF" else ""))
             out.append({"date": d, "from": prev, "to": st, "reason": reason})
         prev = st
     return out
@@ -366,17 +374,20 @@ def earnings_inputs() -> tuple[dict[str, list[date]], dict[str, dict]]:
 
 
 def short_interest() -> dict[str, dict]:
-    """Days-to-cover and the month-on-month change in short interest per name, from the canonical
-    fundamentals fetch (the provider's shortRatio, sharesShort, sharesShortPriorMonth)."""
+    """Days-to-cover, short interest as a share of the float and the month-on-month change in short interest
+    per name, from the canonical fundamentals fetch (the provider's shortRatio, shortPercentOfFloat,
+    floatShares, sharesShort, sharesShortPriorMonth)."""
     out = {}
     for tk, f in (_json(DATA / "canonical" / "fundamentals.json").get("tickers") or {}).items():
         f = f or {}
-        dtc = f.get("shortRatio")
-        if dtc is None:
+        dtc, spf = f.get("shortRatio"), f.get("shortPercentOfFloat")
+        if dtc is None and spf is None:
             continue
         cur, prv = f.get("sharesShort"), f.get("sharesShortPriorMonth")
         stamp = f.get("dateShortInterest")
-        out[tk.upper()] = {"days_to_cover": round(float(dtc), 2), "shares_short": cur, "shares_short_prior_month": prv,
+        out[tk.upper()] = {"days_to_cover": round(float(dtc), 2) if dtc is not None else None,
+                           "short_pct_float": round(float(spf), 4) if spf is not None else None,
+                           "float_shares": f.get("floatShares"), "shares_short": cur, "shares_short_prior_month": prv,
                            "change_vs_prior_month": round(cur / prv - 1, 4) if cur and prv else None,
                            "as_of": datetime.fromtimestamp(stamp).date().isoformat() if isinstance(stamp, (int, float)) else None}
     return out
@@ -465,7 +476,7 @@ def r2(x, nd=2):
 
 
 MOD_TEXT = {"below_200d": "below the 200-day average (momentum positive)", "earnings": "earnings within 20 sessions",
-            "heavily_shorted": "heavily shorted (days-to-cover 7 or more)"}
+            "heavily_shorted": "heavily shorted (days-to-cover 7 or more, or short interest 20% or more of the float)"}
 
 
 def card_record(tk: str, ind: pd.DataFrame, ev: pd.DataFrame, earn: list[date], erec: dict | None, si: dict | None,
@@ -479,8 +490,8 @@ def card_record(tk: str, ind: pd.DataFrame, ev: pd.DataFrame, earn: list[date], 
     rec = {
         "state": e["state"], "date": str(d0), "close": r2(close),
         "trend": {"pass": bool(r["trend"]), "below_200d": bool(r["below_200d"]), "mom_12_1": r2(r["mom_12_1"], 4), "ma200": r2(r["ma_long"])},
-        "setup": {"present": bool(r["setup"]), "below_ma20_minus_atr": bool(r["setup_atr"]), "rsi_le_40": bool(r["setup_rsi"]),
-                  "lowest_quarter_of_range": bool(r["setup_range"])},
+        "setup": {"dist_ma20_atr": r2(r["dist_ma20_atr"]), "rsi": r2(r["rsi"], 1), "range_pos": r2(r["range_pos"], 2),
+                  "note": "information only: no state depends on it (version 3)"},
         "confirmation": {"close_above_prior_high": bool(r["trig_high"]), "prior_high": r2(r["prior_high"]),
                          "failed_breakdown_recovered": bool(r["trig_failed_breakdown"]),
                          "breakdown_level": r2(r["breakdown_level"]) if not pd.isna(r["breakdown_level"]) else None,
@@ -497,7 +508,9 @@ def card_record(tk: str, ind: pd.DataFrame, ev: pd.DataFrame, earn: list[date], 
         "earnings_known": bool(earn),
         "earnings": erec or None,
         "short_interest": si or None,
-        "heavily_shorted": bool(si and si.get("days_to_cover") is not None and si["days_to_cover"] >= cfg["modifiers"]["days_to_cover_min"]),
+        "heavily_shorted": heavily_shorted((si or {}).get("days_to_cover"), (si or {}).get("short_pct_float"), cfg),
+        "heavily_shorted_by": [k for k, ok in (("days-to-cover", (si or {}).get("days_to_cover") is not None and si["days_to_cover"] >= cfg["modifiers"]["days_to_cover_min"]),
+                                                ("short interest of the float", (si or {}).get("short_pct_float") is not None and si["short_pct_float"] >= cfg["modifiers"]["short_pct_float_min"])) if ok],
         "long_range": None, "ceiling_flag": False,
         "provider_flags": pflags or [],
     }
@@ -552,7 +565,7 @@ def main() -> int:
         # the state is a pure function of the data and the name's inputs, so a rerun of the session reproduces
         # it; the last 60 sessions are evaluated and the changes after the previous run's session are reported
         sub = ind.iloc[-60:]
-        ev = evaluate(sub, cfg, earn.get(tk), (si or {}).get("days_to_cover"), ceil_levels)
+        ev = evaluate(sub, cfg, earn.get(tk), (si or {}).get("days_to_cover"), ceil_levels, (si or {}).get("short_pct_float"))
         rec = card_record(tk, ind, ev, earn.get(tk, []), erecs.get(tk), si, lr, pf_all.get(tk, []), cfg)
         st = rec["state"]
         if st in ("READY", "READY-HALF"):
@@ -570,8 +583,8 @@ def main() -> int:
         names[tk] = rec
     counts = {s: sum(1 for v in names.values() if v.get("state") == s) for s in STATES}
     validation = {"verdict": "NOT RUN",
-                  "summary": ("version 2 of the rules (6 Oct 2026): the registered validation on survivorship-free S&P 500 constituents "
-                              "(reports/entry_state_validation_registration_2026-10-06.md) has not run; it waits for the purchased data. "
+                  "summary": ("version 3 of the rules (6 Oct 2026, revised order): the registered validation on survivorship-free S&P 500 constituents "
+                              "(reports/entry_state_validation_registration_v4_2026-10-06.md) has not run; it waits for the purchased data. "
                               "The 2-Oct rules' test returned no verdict (reports/entry_state_validation_2026-10-02.md)")}
     payload = {
         "cadence": "daily", "session_date": session, "as_of": session,
@@ -597,7 +610,7 @@ def main() -> int:
             for t in transitions:
                 if (t["date"], t["ticker"], t["from"], t["to"], t["reason"]) in seen:
                     continue                      # already logged by an earlier run of this session
-                fh.write(json.dumps({**t, "logged_at": payload["computed_at"]}) + "\n")
+                fh.write(json.dumps({**t, "rules_version": payload["rules_version"], "logged_at": payload["computed_at"]}) + "\n")
     log(f"{session}: {len(names)} names; " + ", ".join(f"{k} {v}" for k, v in counts.items()) + f"; {len(transitions)} card transitions")
     return 0
 

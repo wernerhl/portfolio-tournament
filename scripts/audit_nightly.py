@@ -729,7 +729,8 @@ def main(troot, sroot, today=None):
     esp_=os.path.join(troot,'entry_state.json')
     if os.path.exists(esp_):
         ej_=json.load(open(esp_)); en_=ej_.get('names') or {}
-        allowed_={'AVOID','WAIT','WATCH','READY','READY-HALF'}
+        # rules version 3 (revised order of 6-Oct-2026): the WAIT state is removed, so a WAIT anywhere is outside the set
+        allowed_={'AVOID','WATCH','READY','READY-HALF'}
         bad_=[f'{k}:{v.get("state")}' for k,v in en_.items() if v.get('state') is not None and v.get('state') not in allowed_]
         if bad_: add('HIGH','entry:states',f'entry_state.json states outside the rule set: {bad_[:6]}')
         nr_=[k for k,v in en_.items() if v.get('state') is None and not v.get('reason')]
@@ -756,6 +757,21 @@ def main(troot, sroot, today=None):
         if mod_: add('HIGH','entry:modifiers',f'states inconsistent with the size modifiers: {mod_[:6]}')
         if cap_g: add('HIGH','entry:ceiling_cap',f'READY although the ceiling flag is set (it caps at WATCH): {cap_g[:6]}')
         if gate_: add('HIGH','entry:trend_gate',f'AVOID without the gate condition (below the 200-day AND negative momentum): {gate_[:6]}')
+        # version 3: heavily shorted = days-to-cover >= 7 OR short interest >= 20% of the float; the flag, its stated
+        # cause and the size modifier must agree with the two measures on the card
+        cfgm_={}
+        try: cfgm_=(json.load(open(os.path.join(troot,'entry_state_config.json'))).get('modifiers') or {})
+        except Exception: pass
+        dmin_,smin_=cfgm_.get('days_to_cover_min',7.0),cfgm_.get('short_pct_float_min',0.20)
+        sh_=[]
+        for k,v in en_.items():
+            if not v.get('state'): continue
+            si_=v.get('short_interest') or {}
+            want_=bool((si_.get('days_to_cover') is not None and si_['days_to_cover']>=dmin_) or (si_.get('short_pct_float') is not None and si_['short_pct_float']>=smin_))
+            if bool(v.get('heavily_shorted'))!=want_: sh_.append(f'{k}: flag {v.get("heavily_shorted")} vs days-to-cover {si_.get("days_to_cover")}, short of float {si_.get("short_pct_float")}')
+            if v['state'] in ('READY','READY-HALF','WATCH') and v.get('size_factor') is not None and want_!=('heavily_shorted' in [m.get('name') for m in (v.get('modifiers') or [])]):
+                sh_.append(f'{k}: heavily_shorted modifier does not match the flag')
+        if sh_: add('HIGH','entry:short_flag',f'heavily-shorted flag inconsistent with days-to-cover / short interest of the float: {sh_[:6]}')
         cap_=[]
         for k,v in en_.items():
             z_=v.get('size') or {}

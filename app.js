@@ -1311,21 +1311,22 @@ function tradeContext(s){
   if (d.ma200_dist != null && Math.abs(d.ma200_dist) < 5) bits.push("at 200-DMA");
   return bits.join(" · ");
 }
-// ── Order 2-Oct-2026 [E2]: the entry state on every stock card (screen, book, tournament) ──
-// A rule output (trend gate → setup → trigger → event gate; a defined stop and a risk-budget size), shown
-// DIAGNOSTIC until the registered validation reports. It states what the rule reads, not an instruction.
+// ── Order 2-Oct-2026 [E2], rules version 3 (6-Oct-2026, revised): the entry state on every stock card ──
+// A rule output (trend gate → size modifiers → ceiling cap; a defined stop and a risk-budget size), shown
+// DIAGNOSTIC until the registered validation reports. Entry timing is information only (no WAIT state).
+// It states what the rule reads, not an instruction.
 const esD2 = v => v == null ? "—" : Number(v).toFixed(2);
 const esPct = (v, d) => v == null ? "—" : (v * 100).toFixed(d == null ? 1 : d) + "%";
-const ENTRY_CLS = {AVOID: "c-neg", WAIT: "c-3", WATCH: "c-warn", READY: "c-pos", "READY-HALF": "c-pos"};
+const ENTRY_CLS = {AVOID: "c-neg", WATCH: "c-warn", READY: "c-pos", "READY-HALF": "c-pos"};
 function entryRec(tk){ return (S.entryState && S.entryState.names && S.entryState.names[String(tk).toUpperCase()]) || null; }
 function entryLabel(){ return (S.entryState && S.entryState.label) || "DIAGNOSTIC"; }
-// Order 6-Oct-2026 (version 2 of the rules): the flags a card carries, each of which can change a state, a size or an exit.
+// Order 6-Oct-2026 (rules version 3): the flags a card carries, each of which can change a state, a size or an exit.
 function entryFlags(e){
   const out = [];
   if (!e) return out;
   if (e.trend && e.trend.below_200d && e.trend.pass) out.push({k: "below_200d", cls: "c-warn", t: "below the 200-day average", tip: `close $${esD2(e.close)} under the 200-day $${esD2(e.trend.ma200)} with 12-month momentum ${esPct(e.trend.mom_12_1)}: size halved`});
   if (e.ceiling_flag) { const c = (e.long_range || {}).ceiling || {}; out.push({k: "ceiling", cls: "c-warn", t: `ceiling $${esD2(c.level)}`, tip: `a multi-year ceiling ${esPct(-(e.long_range || {}).dist_ceiling)} above the close caps the state at WATCH until a close above it`}); }
-  if (e.heavily_shorted) { const s = e.short_interest || {}; out.push({k: "shorted", cls: "c-warn", t: "heavily shorted", tip: `days-to-cover ${s.days_to_cover} (7 or more): size halved`}); }
+  if (e.heavily_shorted) { const s = e.short_interest || {}; out.push({k: "shorted", cls: "c-warn", t: "heavily shorted", tip: `days-to-cover ${s.days_to_cover != null ? s.days_to_cover : "—"} · short interest ${s.short_pct_float != null ? (s.short_pct_float * 100).toFixed(1) + "% of the float" : "—"} (set by ${(e.heavily_shorted_by || []).join(" and ") || "—"}; 7 days or 20% of the float): size halved`}); }
   const ec = e.earnings || {};
   if (ec.conflict) out.push({k: "earn_conflict", cls: "c-warn", t: "earnings date conflict", tip: ec.conflict_text || "sources disagree on the next earnings date"});
   if ((e.provider_flags || []).length) out.push({k: "provider", cls: "c-neg", t: "provider data suspect", tip: e.provider_flags.map(f => `${f.field}: ${f.reason}`).join("; ")});
@@ -1357,17 +1358,16 @@ function entryStateText(e){
   if (!e || !e.state) return "—";
   const t = e.trend || {};
   if (e.state === "AVOID") return `trend gate fails: close $${esD2(e.close)} below the 200-day $${esD2(t.ma200)} and 12-month momentum ${esPct(t.mom_12_1)}`;
-  if (e.state === "WAIT") return "no setup: the price is extended (no pullback)";
   if (e.state === "WATCH") return escText30(e.watch_reason || "watch");
-  return "setup with a passing trend gate" + (e.state === "READY-HALF" ? " · earnings within 20 sessions: half size" : "");
+  return "a passing trend gate (extended or pulling back alike)" + (e.state === "READY-HALF" ? " · earnings within 20 sessions: half size" : "");
 }
 function renderEntryState(tk){
   const e = entryRec(tk);
   if (!e) return "";
   if (!e.state) return `<div class="es-block mono t1 c-3">ENTRY STATE — ${escText30(e.reason || "not computed")}</div>`;
   const set = e.setup || {}, t = e.trend || {}, cf = e.confirmation || {}, lr = e.long_range, si = e.short_interest;
-  const setupTxt = [set.below_ma20_minus_atr ? "close below the 20-day average less 1 ATR" : null, set.rsi_le_40 ? `RSI ${e.rsi} ≤ 40` : null,
-                    set.lowest_quarter_of_range ? "close in the lowest quarter of the 40-session range" : null].filter(Boolean).join("; ") || "none";
+  const sgn = v => v == null ? "—" : (v >= 0 ? "+" : "") + Number(v).toFixed(2);
+  const setupTxt = `close ${sgn(set.dist_ma20_atr)} ATR from the 20-day average $${esD2(e.ma20)} · RSI(14) ${set.rsi != null ? set.rsi : "—"} · ${set.range_pos != null ? Math.round(set.range_pos * 100) + "% of the way up" : "—"} the 40-session range ($${esD2(e.range_lo)}–$${esD2(e.range_hi)})`;
   const z = e.size || {}; const a = z.book_after || {}, b = z.book_before || {};
   const noEntry = !String(e.state).startsWith("READY");
   const flags = entryFlags(e).map(f => `<span class="es-badge ${f.cls}" title="${escText30(f.tip)}">${f.t}</span>`).join(" ");
@@ -1376,14 +1376,13 @@ function renderEntryState(tk){
   const ceil = lr && lr.ceiling ? lr.ceiling : null;
   const longTxt = lr ? `long range: 5-year closing high $${esD2(lr.high_5y)} (${lr.high_5y_date || "—"}, ${esPct(-lr.dist_5y)} above) · all-time closing high $${esD2(lr.ath)} (${lr.ath_date || "—"}, ${esPct(-lr.dist_ath)} above)` +
     (ceil ? ` · ceiling $${esD2(ceil.level)} (${(ceil.pair || []).map(p => `${p.date.slice(0, 7)} $${esD2(p.close)}, then ${esPct(p.decline)}`).join("; ")})${e.ceiling_flag ? ` <span class="c-warn">· within 15% below: state capped at WATCH</span>` : ""}` : " · no multi-year ceiling") : "";
-  const siTxt = si ? `days to cover ${si.days_to_cover}${si.change_vs_prior_month != null ? ` · short interest ${si.change_vs_prior_month >= 0 ? "+" : ""}${(si.change_vs_prior_month * 100).toFixed(1)}% vs the prior month` : ""}${si.as_of ? ` (as of ${si.as_of})` : ""}${e.heavily_shorted ? ` <span class="c-warn">· heavily shorted: size halved</span>` : ""}` : "days to cover —";
+  const siTxt = si ? `days to cover ${si.days_to_cover != null ? si.days_to_cover : "—"} · short interest ${si.short_pct_float != null ? (si.short_pct_float * 100).toFixed(1) + "% of the float" : "— of the float"}${si.change_vs_prior_month != null ? ` · ${si.change_vs_prior_month >= 0 ? "+" : ""}${(si.change_vs_prior_month * 100).toFixed(1)}% vs the prior month` : ""}${si.as_of ? ` (as of ${si.as_of})` : ""}${e.heavily_shorted ? ` <span class="c-warn">· heavily shorted (${escText30((e.heavily_shorted_by || []).join(" and "))})${e.state === "AVOID" ? "" : ": size halved"}</span>` : ""}` : "days to cover — · short interest —";
   const pf = (e.provider_flags || []).length ? `<div class="c-neg">provider data suspect: ${e.provider_flags.map(f => escText30(`${f.field} (${f.reason})`)).join("; ")}</div>` : "";
   return `<div class="es-block mono t1 lh16">
     <div><span class="c-3 w6 ls08">ENTRY STATE</span> <span class="es-badge ${ENTRY_CLS[e.state] || "c-3"} w7">${e.state}</span> <span class="mono t1 w6 r1 x2 c-warn ls06">${entryLabel()}</span> <span class="c-3">· as of ${e.date} · close $${esD2(e.close)}</span> ${flags}</div>
     ${S.entryState && S.entryState.validation ? `<div class="c-3">validation: ${escText30(S.entryState.validation.summary || S.entryState.validation.verdict || "")}</div>` : ""}
     <div class="c-2">${entryStateText(e)}</div>
-    <div class="c-3">trend gate ${t.pass ? "passes" : "fails"} (12-1 return ${esPct(t.mom_12_1)}; 200-day $${esD2(t.ma200)}${t.below_200d ? ", close below it" : ", close above it"}) · setup: ${setupTxt}</div>
-    <div class="c-3">${conf}</div>
+    <div class="c-3">trend gate ${t.pass ? "passes" : "fails"} (12-1 return ${esPct(t.mom_12_1)}; 200-day $${esD2(t.ma200)}${t.below_200d ? ", close below it" : ", close above it"})</div>
     <div class="${noEntry ? "c-3" : "c-2"}">${noEntry ? "stop level (no entry at " + e.state + "; shown for reference)" : "stop"} $${esD2(e.stop)} <span class="c-3">(40-session low $${esD2(e.range_lo)} less 1 ATR $${esD2(e.atr)})</span></div>
     <div class="c-2">size at the default risk budget: ${entrySizeText(e)}</div>
     ${eff}
@@ -1391,6 +1390,10 @@ function renderEntryState(tk){
     <div class="c-3">${siTxt}</div>
     ${longTxt ? `<div class="c-3">${longTxt}</div>` : ""}
     ${pf}
+    <details class="mt1"><summary class="mono t1 c-3 ptr ls05">entry timing (information: none of these changes a state, a size or an exit)</summary>
+      <div class="c-3 mt1">setup measures: ${setupTxt}</div>
+      <div class="c-3">${conf}</div>
+    </details>
   </div>`;
 }
 
@@ -2213,7 +2216,7 @@ function renderScanner(){
         <th class="${sortCls("trade")}"   data-scsort="trade">SETUP READING</th>
         <th class="num"></th>
         <th class="${sortCls("quad")}"    data-scsort="quad">FLAG</th>
-        <th title="entry state (DIAGNOSTIC): AVOID · WAIT · WATCH · READY · READY-HALF">ENTRY STATE</th>
+        <th title="entry state (DIAGNOSTIC): AVOID · WATCH · READY · READY-HALF">ENTRY STATE</th>
         <th class="${sortCls("opt")}"     data-scsort="opt" title="options: ◯ volatility cheap · ● rich · ◐ mixed · ◎ earnings inside 30 days">OPTIONS</th>
       </tr></thead>
       <tbody>${body}</tbody>
@@ -2555,7 +2558,7 @@ function renderTierDetail(tid){
   </div>`;
 
   h += `<table class="h-table"><tr>
-    <th>TICKER</th><th title="entry state (DIAGNOSTIC): AVOID · WAIT · WATCH · READY · READY-HALF">ENTRY STATE</th><th>SECTOR</th><th class="num">PRICE</th><th class="num">VALUE</th>
+    <th>TICKER</th><th title="entry state (DIAGNOSTIC): AVOID · WATCH · READY · READY-HALF">ENTRY STATE</th><th>SECTOR</th><th class="num">PRICE</th><th class="num">VALUE</th>
     ${tid==="5_werner" ? '<th class="num">COST</th><th class="num">GAIN</th>' : ''}
     <th class="num">WEIGHT</th><th></th>
   </tr>`;

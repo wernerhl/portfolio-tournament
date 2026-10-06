@@ -57,7 +57,7 @@ scripts = [
     "build_earnings_calendar.py",  # 3.2: provider earnings dates into the event calendar (weekly refresh) + the cluster detector
     "earnings_dates.py",           # 6-Oct order §5: the next earnings date across sources, conflicts flagged, investor relations deciding
     "long_range.py",               # 6-Oct order §3: yearly highs, multi-year ceilings, 5-year and all-time highs (rolling weekly refresh)
-    "entry_state.py",              # entry state per name, rules version 2 (6-Oct order): gate, setup, modifiers, ceiling cap, stop, size
+    "entry_state.py",              # entry state per name, rules version 3 (6-Oct order, revised): gate, modifiers, ceiling cap, stop, size
     "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
     # Order 30-Sept-2026 — read served data only, so they run last, before the referee:
     "compute_goals.py",            # D1/D2: the house goal in reais at the settled rate; the claims register's progress
@@ -418,7 +418,7 @@ SERVED_CADENCE = {
     "long_range.json": "daily", "provider_flags.json": "daily", "earnings_dates.json": "daily",   # 6-Oct order §3–§5
     "rates/global_rates.json": "daily", "rates/global_rates_home.json": "daily", "rates/series_meta.json": "daily",
     "rates/auctions.json": "daily", "rates/global_rates_config.json": "static",                 # 6-Oct order (global rates)
-    "review_names.json": "static", "earnings_date_sources.json": "static", "entry_state_config_2026-10-02.json": "static",
+    "review_names.json": "static", "earnings_date_sources.json": "static", "entry_state_config_2026-10-02.json": "static", "entry_state_config_2026-10-06_v2.json": "static",
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

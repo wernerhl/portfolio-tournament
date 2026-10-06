@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-tests/test_entry_state.py — the entry-state rules, version 2 (Execution Order: Revision of the Entry-State Indicator,
-6 October 2026). The 2-Oct rules' tests stay in tests/test_entry_state_v1.py against the frozen module.
+tests/test_entry_state.py — the entry-state rules, version 3 (Execution Order: Revision of the Entry-State Indicator,
+6 October 2026, as revised the same day). The 2-Oct rules' tests stay in tests/test_entry_state_v1.py against the
+frozen module.
 
 Acceptance 2 (states at the 5 October close), from fixtures of each name's daily OHLC and volume
 (tests/fixtures/entry/*_ohlc_to_2026-10-05.csv) with the inputs the order states: Lockheed Martin READY-HALF with
-below_200d, stop near $487 (40-session low $498.55 less ATR); Micron WAIT; Incyte capped at WATCH by its ceiling
-($131.50); Texas Pacific Land heavily shorted (days-to-cover 12.6). Plus the rule mechanics: the trend gate fails
-only below the 200-day with negative momentum, no 200-day floor on the stop, the quarter-size floor, the ceiling
-cap lifting on a close above it.
+below_200d, stop near $487 (40-session low $498.55 less ATR); Micron READY at full size; Powell READY with
+below_200d at half size; Incyte capped at WATCH by its ceiling ($131.50); Texas Pacific Land heavily shorted
+(days-to-cover 12.6); Ondas AVOID (close $7.42, 200-day $9.44, 12-month momentum -17%), heavily shorted by short
+interest of the float (days-to-cover 3.8). No WAIT state. Plus the rule mechanics: the trend gate fails only below
+the 200-day with negative momentum, no 200-day floor on the stop, the quarter-size floor, the ceiling cap lifting
+on a close above it.
 
     .venv/bin/python tests/test_entry_state.py
 """
@@ -41,17 +44,20 @@ def load(tk):
     return pd.read_csv(FX / f"{tk}_ohlc_to_2026-10-05.csv", index_col=0, parse_dates=True)
 
 
-def last(tk, earnings=None, dtc=None, ceiling=None):
+def last(tk, earnings=None, dtc=None, ceiling=None, spf=None):
     ind = es.indicators(load(tk), CFG)
-    ev = es.evaluate(ind.iloc[-5:], CFG, earnings, dtc, ceiling)
+    ev = es.evaluate(ind.iloc[-5:], CFG, earnings, dtc, ceiling, spf)
     return ind.iloc[-1], ev.iloc[-1]
 
 
-def test_config_is_version_2_and_v1_is_kept():
-    assert CFG["version"] == 2 and CFG["label"] == "DIAGNOSTIC"
+def test_config_is_version_3_and_earlier_versions_are_kept():
+    assert CFG["version"] == 3 and CFG["label"] == "DIAGNOSTIC"
+    assert "WAIT" not in CFG["states"] and "WAIT" not in es.STATES
     import hashlib
     v1 = REPO / "data" / "entry_state_config_2026-10-02.json"
     assert hashlib.sha256(v1.read_bytes()).hexdigest().startswith("0f438215"), "the 2-Oct config must stay byte-identical"
+    v2 = REPO / "data" / "entry_state_config_2026-10-06_v2.json"
+    assert hashlib.sha256(v2.read_bytes()).hexdigest().startswith("4aa58cc4"), "the morning's version 2 must stay byte-identical"
 
 
 def test_lockheed_ready_half_below_200d():
@@ -65,9 +71,38 @@ def test_lockheed_ready_half_below_200d():
     assert abs(r["stop"] - (lo40 - r["atr"])) < 1e-9 and abs(r["stop"] - 487) < 1.5, r["stop"]
 
 
-def test_micron_wait():
-    r, e = last("MU", [date(2026, 12, 23)], 1.07)
-    assert not bool(r["setup"]) and e["state"] == "WAIT", (e, r["rsi"])
+def test_micron_ready_at_full_size():
+    """Above its 200-day, positive 12-month momentum, earnings on 23 December (56 sessions away), days-to-cover 1.07 and
+    short interest 2.5% of the float: READY with no modifier. Under version 2 it read WAIT (extended, no pullback)."""
+    r, e = last("MU", [date(2026, 12, 23)], 1.07, None, 0.0245)
+    assert not bool(r["below_200d"]) and r["mom_12_1"] > 0, (r["close"], r["ma_long"], r["mom_12_1"])
+    assert e["state"] == "READY" and e["modifiers"] == [] and e["size_factor"] == 1.0, e
+
+
+def test_powell_ready_half_size_below_200d():
+    """Below its 200-day with positive momentum, extended (RSI above 70): READY at half size, the below_200d modifier only
+    (earnings on 17 November, 31 sessions away; days-to-cover 4.4, short interest 9.8% of the float)."""
+    r, e = last("POWL", [date(2026, 11, 17)], 4.38, None, 0.0975)
+    assert abs(r["close"] - 197.84) < 0.005 and bool(r["below_200d"]) and r["mom_12_1"] > 0 and r["rsi"] > 70, (r["close"], r["rsi"])
+    assert e["state"] == "READY" and e["modifiers"] == ["below_200d"] and e["size_factor"] == 0.5, e
+
+
+def test_ondas_avoid_and_heavily_shorted_by_float():
+    """Close $7.42 under the 200-day $9.44 with 12-month momentum -17%: AVOID. Heavily shorted by short interest of the
+    float (days-to-cover 3.8 alone would not set it)."""
+    r, e = last("ONDS", None, 3.83, None, 0.4096)
+    assert abs(r["close"] - 7.42) < 0.005 and abs(r["ma_long"] - 9.44) < 0.005 and abs(r["mom_12_1"] + 0.17) < 0.01, (r["close"], r["ma_long"], r["mom_12_1"])
+    assert e["state"] == "AVOID", e
+    assert es.heavily_shorted(3.83, 0.4096, CFG) and not es.heavily_shorted(3.83, None, CFG) and not es.heavily_shorted(3.83, 0.19, CFG)
+    assert es.heavily_shorted(7.0, None, CFG) and es.heavily_shorted(None, 0.20, CFG)
+
+
+def test_no_wait_state_extended_names_are_ready():
+    """An extended name and a pulling-back name read the same: every session with a passing gate is READY, READY-HALF or
+    WATCH, never WAIT."""
+    for tk in ("MU", "POWL", "LMT", "TPL", "INCY"):
+        ev = es.evaluate(es.indicators(load(tk), CFG).iloc[-120:], CFG)
+        assert "WAIT" not in set(ev["state"].dropna()), tk
 
 
 def test_incyte_watch_under_its_ceiling():
@@ -157,7 +192,8 @@ def test_states_are_from_the_allowed_set():
 
 
 if __name__ == "__main__":
-    for fn in [test_config_is_version_2_and_v1_is_kept, test_lockheed_ready_half_below_200d, test_micron_wait,
+    for fn in [test_config_is_version_3_and_earlier_versions_are_kept, test_lockheed_ready_half_below_200d, test_micron_ready_at_full_size,
+               test_powell_ready_half_size_below_200d, test_ondas_avoid_and_heavily_shorted_by_float, test_no_wait_state_extended_names_are_ready,
                test_incyte_watch_under_its_ceiling, test_tpl_heavily_shorted, test_trend_gate_fails_only_below_200d_with_negative_momentum,
                test_no_200d_floor_on_the_stop, test_quarter_floor_turns_three_modifiers_into_watch, test_ceiling_cap_lifts_above_the_ceiling,
                test_incyte_long_range_ceiling_reference, test_lockheed_ceiling_broken_so_no_cap, test_states_are_from_the_allowed_set]:

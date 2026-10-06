@@ -29,15 +29,15 @@ function optionsCell(tk){
 }
 
 // Order 2-Oct-2026 [E2]: the entry state on the board (DIAGNOSTIC until the registered validation reports)
-const ES_CLS = {AVOID: 'c-neg', WAIT: 'c-3', WATCH: 'c-warn', READY: 'c-pos', 'READY-HALF': 'c-pos'};
+const ES_CLS = {AVOID: 'c-neg', WATCH: 'c-warn', READY: 'c-pos', 'READY-HALF': 'c-pos'};
 const esRec = tk => (SC.entryState && SC.entryState.names && SC.entryState.names[tk]) || null;
 const esEsc = x => String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-// Order 6-Oct-2026 (rules version 2): the flags that change a state or a size
+// Order 6-Oct-2026 (rules version 3): the flags that change a state or a size
 function esFlags(e){
   const f = [];
   if (e.trend && e.trend.below_200d && e.trend.pass) f.push(['<200d', 'below the 200-day average (momentum positive): size halved']);
   if (e.ceiling_flag) f.push(['ceiling', `a multi-year ceiling at $${fmtD(((e.long_range || {}).ceiling || {}).level)} within 15% above: capped at WATCH`]);
-  if (e.heavily_shorted) f.push(['shorted', `days-to-cover ${(e.short_interest || {}).days_to_cover}: size halved`]);
+  if (e.heavily_shorted) { const si = e.short_interest || {}; f.push(['shorted', `days-to-cover ${si.days_to_cover != null ? si.days_to_cover : '—'}, short interest ${si.short_pct_float != null ? (si.short_pct_float * 100).toFixed(1) + '% of the float' : '—'} (set by ${(e.heavily_shorted_by || []).join(' and ') || '—'}): size halved`]); }
   if ((e.earnings || {}).conflict) f.push(['date?', (e.earnings || {}).conflict_text || 'earnings date conflict']);
   if ((e.provider_flags || []).length) f.push(['data?', 'provider data suspect: ' + e.provider_flags.map(x => x.field + ' (' + x.reason + ')').join('; ')]);
   return f;
@@ -57,7 +57,7 @@ function esCells(tk){
   const flags = fl.length ? fl.map(x => `<span class="c-warn" title="${esEsc(x[1])}">${esEsc(x[0])}</span>`).join(' ') : '<span class="c-3">—</span>';
   const size = z.shares != null ? `${z.shares}${e.size_factor != null && e.size_factor < 1 ? ` <span class="c-3">×${e.size_factor}</span>` : ''}` : '<span class="c-3">—</span>';
   const earn = e.sessions_to_earnings != null ? `<span class="${e.sessions_to_earnings <= 20 ? 'c-warn' : 'c-3'}">${e.sessions_to_earnings}</span>` : `<span class="c-3" title="${e.earnings_known ? 'no date ahead' : 'earnings date unknown'}">?</span>`;
-  const why = e.state === 'AVOID' ? 'trend gate fails (below the 200-day with negative momentum)' : e.state === 'WAIT' ? 'no setup (extended)' : e.state === 'WATCH' ? (e.watch_reason || 'watch') : 'setup with a passing trend gate';
+  const why = e.state === 'AVOID' ? 'trend gate fails (below the 200-day with negative momentum)' : e.state === 'WATCH' ? (e.watch_reason || 'watch') : 'a passing trend gate';
   const tip = `${e.state} · ${why} · stop $${e.stop}${z.shares != null ? ' · ' + z.shares + ' shares, ' + ((z.risk_budget || 0.005) * 100).toFixed(3).replace(/0+$/, '') + '% of the account at risk' + (z.capped_by ? ', capped by ' + z.capped_by : '') : ''} · ${(SC.entryState && SC.entryState.label) || 'DIAGNOSTIC'}`;
   return `<td class="t1"><span class="es-badge ${ES_CLS[e.state] || 'c-3'} w6" title="${esEsc(tip)}">${e.state}</span></td><td class="t1">${flags}</td><td class="num ${e.state.startsWith('READY') ? 'c-neg' : 'c-3'}">$${fmtD(e.stop)}</td><td class="num">${size}</td><td class="num">${earn}</td>`;
 }
@@ -71,7 +71,7 @@ const legend = full => `<div class="legend">
   <span title="the board ranks names against the current book; held names are scored against the rest of the book">CORR = penalty for return overlap vs the book (weight-aware, held names vs rest-of-book) · n/a = failed, no penalty, reason recorded</span>
   <span>LEV = leverage penalty 0 to −5 (net-debt/EBITDA primary, D/E fallback) · financials exempt</span>
   <span>MR REF = the mean-reversion reference (the higher of the 50-day average and 5% below price), formerly "entry level"; a reference, not an entry signal · vs REF = the reference's distance from the price</span>
-  <span>ENTRY STATE, rules version 2 (DIAGNOSTIC until its registered validation reports): AVOID below the 200-day with negative 12-month momentum · WAIT no setup · READY setup with a passing trend gate · READY-HALF the same with earnings inside 20 sessions · WATCH capped by a multi-year ceiling, or the size modifiers below a quarter · FLAGS &lt;200d (size ×½), shorted (days-to-cover 7+, ×½), ceiling, date? (earnings date conflict), data? (provider data suspect) · STOP the 40-session low less 1 ATR · SIZE shares at 0.5% of the account at risk × the modifiers, capped below 40% of the book's risk · EARN sessions to earnings · a rule output, not an instruction${SC.entryState && SC.entryState.validation ? ' · validation: ' + esEsc(SC.entryState.validation.summary || '') : ''}</span>` : ''}
+  <span>ENTRY STATE, rules version 3 (DIAGNOSTIC until its registered validation reports): AVOID below the 200-day with negative 12-month momentum · READY a passing trend gate, extended or pulling back (entry timing is information only) · READY-HALF the same with earnings inside 20 sessions · WATCH capped by a multi-year ceiling, or the size modifiers below a quarter · FLAGS &lt;200d (size ×½), shorted (days-to-cover 7+ or short interest 20%+ of the float, ×½), ceiling, date? (earnings date conflict), data? (provider data suspect) · STOP the 40-session low less 1 ATR · SIZE shares at 0.5% of the account at risk × the modifiers, capped below 40% of the book's risk · EARN sessions to earnings · a rule output, not an instruction${SC.entryState && SC.entryState.validation ? ' · validation: ' + esEsc(SC.entryState.validation.summary || '') : ''}</span>` : ''}
 </div>`;
 
 function sortBy(data, key, dir){
