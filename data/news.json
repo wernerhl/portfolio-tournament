@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-05",
- "fetched_at": "2026-10-06T15:19:14-04:00",
+ "as_of": "2026-10-06",
+ "fetched_at": "2026-10-06T19:34:50-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,7 +57,7 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=6 (parsed 20)",
+  "fed_press": "ok n=5 (parsed 20)",
   "fed_speeches": "ok n=5 (parsed 15)",
   "bea": "ok n=2 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
@@ -67,7 +67,7 @@
   "edgar": "ok n=99 (parsed 41 names)",
   "ir_avgo": "ok n=0 (parsed 10)",
   "ir_nvda": "ok n=0 (parsed 20)",
-  "ir_gev": "ok n=3 (parsed 20)",
+  "ir_gev": "ok n=4 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -82,16 +82,48 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 9,
-  "out_of_window": 26659,
+  "out_of_window": 26660,
   "unparseable": 0
  },
  "counts": {
-  "items": 181,
+  "items": 179,
   "tier1": 156,
-  "tier2": 25,
-  "last24h": 59
+  "tier2": 23,
+  "last24h": 50
  },
  "items": [
+  {
+   "id": "0438248e1accacee204739d672e26b9c61718ca3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183261426000035/xslF345X06/form4-10062026_041001.xml",
+   "timestamp": "2026-10-06T16:10:06-04:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova to Double the Number of MIT Interns and Permanent Hires in 2027",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-double-number-mit-interns-permanent-hires-2027",
+   "timestamp": "2026-10-06T12:16:48-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "1b7f09187e95e7c85c0126cb50eef93a242289fb",
    "tier": 1,
@@ -2909,79 +2941,15 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-09-29 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "d48de5fcc1b5976a5d58002f257b1599d5497b27",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Ares Management Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1176948/000162828026063870/ares-20260930.htm",
-   "timestamp": "2026-09-29T19:21:09-04:00",
-   "tickers": [
-    "ARES"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-09-30 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "608e96dfbaf485e2cb131a114c190b094a938355",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "GE Vernova (GEV) Gains As Market Dips: What You Should Know",
-   "source": "Zacks",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-gev-gains-market-210003190.html",
-   "timestamp": "2026-09-29T17:00:03-04:00",
-   "tickers": [
-    "GEV",
-    "GE"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Zacks · about GEV, GE",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b2bd87e6240a4a888de4e68cbaf8aaff1ff4daa0",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "How GE Vernova Has Jumped Into the Lead in the Nuclear Race",
-   "source": "Barrons.com",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.barrons.com/articles/ge-vernova-stock-hitachi-nuclear-energy-10815e0a?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-09-29T16:55:00-04:00",
-   "tickers": [
-    "GEV",
-    "GE"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Barrons.com · about GEV, GE",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1478a16716375972c4ed5730b455c47f1276eb07",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Agencies publish resolution plan feedback letters for 15 banking organizations",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260929a.htm",
-   "timestamp": "2026-09-29T16:00:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3",
    "3ad0a32bd03623acbcfb75653d8df234d56bbe25",
    "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
    "fea9a4b6bfb1358de0627932c86bdda03e88a486",
-   "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2",
-   "762ca07d3d4885c2ee4654dbcb022c40804f41f0"
+   "5f79ebcfeddeaf18cb852cfa728ad42ebb2f50e2"
   ],
   "NVDA": [
    "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
@@ -3008,6 +2976,8 @@
   ]
  },
  "last24h": [
+  "0438248e1accacee204739d672e26b9c61718ca3",
+  "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3",
   "1b7f09187e95e7c85c0126cb50eef93a242289fb",
   "8f6c23a96b99d7224a00c8b9066a0f7aa2028340",
   "5324592e8d8d7fe1234683005008494739c063c9",
@@ -3055,17 +3025,6 @@
   "1f94df2b8b873bd20076feffdd6dca83891a624d",
   "f37b20302a756c8fc71a4353617e1d4a882e5812",
   "23548e8a0b3b240caf58126a8cd505d8de88c26e",
-  "51758d558e0992ab8e1f17a5b365fbfb75308403",
-  "257a461c987766991e8030987a212fc06a40bd84",
-  "de8bab2d9c6cb392b08f0706e26341f752ebbd8e",
-  "68fd7c6ae4ec89826d71a3e6fbd162899bba3144",
-  "f241d244c5603b0d14dd926e03164a462394d7f0",
-  "6f0b3cf28598122b17761dac50151afc415f15ff",
-  "a284ee3bb75500d9360336b5f39dc8811d9d880b",
-  "3c63aba2178be2b4b7461aba912d4ca4a5b6ecf2",
-  "9a9b6a5949f78ff14db7aeb322fcf80e1968f0c2",
-  "0e36318f27a824c8194c457cf783c01df7b0df7a",
-  "f7395c495e5f3ef41dc7e6c46e1c15a256ab69ea",
-  "e27dbb6a6c607b7aaddae1eac2db4c0f5d5f3451"
+  "51758d558e0992ab8e1f17a5b365fbfb75308403"
  ]
 }
