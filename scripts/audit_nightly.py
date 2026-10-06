@@ -821,6 +821,53 @@ def main(troot, sroot, today=None):
         old_=[k for k in cn_ if k in lrn_ and lrn_[k].get('fetched_at') and to_date(lrn_[k]['fetched_at'][:10]) and (to_date(ls.isoformat())-to_date(lrn_[k]['fetched_at'][:10])).days>14]
         if nolr_: add('HIGH','long_range:coverage',f'card names without a long-range record (5-year and all-time highs, ceilings): {nolr_[:8]}')
         if old_: add('MEDIUM','long_range:stale',f'card names whose long-range history is more than 14 days old: {old_[:8]}')
+    # ---------- global rates (order 6-Oct-2026, section 8) ----------
+    # each series fresh within its expected lag (business days for daily series, 8 for the term premiums, 45 calendar
+    # days for the OECD monthly averages; data/rates/global_rates_config.json); Panel B's identities within 2 bp; every
+    # panel row carries its date; the day's rates vintage exists and matches the sha256 recorded when it was written
+    gcfg_p=os.path.join(troot,'rates','global_rates_config.json'); gm_p=os.path.join(troot,'rates','series_meta.json'); gr_p=os.path.join(troot,'rates','global_rates.json')
+    if os.path.exists(gcfg_p) and os.path.exists(gm_p):
+        gcfg_=json.load(open(gcfg_p)); gm_=json.load(open(gm_p))
+        def _bd_between(a,b):
+            n=0; d=a
+            while d<b:
+                d+=timedelta(days=1)
+                if d.weekday()<5: n+=1
+            return n
+        stale_=[]
+        for k,sdef in (gcfg_.get('series') or {}).items():
+            m_=gm_.get(k) or {}; d_=to_date(str(m_.get('as_of') or '')[:10])
+            if d_ is None: stale_.append(f'{k}: no data'); continue
+            if sdef.get('freq')=='monthly':
+                if (ls-d_).days>sdef.get('lag_days',45)+31: stale_.append(f'{k}: {d_} (monthly, lag {sdef.get("lag_days",45)} days)')
+            elif _bd_between(d_,ls)>sdef.get('lag_bd',1): stale_.append(f'{k}: {d_} ({_bd_between(d_,ls)} business days behind {ls}, allowed {sdef.get("lag_bd",1)})')
+        if stale_: add('HIGH','rates:stale',f'global-rates series older than their expected lag: {stale_[:8]}')
+    if os.path.exists(gr_p):
+        g_=json.load(open(gr_p)); idn_=(g_.get('panel_b') or {}).get('identities') or {}
+        tol_=idn_.get('tolerance_pp',0.02)
+        for k_,lab_ in (('b1_gap_pp','nominal = real + breakeven'),('b2_gap_pp','nominal = expected short rate + term premium')):
+            if idn_.get(k_) is None or abs(idn_[k_])>tol_+1e-9: add('HIGH','rates:identity',f'Panel B identity {lab_} off by {idn_.get(k_)} pp (tolerance {tol_})')
+        nod_=[r.get('code') for r in ((g_.get('panel_a') or {}).get('rows') or []) if not r.get('date')]
+        nod_+=[x.get('series') for x in (g_.get('panel_d') or []) if not x.get('date')]
+        nod_+=[k for k,v in ((g_.get('panel_b') or {}).get('current') or {}).items() if not v.get('date')]
+        nod_+=[x.get('id') for grp in ('worsening','reversal') for x in ((g_.get('panel_e') or {}).get(grp) or []) if not x.get('as_of')]
+        if nod_: add('HIGH','rates:as_of',f'global-rates values shown without their as-of date: {nod_[:8]}')
+        txt_=json.dumps(g_).lower()
+        for neg_ in ('no forecast and no recommendation','no recommendation','not a recommendation','no forecast','not a forecast'):
+            txt_=txt_.replace(neg_,'')                   # the panels' own disclaimers
+        for w_ in ('we expect','will rise','will fall','buy ','sell ','recommend'):
+            if w_ in txt_: add('HIGH','rates:language',f'global_rates.json contains forecast or recommendation wording ({w_.strip()!r})')
+        _lang(gr_p,'rates')
+    vi_p=os.path.join(troot,'rates','vintages','_index.json')
+    if os.path.exists(gcfg_p):
+        vidx_=json.load(open(vi_p)).get('vintages',{}) if os.path.exists(vi_p) else {}
+        import hashlib as _hl2
+        for d_,rec_ in vidx_.items():
+            vp_=os.path.join(troot,'rates','vintages',f'{d_}.json')
+            if not os.path.exists(vp_): add('HIGH','rates:vintage',f'rates vintage {d_} recorded but absent'); continue
+            if _hl2.sha256(open(vp_,'rb').read()).hexdigest()!=rec_.get('sha256'): add('CRITICAL','rates:vintage_immutable',f'rates vintage {d_} differs from the sha256 recorded when it was written: a vintage was rewritten')
+        if ls.isoformat() not in vidx_ and not any(k_>=ls.isoformat() for k_ in vidx_):
+            add('HIGH','rates:vintage',f'no rates vintage for the session {ls} (latest {max(vidx_) if vidx_ else "none"})')
     rroot_=os.path.abspath(os.path.join(troot,'..'))
     bz_=[]
     for fn_ in ('app.js','pages.js','screen.js','common.js','index.html','book.html','screen.html','tournament.html','guide.html','data/ticker_signals.json','data/brief_facts.json'):
