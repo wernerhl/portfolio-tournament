@@ -3434,6 +3434,17 @@ function renderGlobalRatesD(){
   return `<div class="rcc-card"><h3>DRIVERS · <span class="c-3 w5">the values the 6 October analysis linked to the rise; each with its one-month change and date</span></h3>
     <div class="gr-strip">${cells}</div><div class="chart-meta">${escText30((G.footnotes || {}).brent || "")}</div></div>`;
 }
+function renderGlobalRatesE(){
+  const G = S.globalRates; const E = G && G.panel_e; if (!E) return "";
+  const fmtV = s => s.measured == null ? "—" : s.unit === "bp" ? grSgn(s.measured, 0, "bp") : s.unit === "%" ? (s.id === "japan_above_3" ? Number(s.measured).toFixed(3) + "%" : grSgn(s.measured, 1, "%")) : s.measured;
+  const thr = s => `${s.op} ${s.unit === "bp" ? s.threshold + "bp" : s.unit === "%" ? s.threshold + "%" : s.threshold}`;
+  const line = s => `<tr><td><span class="es-badge ${s.present == null ? "c-3" : s.present ? "c-warn" : "c-pos"} w6">${s.present == null ? "n/a" : s.present ? "present" : "absent"}</span></td>
+      <td class="c-2">${escText30(s.text)}</td><td class="num c-1 w6">${fmtV(s)}</td><td class="num c-3">${thr(s)}</td><td class="c-3">${grDate(s.as_of)}${s.also ? ` · same-day front-month ${grSgn(s.also.measured, 1, "%")} (${grDate(s.also.as_of)})` : ""}</td></tr>`;
+  const tbl = (title, lst) => `<div class="mono t1 w6 c-2 mt2 ls08">${title}</div><div class="tbl-scroll"><table class="th-table stack-m"><tr><th>STATE</th><th>CONDITION</th><th class="num">MEASURED</th><th class="num">THRESHOLD</th><th>AS OF</th></tr>${lst.map(line).join("")}</table></div>`;
+  return `<div class="rcc-card"><h3>SIGNALS OF WORSENING AND OF REVERSAL · <span class="c-3 w5">${escText30(E.heading || "")}</span></h3>
+    ${tbl("WORSENING", E.worsening || [])}${tbl("REVERSAL", E.reversal || [])}
+    <div class="chart-meta">${escText30(E.brent_note || "")} · thresholds in data/rates/global_rates_config.json</div></div>`;
+}
 function renderGlobalRatesCharts(){
   const G = S.globalRates; if (!G) return;
   const CV = CHARTS.colors();
