@@ -433,6 +433,7 @@ SERVED_CADENCE = {
     "picks_vs_qqq.json": "daily", "picks_vs_qqq_config.json": "static",                          # 6-Oct order (revised) 6b
     "analyst/snapshots/_index.json": "daily", "analyst/revisions.json": "daily",                   # 7-Oct order C
     "analyst/sp500_membership_meta.json": "static", "analyst/coverage.json": "static",             # 7-Oct order B/D (one-off builds)
+    "analyst/walkforward_test.json": "static",
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

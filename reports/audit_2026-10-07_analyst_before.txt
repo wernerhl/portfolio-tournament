@@ -1,0 +1,9 @@
+last trading session: 2026-10-06
+Traceback (most recent call last):
+  File "/Users/whl/portfolio-tournament/scripts/audit_nightly.py", line 1173, in <module>
+    sys.exit(main(troot,sroot))
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/whl/portfolio-tournament/scripts/audit_nightly.py", line 401, in main
+    eq=sum(p.get('value',0) for p in v.get('positions',[])); cash=v.get('cash',0)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
