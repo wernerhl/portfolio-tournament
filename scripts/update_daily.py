@@ -167,6 +167,13 @@ def validate_outputs() -> None:
             if navs and all(abs(n - 100000) < 100 for n in navs) and len(history) > 5:
                 errors.append("All benchmarks within $100 of start across >5 days — likely frozen")
 
+            # 7-Oct-2026: no position may be published without a price (the provider's bar for the session missing:
+            # 95 of 540 names had no 6-Oct bar at 21:16 ET and the operator tier went out 20% low). A rejection
+            # keeps the last good state; the retries find the bars later in the night or before the open.
+            for tid_, tv_ in (last.get("tiers") or {}).items():
+                nopx_ = [p.get("ticker") for p in (tv_.get("positions") or []) if (p.get("shares") or 0) > 0 and (p.get("price") is None or p.get("value") is None)]
+                if nopx_:
+                    errors.append(f"PRICE_MISSING {tid_}: positions without a price for {last.get('date')}: {nopx_[:8]}")
             # A4: 60/40 should be present when both SPY and TLT have NAVs
             if (bms.get("spy") or {}).get("nav") and (bms.get("tlt") or {}).get("nav") and "60_40" not in bms:
                 errors.append("60/40 composite missing despite SPY + TLT being available")

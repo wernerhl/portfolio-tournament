@@ -397,10 +397,15 @@ def main(troot, sroot, today=None):
             if e.get('refers_to') and e['refers_to'] not in ids_: add('HIGH','mistakes:reference',f'entry {e.get("entry_id")} refers to an unknown entry')
         if len(ids_)!=len(ents_): add('CRITICAL','mistakes:duplicate','mistakes.jsonl carries duplicate entry ids')
     else: add('HIGH','mistakes:missing','data/mistakes.jsonl absent')
+    # 7-Oct-2026: a position published without a price (the provider's bar missing for the session) is a CRITICAL of
+    # its own, and the sums below treat None as 0 so the referee reports instead of crashing (on 6 Oct it crashed
+    # here and the run was recorded as 0 findings while the operator tier's NAV was published 20% low)
+    nopx_=[f'{k}:{p.get("ticker")}' for k,v in L['tiers'].items() for p in v.get('positions',[]) if (p.get('shares') or 0)>0 and (p.get('price') is None or p.get('value') is None)]
+    if nopx_: add('CRITICAL','identity:position_price',f'positions published without a price or value for {L.get("date")}: {nopx_[:8]}')
     for k,v in L['tiers'].items():
-        eq=sum(p.get('value',0) for p in v.get('positions',[])); cash=v.get('cash',0)
-        if abs(eq+cash-v['nav'])>1: add('CRITICAL','identity:nav',f'{k}: equity+cash={eq+cash:.0f} != nav={v["nav"]:.0f}')
-        w=sum(p.get('weight',0) for p in v.get('positions',[]))
+        eq=sum((p.get('value') or 0) for p in v.get('positions',[])); cash=v.get('cash') or 0
+        if abs(eq+cash-(v.get('nav') or 0))>1: add('CRITICAL','identity:nav',f'{k}: equity+cash={eq+cash:.0f} != nav={v.get("nav")}')
+        w=sum((p.get('weight') or 0) for p in v.get('positions',[]))
         if w>101: add('HIGH','identity:weights',f'{k}: position weights sum {w:.1f}%>100')
     inc=h[0]
     for b,vals in L['benchmarks'].items():
