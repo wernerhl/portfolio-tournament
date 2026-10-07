@@ -1,0 +1,54 @@
+{
+ "task": "B1 of the free-analyst-data order (7 October 2026): the provider's free analyst history, stored raw, never rewritten",
+ "downloaded_on": "2026-10-07",
+ "started_at": "2026-10-07T01:54:26-06:00",
+ "finished_at": "2026-10-07T02:21:20-06:00",
+ "elapsed_s": 1615,
+ "provider": "yfinance",
+ "yfinance_version": "1.3.0",
+ "pandas_version": "3.0.3",
+ "calls": {
+  "upgrades_downgrades": "Ticker.upgrades_downgrades",
+  "earnings_dates": "Ticker.get_earnings_dates(limit=100)",
+  "history": "Ticker.history(period='max', auto_adjust=False, actions=True) -> splits + month-end table"
+ },
+ "rate": "at most one request per second (global throttle)",
+ "requests": 1605,
+ "universe": {
+  "n": 535,
+  "source": "scripts/entry_state.universe_and_cards (data/universe.txt + held + board + tiers + review)"
+ },
+ "written": {
+  "upgrades_downgrades": {
+   "file": "upgrades_downgrades_2026-10-07.parquet",
+   "rows": 173099,
+   "tickers": 530
+  },
+  "earnings_dates": {
+   "file": "earnings_dates_2026-10-07.parquet",
+   "rows": 44796,
+   "tickers": 533
+  },
+  "splits": {
+   "file": "splits_2026-10-07.parquet",
+   "rows": 1541,
+   "tickers": 369
+  },
+  "monthly_prices": {
+   "file": "monthly_prices_2026-10-07.parquet",
+   "rows": 214606,
+   "tickers": 531
+  }
+ },
+ "counts": {
+  "ratings": 530,
+  "earnings": 533,
+  "history": 531
+ },
+ "failed": {},
+ "timestamps": {
+  "grade_date_utc": "naive UTC (the provider's epochGradeDate)",
+  "earnings_date_et": "naive America/New_York",
+  "month_end": "the last bar of each calendar month"
+ }
+}
