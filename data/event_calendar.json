@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-10-05",
+  "rebuilt_at": "2026-10-06",
   "cadence": "weekly",
-  "as_of": "2026-10-05",
+  "as_of": "2026-10-06",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule; Treasury auctions from TreasuryDirect TA_WS and Treasury's tentative auction schedule, never a weekday pattern). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -25,20 +25,8 @@
     "ta_ws_upcoming": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-05",
+      "retrieved_at": "2026-10-06",
       "items": [
-        {
-          "date": "2026-10-06",
-          "tenor": "3Y",
-          "tips": false,
-          "reopening": false,
-          "security_type": "Note",
-          "security_term": "3-Year",
-          "original_term": "3-Year",
-          "cusip": "91282CRQ6",
-          "announcement_date": "2026-10-01",
-          "time_et": "13:00"
-        },
         {
           "date": "2026-10-07",
           "tenor": "10Y",
@@ -68,15 +56,15 @@
     "ta_ws_auctioned": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/search?startDate={start}&endDate={end}&dateFieldName=auctionDate&type={kind}&format=json",
-      "retrieved_at": "2026-10-05",
+      "retrieved_at": "2026-10-06",
       "start": "2024-01-01",
-      "n": 264
+      "n": 265
     },
     "tentative_schedule": {
       "source": "live",
       "url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
       "pdf": "https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf",
-      "retrieved_at": "2026-10-05",
+      "retrieved_at": "2026-10-06",
       "parse": "XML (xml.etree), fetched at build time",
       "name": "Aug2026 Refunding Auction Calendar Official Ver 2",
       "start": "2026-08-05",
@@ -85,7 +73,7 @@
     "refunding": {
       "source": "live",
       "url": "https://home.treasury.gov/policy-issues/financing-the-government/quarterly-refunding/most-recent-quarterly-refunding-documents",
-      "retrieved_at": "2026-10-05",
+      "retrieved_at": "2026-10-06",
       "latest": "2026-08-05",
       "next": "2026-11-04"
     },
@@ -6979,9 +6967,9 @@
       "name": "3-Year Note auction",
       "label": "3Y",
       "impact": "low",
-      "source_url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-01",
-      "provenance": "announced (TreasuryDirect TA_WS upcoming; announced 2026-10-01)",
+      "source_url": "https://www.treasurydirect.gov/TA_WS/securities/search?cusip=91282CRQ6&format=json",
+      "retrieved_at": "2026-10-06",
+      "provenance": "auctioned (TreasuryDirect TA_WS auction record)",
       "time_et": "13:00",
       "tenor": "3Y",
       "reopening": false,
@@ -6992,7 +6980,7 @@
       "cusip": "91282CRQ6",
       "announcement_date": "2026-10-01",
       "tentative": false,
-      "status": "announced"
+      "status": "auctioned"
     },
     {
       "date": "2026-10-07",
@@ -7472,6 +7460,17 @@
       "announcement_date": "2026-10-22",
       "tentative": true,
       "status": "tentative"
+    },
+    {
+      "date": "2026-10-28",
+      "type": "EARNINGS",
+      "ticker": "ADP",
+      "name": "Earnings \u00b7 ADP",
+      "label": "ADP",
+      "source_url": "https://finance.yahoo.com/quote/ADP/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-06T22:55:11-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
     },
     {
       "date": "2026-10-28",
