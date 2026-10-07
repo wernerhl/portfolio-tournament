@@ -55,3 +55,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           FORCE_MISS: ${{ inputs.force_miss_date }}
         run: python scripts/options/snapshot_alerts.py sync ${FORCE_MISS:+--force-miss "$FORCE_MISS"}
+      - name: Analyst snapshot index and missed-day issue (7-Oct order C; the previous session is decided by now)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/analyst/snapshot_index.py
+          git config user.name "Tournament Bot"
+          git config user.email "bot@tournament"
+          git add data/analyst/snapshots/_index.json
+          if ! git diff --cached --quiet; then
+            git commit -m "🗂 analyst snapshot index $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3; do git pull --rebase -q origin main && git push && break; sleep $((i * 3)); done
+          fi
+          python scripts/analyst/snapshot_alerts.py sync || true

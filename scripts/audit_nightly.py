@@ -799,6 +799,56 @@ def main(troot, sroot, today=None):
             except Exception as e:
                 add('HIGH','entry:log',f'entry_state_log.jsonl unreadable ({e})')
         elif ej_.get('transitions_today'): add('MEDIUM','entry:log','transitions reported but entry_state_log.jsonl is absent')
+    # ---------- free-analyst-data order (7-Oct-2026), task C: the estimate snapshots ----------
+    # The latest snapshot is at most one trading day old and covers at least 95% of the universe; every captured
+    # file matches the sha256 the index recorded (immutable: CRITICAL); the revision variables stay DIAGNOSTIC and
+    # out of every score until 12 months of snapshots exist and the registered test reports (CRITICAL).
+    asn_=os.path.join(troot,'analyst','snapshots'); aix_=os.path.join(asn_,'_index.json')
+    if os.path.isdir(asn_):
+        from trading_calendar import last_completed_session as _lcs, prev_trading_day as _ptd
+        import datetime as _dt
+        snaps_=sorted(f[:10] for f in os.listdir(asn_) if re.fullmatch(r'\d{4}-\d{2}-\d{2}\.json',f))
+        S_=_lcs(); P_=_ptd(_dt.date.fromisoformat(S_))
+        if not snaps_:
+            add('INFO','analyst:snapshot_missing','no analyst-estimate snapshot yet (the first is written by the nightly of 7 Oct 2026)')
+        else:
+            L_=snaps_[-1]
+            if L_<P_: add('HIGH','analyst:snapshot_stale',f'latest analyst snapshot {L_} is more than one trading day old (last session {S_})')
+            try:
+                lj_=json.load(open(os.path.join(asn_,L_+'.json')))
+                cov_=lj_.get('coverage'); un_=(lj_.get('universe') or {}).get('n')
+                if cov_ is None or cov_<0.95: add('HIGH','analyst:snapshot_coverage',f'snapshot {L_} covers {cov_!r} of the universe ({lj_.get("captured")} of {un_}; at least 95% required)')
+                if lj_.get('immutable') is not True: add('HIGH','analyst:snapshot_flag',f'snapshot {L_} is not flagged immutable')
+            except Exception as e: add('HIGH','analyst:snapshot_unreadable',f'snapshot {L_}: {e}')
+            if os.path.exists(aix_):
+                try:
+                    import hashlib as _hl
+                    ix_=json.load(open(aix_)); bad_=[]
+                    for e_ in (ix_.get('days') or []):
+                        if e_.get('status')=='captured' and e_.get('sha256'):
+                            fp_=os.path.join(asn_,e_['date']+'.json')
+                            if os.path.exists(fp_) and _hl.sha256(open(fp_,'rb').read()).hexdigest()!=e_['sha256']: bad_.append(e_['date'])
+                    if bad_: add('CRITICAL','analyst:snapshot_immutable',f'snapshot files rewritten since the index recorded them: {bad_[:6]}')
+                    missing_=[e_['date'] for e_ in (ix_.get('days') or []) if e_.get('status')=='missing']
+                    if missing_: add('INFO','analyst:snapshot_index',f'{len(missing_)} missed day(s) on record: {missing_[-5:]}')
+                except Exception as e: add('HIGH','analyst:snapshot_index',f'_index.json unreadable ({e})')
+            else: add('MEDIUM','analyst:snapshot_index','data/analyst/snapshots/_index.json absent')
+        _lang(aix_,'analyst')
+    arv_=os.path.join(troot,'analyst','revisions.json')
+    if os.path.exists(arv_):
+        try:
+            rv_=json.load(open(arv_)); mo_=((rv_.get('snapshots') or {}).get('months') or 0)
+            if rv_.get('label')!='DIAGNOSTIC' and mo_<12: add('CRITICAL','analyst:diagnostic_gate',f"revisions.json labelled {rv_.get('label')!r} with {mo_} months of snapshots (DIAGNOSTIC until 12 months and a registered test)")
+            if rv_.get('in_score') is not False: add('CRITICAL','analyst:in_score','revisions.json marks the revision variables as score inputs')
+        except Exception as e: add('HIGH','analyst:revisions',f'revisions.json unreadable ({e})')
+        _lang(arv_,'analyst')
+        scp2_=os.path.join(troot,'screen','scores.json')
+        if os.path.exists(scp2_):
+            try:
+                rows2_=(json.load(open(scp2_)).get('watchlist') or [])
+                ank_=sorted({k for r in rows2_ for k in r if str(k).startswith('an_')})
+                if ank_: add('CRITICAL','analyst:in_score',f'analyst variables present in the screen scores before validation: {ank_[:6]}')
+            except Exception: pass
     # ---------- order 6-Oct-2026 (revised) 6b: the operator's picks against QQQ ----------
     # The number of independent decisions accompanies every figure; index funds, sector funds and gold stay out;
     # the summed difference is the sum of its positions; below about 30 decisions the panel says it cannot

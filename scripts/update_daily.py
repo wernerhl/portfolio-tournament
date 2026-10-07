@@ -24,6 +24,9 @@ scripts = [
     # the referee and the publish step follow in the workflow.
     "build_universe.py",           # 6.2: one universe (tournament ∪ screen ∪ midcaps ∪ held) → data/universe.txt
     "refresh_data.py",             # canonical closes: prices (new universe names fetched on first appearance), vol complex, sector ETFs, FRED
+    ["analyst/snapshot_estimates.py", "--check-origin"],   # 7-Oct order C: the day's analyst-estimate snapshot (immutable; one writer per session)
+    "analyst/snapshot_index.py",   # 7-Oct order C: captured / missing (with the reason) per trading day → data/analyst/snapshots/_index.json
+    "analyst/build_revisions.py",  # 7-Oct order C: the dated consensus history and the 30-day revision variables (DIAGNOSTIC, no score)
     "compute_regime_v2.py",        # regime layer (R_lead / R_full, published vintage)
     "score_regime_v4_daily.py",    # graduated model, daily scorer (AUDIT FIX 2a)
     "compute_vol_regime.py",       # volatility layer: VIX term-structure regime + attribution
@@ -428,6 +431,8 @@ SERVED_CADENCE = {
     "rates/auctions.json": "daily", "rates/global_rates_config.json": "static",                 # 6-Oct order (global rates)
     "review_names.json": "static", "earnings_date_sources.json": "static", "entry_state_config_2026-10-02.json": "static", "entry_state_config_2026-10-06_v2.json": "static",
     "picks_vs_qqq.json": "daily", "picks_vs_qqq_config.json": "static",                          # 6-Oct order (revised) 6b
+    "analyst/snapshots/_index.json": "daily", "analyst/revisions.json": "daily",                   # 7-Oct order C
+    "analyst/sp500_membership_meta.json": "static", "analyst/coverage.json": "static",             # 7-Oct order B/D (one-off builds)
     # on-change / static artifacts → cadence + as_of
     "thesis_registry.json": "on_change", "thesis_claims.json": "on_change",
     "registry_proposals.json": "on_change", "tier_holdings.json": "on_change",

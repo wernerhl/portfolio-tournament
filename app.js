@@ -1378,6 +1378,12 @@ function renderEntryState(tk){
     (ceil ? ` · ceiling $${esD2(ceil.level)} (${(ceil.pair || []).map(p => `${p.date.slice(0, 7)} $${esD2(p.close)}, then ${esPct(p.decline)}`).join("; ")})${e.ceiling_flag ? ` <span class="c-warn">· within 15% below: state capped at WATCH</span>` : ""}` : " · no multi-year ceiling") : "";
   const siTxt = si ? `days to cover ${si.days_to_cover != null ? si.days_to_cover : "—"} · short interest ${si.short_pct_float != null ? (si.short_pct_float * 100).toFixed(1) + "% of the float" : "— of the float"}${si.change_vs_prior_month != null ? ` · ${si.change_vs_prior_month >= 0 ? "+" : ""}${(si.change_vs_prior_month * 100).toFixed(1)}% vs the prior month` : ""}${si.as_of ? ` (as of ${si.as_of})` : ""}${e.heavily_shorted ? ` <span class="c-warn">· heavily shorted (${escText30((e.heavily_shorted_by || []).join(" and "))})${e.state === "AVOID" ? "" : ": size halved"}</span>` : ""}` : "days to cover — · short interest —";
   const pf = (e.provider_flags || []).length ? `<div class="c-neg">provider data suspect: ${e.provider_flags.map(f => escText30(`${f.field} (${f.reason})`)).join("; ")}</div>` : "";
+  // 7-Oct-2026 order (task C): the 30-day consensus-revision variables from the repository's own snapshots, shown
+  // once 30 days of snapshots exist, DIAGNOSTIC and in no score until 12 months and the registered test
+  const AR = S.analystRev, ar = AR && AR.names && AR.names[tk];
+  const pct1 = v => v == null ? "—" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%";
+  const arTxt = ar && (ar.an_eps_rev_30 != null || ar.an_eps_breadth_30 != null || ar.an_rev_rev_30 != null)
+    ? `<div class="c-3">analyst revisions, 30 days <span class="mono t1 w6 r1 x2 c-warn ls06">${escText30(AR.label || "DIAGNOSTIC")}</span> (information, in no score): consensus EPS for the fiscal year ${pct1(ar.an_eps_rev_30)} · breadth ${ar.an_eps_breadth_30 == null ? "—" : (ar.an_eps_breadth_30 >= 0 ? "+" : "") + ar.an_eps_breadth_30.toFixed(2)} of ${ar.analysts || "—"} analysts · revenue ${pct1(ar.an_rev_rev_30)} · against the snapshot of ${ar.base_snapshot || "—"}${ar.note ? " · " + escText30(ar.note) : ""}</div>` : "";
   return `<div class="es-block mono t1 lh16">
     <div><span class="c-3 w6 ls08">ENTRY STATE</span> <span class="es-badge ${ENTRY_CLS[e.state] || "c-3"} w7">${e.state}</span> <span class="mono t1 w6 r1 x2 c-warn ls06">${entryLabel()}</span> <span class="c-3">· as of ${e.date} · close $${esD2(e.close)}</span> ${flags}</div>
     ${S.entryState && S.entryState.validation ? `<div class="c-3">validation: ${escText30(S.entryState.validation.summary || S.entryState.validation.verdict || "")}</div>` : ""}
@@ -1390,6 +1396,7 @@ function renderEntryState(tk){
     <div class="c-3">${siTxt}</div>
     ${longTxt ? `<div class="c-3">${longTxt}</div>` : ""}
     ${pf}
+    ${arTxt}
     <details class="mt1"><summary class="mono t1 c-3 ptr ls05">entry timing (information: none of these changes a state, a size or an exit)</summary>
       <div class="c-3 mt1">setup measures: ${setupTxt}</div>
       <div class="c-3">${conf}</div>
