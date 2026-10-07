@@ -22,6 +22,8 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 HIST = REPO / "data" / "analyst" / "history"
 RESULTS = []
+sys.path.insert(0, str(REPO / "scripts" / "analyst"))
+import build_panel as bp   # noqa: E402  (read_all: the union of every download, the latest per name)
 
 
 def run(fn):
@@ -38,7 +40,7 @@ def stamp() -> str:
 
 
 def test_mu_and_lmt_rating_rows():
-    r = pd.read_parquet(HIST / f"upgrades_downgrades_{stamp()}.parquet")
+    r = bp.read_all("upgrades_downgrades", bp.all_stamps())
     mu = r[r["ticker"] == "MU"]; lmt = r[r["ticker"] == "LMT"]
     assert len(mu) >= 890 and mu["grade_date_utc"].min().year == 2012, (len(mu), mu["grade_date_utc"].min())
     assert len(lmt) >= 300, len(lmt)
@@ -46,7 +48,7 @@ def test_mu_and_lmt_rating_rows():
 
 
 def test_mu_earnings_rows():
-    e = pd.read_parquet(HIST / f"earnings_dates_{stamp()}.parquet")
+    e = bp.read_all("earnings_dates", bp.all_stamps())
     mu = e[e["ticker"] == "MU"].sort_values("earnings_date_et")
     assert mu["earnings_date_et"].min().year == 2002, mu["earnings_date_et"].min()
     row = mu[mu["earnings_date_et"].dt.strftime("%Y-%m-%d") == "2026-09-30"]
@@ -54,16 +56,16 @@ def test_mu_earnings_rows():
 
 
 def test_raw_files_are_dated_and_described():
-    s = stamp()
-    for n in ("upgrades_downgrades", "earnings_dates", "splits", "monthly_prices"):
-        assert (HIST / f"{n}_{s}.parquet").exists(), n
-    m = json.loads((HIST / f"_meta_{s}.json").read_text())
-    assert m["downloaded_on"] == s and m["rate"].startswith("at most one request per second") and m["requests"] > 0
-    assert "never rewritten" in m["task"]
+    for s in bp.all_stamps():
+        for n in ("upgrades_downgrades", "earnings_dates", "splits", "monthly_prices"):
+            assert (HIST / f"{n}_{s}.parquet").exists(), (n, s)
+        m = json.loads((HIST / f"_meta_{s}.json").read_text())
+        assert m["downloaded_on"] == s and m["rate"].startswith("at most one request per second") and m["requests"] > 0
+        assert "never rewritten" in m["task"]
 
 
 def test_monthly_table_columns():
-    m = pd.read_parquet(HIST / f"monthly_prices_{stamp()}.parquet")
+    m = bp.read_all("monthly_prices", bp.all_stamps())
     assert {"ticker", "month_end", "close", "adj_close", "dollar_volume_20", "sessions"} <= set(m.columns)
     lmt = m[m["ticker"] == "LMT"].sort_values("month_end")
     assert lmt["month_end"].min().year <= 1990 and lmt["dollar_volume_20"].notna().mean() > 0.9
