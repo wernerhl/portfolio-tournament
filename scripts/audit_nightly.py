@@ -1074,6 +1074,21 @@ def main(troot, sroot, today=None):
                 if _hl2.sha256(open(vp_,'rb').read()).hexdigest()!=rec_.get('sha256'): add('CRITICAL','rates:vintage_immutable',f'rates vintage {d_} differs from the sha256 recorded when it was written: a vintage was rewritten')
             if ls.isoformat() not in vidx_ and not any(k_>=ls.isoformat() for k_ in vidx_):
                 add('HIGH','rates:vintage',f'no rates vintage for the session {ls} (latest {max(vidx_) if vidx_ else "none"})')
+            # G7 (second follow-up, 7-Oct-2026): the vintage holds the session it is named for. Files written before the naming
+            # change carry no session field: their session is the last completed session at written_at
+            try:
+                from trading_calendar import last_completed_session as _lcs2
+                import errata as _er2, datetime as _dt3
+                _vcov={str(e_.get('file','')).split('/')[-1][:10]: e_ for e_ in _er2.entries() if str(e_.get('file','')).startswith('data/rates/vintages/')}
+                for d_ in vidx_:
+                    vp_=os.path.join(troot,'rates','vintages',f'{d_}.json')
+                    if not os.path.exists(vp_): continue
+                    vj_=json.load(open(vp_)); sess_=vj_.get('session')
+                    if not sess_ and vj_.get('written_at'): sess_=_lcs2(_dt3.datetime.fromisoformat(str(vj_['written_at'])))
+                    if sess_ and str(sess_)[:10]!=d_:
+                        if d_ in _vcov: add('INFO','rates:vintage_session',f'rates vintage {d_} holds the {sess_} session (erratum {_vcov[d_]["id"]}; the file stays as written)')
+                        else: add('HIGH','rates:vintage_session',f'rates vintage {d_} holds the {sess_} session, not the one it is named for')
+            except Exception as _e: add('MEDIUM','rates:vintage_session',f'check could not run ({type(_e).__name__}: {str(_e)[:80]})')
         rroot_=os.path.abspath(os.path.join(troot,'..'))
         bz_=[]
         for fn_ in ('app.js','pages.js','screen.js','common.js','index.html','book.html','screen.html','tournament.html','guide.html','data/ticker_signals.json','data/brief_facts.json'):

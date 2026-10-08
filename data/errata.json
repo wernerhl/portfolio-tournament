@@ -109,9 +109,22 @@
    "ledger_id": "mistake-2026-10-06-5",
    "added": "2026-10-07",
    "sha256": "2fd69f5e2e241752996a8c527b1398efac8d356c8633e212fc1bb693a15a18b2"
+  },
+  {
+   "id": "erratum-2026-10-06-rates-vintage-1",
+   "file": "data/rates/vintages/2026-10-06.json",
+   "tier": "rates",
+   "date": "2026-10-06",
+   "field": "session",
+   "published": "2026-10-06",
+   "corrected": "2026-10-05",
+   "reason": "the vintage is named by the calendar date it was written (6 Oct, 07:30 ET, by the morning retry that published the 5-October session) and holds the 5-October session's state; from the second follow-up of 7 Oct 2026 (G7) vintages are named by the session they hold. The file stays as written",
+   "ledger_id": null,
+   "added": "2026-10-08",
+   "sha256": "e80271bbeac418ec4d6fb3f18e60cdda5550cff1f0d4892f242cdf21775955e4"
   }
  ],
  "cadence": "static",
  "note": "append-only: one entry per wrong published value; the published file keeps its bytes and every computation reading it applies the corrected value (scripts/errata.py)",
- "as_of": "2026-10-07"
+ "as_of": "2026-10-08"
 }

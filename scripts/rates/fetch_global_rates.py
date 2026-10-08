@@ -33,6 +33,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 import re
 import sys
 import time
@@ -258,23 +259,28 @@ def main() -> int:
             log(f"auctions: {len(json.loads(AUCTIONS.read_text())['rows'])} notes and bonds since {(now_et().date() - timedelta(days=500)).isoformat()}")
         except Exception as e:  # noqa: BLE001
             log(f"auctions FAILED ({type(e).__name__}: {e}); previous file kept")
-    # the day's vintage: written once, never rewritten
+    # the session's vintage: written once, never rewritten. G7 (7-Oct-2026, second follow-up): named by the SESSION
+    # whose data it holds (the session the nightly publishes), not by the calendar date of the run — a morning retry
+    # that published the previous session had written the day's vintage with that session's state (6 Oct 2026)
     VINT.mkdir(parents=True, exist_ok=True)
     today = now_et().date().isoformat()
-    vp = VINT / f"{today}.json"
+    from trading_calendar import last_completed_session
+    session = os.environ.get("PUBLISH_SESSION") or last_completed_session(now_et())
+    vp = VINT / f"{session}.json"
     idx_p = VINT / "_index.json"
-    idx = json.loads(idx_p.read_text()) if idx_p.exists() else {"note": "one vintage per day, written once and never rewritten; sha256 recorded at write time", "vintages": {}}
+    idx = json.loads(idx_p.read_text()) if idx_p.exists() else {"note": "one vintage per session, written once and never rewritten; sha256 recorded at write time", "vintages": {}}
     if vp.exists():
         log(f"vintage {vp.name} already written; not rewritten")
     else:
-        body = {"date": today, "written_at": now, "order": "Execution Order: Global Rates Panels on the Bonds Page (6 October 2026)",
+        body = {"session": session, "date": today, "written_at": now, "order": "Execution Order: Global Rates Panels on the Bonds Page (6 October 2026)",
+                "naming": "the session whose data the vintage holds (second follow-up of 7 October 2026, G7)",
                 "series": {}}
         for key in cfg["series"]:
             sub = new[new["series"] == key].tail(30)
             body["series"][key] = {**{k: meta.get(key, {}).get(k) for k in ("label", "source", "id", "url", "retrieved_at", "as_of", "error")},
                                    "observations": [[str(d.date()), round(float(v), 4)] for d, v in zip(sub["date"], sub["value"])]}
         vp.write_text(json.dumps(body, indent=1, default=str))
-        idx["vintages"][today] = {"sha256": hashlib.sha256(vp.read_bytes()).hexdigest(), "written_at": now}
+        idx["vintages"][session] = {"sha256": hashlib.sha256(vp.read_bytes()).hexdigest(), "written_at": now, "session": session}
         idx_p.write_text(json.dumps(idx, indent=1))
         log(f"vintage {vp.name} written")
     fails = [k for k, v in meta.items() if v.get("error")]
