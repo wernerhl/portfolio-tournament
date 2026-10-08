@@ -1,0 +1,117 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-07",
+ "label": "DIAGNOSTIC",
+ "no_verdict": "computed after the registered result was known; no part in any verdict",
+ "order": "third follow-up of 7 October 2026, H3",
+ "score": "the registered primary score (43 variables, ridge penalty 100 and the boosted tree, mean of the within-month percentile ranks), refitted on the harness after H1",
+ "inputs": {
+  "raw_stamp": "2026-10-07+2026-10-07-2+2026-10-07-3+2026-10-07-4",
+  "table_rows": 81583,
+  "test_months": 141,
+  "members_per_month_with_label": 421.9,
+  "share_of_test_rows_with_a_sector_label": 0.9976,
+  "sector_file": "sectors_2026-10-07.parquet",
+  "registration_sha256": "eed7fab55a4ae4f92cb14a4e438717cd7c00507a4cc9a31ab61dd89e6c48296e",
+  "table_options": {
+   "hold_delisted": true,
+   "clip": null,
+   "ext": true,
+   "liquid_only": false,
+   "current_universe_only": false,
+   "shift_analyst": 0
+  }
+ },
+ "sector_labels": "the provider's current sector for each current symbol, applied to every year: Alphabet and Meta carry Communication Services also before the 2018 reclassification; a name that left the index keeps the label the provider shows today",
+ "cost": "20 bps a holding (10 bps a trade, both ways), charged to the top tenth, the selection term and the within-sector portfolios; the allocation term is gross",
+ "table": [
+  {
+   "quantity": "top tenth over the average member (registered quantity; names with a sector label)",
+   "pts_per_year": 4.2,
+   "t_nw": 2.68,
+   "months": 141,
+   "lags": 11
+  },
+  {
+   "quantity": "the top tenth's sector weights held at sector-average returns (gross)",
+   "pts_per_year": 1.83,
+   "t_nw": 1.87,
+   "months": 141,
+   "lags": 11
+  },
+  {
+   "quantity": "top tenth over the members of its own sector (net; allocation + this = the first row)",
+   "pts_per_year": 2.37,
+   "t_nw": 2.12,
+   "months": 141,
+   "lags": 11
+  },
+  {
+   "quantity": "same score ranked within each sector, top tenth of each sector, over the average member",
+   "pts_per_year": 2.47,
+   "t_nw": 3.5,
+   "months": 141,
+   "lags": 11
+  },
+  {
+   "quantity": "the same, over the members of its own sector",
+   "pts_per_year": 2.34,
+   "t_nw": 3.23,
+   "months": 141,
+   "lags": 11
+  },
+  {
+   "quantity": "within-sector version, 2014 to 2019",
+   "pts_per_year": 2.08,
+   "t_nw": 2.18,
+   "months": 72,
+   "lags": 11
+  },
+  {
+   "quantity": "within-sector version, 2020 to 2025",
+   "pts_per_year": 2.87,
+   "t_nw": 2.9,
+   "months": 69,
+   "lags": 11
+  },
+  {
+   "quantity": "registered version, 2014 to 2019",
+   "pts_per_year": 3.68,
+   "t_nw": 1.8,
+   "months": 72,
+   "lags": 11
+  },
+  {
+   "quantity": "registered version, 2020 to 2025",
+   "pts_per_year": 4.74,
+   "t_nw": 2.12,
+   "months": 69,
+   "lags": 11
+  },
+  {
+   "quantity": "past placebo (variables from 12 months earlier), within-sector version over the average member",
+   "pts_per_year": 2.51,
+   "t_nw": 2.96,
+   "months": 141,
+   "lags": 11
+  },
+  {
+   "quantity": "past placebo, registered version over the average member",
+   "pts_per_year": 3.76,
+   "t_nw": 3.55,
+   "months": 141,
+   "lags": 11
+  }
+ ],
+ "allocation_share_of_result": 0.436,
+ "technology": {
+  "share_of_top_tenth": 0.298,
+  "share_of_members": 0.134
+ },
+ "top_tenth_mean_rank": {
+  "R&D to sales": 0.187,
+  "gross profit to assets": 0.119,
+  "leverage": 0.105
+ },
+ "reading": "the past placebo stays high because R&D to sales and gross profitability change little from one year to the next: that placebo was built to catch look-ahead in variables that change quickly; for slow characteristics it is expected to stay high and does not indicate a leak"
+}
