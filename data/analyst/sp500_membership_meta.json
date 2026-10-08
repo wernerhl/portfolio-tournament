@@ -15,8 +15,8 @@
   "Wikipedia rows": "the symbol of the revision, mapped to today's symbol by the change table"
  },
  "tickers_ever": 1026,
- "tickers_current_ever": 956,
- "rows_with_a_mapped_ticker": 6733,
+ "tickers_current_ever": 961,
+ "rows_with_a_mapped_ticker": 6892,
  "ticker_changes": {
   "rows": 77,
   "by_method": {
@@ -25,7 +25,46 @@
    "components_list_continuity": 11,
    "wikipedia_name_continuity": 6,
    "sec_company_tickers_cik": 5
-  }
+  },
+  "applied": 76
+ },
+ "h1_bounds": {
+  "rule": "a change applies to a row under the old symbol only up to valid_to (the last month-end the old symbol is listed before the new symbol first appears), only when the row's CIK (where carried) is the change's, only when the row's name (where carried, no CIK) shares a word with a name the company had under the old symbol, and not when the new symbol is listed in the same month-end for another company",
+  "blocked": {
+   "date": 227,
+   "cik": 0,
+   "name": 0,
+   "coexistence": 6
+  },
+  "share_classes_not_mapped": [
+   {
+    "old": "DISCK",
+    "new": "WBD",
+    "note": "share class of DISCA: the provider's WBD history is DISCA's; stays under its own symbol"
+   }
+  ],
+  "earlier_holders_set_apart": [
+   {
+    "symbol": "AGN",
+    "set_apart_as": "AGN-201502",
+    "from": "2004-06-30",
+    "to": "2015-02-28",
+    "months": 129,
+    "cik": 850693,
+    "name": "Allergan Inc"
+   },
+   {
+    "symbol": "CB",
+    "set_apart_as": "CB-201512",
+    "from": "2004-06-30",
+    "to": "2015-12-31",
+    "months": 139,
+    "cik": 20171,
+    "name": "Chubb Corp."
+   }
+  ],
+  "collisions_unmapped": [],
+  "duplicate_pairs_left": 0
  },
  "wikipedia_revisions": {
   "2012-01-31": {

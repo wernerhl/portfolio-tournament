@@ -34,6 +34,17 @@ where today's symbol is TNL), the direction is reversed, unless the other side i
 Every member row carries `ticker` (as the source lists it) and `ticker_current`. Before 2012 no source gives the
 symbol of the day: the repository's "original" list carries the same later symbols as its "(Updated)" list.
 
+Bounds (H1, third follow-up of 7 October 2026). A change is applied to a row under the old symbol only up to
+`valid_to` - the last month-end the old symbol is listed before the new one first appears in the file - and only to
+the company that made the change: the row's CIK (where it carries one; before May 2014 the CIK of its run of
+consecutive month-ends, where any row of the run carries one) must be the change's; a row with a name and no CIK must
+share a word of a name the company had under the old symbol; and the change is withheld when the new symbol is listed
+in the same month-end for another company. A second share class whose history the new symbol does not carry (DISCK
+beside DISCA) stays under its own symbol. A symbol's earlier holder (Chubb Corp under CB until ACE took the symbol,
+Allergan Inc under AGN until Actavis took it) is set apart as SYMBOL-YYYYMM, the month its run ends, so that it takes
+no bars. The file carries no duplicate (month-end, ticker_current) pair; the referee checks
+(membership:duplicate_current_symbol). The CSV records valid_to, the names, `applies` and the note.
+
 Outputs
   data/analyst/sp500_membership_history.parquet   month_end, ticker, ticker_current, cik, name, source, revid, rev_time
   data/analyst/sp500_membership_meta.json
@@ -73,6 +84,16 @@ def log(m: str) -> None:
 
 def norm(t: str) -> str:
     return re.sub(r"\[.*?\]", "", str(t)).strip().upper().replace(".", "-")
+
+
+STOP = {"inc", "corp", "co", "the", "ltd", "plc", "company", "incorporated", "corporation", "group", "holdings", "holding",
+        "international", "intl", "and", "of", "de", "cos", "companies", "limited", "class", "a", "b", "c", "common", "stock",
+        "series", "new", "nv", "sa", "ag", "se"}
+
+
+def name_tokens(nm) -> set:
+    """The words of a company name that identify it (no corporate suffixes, no share-class words)."""
+    return {t for t in re.sub(r"[^a-z0-9 ]", " ", str(nm).lower()).split() if t and t not in STOP}
 
 
 def wiki_rows(html: str) -> pd.DataFrame:
@@ -268,9 +289,7 @@ def main() -> int:
             add_pair(x, ys[0], "unique")
     if ambiguous:
         ua = os.environ.get("SEC_USER_AGENT")
-        def tokens(nm):
-            stop = {"inc", "corp", "co", "the", "ltd", "plc", "company", "incorporated", "corporation", "group", "holdings", "holding", "international", "intl", "and", "of", "de", "cos", "companies", "limited", "class", "a", "b", "c", "common", "stock"}
-            return {t for t in re.sub(r"[^a-z0-9 ]", " ", str(nm).lower()).split() if t and t not in stop}
+        tokens = name_tokens
         def former_names(cik):
             pth = cache / f"sec_submissions_{cik}.json"
             if not pth.exists():
@@ -316,8 +335,130 @@ def main() -> int:
         log(f"components-list continuity: {len(unresolved)} unresolved: " + "; ".join(f"{u_['wikipedia']} ({u_['name']}) vs {u_['candidates']}: {u_['reason']}" for u_ in unresolved))
     resolve = make_resolve(dict(zip(changes["old"], changes["new"])))
     changes["current"] = changes["new"].map(resolve)
+    # ── H1 (third follow-up, 7 Oct 2026): a change is bounded by date and company. It applies to a row under the old
+    # symbol only (1) at month-ends up to valid_to - the last month-end the old symbol is listed before the new symbol
+    # first appears in the file (a symbol reused later by another company, Q after Quintiles, is not mapped);
+    # (2) when the row's CIK, where it carries one, is the CIK of the change; (3) when the row's name, where it carries
+    # one and no CIK, shares a word with a name the company had under the old symbol; (4) when the new symbol is not
+    # listed in the same month-end for another company (WellPoint Health Networks beside Anthem in 2004). A second
+    # share class whose history the new symbol does not carry (DISCK beside DISCA) stays under its own symbol. A
+    # symbol's earlier holder (Chubb Corp under CB before ACE took the symbol) is set apart as SYMBOL-YYYYMM, the
+    # month its run ends, so that it takes no bars.
+    changes = changes.drop_duplicates(["old", "new"]).reset_index(drop=True)
+    if "cik" not in changes.columns:
+        changes["cik"] = None
+    wrows = df[df["source"] == "Wikipedia revision"]
+    lit_first = df.groupby("ticker")["month_end"].min().to_dict()
+    row_cik = df["cik"].astype("float")
+    valid_to, old_names = [], []
+    for ch in changes.itertuples():
+        cik = float(ch.cik) if pd.notna(ch.cik) else None
+        rows = df[(df["ticker"] == ch.old) & (row_cik.isna() | (row_cik == cik) if cik is not None else True)]
+        nf = lit_first.get(ch.new)
+        before = rows[rows["month_end"] < nf] if (nf is not None and len(rows) and nf > rows["month_end"].min()) else rows
+        vt = (before if len(before) else rows)["month_end"].max() if len(rows) else None
+        valid_to.append(vt)
+        names = []
+        if isinstance(ch.old_name, str) and ch.old_name:
+            names.append(ch.old_name)
+        wn = wrows[(wrows["ticker"] == ch.old) & wrows["name"].notna() & ((wrows["month_end"] <= vt) if vt is not None else True)]
+        if cik is not None and (wn["cik"].astype("float") == cik).any():
+            wn = wn[wn["cik"].astype("float") == cik]
+        names += [n for n in wn["name"].unique().tolist() if n not in names]
+        old_names.append(" | ".join(names) if names else None)
+    changes["valid_to"] = [pd.Timestamp(v).strftime("%Y-%m-%d") if v is not None and pd.notna(v) else None for v in valid_to]
+    changes["old_name"] = old_names
+    # share classes: two old symbols of one company (the same CIK in their rows) mapped to one new symbol - the class
+    # whose symbol ends in A (or the first) carries the provider's history; the other stays under its own symbol
+    changes["applies"] = True; changes["note"] = None
+    cik_of_old = {o: set(df.loc[(df["ticker"] == o) & df["cik"].notna(), "cik"].astype(int)) for o in changes["old"].unique()}
+    for new, grp in changes.groupby("new"):
+        if len(grp) < 2:
+            continue
+        olds = list(grp["old"])
+        for i in range(len(olds)):
+            for j in range(i + 1, len(olds)):
+                if cik_of_old[olds[i]] & cik_of_old[olds[j]]:
+                    keep = olds[i] if olds[i].endswith("A") else (olds[j] if olds[j].endswith("A") else min(olds[i], olds[j]))
+                    drop = olds[j] if keep == olds[i] else olds[i]
+                    changes.loc[(changes["old"] == drop) & (changes["new"] == new), ["applies", "note"]] = [False, f"share class of {keep}: the provider's {new} history is {keep}'s; stays under its own symbol"]
+    by_old = {}
+    for ch in changes[changes["applies"]].itertuples():
+        by_old.setdefault(ch.old, []).append(ch)
+    literal_at = {me: set(g["ticker"]) for me, g in df.groupby("month_end")}
+    # a literal run: consecutive month-ends of one symbol with no change of CIK; the run's CIK, where any row carries
+    # one, is the company's CIK for every row of the run (the revisions before May 2014 carry none)
+    run_id = {}; run_cik = {}
+    for t, g in df.sort_values("month_end").groupby("ticker"):
+        rid, prev = 0, None
+        for r in g.itertuples():
+            if prev is not None and ((r.month_end.to_period("M") - prev.month_end.to_period("M")).n > 1 or
+                                     (pd.notna(r.cik) and run_cik.get((t, rid)) is not None and int(r.cik) != run_cik[(t, rid)])):
+                rid += 1
+            run_id[r.Index] = (t, rid)
+            if pd.notna(r.cik) and run_cik.get((t, rid)) is None:
+                run_cik[(t, rid)] = int(r.cik)
+            prev = r
+    cik_at = {(me, t): run_cik.get(run_id[i]) for i, me, t in zip(df.index, df["month_end"], df["ticker"])}
+    blocked = {"date": 0, "cik": 0, "name": 0, "coexistence": 0}; name_blocked_cases = {}
+    def step(t, t0, me, cik, name):
+        for ch in by_old.get(t, []):
+            if ch.valid_to is not None and me > pd.Timestamp(ch.valid_to):
+                blocked["date"] += 1; continue
+            if pd.notna(ch.cik) and cik is not None and int(ch.cik) != cik:
+                blocked["cik"] += 1; continue
+            if t == t0 and cik is None and name and ch.old_name and not (name_tokens(name) & name_tokens(ch.old_name)):
+                blocked["name"] += 1; name_blocked_cases.setdefault((t, name, ch.new), 0); name_blocked_cases[(t, name, ch.new)] += 1; continue
+            if ch.new in literal_at[me] and ch.new != t0:
+                same_company = pd.notna(ch.cik) and cik is not None and int(ch.cik) == cik   # the row is the company that took the symbol; the literal holder is the earlier one
+                if not same_company:
+                    blocked["coexistence"] += 1; continue
+            return ch.new
+        return None
+    def resolve_row(t, me, cik, name):
+        t0 = t; seen = [t]
+        while True:
+            n = step(t, t0, me, cik, name)
+            if n is None:
+                return t
+            if n in seen:                                                 # a cycle: the symbol listed in the latest month-end
+                cyc = seen[seen.index(n):]
+                inlatest = [x for x in cyc if x in latest_set]
+                return inlatest[0] if inlatest else cyc[-1]
+            seen.append(n); t = n
+    df["ticker_current"] = [resolve_row(t, me, cik_at[(me, t)], (n if isinstance(n, str) else None))
+                            for t, me, n in zip(df["ticker"], df["month_end"], df["name"])]
+    if name_blocked_cases:
+        log("name rule blocked: " + "; ".join(f"{k[0]} '{k[1]}' -> {k[2]} x{v}" for k, v in sorted(name_blocked_cases.items(), key=lambda kv: -kv[1])[:12]))
+    # earlier holders of a symbol: a literal run of the symbol that collides with rows mapped on to it
+    prior_holders, unmapped_collisions = [], []
+    dup = df[df.duplicated(["month_end", "ticker_current"], keep=False)]
+    for sym in sorted(dup["ticker_current"].unique()):
+        g = dup[dup["ticker_current"] == sym]
+        lit_months = set(g.loc[g["ticker"] == sym, "month_end"])
+        if lit_months:
+            L = df[(df["ticker"] == sym)].sort_values("month_end")
+            runs = {}
+            for r in L.itertuples():
+                runs.setdefault(run_id[r.Index], []).append(r)
+            for run in runs.values():
+                if any(r.month_end in lit_months for r in run):
+                    tag = f"{sym}-{run[-1].month_end.strftime('%Y%m')}"
+                    df.loc[[r.Index for r in run], "ticker_current"] = tag
+                    prior_holders.append({"symbol": sym, "set_apart_as": tag, "from": run[0].month_end.strftime("%Y-%m-%d"), "to": run[-1].month_end.strftime("%Y-%m-%d"),
+                                          "months": len(run), "cik": (int(run[-1].cik) if pd.notna(run[-1].cik) else None), "name": next((r.name for r in reversed(run) if isinstance(r.name, str)), None)})
+        else:
+            # two mapped rows: the company with the longer chain was absorbed; it stays under its own symbol
+            olds = sorted(g["ticker"].unique(), key=lambda o: (-len(set(resolve_chain(o))), o)) if False else sorted(g["ticker"].unique())
+            keep = olds[0]
+            for o in olds[1:]:
+                df.loc[(df["ticker"] == o) & (df["ticker_current"] == sym), "ticker_current"] = o
+                unmapped_collisions.append({"symbol": o, "collides_with": keep, "on": sym})
+    dups_left = int(df.duplicated(["month_end", "ticker_current"]).sum())
     changes.to_csv(CHANGES, index=False)
-    df["ticker_current"] = df["ticker"].map(resolve)
+    log(f"H1 bounds: blocked by date {blocked['date']}, CIK {blocked['cik']}, name {blocked['name']}, coexistence {blocked['coexistence']}; "
+        f"share classes not mapped {int((~changes['applies']).sum())}; earlier holders set apart {len(prior_holders)} ({', '.join(p['set_apart_as'] for p in prior_holders)}); "
+        f"collisions unmapped {len(unmapped_collisions)}; duplicate (month-end, current symbol) pairs left {dups_left}")
     for c_ in comparison:                                             # the same comparison with both sides mapped to current symbols
         me = c_["month_end"]; w = {resolve(t) for t in wiki[me]["ticker"]}; c = {resolve(t) for t in comp[me]}
         c_["differ_mapped"] = len(w ^ c); c_["only_wikipedia_mapped"] = sorted(w - c)[:40]; c_["only_components_mapped"] = sorted(c - w)[:40]
@@ -338,7 +479,10 @@ def main() -> int:
         "ticker_convention": {"components list rows (2004-06 to the first revision)": "the list's symbol: the company's later symbol as the list's maintainer carries it (ANTM for WellPoint's WLP, MDLZ for Kraft Foods' KFT), mapped on to today's symbol by the change table (ELV); the repository's 'original' file carries the same later symbols, so no source gives the symbol of the day before 2012",
                               "Wikipedia rows": "the symbol of the revision, mapped to today's symbol by the change table"},
         "tickers_ever": int(df["ticker"].nunique()), "tickers_current_ever": int(df["ticker_current"].nunique()), "rows_with_a_mapped_ticker": mapped,
-        "ticker_changes": {"rows": int(len(changes)), "by_method": changes["method"].value_counts().to_dict()},
+        "ticker_changes": {"rows": int(len(changes)), "by_method": changes["method"].value_counts().to_dict(), "applied": int(changes["applies"].sum())},
+        "h1_bounds": {"rule": "a change applies to a row under the old symbol only up to valid_to (the last month-end the old symbol is listed before the new symbol first appears), only when the row's CIK (where carried) is the change's, only when the row's name (where carried, no CIK) shares a word with a name the company had under the old symbol, and not when the new symbol is listed in the same month-end for another company",
+                      "blocked": blocked, "share_classes_not_mapped": changes.loc[~changes["applies"], ["old", "new", "note"]].to_dict("records"),
+                      "earlier_holders_set_apart": prior_holders, "collisions_unmapped": unmapped_collisions, "duplicate_pairs_left": dups_left},
         "wikipedia_revisions": revmeta,
         "limits": "volunteer-maintained lists; a change can lag by days; delisted members have no bars at the price provider and enter a test only where bars exist",
     }, indent=1, default=str))

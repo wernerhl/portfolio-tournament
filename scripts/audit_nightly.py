@@ -1306,12 +1306,23 @@ def main(troot, sroot, today=None):
             _tmap={}
             if os.path.exists(_tc):
                 _t=_pd3.read_csv(_tc); _tmap=dict(zip(_t['old'].astype(str).str.upper(),_t['current' if 'current' in _t.columns else 'new'].astype(str).str.upper()))
-            _cur={_tmap.get(t,t) for t in _cur}
+            if 'ticker_current' not in _mem.columns: _cur={_tmap.get(t,t) for t in _cur}      # H1: ticker_current is bounded by date and company; the CSV map is not
             _um=json.load(open(os.path.join(troot,'universe_meta.json'))) if os.path.exists(os.path.join(troot,'universe_meta.json')) else {}
             _dropped={str(d.get('class','')).upper() for d in ((_um.get('share_class_collapse') or {}).get('dropped') or [])}
             _miss=sorted(t for t in _cur if t not in set(_uni) and t not in _dropped)
             if _miss: add('INFO','universe:index_gap',f'{len(_miss)} current index members (as of {str(_lastm)[:10]}) not in the universe; listed for the owner, never added by the pipeline: {_miss}')
     except Exception as _e: add('MEDIUM','universe:check',f'universe checks could not run ({type(_e).__name__}: {str(_e)[:80]})')
+    # ---------- H1 (third follow-up, 7-Oct-2026): a current symbol listed twice in one month-end of the membership file
+    try:
+        _mp=os.path.join(troot,'analyst','sp500_membership_history.parquet')
+        if os.path.exists(_mp):
+            import pandas as _pd
+            _m=_pd.read_parquet(_mp,columns=['month_end','ticker','ticker_current'])
+            _d=_m[_m.duplicated(['month_end','ticker_current'],keep=False)]
+            if len(_d):
+                _cases=sorted({f"{str(me)[:7]} {cur} <- {'/'.join(sorted(set(g['ticker'])))}" for (me,cur),g in _d.groupby(['month_end','ticker_current'])})
+                add('HIGH','membership:duplicate_current_symbol',f"{_d.groupby(['month_end','ticker_current']).ngroups} month-end/symbol pairs where one current symbol appears twice (a ticker change applied to the wrong company or month): {_cases[:6]}")
+    except Exception as _e: add('MEDIUM','membership:duplicate_current_symbol',f'check could not run ({type(_e).__name__})')
     # ---------- the live site (F3, 7-Oct-2026) ----------
     # The served status.json of the live site: its session and its age in hours are reported every run; more than one
     # trading session behind the last session is HIGH (scripts/site_alerts.py opens the site-stale issue).

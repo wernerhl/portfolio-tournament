@@ -58,11 +58,26 @@ def ticker_map() -> dict[str, str]:
     CIK). Applied to every input list; the old symbol is kept in universe_meta.json's former_tickers."""
     if not TICKER_CHANGES.exists():
         return {}
+    import csv
+    # H1 (third follow-up, 7-Oct-2026): a change whose old symbol is listed today under another company (Q: Qnity after
+    # Quintiles) or that the membership build marked as not applying (a second share class) is not a rename of a
+    # current name; the membership file's latest month-end says which symbols are listed today
+    listed_today = set()
+    mp = DATA / "analyst" / "sp500_membership_history.parquet"
+    if mp.exists():
+        try:
+            import pandas as pd
+            m = pd.read_parquet(mp, columns=["month_end", "ticker"])
+            listed_today = set(m.loc[m["month_end"] == m["month_end"].max(), "ticker"].astype(str))
+        except Exception:
+            listed_today = set()
     out = {}
-    for ln in TICKER_CHANGES.read_text().splitlines()[1:]:
-        parts = ln.split(",")
-        if len(parts) >= 2 and parts[0].strip() and parts[1].strip():
-            out[norm(parts[0])] = norm(parts[1])
+    with TICKER_CHANGES.open(newline="") as fh:
+        for r in csv.DictReader(fh):
+            o, n = norm(r.get("old") or ""), norm(r.get("new") or "")
+            if not o or not n or str(r.get("applies", "True")).strip().lower() == "false" or o in listed_today:
+                continue
+            out[o] = n
     # chains (A -> B -> C) resolve to the last symbol
     for k in list(out):
         seen = {k}

@@ -1,0 +1,838 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-07",
+ "label": "free data, members with prices only",
+ "registration": {
+  "path": "data/analyst/candidate_list_test_registration.json",
+  "sha256": "eed7fab55a4ae4f92cb14a4e438717cd7c00507a4cc9a31ab61dd89e6c48296e"
+ },
+ "options": {
+  "current_universe_only": false,
+  "hold_delisted_primary": true,
+  "cost_bps": 10.0
+ },
+ "table": {
+  "primary": {
+   "months": 268,
+   "rows": 111096,
+   "first": "2004-06",
+   "last": "2026-09",
+   "options": {
+    "hold_delisted": true,
+    "clip": null,
+    "ext": true,
+    "liquid_only": false,
+    "current_universe_only": false,
+    "shift_analyst": 0
+   },
+   "members_per_month_avg": 414.5,
+   "members_without_12m_outcome_share": 0.0995,
+   "members_in_file_without_prices": 23221
+  },
+  "options": {
+   "hold_delisted": true,
+   "clip": null,
+   "ext": true,
+   "liquid_only": false,
+   "current_universe_only": false,
+   "shift_analyst": 0
+  }
+ },
+ "runs": {
+  "primary_43_held": {
+   "variables": "ext43",
+   "features": 43,
+   "train_from": "2010-06",
+   "hold_delisted": true,
+   "placebo_shift_months": 0,
+   "members_per_month": 388.5,
+   "months": 210,
+   "fwd12": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 4.21,
+      "t_nw_net": 2.7,
+      "excess_pts_per_year_gross": 4.41,
+      "t_nw_gross": 2.83,
+      "turnover_one_way_avg": 0.285,
+      "lags": 11
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 47,
+      "excess_pts_per_year_net": 5.0,
+      "t_nw_net": 3.08,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.13,
+      "t_nw_net": 2.85,
+      "excess_pts_per_year_gross": 3.33,
+      "t_nw_gross": 3.03,
+      "turnover_one_way_avg": 0.239,
+      "lags": 11
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 141,
+      "pts_per_year": 2.71,
+      "t_nw": 1.15
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 198,
+      "excess_pts_per_year_net": 0.56,
+      "t_nw_net": 0.39,
+      "excess_pts_per_year_gross": 0.76,
+      "t_nw_gross": 0.53,
+      "turnover_one_way_avg": 0.316,
+      "lags": 11
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 141,
+      "excess_pts_per_year_net": 1.5,
+      "t_nw_net": 0.83,
+      "excess_pts_per_year_gross": 1.7,
+      "t_nw_gross": 0.94,
+      "turnover_one_way_avg": 0.299,
+      "lags": 11
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 4.75,
+      "t_nw_net": 2.95,
+      "excess_pts_per_year_gross": 4.95,
+      "t_nw_gross": 3.07,
+      "turnover_one_way_avg": 0.297,
+      "lags": 11
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.44,
+      "t_nw_net": 2.51,
+      "excess_pts_per_year_gross": 3.64,
+      "t_nw_gross": 2.65,
+      "turnover_one_way_avg": 0.276,
+      "lags": 11
+     }
+    }
+   },
+   "fwd1": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 0.91,
+      "t_nw_net": 0.54,
+      "excess_pts_per_year_gross": 2.33,
+      "t_nw_gross": 1.39,
+      "turnover_one_way_avg": 0.593,
+      "lags": 1
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 50,
+      "excess_pts_per_year_net": 1.11,
+      "t_nw_net": 1.23,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 0.26,
+      "t_nw_net": 0.21,
+      "excess_pts_per_year_gross": 1.46,
+      "t_nw_gross": 1.16,
+      "turnover_one_way_avg": 0.498,
+      "lags": 1
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 152,
+      "pts_per_year": -0.75,
+      "t_nw": -0.22
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 209,
+      "excess_pts_per_year_net": -0.14,
+      "t_nw_net": -0.05,
+      "excess_pts_per_year_gross": 0.61,
+      "t_nw_gross": 0.24,
+      "turnover_one_way_avg": 0.313,
+      "lags": 1
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 152,
+      "excess_pts_per_year_net": 1.66,
+      "t_nw_net": 0.53,
+      "excess_pts_per_year_gross": 2.37,
+      "t_nw_gross": 0.76,
+      "turnover_one_way_avg": 0.296,
+      "lags": 1
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 1.62,
+      "t_nw_net": 0.96,
+      "excess_pts_per_year_gross": 3.05,
+      "t_nw_gross": 1.81,
+      "turnover_one_way_avg": 0.596,
+      "lags": 1
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 0.0,
+      "t_nw_net": 0.0,
+      "excess_pts_per_year_gross": 1.42,
+      "t_nw_gross": 0.83,
+      "turnover_one_way_avg": 0.589,
+      "lags": 1
+     }
+    }
+   }
+  },
+  "43_dropped": {
+   "variables": "ext43",
+   "features": 43,
+   "train_from": "2010-06",
+   "hold_delisted": false,
+   "placebo_shift_months": 0,
+   "members_per_month": 388.5,
+   "months": 210,
+   "fwd12": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 4.21,
+      "t_nw_net": 2.7,
+      "excess_pts_per_year_gross": 4.41,
+      "t_nw_gross": 2.83,
+      "turnover_one_way_avg": 0.285,
+      "lags": 11
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 47,
+      "excess_pts_per_year_net": 5.0,
+      "t_nw_net": 3.08,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.13,
+      "t_nw_net": 2.85,
+      "excess_pts_per_year_gross": 3.33,
+      "t_nw_gross": 3.03,
+      "turnover_one_way_avg": 0.239,
+      "lags": 11
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 141,
+      "pts_per_year": 2.71,
+      "t_nw": 1.15
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 198,
+      "excess_pts_per_year_net": 0.56,
+      "t_nw_net": 0.39,
+      "excess_pts_per_year_gross": 0.76,
+      "t_nw_gross": 0.53,
+      "turnover_one_way_avg": 0.316,
+      "lags": 11
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 141,
+      "excess_pts_per_year_net": 1.5,
+      "t_nw_net": 0.83,
+      "excess_pts_per_year_gross": 1.7,
+      "t_nw_gross": 0.94,
+      "turnover_one_way_avg": 0.299,
+      "lags": 11
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 4.75,
+      "t_nw_net": 2.95,
+      "excess_pts_per_year_gross": 4.95,
+      "t_nw_gross": 3.07,
+      "turnover_one_way_avg": 0.297,
+      "lags": 11
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.44,
+      "t_nw_net": 2.51,
+      "excess_pts_per_year_gross": 3.64,
+      "t_nw_gross": 2.65,
+      "turnover_one_way_avg": 0.276,
+      "lags": 11
+     }
+    }
+   },
+   "fwd1": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 0.91,
+      "t_nw_net": 0.54,
+      "excess_pts_per_year_gross": 2.33,
+      "t_nw_gross": 1.39,
+      "turnover_one_way_avg": 0.593,
+      "lags": 1
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 50,
+      "excess_pts_per_year_net": 1.11,
+      "t_nw_net": 1.23,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 0.26,
+      "t_nw_net": 0.21,
+      "excess_pts_per_year_gross": 1.46,
+      "t_nw_gross": 1.16,
+      "turnover_one_way_avg": 0.498,
+      "lags": 1
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 152,
+      "pts_per_year": -0.75,
+      "t_nw": -0.22
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 209,
+      "excess_pts_per_year_net": -0.14,
+      "t_nw_net": -0.05,
+      "excess_pts_per_year_gross": 0.61,
+      "t_nw_gross": 0.24,
+      "turnover_one_way_avg": 0.313,
+      "lags": 1
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 152,
+      "excess_pts_per_year_net": 1.66,
+      "t_nw_net": 0.53,
+      "excess_pts_per_year_gross": 2.37,
+      "t_nw_gross": 0.76,
+      "turnover_one_way_avg": 0.296,
+      "lags": 1
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 1.62,
+      "t_nw_net": 0.96,
+      "excess_pts_per_year_gross": 3.05,
+      "t_nw_gross": 1.81,
+      "turnover_one_way_avg": 0.596,
+      "lags": 1
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 0.0,
+      "t_nw_net": 0.0,
+      "excess_pts_per_year_gross": 1.42,
+      "t_nw_gross": 0.83,
+      "turnover_one_way_avg": 0.589,
+      "lags": 1
+     }
+    }
+   }
+  },
+  "21_price_held": {
+   "variables": "ext21",
+   "features": 21,
+   "train_from": "2005-01",
+   "hold_delisted": true,
+   "placebo_shift_months": 0,
+   "members_per_month": 414.5,
+   "months": 268,
+   "fwd12": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.2,
+      "t_nw_net": 2.12,
+      "excess_pts_per_year_gross": 3.4,
+      "t_nw_gross": 2.25,
+      "turnover_one_way_avg": 0.426,
+      "lags": 11
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 47,
+      "excess_pts_per_year_net": 3.59,
+      "t_nw_net": 1.79,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 2.7,
+      "t_nw_net": 2.36,
+      "excess_pts_per_year_gross": 2.9,
+      "t_nw_gross": 2.53,
+      "turnover_one_way_avg": 0.337,
+      "lags": 11
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 141,
+      "pts_per_year": 1.69,
+      "t_nw": 0.62
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 256,
+      "excess_pts_per_year_net": -0.53,
+      "t_nw_net": -0.32,
+      "excess_pts_per_year_gross": -0.33,
+      "t_nw_gross": -0.2,
+      "turnover_one_way_avg": 0.294,
+      "lags": 11
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 141,
+      "excess_pts_per_year_net": 1.51,
+      "t_nw_net": 0.9,
+      "excess_pts_per_year_gross": 1.71,
+      "t_nw_gross": 1.02,
+      "turnover_one_way_avg": 0.296,
+      "lags": 11
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.69,
+      "t_nw_net": 2.42,
+      "excess_pts_per_year_gross": 3.89,
+      "t_nw_gross": 2.55,
+      "turnover_one_way_avg": 0.435,
+      "lags": 11
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 1.93,
+      "t_nw_net": 1.17,
+      "excess_pts_per_year_gross": 2.13,
+      "t_nw_gross": 1.29,
+      "turnover_one_way_avg": 0.401,
+      "lags": 11
+     }
+    }
+   },
+   "fwd1": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": -0.89,
+      "t_nw_net": -0.41,
+      "excess_pts_per_year_gross": 0.76,
+      "t_nw_gross": 0.36,
+      "turnover_one_way_avg": 0.687,
+      "lags": 1
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 50,
+      "excess_pts_per_year_net": 2.62,
+      "t_nw_net": 2.72,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": -0.21,
+      "t_nw_net": -0.14,
+      "excess_pts_per_year_gross": 1.14,
+      "t_nw_gross": 0.74,
+      "turnover_one_way_avg": 0.564,
+      "lags": 1
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 152,
+      "pts_per_year": -2.87,
+      "t_nw": -0.8
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 267,
+      "excess_pts_per_year_net": -0.57,
+      "t_nw_net": -0.22,
+      "excess_pts_per_year_gross": 0.13,
+      "t_nw_gross": 0.05,
+      "turnover_one_way_avg": 0.293,
+      "lags": 1
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 152,
+      "excess_pts_per_year_net": 1.98,
+      "t_nw_net": 0.64,
+      "excess_pts_per_year_gross": 2.68,
+      "t_nw_gross": 0.86,
+      "turnover_one_way_avg": 0.293,
+      "lags": 1
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": -0.48,
+      "t_nw_net": -0.23,
+      "excess_pts_per_year_gross": 1.18,
+      "t_nw_gross": 0.56,
+      "turnover_one_way_avg": 0.689,
+      "lags": 1
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": -1.09,
+      "t_nw_net": -0.52,
+      "excess_pts_per_year_gross": 0.53,
+      "t_nw_gross": 0.25,
+      "turnover_one_way_avg": 0.676,
+      "lags": 1
+     }
+    }
+   }
+  },
+  "placebo_future_12m_43": {
+   "variables": "ext43",
+   "features": 43,
+   "train_from": "2010-06",
+   "hold_delisted": true,
+   "placebo_shift_months": 12,
+   "members_per_month": 388.5,
+   "months": 210,
+   "fwd12": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 55.98,
+      "t_nw_net": 11.31,
+      "excess_pts_per_year_gross": 56.18,
+      "t_nw_gross": 11.35,
+      "turnover_one_way_avg": 0.318,
+      "lags": 11
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 47,
+      "excess_pts_per_year_net": 57.04,
+      "t_nw_net": 11.14,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 40.6,
+      "t_nw_net": 14.19,
+      "excess_pts_per_year_gross": 40.8,
+      "t_nw_gross": 14.26,
+      "turnover_one_way_avg": 0.239,
+      "lags": 11
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 141,
+      "pts_per_year": 1.2,
+      "t_nw": 7.89
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 198,
+      "excess_pts_per_year_net": 51.97,
+      "t_nw_net": 13.64,
+      "excess_pts_per_year_gross": 52.17,
+      "t_nw_gross": 13.69,
+      "turnover_one_way_avg": 0.303,
+      "lags": 11
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 141,
+      "excess_pts_per_year_net": 54.78,
+      "t_nw_net": 10.92,
+      "excess_pts_per_year_gross": 54.98,
+      "t_nw_gross": 10.96,
+      "turnover_one_way_avg": 0.298,
+      "lags": 11
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 56.06,
+      "t_nw_net": 11.33,
+      "excess_pts_per_year_gross": 56.26,
+      "t_nw_gross": 11.37,
+      "turnover_one_way_avg": 0.319,
+      "lags": 11
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 55.58,
+      "t_nw_net": 11.31,
+      "excess_pts_per_year_gross": 55.78,
+      "t_nw_gross": 11.35,
+      "turnover_one_way_avg": 0.319,
+      "lags": 11
+     }
+    }
+   },
+   "fwd1": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 75.1,
+      "t_nw_net": 19.93,
+      "excess_pts_per_year_gross": 76.69,
+      "t_nw_gross": 20.21,
+      "turnover_one_way_avg": 0.663,
+      "lags": 1
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 50,
+      "excess_pts_per_year_net": 27.54,
+      "t_nw_net": 12.24,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 56.75,
+      "t_nw_net": 19.24,
+      "excess_pts_per_year_gross": 58.07,
+      "t_nw_gross": 19.54,
+      "turnover_one_way_avg": 0.551,
+      "lags": 1
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 141,
+      "pts_per_year": 33.8,
+      "t_nw": 14.61
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 198,
+      "excess_pts_per_year_net": 45.27,
+      "t_nw_net": 18.91,
+      "excess_pts_per_year_gross": 46.0,
+      "t_nw_gross": 19.23,
+      "turnover_one_way_avg": 0.303,
+      "lags": 1
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 141,
+      "excess_pts_per_year_net": 47.3,
+      "t_nw_net": 17.01,
+      "excess_pts_per_year_gross": 48.01,
+      "t_nw_gross": 17.27,
+      "turnover_one_way_avg": 0.298,
+      "lags": 1
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 75.57,
+      "t_nw_net": 19.96,
+      "excess_pts_per_year_gross": 77.16,
+      "t_nw_gross": 20.24,
+      "turnover_one_way_avg": 0.663,
+      "lags": 1
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 73.48,
+      "t_nw_net": 19.89,
+      "excess_pts_per_year_gross": 75.03,
+      "t_nw_gross": 20.16,
+      "turnover_one_way_avg": 0.645,
+      "lags": 1
+     }
+    }
+   }
+  },
+  "placebo_past_12m_43": {
+   "variables": "ext43",
+   "features": 43,
+   "train_from": "2010-06",
+   "hold_delisted": true,
+   "placebo_shift_months": -12,
+   "members_per_month": 388.5,
+   "months": 210,
+   "fwd12": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 4.11,
+      "t_nw_net": 3.72,
+      "excess_pts_per_year_gross": 4.31,
+      "t_nw_gross": 3.9,
+      "turnover_one_way_avg": 0.34,
+      "lags": 11
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 47,
+      "excess_pts_per_year_net": 3.82,
+      "t_nw_net": 3.59,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 2.98,
+      "t_nw_net": 3.68,
+      "excess_pts_per_year_gross": 3.18,
+      "t_nw_gross": 3.93,
+      "turnover_one_way_avg": 0.275,
+      "lags": 11
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 141,
+      "pts_per_year": 4.03,
+      "t_nw": 1.34
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 198,
+      "excess_pts_per_year_net": -1.3,
+      "t_nw_net": -0.68,
+      "excess_pts_per_year_gross": -1.1,
+      "t_nw_gross": -0.58,
+      "turnover_one_way_avg": 0.308,
+      "lags": 11
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 141,
+      "excess_pts_per_year_net": 0.07,
+      "t_nw_net": 0.03,
+      "excess_pts_per_year_gross": 0.27,
+      "t_nw_gross": 0.11,
+      "turnover_one_way_avg": 0.295,
+      "lags": 11
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 4.08,
+      "t_nw_net": 3.78,
+      "excess_pts_per_year_gross": 4.28,
+      "t_nw_gross": 3.96,
+      "turnover_one_way_avg": 0.345,
+      "lags": 11
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 141,
+      "excess_pts_per_year_net": 3.91,
+      "t_nw_net": 3.96,
+      "excess_pts_per_year_gross": 4.11,
+      "t_nw_gross": 4.16,
+      "turnover_one_way_avg": 0.323,
+      "lags": 11
+     }
+    }
+   },
+   "fwd1": {
+    "penalty_100": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 2.28,
+      "t_nw_net": 1.22,
+      "excess_pts_per_year_gross": 3.31,
+      "t_nw_gross": 1.78,
+      "turnover_one_way_avg": 0.43,
+      "lags": 1
+     },
+     "top_tenth_quarter_end": {
+      "quarters": 50,
+      "excess_pts_per_year_net": 0.04,
+      "t_nw_net": 0.05,
+      "lags": 3
+     },
+     "top_fifth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 1.9,
+      "t_nw_net": 1.55,
+      "excess_pts_per_year_gross": 2.76,
+      "t_nw_gross": 2.25,
+      "turnover_one_way_avg": 0.358,
+      "lags": 1
+     },
+     "paired_vs_momentum_12_1_top_tenth": {
+      "months": 152,
+      "pts_per_year": 3.89,
+      "t_nw": 1.23
+     },
+     "momentum_12_1_top_tenth": {
+      "months": 209,
+      "excess_pts_per_year_net": -1.68,
+      "t_nw_net": -0.81,
+      "excess_pts_per_year_gross": -0.94,
+      "t_nw_gross": -0.45,
+      "turnover_one_way_avg": 0.306,
+      "lags": 1
+     },
+     "momentum_12_1_top_tenth_test_months": {
+      "months": 152,
+      "excess_pts_per_year_net": -1.6,
+      "t_nw_net": -0.64,
+      "excess_pts_per_year_gross": -0.9,
+      "t_nw_gross": -0.36,
+      "turnover_one_way_avg": 0.294,
+      "lags": 1
+     },
+     "excess_return_target_ridge_only": null
+    },
+    "penalty_10": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 2.45,
+      "t_nw_net": 1.31,
+      "excess_pts_per_year_gross": 3.52,
+      "t_nw_gross": 1.88,
+      "turnover_one_way_avg": 0.443,
+      "lags": 1
+     }
+    },
+    "penalty_1000": {
+     "top_tenth_monthly": {
+      "months": 152,
+      "excess_pts_per_year_net": 2.01,
+      "t_nw_net": 1.15,
+      "excess_pts_per_year_gross": 2.98,
+      "t_nw_gross": 1.7,
+      "turnover_one_way_avg": 0.406,
+      "lags": 1
+     }
+    }
+   }
+  }
+ },
+ "pass_rule": {
+  "checks": {
+   "top_tenth_above_2_pts_net": true,
+   "t_nw_above_3": false,
+   "paired_vs_momentum_positive_t_above_2": false
+  },
+  "passed": false,
+  "sentence": "The candidate-list test fails on free data: the 43-variable score's top tenth, formed monthly and held to the last price, is +4.21 points a year against the average member after costs (Newey-West t 2.70; the rule needs more than 2 points and t above 3), and its paired difference against the 12-1 momentum top tenth is +2.71 points (t 1.15; the rule needs a positive difference with t above 2)."
+ },
+ "consequence": "the candidate list stays out of the score (the proposal's fallback is the 50 largest members)"
+}
