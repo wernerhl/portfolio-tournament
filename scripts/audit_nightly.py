@@ -1263,6 +1263,29 @@ def main(troot, sroot, today=None):
             if s.get('failure_reason') and 'exit 1' in str(s['failure_reason']): add('MEDIUM','status:opaque','tournament failure_reason does not name the failing assertion')
     except Exception as _e:
         add('CRITICAL','referee:check_failed:status',f'the status checks did not finish: {type(_e).__name__}: {str(_e)[:200]}')
+    # ---------- the dashboard universe (G3, second follow-up of 7-Oct-2026) ----------
+    # A universe name with no price bar for five sessions is HIGH (a symbol that no longer trades under that name);
+    # current index members missing from the universe are listed as INFO (names are never added by the pipeline).
+    try:
+        import pandas as _pd3
+        _up=os.path.join(troot,'universe.txt'); _pp=os.path.join(troot,'source','prices_daily.parquet')
+        _uni=[t.strip().upper() for t in open(_up).read().split() if t.strip()] if os.path.exists(_up) else []
+        if _uni and os.path.exists(_pp):
+            _px=_pd3.read_parquet(_pp); _px.index=_pd3.to_datetime(_px.index); _last5=_px.index[-5:]
+            _stale=[t for t in _uni if t not in _px.columns or _px.loc[_last5,t].isna().all()]
+            if _stale: add('HIGH','universe:stale_ticker',f'universe names with no price bar in the last five sessions ({_last5[0].date()}..{_last5[-1].date()}): {_stale[:12]}')
+        _mp=os.path.join(troot,'analyst','sp500_membership_history.parquet'); _tc=os.path.join(troot,'analyst','ticker_changes.csv')
+        if _uni and os.path.exists(_mp):
+            _mem=_pd3.read_parquet(_mp); _lastm=_mem['month_end'].max(); _cur=set(_mem[_mem['month_end']==_lastm]['ticker_current' if 'ticker_current' in _mem.columns else 'ticker'])
+            _tmap={}
+            if os.path.exists(_tc):
+                _t=_pd3.read_csv(_tc); _tmap=dict(zip(_t['old'].astype(str).str.upper(),_t['current' if 'current' in _t.columns else 'new'].astype(str).str.upper()))
+            _cur={_tmap.get(t,t) for t in _cur}
+            _um=json.load(open(os.path.join(troot,'universe_meta.json'))) if os.path.exists(os.path.join(troot,'universe_meta.json')) else {}
+            _dropped={str(d.get('class','')).upper() for d in ((_um.get('share_class_collapse') or {}).get('dropped') or [])}
+            _miss=sorted(t for t in _cur if t not in set(_uni) and t not in _dropped)
+            if _miss: add('INFO','universe:index_gap',f'{len(_miss)} current index members (as of {str(_lastm)[:10]}) not in the universe; listed for the owner, never added by the pipeline: {_miss}')
+    except Exception as _e: add('MEDIUM','universe:check',f'universe checks could not run ({type(_e).__name__}: {str(_e)[:80]})')
     # ---------- the live site (F3, 7-Oct-2026) ----------
     # The served status.json of the live site: its session and its age in hours are reported every run; more than one
     # trading session behind the last session is HIGH (scripts/site_alerts.py opens the site-stale issue).

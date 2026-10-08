@@ -50,12 +50,54 @@ def norm(t: str) -> str:
     return str(t).strip().upper().replace(".", "-")
 
 
+TICKER_CHANGES = DATA / "analyst" / "ticker_changes.csv"
+
+
+def ticker_map() -> dict[str, str]:
+    """G3 (second follow-up, 7-Oct-2026): old symbol -> current symbol (data/analyst/ticker_changes.csv, confirmed by SEC
+    CIK). Applied to every input list; the old symbol is kept in universe_meta.json's former_tickers."""
+    if not TICKER_CHANGES.exists():
+        return {}
+    out = {}
+    for ln in TICKER_CHANGES.read_text().splitlines()[1:]:
+        parts = ln.split(",")
+        if len(parts) >= 2 and parts[0].strip() and parts[1].strip():
+            out[norm(parts[0])] = norm(parts[1])
+    # chains (A -> B -> C) resolve to the last symbol
+    for k in list(out):
+        seen = {k}
+        while out[k] in out and out[k] not in seen:
+            seen.add(out[k]); out[k] = out[out[k]]
+    return out
+
+
+FORMER: dict[str, list[str]] = {}
+
+
+def former_tickers(names) -> dict[str, list[str]]:
+    """{current symbol: [former symbols]} for the universe's names, from the change table (chains included) and from
+    any old symbol read from the inputs."""
+    tmap = ticker_map()
+    out: dict[str, list[str]] = {k: list(v) for k, v in FORMER.items()}
+    present = set(names)
+    for old, cur in tmap.items():
+        if cur in present and old not in out.setdefault(cur, []):
+            out[cur].append(old)
+    return {k: sorted(v) for k, v in sorted(out.items()) if v}
+
+
 def read_list(path: Path) -> list[str]:
     if not path.exists():
         sys.exit(f"build_universe: required input missing: {path.relative_to(ROOT)}")
     seen, out = set(), []
+    tmap = ticker_map()
     for tok in path.read_text().split():
         tk = norm(tok)
+        if tk in tmap:                                   # G3: a symbol that changed is read as its current symbol
+            FORMER.setdefault(tmap[tk], [])
+            if tk not in FORMER[tmap[tk]]:
+                FORMER[tmap[tk]].append(tk)
+            tk = tmap[tk]
         if tk and not tk.startswith("#") and tk not in seen:
             seen.add(tk)
             out.append(tk)
@@ -144,6 +186,8 @@ def main() -> None:
         "only_screener_or_midcap": only_screener_or_midcap,
         "held_added": held_added,
         "share_class_collapse": collapse,
+        "former_tickers": former_tickers(union),                       # G3 (second follow-up, 7-Oct-2026): current symbol -> its former symbols (the change table)
+        "ticker_changes": "data/analyst/ticker_changes.csv",
         "sha256": sha,
         "output": "data/universe.txt",
     }
