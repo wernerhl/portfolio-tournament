@@ -567,7 +567,8 @@ def parent_navs(tournament_path: Path | None, session: str) -> dict:
         return {}
     try:
         t = json.load(open(tournament_path))
-        for h in reversed(t.get("history", []) or []):
+        sys.path.insert(0, str(Path(__file__).resolve().parent)); import errata
+        for h in reversed(errata.apply_history(t.get("history", []) or [])):            # F2 (7-Oct-2026): corrected values
             if str(h.get("date"))[:10] == session:
                 return {tid: td.get("nav") for tid, td in (h.get("tiers") or {}).items()}
     except Exception:

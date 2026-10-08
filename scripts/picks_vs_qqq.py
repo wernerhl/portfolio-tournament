@@ -356,6 +356,8 @@ def build(cfg: dict, tournament: dict, rows: list[dict], betas: Betas) -> dict:
 def main() -> int:
     cfg = json.loads(CONFIG.read_text())
     tournament = json.loads((DATA / "tournament.json").read_text())
+    import errata
+    tournament["history"] = errata.apply_history(tournament.get("history") or [])     # F2 (7-Oct-2026): corrected values
     rows = []
     p = DATA / "actions.jsonl"
     if p.exists():

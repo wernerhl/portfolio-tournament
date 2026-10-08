@@ -261,7 +261,8 @@ def main() -> int:
     ap.add_argument("--print", dest="do_print", action="store_true")
     ap.add_argument("--allow-non-trading", action="store_true")
     args = ap.parse_args()
-    H = json.load(open(DATA / "tournament.json"))["history"]
+    import errata
+    H = errata.apply_history(json.load(open(DATA / "tournament.json"))["history"])   # F2 (7-Oct-2026): corrected values
     a = build(H)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(a, indent=1, default=str) + "\n")

@@ -47,7 +47,7 @@ const FILES = {
   trades:["data/tournament/trades.jsonl","jsonl"], spells:["data/tournament/spells.jsonl","jsonl"], reviews:["data/tournament/reviews.jsonl","jsonl"],
   c6Power:["data/tournament/c6_power_check.json","json"],
   // the entry-state indicator (order 2-Oct-2026)
-  entryState:["data/entry_state.json","json"], globalRates:["data/rates/global_rates.json","json"], globalRatesHome:["data/rates/global_rates_home.json","json"], reviewNames:["data/review_names.json","json"], picksQQQ:["data/picks_vs_qqq.json","json"], analystRev:["data/analyst/revisions.json","json"], providerFlags:["data/provider_flags.json","json"],
+  entryState:["data/entry_state.json","json"], globalRates:["data/rates/global_rates.json","json"], globalRatesHome:["data/rates/global_rates_home.json","json"], reviewNames:["data/review_names.json","json"], picksQQQ:["data/picks_vs_qqq.json","json"], analystRev:["data/analyst/revisions.json","json"], errata:["data/errata.json","json"], providerFlags:["data/provider_flags.json","json"],
 };
 async function loadFiles(keys, into){
   const target = into || S;
@@ -62,7 +62,31 @@ async function loadFiles(keys, into){
     else if (kind === "text") v = await loadText(path);
     target[k] = v;
   }));
+  applyErrata(target);
   return target;
+}
+
+// F2 (7-Oct-2026): corrections to published values live in data/errata.json (append-only); the published file keeps
+// its bytes and every reader uses the corrected value. Applied once to the tournament history in memory; each
+// corrected tier dict carries `errata` (the entry ids) so the pages can footnote the date.
+function applyErrata(target){
+  const T = target.tournament, E = target.errata;
+  if (!T || !E || !Array.isArray(E.entries) || T._errata_applied || !Array.isArray(T.history)) return;
+  const byKey = {};
+  E.entries.filter(e => e.file === "data/tournament.json").forEach(e => { const k = String(e.date).slice(0, 10) + "|" + e.tier; (byKey[k] = byKey[k] || []).push(e); });
+  T.history.forEach(row => {
+    const d = String(row.date).slice(0, 10);
+    Object.entries(row.tiers || {}).forEach(([tid, td]) => {
+      const es = byKey[d + "|" + tid]; if (!es) return;
+      es.forEach(e => {
+        if (e.ticker) (td.positions || []).forEach(p => { if (String(p.ticker).toUpperCase() === String(e.ticker).toUpperCase()) p[e.field] = e.corrected; });
+        else td[e.field] = e.corrected;
+      });
+      td.errata = es.map(e => e.id);
+    });
+  });
+  T._errata_applied = true;
+  T._errata_dates = Object.keys(byKey).map(k => k.split("|")).reduce((acc, [d, tid]) => { (acc[d] = acc[d] || []).push(tid); return acc; }, {});
 }
 
 // ── Sessions and freshness (moved from app.js 1-Oct-2026; shared by every page incl. the screen) ──

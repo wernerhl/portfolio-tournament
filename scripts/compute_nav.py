@@ -293,7 +293,11 @@ def werner_comparable(history: list) -> dict:
             # cash to the holdings file (1-Oct-2026: a cash-only re-sync carries no name change)
             shares = {p["ticker"]: round(float(p.get("shares") or 0), 4) for p in w.get("positions", [])}
             pshares = {p["ticker"]: round(float(p.get("shares") or 0), 4) for p in prev["tiers"]["5_werner"].get("positions", [])}
-            reseed = names != pnames or shares != pshares or bool(w.get("reseeded"))
+            # 7-Oct-2026 (F2): since 1 Oct every row re-syncs its cash to the holdings file and carries reseeded=True,
+            # which froze this series (each day's return was excluded as a "step"). A cash re-sync is a re-seed only
+            # when the cash actually moved against the previous row (a deposit, a withdrawal or a re-transcription).
+            pcash = float(prev["tiers"]["5_werner"].get("cash") or 0); cash = float(w.get("cash") or 0)
+            reseed = names != pnames or shares != pshares or (bool(w.get("reseeded")) and pnav > 0 and abs(cash - pcash) > 0.005 * pnav)
             if reseed:
                 events.append({"date": r["date"], "nav_before": round(pnav, 2), "nav_after": round(nav, 2),
                                "step_pct": round((nav / pnav - 1.0) * 100, 2) if pnav > 0 else None,
@@ -308,7 +312,7 @@ def werner_comparable(history: list) -> dict:
             "comparable": False,
             "comparable_reason": "the tier is not rebuilt from the brokerage transactions export; until then it is shown as not comparable and excluded from rankings (order 30-Sept, 4.4)",
             "reseed_events": events,
-            "series_definition": "daily returns of the as-published NAV chain-linked from inception with each re-seed session's step excluded (ratio 1 on that session)",
+            "series_definition": "daily returns of the (errata-corrected) NAV chain-linked from inception with each re-seed session's step excluded (ratio 1 on that session); a cash re-sync counts as a re-seed only when the cash moved by more than 0.5% of NAV",
             "series": series,
             "note": "as-published NAVs untouched; this block is additive"}
 
@@ -685,9 +689,20 @@ def main():
     else:
         history.append(entry)
     tournament["history"] = history
-    tournament["cost_restatement"] = cost_restatement(history, COST_RT, COST_LABEL)   # C1, additive
-    tournament["werner_comparable"] = werner_comparable(history)                       # T3 (audit 30-Sept), additive
-    tournament["drawdown"] = annotate_drawdowns(history, today)                        # P2.1, additive (per-row drawdown alongside nav)
+    # F2 (7-Oct-2026): every computation that reads the tier history uses the errata-corrected values
+    # (data/errata.json, scripts/errata.py); the published rows keep their bytes. The per-row drawdown
+    # annotation (a derived field, recomputed every night since P2.1) is copied back from the corrected copy.
+    import errata as _errata
+    corrected = _errata.apply_history(history)
+    tournament["cost_restatement"] = cost_restatement(corrected, COST_RT, COST_LABEL)   # C1, additive
+    tournament["werner_comparable"] = werner_comparable(corrected)                       # T3 (audit 30-Sept), additive
+    tournament["drawdown"] = annotate_drawdowns(corrected, today)                        # P2.1, additive (per-row drawdown alongside nav)
+    for r_, c_ in zip(history, corrected):
+        for tid_, td_ in (r_.get("tiers") or {}).items():
+            if (c_.get("tiers") or {}).get(tid_) and "drawdown" in c_["tiers"][tid_]: td_["drawdown"] = c_["tiers"][tid_]["drawdown"]
+        for b_, bv_ in (r_.get("benchmarks") or {}).items():
+            if isinstance(bv_, dict) and isinstance((c_.get("benchmarks") or {}).get(b_), dict) and "drawdown" in c_["benchmarks"][b_]: bv_["drawdown"] = c_["benchmarks"][b_]["drawdown"]
+    tournament["errata_applied"] = {"file": "data/errata.json", "dates": _errata.dates(), "note": "the comparable series, the cost restatement and the drawdowns are computed on the corrected values; the published rows are unchanged"}
     write_backtest_drawdown(today)                                                    # P2.1 companion for the backtest curves
     tournament["last_updated"] = datetime.now().isoformat()
     # Repair 2026-09-16: the producer stamps the declared session. The generic

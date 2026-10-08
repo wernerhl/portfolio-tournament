@@ -77,7 +77,7 @@ function renderUniverseCard(){   // system page: the one universe (6.2)
 const PAGES = {
   home: {
     title: "PORTFOLIO TOURNAMENT", sub: () => `${updatedStr()} · the regime index and the book's drawdown · 4 algo tiers + Werner`,
-    loads: ["config","tournament","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens","bondsStates","globalRatesHome"],
+    loads: ["config","tournament","errata","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens","bondsStates","globalRatesHome"],
     compose(){
       const live = liveRow(); const R = live ? live.R_t : null;
       const rv = renderRegimeCommandCenter(R); const strip = renderStatusStrip();
@@ -92,10 +92,10 @@ const PAGES = {
   },
   book: {
     title: "THE BOOK", sub: () => `${S.book ? "analytics through " + S.book.as_of : ""} · positions from data/holdings.json, the only holdings source · every panel descriptive`,
-    loads: ["config","tournament","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f","entryState","analystRev","reviewNames","providerFlags","earningsRx","picksQQQ"],
+    loads: ["config","tournament","errata","book","comparators","thesis","thesisReg","factors","signals","holdingsFile","status","provLedger","optionsLens","optionsHedges","goals","claimsReg","gains","news","insiders","holders13f","entryState","analystRev","reviewNames","providerFlags","earningsRx","picksQQQ"],
     compose(){
       const strip = renderStatusStrip();
-      let h = `<div class="tier tier-1"><h2 class="tier-title">THE BOOK</h2>${strip}${renderBookPanel()}</div>`;
+      let h = `<div class="tier tier-1"><h2 class="tier-title">THE BOOK</h2>${strip}${renderBookPanel()}${renderErrataNote("5_werner")}</div>`;
       // order 30-Sept D1–D3: the operator's goals beside the book, the realized gains after the positions
       h += `<div class="tier tier-1"><h2 class="tier-title">THE GOALS</h2><div class="goals-grid">${renderHouseGoalCard()}${renderClaimsCard()}</div></div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">SIZING, STRESS AND SLEEVES</h2>${renderEventBoard()}${renderPostureCard()}<div class="rcc-card">${renderStressPanel()}</div>${renderSleevesPanel()}</div>`;
@@ -123,10 +123,10 @@ const PAGES = {
   },
   tournament: {
     title: "THE TOURNAMENT", sub: () => `${updatedStr()} · 4 algorithmic tiers + Werner · monthly rescore + regime overlay · net of costs`,
-    loads: ["config","tournament","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges","tournamentAudit","twins","trades","spells","c6Power","entryState","analystRev","earningsRx"],
+    loads: ["config","tournament","errata","holdings","tickers","metrics","backtest","condScores","volRegime","thesis","thesisReg","thesisBT","provLedger","c2","signals","regimeDaily","status","regime","optionsLens","optionsHedges","tournamentAudit","twins","trades","spells","c6Power","entryState","analystRev","earningsRx"],
     compose(){
       const lb = renderLeaderboardBlock(); this._allSeries = lb.allSeries;
-      let h = `<div class="tier tier-1"><h2 class="tier-title">LEADERBOARD</h2>${lb.html}</div>`;
+      let h = `<div class="tier tier-1"><h2 class="tier-title">LEADERBOARD</h2>${lb.html}${renderErrataNote()}</div>`;
       // audit order 30-Sept: what the tournament does (retention, cash gaps, spells with the effective sample), the continuous twins
       h += `<div class="tier tier-2"><h2 class="tier-title">WHAT THE TOURNAMENT DOES · AUDIT</h2>${renderSelectionAudit()}${renderTwinsCard()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">THESES</h2>${renderTreemapCard()}${renderThesisExposure()}${renderThesisAttribution()}</div>`;
@@ -136,7 +136,7 @@ const PAGES = {
   },
   evidence: {
     title: "EVIDENCE", sub: () => "the retirement tests with both registrations · the calibration of the graduated model · the point-in-time vintage comparison",
-    loads: ["config","c3","c3Paths","comparators","v4Cal","c2","regimeV4","regime","regimePub","v4Attr","status","tournament","metrics","bondsStates"],
+    loads: ["config","c3","c3Paths","comparators","v4Cal","c2","regimeV4","regime","regimePub","v4Attr","status","tournament","errata","metrics","bondsStates"],
     compose(){
       const live = liveRow(); const rv = renderRegimeCommandCenter(live ? live.R_t : null);
       let h = `<div class="tier tier-1"><h2 class="tier-title">RETIREMENT TESTS</h2>${renderRetirementPanel()}${renderBondsRegistrationCard()}</div>`;
@@ -156,7 +156,7 @@ const PAGES = {
   },
   system: {
     title: "SYSTEM", sub: () => "audit history · no-publish count · the action log · the universe",
-    loads: ["config","status","actions","regimePub","eventCal","tournament","holdingsFile","regime","universeMeta","auditLast","dailyLog","briefRules","reviews"],
+    loads: ["config","status","actions","regimePub","eventCal","tournament","errata","holdingsFile","regime","universeMeta","auditLast","dailyLog","briefRules","reviews"],
     compose(){
       let h = `<div class="tier tier-1"><h2 class="tier-title">PIPELINE</h2>${renderStatusStrip()}${renderSystemPanel()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">RECORDS</h2>${renderBriefHistory()}${renderReviewsCard()}${renderActionLog()}${renderUniverseCard()}</div>`;

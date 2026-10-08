@@ -296,7 +296,25 @@ def main(troot, sroot, today=None):
             if tok in blob: add('CRITICAL',f'{label}:directive',f'{os.path.relpath(path,troot)} contains a buy/sell directive ({tok!r})')
     # ---------- tournament identities ----------
     try:
-        t=T('tournament.json'); h=t['history']; L=h[-1]
+        t=T('tournament.json'); h_pub=t['history']; L_pub=h_pub[-1]
+        # F2 (7-Oct-2026): the checks read the errata-corrected history (data/errata.json); the published rows are judged
+        # only for values no erratum covers. An edited erratum is CRITICAL (append-only); a day-to-day change above 15%
+        # in any tier value without an erratum or a recorded re-seed/flow is HIGH.
+        import errata as _errata
+        _eprob=_errata.verify()
+        if _eprob: add('CRITICAL','errata:edited','data/errata.json is append-only: '+'; '.join(_eprob)[:300])
+        h=_errata.apply_history(h_pub); L=h[-1]
+        _ecov={(str(e['date'])[:10],e['tier'],(e.get('ticker') or '').upper()) for e in _errata.entries()}
+        _edates=_errata.dates()
+        _flows={str(ev.get('date'))[:10] for ev in ((t.get('werner_comparable') or {}).get('reseed_events') or [])}
+        _jumps=[]
+        for _i in range(1,len(h)):
+            for _tid,_td in (h[_i].get('tiers') or {}).items():
+                _p=((h[_i-1].get('tiers') or {}).get(_tid) or {}).get('nav'); _n=_td.get('nav'); _d=str(h[_i].get('date'))[:10]
+                if _p and _n and abs(_n/_p-1)>0.15 and _tid not in _edates.get(_d,[]) and not (_tid=='5_werner' and _d in _flows):
+                    _jumps.append(f'{_tid} {_d} {(_n/_p-1)*100:+.1f}%')
+        if _jumps: add('HIGH','errata:unexplained_jump',f'day-to-day tier value change above 15% with no erratum and no recorded flow: {_jumps[:6]}')
+        if _edates: add('INFO','errata:applied',f'corrected values applied for {sorted(_edates)} (data/errata.json; the published rows are unchanged)')
         # T1 (audit 30-Sept-2026): no missing session in the history — CRITICAL; backfilled rows are
         # marked and counted (INFO). T3: the label must respect the hysteresis corridor from 30 Sept.
         hd_=[to_date(r['date']) for r in h if to_date(r.get('date',''))]
@@ -407,7 +425,8 @@ def main(troot, sroot, today=None):
         # 7-Oct-2026: a position published without a price (the provider's bar missing for the session) is a CRITICAL of
         # its own, and the sums below treat None as 0 so the referee reports instead of crashing (on 6 Oct it crashed
         # here and the run was recorded as 0 findings while the operator tier's NAV was published 20% low)
-        nopx_=[f'{k}:{p.get("ticker")}' for k,v in L['tiers'].items() for p in v.get('positions',[]) if (p.get('shares') or 0)>0 and (p.get('price') is None or p.get('value') is None)]
+        nopx_=[f'{k}:{p.get("ticker")}' for k,v in L_pub['tiers'].items() for p in v.get('positions',[]) if (p.get('shares') or 0)>0 and (p.get('price') is None or p.get('value') is None)
+           and (str(L_pub.get('date'))[:10],k,str(p.get('ticker')).upper()) not in _ecov]
         if nopx_: add('CRITICAL','identity:position_price',f'positions published without a price or value for {L.get("date")}: {nopx_[:8]}')
         for k,v in L['tiers'].items():
             eq=sum((p.get('value') or 0) for p in v.get('positions',[])); cash=v.get('cash') or 0

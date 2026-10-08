@@ -100,7 +100,8 @@ def regime_label(R: float, prev_label: str | None = None) -> str:
 def previous_published_label(session: str) -> str | None:
     """The tournament row's label for the last published session before `session`."""
     try:
-        H = json.load(open(DATA / "tournament.json")).get("history", [])
+        import errata
+        H = errata.apply_history(json.load(open(DATA / "tournament.json")).get("history", []))   # F2: corrected values
         before = [h for h in H if str(h.get("date", "")) < session]
         return before[-1].get("regime") if before else None
     except Exception:
@@ -188,7 +189,7 @@ def facts_payload(session: str, rules: dict) -> dict:
             v = _pct(etf.loc[s, col], etf.loc[ep, col])
             if v is not None:
                 sectors[lab] = r2(v)
-    sec_sorted = sorted(sectors.items(), key=lambda kv: kv[1])
+    sec_sorted = sorted(((k, v) for k, v in sectors.items() if v is not None), key=lambda kv: kv[1])   # 6-Oct crash: a None change
     # regime: the continuous revised series for the streak, the published vintage beside it
     rd = pd.read_csv(DATA / "regime_daily.csv"); rd["date"] = rd["date"].astype(str)
     rd = rd[rd["date"] <= session].reset_index(drop=True)

@@ -3121,6 +3121,19 @@ function applyTweens(){
 }
 
 // ── 6.3: the leaderboard block (leader banner · race chart · leaderboard), used by tournament.html ──
+// F2 (7-Oct-2026): the footnote for dates whose published tier values are corrected through data/errata.json
+function renderErrataNote(tierFilter){
+  const T = S.tournament, E = S.errata; if (!T || !E || !T._errata_dates) return "";
+  const items = Object.entries(T._errata_dates).filter(([d, tiers]) => !tierFilter || tiers.includes(tierFilter)).sort();
+  if (!items.length) return "";
+  const txt = items.map(([d, tiers]) => {
+    const es = (E.entries || []).filter(e => String(e.date).slice(0, 10) === d && tiers.includes(e.tier));
+    const nav = es.find(e => e.field === "nav");
+    const tn = tiers.map(t => (tierSpec(t) || {}).short || t).join(", ");
+    return `${d} — ${tn}: ${nav ? `published ${fmtMoney(nav.published)}, corrected ${fmtMoney(nav.corrected)} (${escText30(nav.reason.split(";")[0])})` : es.length + " corrected value" + (es.length > 1 ? "s" : "")}; entries ${es.map(e => e.id).join(", ")}`;
+  }).join(" · ");
+  return `<div class="mono t1 c-3 mt1 lh16">errata: ${txt} · the published row keeps its values; every figure here uses the corrected ones · <a class="c-3" href="data/errata.json">data/errata.json</a></div>`;
+}
 function renderLeaderboardBlock(){
   const live = S.tournament && S.tournament.history && S.tournament.history.length > 0
     ? S.tournament.history[S.tournament.history.length-1] : null;
