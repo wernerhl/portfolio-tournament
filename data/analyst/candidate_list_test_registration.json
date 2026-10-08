@@ -1,21 +1,30 @@
 {
  "cadence": "static",
- "as_of": "2026-10-07",
- "registered_at": "2026-10-07",
- "order": "follow-up order of 7 October 2026, F5.3: the candidate-list test in the proposal is registered on the single harness",
- "status": "REGISTERED ON THE HARNESS - parameters to be confirmed against the proposal text, which is not in the repository",
- "harness": {
-  "script": "scripts/analyst/walkforward_test.py",
-  "feature_sets": {
-   "base": "5 price variables (mom_12_1, ret_1m, vol_12m, hi_12m, log_dv)",
-   "analyst": "the 7 analyst-history variables of data/analyst/panel_monthly.parquet",
-   "ext43": "the design workspace's 43 variables (scripts/analyst/features_ext.py -> data/analyst/panel_ext_monthly.parquet): 21 price, 22 fundamentals from EDGAR company facts",
-   "revisions": "an_eps_rev_30, an_eps_breadth_30, an_rev_rev_30 from observed snapshot rows at or after available_from (F4); none until 12 months of snapshots exist"
-  },
-  "design": "S&P 500 members at each month-end from the dated membership file; ranks within the month; 12-month (primary) and 1-month outcomes in excess of the average member; test years 2014-2026 retrained each January on month-ends whose 12-month outcome was complete; ridge (primary) and a boosted tree; top tenth and top fifth after 10 bps a trade; Newey-West t (11 lags at 12 months)"
+ "as_of": "2026-10-08",
+ "registered_at": "2026-10-08",
+ "order": "second follow-up order of 7 October 2026 (evening), G4: the candidate-list test of the proposal 'Diagnostic and proposal: an actions layer for stock selection' (sections 'How a stock gets selected' and 'Pass rules'), registered before the run",
+ "status": "REGISTERED - committed with its sha256 before any run; the run follows in the same commit series",
+ "harness": "scripts/analyst/candidate_list_test.py on scripts/analyst/walkforward_test.py (the single harness)",
+ "data_label": "free data, members with prices only: the price provider has no bars for delisted members; the coverage table of G2 is reported with the result. A pass on free data stays out of the score until it is confirmed on Sharadar or Norgate (owner-approved, paid; no key stored)",
+ "universe": "S&P 500 members at each month-end from data/analyst/sp500_membership_history.parquet (June 2004 to date: the fja05680/sp500 components list to the first Wikipedia revision of 2012, Wikipedia revisions after), tickers mapped to their current symbols through data/analyst/ticker_changes.csv. No filter that uses today's list or today's labels (current_universe_only off; a run that sets it is CRITICAL analyst:lookahead_filter).",
+ "variables": {
+  "primary": "the 43 (ext43: 21 price variables and 22 fundamentals from EDGAR company facts, scripts/analyst/features_ext.py). Names without fundamentals are left out of the 43-variable model",
+  "beside": "the 21 price variables alone, trained from January 2005"
  },
- "pass_rule": "section D2 of the free-analyst-data order: top tenth more than 2 points a year above the average member after costs, Newey-West t above 3, and a positive paired difference against the same model without the variables under test",
- "lookahead_checks": ["no variable depends on the current membership list (dated file only; no current sector filter)", "dollar volume on split-adjusted prices", "two placebo runs (+12 and -12 months)", "no row after the month-end enters that month (unit tests)", "no provider-reported consensus row enters (referee analyst:provider_rows_in_test, CRITICAL)"],
- "pending": "the proposal's own candidate list and any parameter it fixes (universe, horizon, feature set, dates) are to be entered here from the proposal text before the run; nothing runs until then",
- "do_not_touch": "once a run begins nothing above changes; a change needs a new registration with a stated reason and both results are reported"
+ "score": "the mean of the within-month percentile ranks of two predictions: the ridge and the harness's boosted tree",
+ "target": "the within-month percentile rank of the 12-month return (primary); the excess return over the average member is reported beside it",
+ "ridge": {"penalty": 100, "features_and_target_ranked_to": "[-0.5, 0.5]", "sensitivity_penalties_no_part_in_verdict": [10, 1000]},
+ "boosted_tree": "sklearn HistGradientBoostingRegressor(max_iter=300, learning_rate=0.05, max_depth=3, min_samples_leaf=100, l2_regularization=1.0, random_state=0), frozen",
+ "training": "expanding window from June 2010 for the 43 variables (the first month-ends with fundamentals for most members), from January 2005 for the 21 price variables; only month-ends whose 12-month outcome ended before the test year; retrained each January",
+ "test_years": "2014 to 2026; 12-month horizon primary, 1-month beside",
+ "portfolio": {"primary": "top tenth, equal weight, formed every month", "beside": "formed at quarter-ends only (the proposal re-scores each quarter)"},
+ "delisted_names": {"primary": "held to the last price", "beside": "dropped"},
+ "cost": "10 bps a trade, both ways (20 bps per holding)",
+ "statistic": "Newey-West t on the series of top-tenth excess over the average member: 11 lags for monthly formation, 3 for quarter-end formation",
+ "pass_rule": "top tenth more than 2 points a year above the average member after costs, t above 3, and a paired difference against the 12-1 momentum top tenth that is positive with t above 2",
+ "checks": ["placebo shifts of +12 and -12 months on all 43 variables (the effect should rise with values from the future and fall toward zero with values from the past)", "no row after the month-end enters that month (tests/test_analyst_lookahead.py)", "current_universe_only off (referee analyst:lookahead_filter)", "no provider-reported consensus row (referee analyst:provider_rows_in_test)"],
+ "if_it_fails": "the candidate list is retired; the proposal's fallback is the 50 largest members",
+ "expected_result": "on the evidence of the reconciliation correction (the 43 variables trained from June 2010 give t about 2 in the design workspace), the test is expected to fail the t rule; the registered run decides",
+ "artifacts": {"script": "scripts/analyst/candidate_list_test.py", "result": "data/analyst/candidate_list_test_result.json", "report": "reports/analyst_followup2_2026-10-08.md, section G4"},
+ "do_not_touch": "once the run begins nothing above changes; a change needs a new registration with a stated reason and both results are reported"
 }
