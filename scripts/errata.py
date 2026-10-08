@@ -53,6 +53,33 @@ def verify() -> list[str]:
     return problems
 
 
+def compare_with_previous(repo: Path | None = None, ref: str = "HEAD", path: str = "data/errata.json") -> list[str]:
+    """G6 (7-Oct-2026, second follow-up): append-only against the version at the previous commit. Every entry present
+    at `ref` must be present and byte-identical now (compared as canonical JSON); an entry edited together with its
+    hash, or a deleted entry, is a finding. Returns the problems (empty when intact or when `ref` has no file)."""
+    import subprocess
+    repo = Path(repo) if repo else REPO
+    r = subprocess.run(["git", "show", f"{ref}:{path}"], cwd=repo, capture_output=True, text=True)
+    if r.returncode != 0:
+        return []                                             # no earlier version: nothing to compare with
+    try:
+        before = json.loads(r.stdout).get("entries") or []
+    except ValueError:
+        return [f"the {ref} version of {path} is not JSON"]
+    try:
+        now = {e.get("id"): e for e in (json.loads((repo / path).read_text()).get("entries") or [])}
+    except (OSError, ValueError) as e:
+        return [f"{path} unreadable: {type(e).__name__}"]
+    canon = lambda e: json.dumps(e, sort_keys=True, separators=(",", ":"), ensure_ascii=False)   # noqa: E731
+    problems = []
+    for e in before:
+        if e.get("id") not in now:
+            problems.append(f"{e.get('id')}: present at {ref}, deleted now")
+        elif canon(now[e["id"]]) != canon(e):
+            problems.append(f"{e.get('id')}: differs from its {ref} version (edited)")
+    return problems
+
+
 def make(file: str, tier: str, date: str, field: str, published, corrected, reason: str, ledger_id: str | None,
          added: str, ticker: str | None = None, seq: int | None = None, existing: list | None = None) -> dict:
     ex = existing if existing is not None else entries()
@@ -119,7 +146,7 @@ def dates(file: str = TOURNAMENT) -> dict[str, list[str]]:
 def main() -> int:
     cmd = sys.argv[1] if len(sys.argv) > 1 else "list"
     if cmd == "verify":
-        p = verify()
+        p = verify() + compare_with_previous()
         print("errata intact: every entry matches its sha256" if not p else "PROBLEMS: " + "; ".join(p))
         return 0 if not p else 2
     for e in entries():

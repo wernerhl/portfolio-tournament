@@ -301,7 +301,7 @@ def main(troot, sroot, today=None):
         # only for values no erratum covers. An edited erratum is CRITICAL (append-only); a day-to-day change above 15%
         # in any tier value without an erratum or a recorded re-seed/flow is HIGH.
         import errata as _errata
-        _eprob=_errata.verify()
+        _eprob=_errata.verify()+_errata.compare_with_previous(repo=os.path.abspath(os.path.join(troot,os.pardir)))   # G6: against the previous commit
         if _eprob: add('CRITICAL','errata:edited','data/errata.json is append-only: '+'; '.join(_eprob)[:300])
         h=_errata.apply_history(h_pub); L=h[-1]
         _ecov={(str(e['date'])[:10],e['tier'],(e.get('ticker') or '').upper()) for e in _errata.entries()}

@@ -51,8 +51,12 @@ def main() -> int:
     # referee's final "REFEREE COMPLETE" line, or with a traceback in it, is CRITICAL referee:crashed and is
     # treated like any other CRITICAL: served files restored, failure_reason written, exit 1.
     complete = re.search(r"^REFEREE COMPLETE: (\d+) findings; (\d+) CRITICAL\s*$", text, re.M)
-    if complete is None or "Traceback" in text:
-        why = ("a traceback is in the report" if "Traceback" in text else "no REFEREE COMPLETE line") + \
+    # G6 (7-Oct-2026, second follow-up): a finding's message may quote an error text that contains the word
+    # "Traceback" (the options check quotes the step's annotation); only a line that BEGINS a Python traceback and is
+    # not a finding line marks a crash
+    tb_line = any(ln.startswith("Traceback (most recent call last):") and not LINE.match(ln.strip()) for ln in text.splitlines())
+    if complete is None or tb_line:
+        why = ("a traceback is in the report" if tb_line else "no REFEREE COMPLETE line") + \
               ("" if complete else "; the referee did not finish")
         findings.append(("CRITICAL", "referee:crashed", f"the referee did not complete ({why}); nothing it reported can be trusted"))
     elif int(complete.group(1)) != len(findings):

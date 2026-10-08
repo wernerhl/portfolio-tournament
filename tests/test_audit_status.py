@@ -67,6 +67,15 @@ def test_complete_report_passes():
     assert not any(c.startswith("referee:") for c in st["audit"]["high"] + st["audit"]["critical"])
 
 
+def test_finding_quoting_traceback_passes():
+    """G6: the word Traceback inside a finding's message (the options check quotes the step's annotation) is not a crash;
+    only a line that begins a Python traceback outside a finding, or a missing final line, is."""
+    rc, st, _ = status_run("last trading session: 2026-10-07\n[HIGH    ] options:vintage_missing      reason push_failed (run 51: 'Traceback (most recent call last):' quoted from the step)\n\n1 findings; 0 CRITICAL\nREFEREE COMPLETE: 1 findings; 0 CRITICAL\n")
+    assert rc == 0 and not st["audit"]["critical"] and "options:vintage_missing" in st["audit"]["high"], st["audit"]
+    rc2, st2, _ = status_run("last trading session: 2026-10-07\n[HIGH    ] x:y                          fine\nTraceback (most recent call last):\n  File \"a.py\", line 1\nValueError: boom\n\n1 findings; 0 CRITICAL\nREFEREE COMPLETE: 1 findings; 0 CRITICAL\n")
+    assert rc2 == 1 and "referee:crashed" in st2["audit"]["critical"], st2["audit"]
+
+
 def test_check_that_raises_is_reported_and_the_rest_still_run():
     sys.path.insert(0, str(REPO / "scripts"))
     import audit_nightly as an
@@ -93,7 +102,7 @@ def test_check_that_raises_is_reported_and_the_rest_still_run():
 
 if __name__ == "__main__":
     for fn in [test_traceback_only_report_is_critical, test_findings_without_final_line_is_critical, test_complete_report_passes,
-               test_check_that_raises_is_reported_and_the_rest_still_run]:
+               test_finding_quoting_traceback_passes, test_check_that_raises_is_reported_and_the_rest_still_run]:
         run(fn)
     n_fail = sum(1 for _, ok in RESULTS if not ok)
     print(f"\n{len(RESULTS) - n_fail} passed, {n_fail} failed")
