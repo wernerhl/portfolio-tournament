@@ -215,7 +215,8 @@ def main() -> int:
     e = e[e["reported_eps"].notna()].copy()                    # a row counts only with a reported EPS
     members = pd.read_parquet(MEMBERS) if MEMBERS.exists() else pd.DataFrame(columns=["month_end", "ticker"])
     members["month_end"] = pd.to_datetime(members["month_end"])
-    mem_by_month = {p: set(g["ticker"]) for p, g in members.groupby(members["month_end"].dt.to_period("M"))}
+    _mcol = "ticker_current" if "ticker_current" in members.columns else "ticker"     # G2: members by their current symbol
+    mem_by_month = {p: set(g[_mcol]) for p, g in members.groupby(members["month_end"].dt.to_period("M"))}
     tickers = sorted(set(m["ticker"]))
     mes = month_ends(m, a.start)
     log(f"raw {stamp}: {len(r)} rating rows, {len(e)} reported earnings rows, {len(s)} splits, {len(tickers)} tickers; "

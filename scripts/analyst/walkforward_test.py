@@ -200,18 +200,19 @@ def build_table(stamp: str, shift_analyst: int = 0, hold_delisted: bool = True, 
     T = pd.concat(long, axis=1).reset_index().rename(columns={"level_0": "p", "level_1": "ticker"})
     if "p" not in T.columns:
         T = T.rename(columns={T.columns[0]: "p", T.columns[1]: "ticker"})
+    if "ticker_current" in mem.columns: mem = mem.assign(ticker=mem["ticker_current"])                 # G2: members by their current symbol
     mem_set = mem[["p", "ticker"]].drop_duplicates(); mem_set["member"] = True
     T = T.merge(mem_set, on=["p", "ticker"], how="left"); T["member"] = T["member"].fillna(False).astype(bool)
     an = shift_analyst_frame(panel[["p", "ticker"] + AN_VARS].copy(), shift_analyst)
     T = T.merge(an, on=["p", "ticker"], how="left")
     T = T[T["member"]].copy()
-    if ext or liquid_only or sector_known_only:
+    if ext or liquid_only or current_universe_only:
         X = pd.read_parquet(AN / "panel_ext_monthly.parquet"); X["p"] = pd.to_datetime(X["month_end"]).dt.to_period("M")
         keep = ["p", "ticker", "liquid", "has_fund"] + [v for v in EXT_VARS if v in X.columns]
         T = T.merge(X[keep], on=["p", "ticker"], how="left")
         if liquid_only:
             T = T[T["liquid"].fillna(False)]
-        if sector_known_only:
+        if current_universe_only:
             T = T[T["sec_mom"].notna()]
     T["month_end"] = T["p"].dt.to_timestamp("M")
     # ranks within the members of each month: base features and (re-ranked after any shift) analyst variables
@@ -331,6 +332,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stamp", default=None)
     ap.add_argument("--quick", action="store_true", help="ridge only, no placebos")
+    ap.add_argument("--out", default=None, help="result path (default data/analyst/walkforward_test.json; a rerun beside a published result names its own file)")
     a = ap.parse_args()
     stamp = a.stamp or latest_stamp()
     models = ("ridge",) if a.quick else ("ridge", "gbm")
@@ -384,7 +386,8 @@ def main() -> int:
             "timestamp": "tests/test_analyst_lookahead.py plants a rating row after the month-end and asserts the month's variables are unchanged",
         },
     }
-    OUT.write_text(json.dumps(payload, indent=1, default=str))
+    out = Path(a.out) if a.out else OUT
+    out.write_text(json.dumps(payload, indent=1, default=str))
     log(sentence)
     for h in ("fwd12", "fwd1"):
         for m in models:

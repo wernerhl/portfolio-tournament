@@ -153,6 +153,7 @@ def main() -> int:
         s = v.stack(); s.name = k; rows.append(s)
     P = pd.concat(rows, axis=1).reset_index(); P.columns = ["date", "ticker"] + list(Fm.keys())
     P["p"] = P["date"].dt.to_period("M")
+    if "ticker_current" in mem.columns: mem = mem.assign(ticker=mem["ticker_current"])                 # G2: members by their current symbol
     mem_set = mem.assign(p=mem["month_end"].dt.to_period("M"))[["p", "ticker"]].drop_duplicates(); mem_set["member"] = True
     P = P.merge(mem_set, on=["p", "ticker"], how="left"); P["member"] = P["member"].fillna(False).astype(bool)
     P["liquid"] = P["dvol"] >= np.log(3e6)
