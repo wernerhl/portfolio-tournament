@@ -41,10 +41,22 @@ def main() -> int:
         return "tournament"
 
     findings = []
-    for ln in report.read_text(encoding="utf-8", errors="replace").splitlines():
+    text = report.read_text(encoding="utf-8", errors="replace")
+    for ln in text.splitlines():
         m = LINE.match(ln.strip())
         if m:
             findings.append((m.group(1), m.group(2), m.group(3)))
+    # F1 (7-Oct-2026): the referee fails closed. On 6 Oct audit_nightly.py crashed, its report held a traceback and
+    # no finding lines, and this step recorded 0 findings and let the publish through. A report without the
+    # referee's final "REFEREE COMPLETE" line, or with a traceback in it, is CRITICAL referee:crashed and is
+    # treated like any other CRITICAL: served files restored, failure_reason written, exit 1.
+    complete = re.search(r"^REFEREE COMPLETE: (\d+) findings; (\d+) CRITICAL\s*$", text, re.M)
+    if complete is None or "Traceback" in text:
+        why = ("a traceback is in the report" if "Traceback" in text else "no REFEREE COMPLETE line") + \
+              ("" if complete else "; the referee did not finish")
+        findings.append(("CRITICAL", "referee:crashed", f"the referee did not complete ({why}); nothing it reported can be trusted"))
+    elif int(complete.group(1)) != len(findings):
+        findings.append(("CRITICAL", "referee:crashed", f"the referee reported {complete.group(1)} findings but {len(findings)} lines were parsed"))
     crit_all = sorted({c for s, c, _ in findings if s == "CRITICAL"})
     crit = sorted(crit_all) if scope == "all" else sorted({c for c in crit_all if scope_of(c) == scope})   # blocking here
     crit_other = [] if scope == "all" else sorted({c for c in crit_all if scope_of(c) not in (scope, "xfile")})
