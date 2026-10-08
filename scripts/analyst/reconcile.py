@@ -12,8 +12,10 @@ difference is removed in turn, cumulatively, and the ridge top tenth (12 months)
   1  no cost
   2  the workspace's return treatment: a name whose prices end inside the horizon is dropped; returns capped at 300%
   3  the workspace's fit: the within-month percentile rank of the outcome as the training target, ridge penalty 100
-  4  the workspace's universe filters: 63-day dollar volume of at least $3 million, and a current sector label (which
-     drops the delisted names)
+  4  the two universe filters as the first reconciliation applied them: 63-day dollar volume of at least $3 million, and
+     a sector label in TODAY's canonical fundamentals (current_universe_only) — the correction of 8 Oct 2026 showed the
+     second is a look-ahead filter on the dashboard's current universe, not the workspace's filter
+     (data/analyst/reconciliation_correction.json)
   5  the workspace's 21 price variables
   6  the workspace's 43 variables (price and fundamentals)
 
@@ -75,7 +77,7 @@ def main() -> int:
     T2, _ = wf.build_table(stamp, hold_delisted=False, clip=3.0)
     rows.append(step("2 + the workspace's return treatment (delisted dropped, returns capped at 300%)", T2, base_feats, 0.0, False, wf.RIDGE_LAMBDA))
     rows.append(step("3 + the workspace's fit (percentile-rank target, penalty 100)", T2, base_feats, 0.0, True, 100.0))
-    T4, info4 = wf.build_table(stamp, hold_delisted=False, clip=3.0, ext=True, liquid_only=True, sector_known_only=True)
+    T4, info4 = wf.build_table(stamp, hold_delisted=False, clip=3.0, ext=True, liquid_only=True, current_universe_only=True)
     rows.append(step("4 + the workspace's universe filters (dollar volume >= $3M, a current sector label)", T4, base_feats, 0.0, True, 100.0))
     ext21 = [v + "_rk" for v in wf.EXT_PRICE_VARS if v + "_rk" in T4.columns]
     rows.append(step("5 + the workspace's 21 price variables", T4, ext21, 0.0, True, 100.0))

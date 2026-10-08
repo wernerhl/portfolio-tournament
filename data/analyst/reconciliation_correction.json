@@ -1,0 +1,140 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-08",
+ "order": "second follow-up order of 7 October 2026 (evening), G1: correction of the reconciliation",
+ "finding": "the reconciliation's step 4 called a filter on data/canonical/fundamentals.json's sector labels 'the workspace's sector filter'; that file labels today's universe only (80% of the 2014 member-months, 99% of 2026), so the filter kept the companies still in the index today \u2014 the look-ahead the workspace had removed after its first run. The workspace's own info.csv labels 665 of 687 tickers and removed 22. The gap in the t-statistic comes from the variable set and the length of the training history: the workspace trains from 2005 (price variables) or June 2010 (43 variables); the repository's membership file started in 2012, so its 2014 model trained on one year of month-ends",
+ "common_settings": "ridge top tenth at 12 months; ranked target; penalty 100; delisted names dropped; returns capped at 300%; no cost; the same 141 test months (January 2014 to September 2025); the 43-variable rows use names with fundamentals only",
+ "filter_by_filter": [
+  {
+   "step": "a 5 vars, no filter",
+   "months": 141,
+   "top_tenth_pts_per_year": -2.55,
+   "t_nw": -1.07,
+   "members_per_month": 427.0,
+   "features": 5
+  },
+  {
+   "step": "b 21 price vars, no filter",
+   "months": 141,
+   "top_tenth_pts_per_year": 1.61,
+   "t_nw": 0.54,
+   "members_per_month": 427.0,
+   "features": 21
+  },
+  {
+   "step": "c 43 vars, names with fundamentals, no filter",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.38,
+   "t_nw": 1.22,
+   "members_per_month": 397.9,
+   "features": 43
+  },
+  {
+   "step": "c2 5 vars, names with fundamentals, no filter",
+   "months": 141,
+   "top_tenth_pts_per_year": -2.17,
+   "t_nw": -0.97,
+   "members_per_month": 397.9,
+   "features": 5
+  },
+  {
+   "step": "d 5 vars, liquidity filter only",
+   "months": 141,
+   "top_tenth_pts_per_year": -2.75,
+   "t_nw": -1.19,
+   "members_per_month": 416.4,
+   "features": 5
+  },
+  {
+   "step": "d2 21 vars, liquidity filter only",
+   "months": 141,
+   "top_tenth_pts_per_year": 1.46,
+   "t_nw": 0.49,
+   "members_per_month": 416.4,
+   "features": 21
+  },
+  {
+   "step": "e 5 vars, sector filter only",
+   "months": 141,
+   "top_tenth_pts_per_year": 4.03,
+   "t_nw": 1.66,
+   "members_per_month": 377.9,
+   "features": 5
+  }
+ ],
+ "repository_treatment": [
+  {
+   "step": "f repo treatment, 21 vars, ranked target, 10 bps",
+   "months": 141,
+   "top_tenth_pts_per_year": 1.97,
+   "t_nw": 0.6,
+   "members_per_month": 427.0,
+   "features": 21
+  },
+  {
+   "step": "g repo treatment, 43 vars, ranked target, 10 bps",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.08,
+   "t_nw": 1.06,
+   "members_per_month": 397.9,
+   "features": 43
+  },
+  {
+   "step": "h repo treatment, 43 vars, raw target lam 1, 10 bps",
+   "months": 141,
+   "top_tenth_pts_per_year": 4.32,
+   "t_nw": 1.74,
+   "members_per_month": 397.9,
+   "features": 43
+  }
+ ],
+ "table": [
+  {
+   "variables": "5 price",
+   "workspace_from_2012": {
+    "top_tenth_pts_per_year": -3.49,
+    "t_nw": -1.27
+   },
+   "repository_from_2012_no_filter": {
+    "top_tenth_pts_per_year": -2.55,
+    "t_nw": -1.07
+   },
+   "workspace_from_2005": {
+    "top_tenth_pts_per_year": -2.94,
+    "t_nw": -2.27
+   }
+  },
+  {
+   "variables": "21 price",
+   "workspace_from_2012": {
+    "top_tenth_pts_per_year": 1.42,
+    "t_nw": 0.44
+   },
+   "repository_from_2012_no_filter": {
+    "top_tenth_pts_per_year": 1.61,
+    "t_nw": 0.54
+   },
+   "workspace_from_2005": {
+    "top_tenth_pts_per_year": 2.85,
+    "t_nw": 1.95
+   }
+  },
+  {
+   "variables": "43",
+   "workspace_from_2012": {
+    "top_tenth_pts_per_year": 2.44,
+    "t_nw": 1.27
+   },
+   "repository_from_2012_no_filter": {
+    "top_tenth_pts_per_year": 2.38,
+    "t_nw": 1.22
+   },
+   "workspace_from_2010_06": {
+    "top_tenth_pts_per_year": 2.64,
+    "t_nw": 2.06
+   }
+  }
+ ],
+ "workspace_results_source": "research/ml_stratification_test/audit_rerun/mine_results.csv (the workspace's own data files are not delivered); the repository column recomputed by research/ml_stratification_test/audit_rerun/agent.py on this tree (identical to the audit's agent_steps.csv at 0fc578f, every row)",
+ "look_ahead_option": "walkforward_test.build_table(current_universe_only=True) is the substitute filter; it marks today's universe and is look-ahead; a registered run that sets it is CRITICAL analyst:lookahead_filter"
+}

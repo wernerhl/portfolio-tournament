@@ -150,13 +150,16 @@ def shift_analyst_frame(an: pd.DataFrame, k: int) -> pd.DataFrame:
 
 # ── the table ────────────────────────────────────────────────────────────────────────────────
 def build_table(stamp: str, shift_analyst: int = 0, hold_delisted: bool = True, clip: float | None = None,
-                ext: bool = False, liquid_only: bool = False, sector_known_only: bool = False) -> tuple[pd.DataFrame, dict]:
+                ext: bool = False, liquid_only: bool = False, current_universe_only: bool = False) -> tuple[pd.DataFrame, dict]:
     """One row per (month, member) with features, outcomes and the excess over the average member.
     shift_analyst: the placebo shift in months of the analyst variables (+12 = values from the future).
     hold_delisted: a name whose bars end inside the horizon is held to its last price (False: dropped, as in the
     design workspace). clip: cap the forward return (the workspace used 3.0). ext: join the 43 variables of
-    data/analyst/panel_ext_monthly.parquet. liquid_only / sector_known_only: the workspace's two universe filters
-    (63-day dollar volume of at least $3 million; a current sector label) — the second drops the delisted names."""
+    data/analyst/panel_ext_monthly.parquet. liquid_only: the workspace's liquidity filter (63-day dollar volume of
+    at least $3 million). current_universe_only: keeps only names with a sector label in TODAY's canonical
+    fundamentals, i.e. the dashboard's current universe — a LOOK-AHEAD filter (it removes the companies that later
+    left the index; the first reconciliation of 7 Oct 2026 mistook it for the design workspace's own filter). Kept
+    for the record of that correction only; a registered run that sets it is CRITICAL analyst:lookahead_filter."""
     panel = pd.read_parquet(AN / "panel_monthly.parquet")
     mp = monthly_prices()
     mem = pd.read_parquet(AN / "sp500_membership_history.parquet")
@@ -218,6 +221,7 @@ def build_table(stamp: str, shift_analyst: int = 0, hold_delisted: bool = True, 
     for h in ("fwd12", "fwd1"):
         T[h + "_x"] = T[h] - T.groupby("p")[h].transform("mean")                # excess over the average member
     info = {"months": int(T["p"].nunique()), "rows": int(len(T)), "first": str(T["p"].min()), "last": str(T["p"].max()),
+            "options": {"hold_delisted": hold_delisted, "clip": clip, "ext": ext, "liquid_only": liquid_only, "current_universe_only": current_universe_only, "shift_analyst": shift_analyst},
             "members_per_month_avg": round(float(T.groupby("p").size().mean()), 1),
             "members_without_12m_outcome_share": round(float(T["fwd12"].isna().mean()), 4),
             "members_in_file_without_prices": int(len(mem_set) - len(mem_set.merge(T[["p", "ticker"]], on=["p", "ticker"])))}

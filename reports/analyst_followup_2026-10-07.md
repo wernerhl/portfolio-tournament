@@ -101,6 +101,31 @@ The months in the sample are the same (141 twelve-month test months, January 201
 
 **The single harness.** `scripts/analyst/walkforward_test.py` stays the one harness. The 43 variables are an optional feature set (`EXT_VARS`, through `build_table(ext=True)` from `data/analyst/panel_ext_monthly.parquet`), with the workspace's return treatment, fit and filters as options used by the reconciliation. The candidate-list test is registered on it (`data/analyst/candidate_list_test_registration.json`: the harness, the feature sets, the design, the pass rule of section D2 and the look-ahead checks); the proposal's own candidate list and any parameter it fixes are not in the repository and are to be entered there from the proposal text before any run.
 
+### Correction, 8 October
+
+The audit of this report (second follow-up order of 7 October, G1) found that the conclusion above is wrong about what explains the gap, and the earlier text stands as written with this correction beside it.
+
+**Findings.**
+
+1. The design workspace's filter used the provider's sector label for every ticker with prices (`info.csv`, 665 of 687 tickers labelled; delivered with the second follow-up and now under `research/ml_stratification_test/`). It removed 22 tickers in all: ABI, AT, AV, BBBY, CAM, CSRA, EMC, FB, FISV, GDT, GENZ, INFO, JAVA, MEDI, NFX, PCL, PWER, SDS, SHLD, SPLS, TEK, UST.
+2. `info.csv` had not been delivered with the code, and step 4 of the reconciliation used the sector labels in `data/canonical/fundamentals.json` instead. That file labels the dashboard's current universe only: it covers 80% of the 2014 member-months in `panel_ext_monthly.parquet` and 99% of the 2026 ones. A filter on it keeps the companies that are still in the index today — the look-ahead the workspace had removed after its first run. The option is renamed `current_universe_only`, its docstring calls it look-ahead, and a registered run that sets it is CRITICAL `analyst:lookahead_filter`.
+3. The harness with each filter alone (5 variables, ranked target, penalty 100, delisted names dropped, returns capped at 300%, no cost; `data/analyst/reconciliation_correction.json`, recomputed on this tree and identical to the audit's rows): no filter −2.55 (t −1.07); the dollar-volume filter alone −2.75 (t −1.19); the substitute sector filter alone +4.03 (t 1.66). The jump to +4.0 is the substitute filter.
+4. The two universes are nearly the same. In 2014 the workspace had 355 members a month with prices and the repository 374, with 343 in common. From 2019 on, the workspace has no member the repository lacks.
+
+**What explains the gap:** the variable set and the length of the training history. Ridge top tenth at 12 months, ranked target, penalty 100, delisted names dropped, returns capped at 300%, no cost, the same 141 test months (January 2014 to September 2025); the 43-variable rows use names with fundamentals only.
+
+| Variables | Workspace code, training from 2012 | Repository harness, training from 2012, no filter | Workspace code, training from 2005 (price) or June 2010 (43) |
+|---|---|---|---|
+| 5 price | −3.49 (t −1.27) | −2.55 (t −1.07) | −2.94 (t −2.27) |
+| 21 price | +1.42 (t 0.44) | +1.61 (t 0.54) | +2.85 (t 1.95) |
+| 43 | +2.44 (t 1.27) | +2.38 (t 1.22) | +2.64 (t 2.06) |
+
+With the same variables and the same training start, the two implementations agree within one point and 0.2 of t. The t of about 2 in the workspace needs training data from before 2012; the repository's membership file started in 2012, so its 2014 model trained on one year of month-ends. G2 of the second follow-up extends the membership file to June 2004 and reruns the test on it.
+
+For the record, on the repository's own treatment (delisted names held to the last price, 10 bps a trade) the 43 variables give +2.08 (t 1.06) with the ranked target and penalty 100, and +4.32 (t 1.74) with the raw target and penalty 1.
+
+Ledger: `mistake-2026-10-07-3` (design layer: the code delivered without its sector file) and `mistake-2026-10-07-4` (agent layer: a substitute filter reported as the workspace's filter).
+
 ## 6. F6 — open referee findings
 
 | Finding | Result |

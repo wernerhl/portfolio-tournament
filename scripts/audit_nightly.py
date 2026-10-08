@@ -907,6 +907,17 @@ def main(troot, sroot, today=None):
                 if rv_.get('in_score') is not False: add('CRITICAL','analyst:in_score','revisions.json marks the revision variables as score inputs')
             except Exception as e: add('HIGH','analyst:revisions',f'revisions.json unreadable ({e})')
             _lang(arv_,'analyst')
+            # F4: a provider-reported consensus row in the registered test's inputs is CRITICAL; G1: the look-ahead filter
+            for _rf in ('walkforward_test.json','candidate_list_test_result.json'):
+                _rp=os.path.join(troot,'analyst',_rf)
+                if not os.path.exists(_rp): continue
+                try:
+                    _rj=json.load(open(_rp))
+                    _cr=((_rj.get('inputs') or {}).get('consensus_rows') or {})
+                    if (_cr.get('provider_reported_rows_in_test') or 0)>0: add('CRITICAL','analyst:provider_rows_in_test',f"{_rf}: {_cr['provider_reported_rows_in_test']} provider-reported consensus rows entered the registered test (cards-only rows; F4)")
+                    _opts=((_rj.get('table') or {}).get('options') or {}); _opts2=(_rj.get('options') or {})
+                    if _opts.get('current_universe_only') or _opts2.get('current_universe_only'): add('CRITICAL','analyst:lookahead_filter',f"{_rf}: the run set current_universe_only (a filter on today's universe; look-ahead)")
+                except Exception as _e: add('HIGH','analyst:test_result',f'{_rf} unreadable ({type(_e).__name__})')
             scp2_=os.path.join(troot,'screen','scores.json')
             if os.path.exists(scp2_):
                 try:
