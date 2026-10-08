@@ -170,7 +170,9 @@ def publish(session: str, pulled_hm: str) -> str:
     git("add", rel, check=True)
     git("-c", "user.name=Tournament Bot", "-c", "user.email=bot@tournament", "commit", "-q", "-m",
         f"🧾 options vintage {session} · pulled {pulled_hm} ET · {trig}", check=True)
-    for attempt in range(1, 4):
+    # F6 (7-Oct-2026): six attempts with a longer backoff (the 6- and 7-Oct vintages were pulled and then lost to
+    # push_failed after three quick attempts); a rebase that fails on a shallow history is retried after unshallowing
+    for attempt in range(1, 7):
         if git("push", "origin", "HEAD:main").returncode == 0:
             return "written"
         git("fetch", "-q", "origin", "main")
@@ -179,8 +181,13 @@ def publish(session: str, pulled_hm: str) -> str:
             return "push_conflict"
         if git("rebase", "-q", "origin/main").returncode != 0:          # an unrelated bot commit: replay ours on top
             git("rebase", "--abort")
-            return "push_failed"
-        time.sleep(2 * attempt)
+            git("fetch", "-q", "--unshallow", "origin", "main")
+            if git("rebase", "-q", "origin/main").returncode != 0:
+                git("rebase", "--abort")
+                log(f"rebase onto origin/main failed (attempt {attempt}); {git('status', '--short').stdout.strip()[:200]}")
+                if attempt == 6:
+                    return "push_failed"
+        time.sleep(5 * attempt)
     return "push_failed"
 
 

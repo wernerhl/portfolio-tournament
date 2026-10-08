@@ -13,6 +13,7 @@ otherwise the previous trading day.
               provider_error    a run in the window reached the snapshot step and that step failed
               push_conflict     a run in the window pushed nothing because it lost a push race, and no
                                 vintage exists
+              push_failed       the chains were pulled but the push failed after every attempt (F6, 7-Oct-2026)
               no_run_in_window  no run of the workflow was active inside the window
 
 Missed days are never backfilled with after-hours data. Once a missing day's reason is recorded it is
@@ -46,7 +47,7 @@ FIRST_DAY = "2026-09-25"
 WORKFLOW = "options_snapshot.yml"
 REPO_SLUG = "wernerhl/portfolio-tournament"
 INDEX = oc.VINTAGES / "_index.json"
-REASONS = ("no_run_in_window", "runner_failure", "provider_error", "push_conflict")
+REASONS = ("no_run_in_window", "runner_failure", "provider_error", "push_conflict", "push_failed")
 
 
 def log(m: str) -> None:
@@ -107,6 +108,14 @@ def classify(day: str, runs: list[dict] | None) -> tuple[str, str]:
             return "runner_failure", f"run {r.get('run_number')} ({r.get('conclusion')}) never reached a runner"
         snap = [s for s in steps if str(s.get("name", "")).startswith("Snapshot chains")]
         if any(s.get("conclusion") == "failure" for s in snap):
+            # F6 (7-Oct-2026): the step's own warning annotation names the outcome; a push failure after a complete pull
+            # is not a provider error (6 and 7 Oct: "wrote 44, failed 0" then push_failed after three attempts)
+            for j_ in jobs:
+                ann = gh_json(f"repos/{REPO_SLUG}/check-runs/{j_.get('id')}/annotations") or []
+                msgs = [str(x.get("message", "")) for x in ann if isinstance(x, dict)]
+                hit = [m for m in msgs if "push_failed" in m]
+                if hit:
+                    return "push_failed", f"run {r.get('run_number')}: the chains were pulled but the vintage could not be pushed ({hit[0][:140]})"
             return "provider_error", f"run {r.get('run_number')}: the snapshot step failed"
         if any(s.get("conclusion") == "success" for s in snap):
             return "push_conflict", f"run {r.get('run_number')}: the snapshot step ran in the window but no vintage exists"
@@ -133,8 +142,8 @@ def build(now: datetime) -> dict:
                  "tickers": len(m.get("tickers") or {})}
             if m.get("snapshot_kind") == "backfill":
                 e["note"] = "seeded once, 26 Sept, from the provider's retained close (flagged); after-hours backfills are prohibited"
-        elif prev_days.get(day, {}).get("status") == "missing" and prev_days[day].get("reason") in REASONS:
-            e = prev_days[day]                                   # a recorded miss keeps its reason
+        elif prev_days.get(day, {}).get("status") == "missing" and prev_days[day].get("reason") in REASONS and prev_days[day].get("reason") != "provider_error":
+            e = prev_days[day]                                   # a recorded miss keeps its reason (a provider_error is re-read once: F6 distinguishes push_failed)
         else:
             reason, evidence = classify(day, runs_around(day))
             e = {"date": day, "status": "missing", "reason": reason, "evidence": evidence,

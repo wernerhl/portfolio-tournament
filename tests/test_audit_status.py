@@ -80,8 +80,10 @@ def test_check_that_raises_is_reported_and_the_rest_still_run():
         with redirect_stdout(buf):
             an.main(str(data), str(data / "screen"))
         out = buf.getvalue()
-    lines = [l for l in out.splitlines() if l.startswith("[")]
-    checks = [l.split()[1] for l in lines]
+    import re
+    LINE = re.compile(r"^\[(CRITICAL|HIGH|MEDIUM|INFO)\s*\]\s+(\S+)")
+    lines = [l for l in out.splitlines() if LINE.match(l)]
+    checks = [LINE.match(l).group(2) for l in lines]
     assert any(c.startswith("referee:check_failed:picks") for c in checks), checks[:10]
     assert any(c.startswith(("entry:", "options:", "governance:", "analyst:", "tournament:", "identity:")) for c in checks), "other checks must still report"
     assert out.rstrip().splitlines()[-1].startswith("REFEREE COMPLETE:"), out.rstrip().splitlines()[-2:]

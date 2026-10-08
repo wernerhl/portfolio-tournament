@@ -43,6 +43,8 @@ jobs:
     timeout-minutes: 350
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # F6 (7-Oct-2026): the publish rebases onto origin/main; a shallow clone made the rebase fail and both the 6- and 7-Oct vintages were lost (push_failed)
       - uses: actions/setup-python@v7
         with:
           python-version: '3.11'

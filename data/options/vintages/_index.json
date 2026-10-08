@@ -1,19 +1,19 @@
 {
  "cadence": "daily",
- "as_of": "2026-10-06",
- "session_date": "2026-10-06",
- "computed_at": "2026-10-06T22:53:36-04:00",
+ "as_of": "2026-10-07",
+ "session_date": "2026-10-07",
+ "computed_at": "2026-10-07T20:23:09-04:00",
  "order": "Execution Order: Make the Daily Options Snapshot Reliable (5 October 2026), item 2.3",
  "window_et": "15:30\u201316:00",
  "first_day": "2026-09-25",
- "decided_through": "2026-10-06",
+ "decided_through": "2026-10-07",
  "policy": "missed days are never backfilled with after-hours data; IV rank and percentile use captured days only",
  "counts": {
-  "days": 8,
+  "days": 9,
   "captured": 4,
-  "missing": 4
+  "missing": 5
  },
- "captured_share_last_20": 0.5,
+ "captured_share_last_20": 0.4444,
  "days": [
   {
    "date": "2026-09-25",
@@ -68,9 +68,16 @@
   {
    "date": "2026-10-06",
    "status": "missing",
-   "reason": "provider_error",
-   "evidence": "run 49: the snapshot step failed",
-   "recorded_at": "2026-10-06T20:53:14-04:00"
+   "reason": "push_failed",
+   "evidence": "run 49: the chains were pulled but the vintage could not be pushed (Process completed with exit code 1. options snapshot: push_failed \u2014 the 2026-10-06 vintage could not be pushed after thr)",
+   "recorded_at": "2026-10-07T20:22:00-04:00"
+  },
+  {
+   "date": "2026-10-07",
+   "status": "missing",
+   "reason": "push_failed",
+   "evidence": "run 51: the chains were pulled but the vintage could not be pushed (Process completed with exit code 1. options snapshot: push_failed \u2014 the 2026-10-07 vintage could not be pushed after thr)",
+   "recorded_at": "2026-10-07T20:22:00-04:00"
   }
  ]
 }
