@@ -33,7 +33,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE.parent)); sys.path.insert(0, str(HERE))
 from trading_calendar import is_trading_day, last_completed_session, now_et, prev_trading_day   # noqa: E402
 
 ET = ZoneInfo("America/New_York")
@@ -123,7 +123,9 @@ def file_entry(day: str) -> dict:
         j = json.loads(body)
     except ValueError:
         j = {}
-    return {"date": day, "status": "captured", "captured_at": j.get("captured_at"), "tickers": j.get("captured"),
+    from snapshot_common import snapshot_available_from
+    return {"date": day, "status": "captured", "captured_at": j.get("captured_at"), "available_from": snapshot_available_from(j) if j.get("captured_at") else None,
+            "tickers": j.get("captured"),
             "universe": (j.get("universe") or {}).get("n"), "coverage": j.get("coverage"), "first_run": bool(j.get("first_run")),
             "sha256": hashlib.sha256(body).hexdigest(), "size_kb": round(len(body) / 1024, 1)}
 

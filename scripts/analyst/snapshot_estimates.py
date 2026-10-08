@@ -44,7 +44,7 @@ from datetime import datetime
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE.parent)); sys.path.insert(0, str(HERE))
 REPO = HERE.parent.parent
 DATA = REPO / "data"
 SNAPS = DATA / "analyst" / "snapshots"
@@ -255,8 +255,13 @@ def main() -> int:
     if coverage < a.min_coverage:
         set_outcome("provider_error", f"only {len(names)} of {len(tickers)} names captured ({coverage:.0%} < {a.min_coverage:.0%}); nothing written")
         return 2
+    from snapshot_common import available_from as _avail
+    captured_at = datetime.now().astimezone().isoformat(timespec="seconds")
     payload = {
-        "session": session, "captured_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "session": session, "captured_at": captured_at,
+        # F4 (7-Oct-2026): the first trading session whose close is at or after the capture; the revisions builder
+        # and the registered test use the file only for dates at or after it
+        "available_from": _avail(captured_at),
         "order": "free-analyst-data order (7 October 2026), task C: nightly snapshot of current estimates",
         "immutable": True, "first_run": first_run,
         "first_run_note": ("the 7-, 30-, 60- and 90-day-ago consensus values of this first file are one extra dated observation per "

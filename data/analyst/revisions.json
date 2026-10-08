@@ -2,7 +2,7 @@
  "cadence": "daily",
  "session_date": "2026-10-06",
  "as_of": "2026-10-06",
- "computed_at": "2026-10-07T02:31:33-06:00",
+ "computed_at": "2026-10-07T18:16:12-06:00",
  "order": "free-analyst-data order (7 October 2026), task C",
  "label": "DIAGNOSTIC",
  "in_score": false,
@@ -21,5 +21,10 @@
   "an_rev_rev_30": "the same as an_eps_rev_30 for revenue",
   "history": "data/analyst/consensus_history.parquet: observed values per snapshot; the first snapshot's 7/30/60/90-day-ago values dated back and marked provider-reported"
  },
- "names": {}
+ "names": {},
+ "availability_rule": "a snapshot serves a date only from available_from, the first trading session whose close is at or after its capture; provider-reported rows (the first file's 7/30/60/90-day look-backs) are cards-only and never a test input",
+ "history_rows_by_source": {
+  "provider-reported": 8468,
+  "observed": 2120
+ }
 }

@@ -3130,7 +3130,7 @@ function renderErrataNote(tierFilter){
     const es = (E.entries || []).filter(e => String(e.date).slice(0, 10) === d && tiers.includes(e.tier));
     const nav = es.find(e => e.field === "nav");
     const tn = tiers.map(t => (tierSpec(t) || {}).short || t).join(", ");
-    return `${d} — ${tn}: ${nav ? `published ${fmtMoney(nav.published)}, corrected ${fmtMoney(nav.corrected)} (${escText30(nav.reason.split(";")[0])})` : es.length + " corrected value" + (es.length > 1 ? "s" : "")}; entries ${es.map(e => e.id).join(", ")}`;
+    return `${d} — ${tn}: ${nav ? `published ${fmtMoney(nav.published)}, corrected ${fmtMoney(nav.corrected)} (${escText30(nav.reason.split(";")[0])})` : es.length + " corrected value" + (es.length > 1 ? "s" : "")}; ${es.length} entr${es.length === 1 ? "y" : "ies"} (${es[0].id}${es.length > 1 ? " … " + es[es.length - 1].id.split("-").pop() : ""})`;
   }).join(" · ");
   return `<div class="mono t1 c-3 mt1 lh16">errata: ${txt} · the published row keeps its values; every figure here uses the corrected ones · <a class="c-3" href="data/errata.json">data/errata.json</a></div>`;
 }

@@ -107,6 +107,33 @@ def gbm_fit(X: np.ndarray, y: np.ndarray):
     return m.fit(X, y)
 
 
+def load_revision_features(as_of_months: pd.PeriodIndex | None = None) -> tuple[pd.DataFrame, dict]:
+    """F4 (7-Oct-2026): the consensus-revision rows the test may use — observed rows of data/analyst/consensus_history.parquet
+    only (provider-reported rows are cards-only), each attached to a month-end t only when its available_from <= t.
+    Returns the frame (p, ticker, an_eps_rev_30 ...) and the counts of rows by source that entered and were excluded;
+    the referee's analyst:provider_rows_in_test is CRITICAL if a provider-reported row ever enters."""
+    p_hist = AN / "consensus_history.parquet"
+    info = {"observed_rows": 0, "provider_reported_rows_excluded": 0, "provider_reported_rows_in_test": 0, "rows_after_availability": 0, "months_with_values": 0}
+    if not p_hist.exists():
+        return pd.DataFrame(columns=["p", "ticker"]), info
+    h = pd.read_parquet(p_hist)
+    if not len(h):
+        return pd.DataFrame(columns=["p", "ticker"]), info
+    prov = h[h["source"] != "observed"]
+    info["provider_reported_rows_excluded"] = int(len(prov))
+    obs = h[(h["source"] == "observed") & (h["period"] == "0y")].copy()
+    info["observed_rows"] = int(len(obs))
+    obs["available_from"] = pd.to_datetime(obs["available_from"])
+    # the row serves the month-end at or after its availability: p = the month of available_from, the latest row per month
+    obs["p"] = obs["available_from"].dt.to_period("M")
+    me = obs["available_from"].dt.to_period("M").dt.to_timestamp("M")
+    obs = obs[obs["available_from"] <= me]                              # available on or before that month's end
+    info["rows_after_availability"] = int(len(obs))
+    out = obs.sort_values("available_from").groupby(["p", "ticker"]).tail(1)[["p", "ticker", "eps_consensus", "eps_n", "up30", "down30", "rev_mean"]]
+    info["months_with_values"] = int(out["p"].nunique())
+    return out, info
+
+
 def shift_analyst_frame(an: pd.DataFrame, k: int) -> pd.DataFrame:
     """The placebo shift: with k = +12 the value observed 12 months LATER is placed on month t (information from
     the future); with k = -12 the value observed 12 months earlier. k = 0 leaves the frame as it is."""
@@ -299,9 +326,12 @@ def main() -> int:
                 f"{top['excess_pts_per_year_net']:+.2f} points a year against the average member after costs (Newey-West t {top['t_nw_net']:.2f}; "
                 f"the rule needs more than 2 points and t above 3), and the paired difference against the same model without them is "
                 f"{pair['pts_per_year']:+.2f} points (t {pair['t_nw']:.2f}).")
+    _rev, rev_info = load_revision_features()
     payload = {
         "cadence": "static", "as_of": datetime.now().strftime("%Y-%m-%d"), "raw_stamp": stamp,
         "order": "free-analyst-data order (7 October 2026), task D",
+        "inputs": {"consensus_rows": rev_info,
+                   "note": "F4: revision features enter only from observed snapshot rows available at the month-end; none are in the model until 12 months of snapshots exist"},
         "design": {"universe": "S&P 500 members at each month-end from the Wikipedia revision history (survivorship-free data not installed)",
                    "test_years": TEST_YEARS, "retrain": "each January on month-ends whose 12-month outcome was complete before the test year",
                    "base_features": BASE_VARS, "analyst_features": AN_VARS + ["an_present"], "ranking": "within the members of the month, [-0.5, 0.5]",

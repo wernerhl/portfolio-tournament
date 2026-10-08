@@ -29,6 +29,8 @@ from pathlib import Path
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE)); sys.path.insert(0, str(HERE.parent))
+from snapshot_common import snapshot_available_from   # noqa: E402
 REPO = HERE.parent.parent
 AN = REPO / "data" / "analyst"
 SNAPS = AN / "snapshots"
@@ -53,20 +55,24 @@ def load_snapshots() -> list[tuple[str, dict]]:
 
 
 def history(snaps: list[tuple[str, dict]]) -> pd.DataFrame:
+    """One row per (snapshot, ticker, period). `date` is the session the file is named for; `available_from` (F4) is
+    the first session whose close is at or after the capture — the builder and the registered test use a row only
+    for dates at or after it. Provider-reported rows (the first file's look-backs) are cards_only: never a test input."""
     rows = []
     for i, (day, j) in enumerate(snaps):
+        avail = snapshot_available_from(j)
         for tk, rec in (j.get("names") or {}).items():
             for per, p in (rec.get("periods") or {}).items():
                 eps, rev, ee, re_ = p.get("eps") or {}, p.get("rev") or {}, p.get("eps_est") or {}, p.get("rev_est") or {}
-                rows.append({"date": day, "ticker": tk, "period": per, "period_end": p.get("end"), "source": "observed",
+                rows.append({"date": day, "available_from": avail, "cards_only": False, "ticker": tk, "period": per, "period_end": p.get("end"), "source": "observed",
                              "eps_consensus": eps.get("current"), "eps_mean": ee.get("avg"), "eps_n": ee.get("n"),
                              "rev_mean": re_.get("avg"), "rev_n": re_.get("n"),
                              "up7": rev.get("up7"), "up30": rev.get("up30"), "down7": rev.get("down7"), "down30": rev.get("down30")})
                 if i == 0 and j.get("first_run"):
                     for k, lag in LAGS.items():
                         if eps.get(k) is not None:
-                            rows.append({"date": (date.fromisoformat(day) - timedelta(days=lag)).isoformat(), "ticker": tk, "period": per,
-                                         "period_end": p.get("end"), "source": "provider-reported",
+                            rows.append({"date": (date.fromisoformat(day) - timedelta(days=lag)).isoformat(), "available_from": avail, "cards_only": True,
+                                         "ticker": tk, "period": per, "period_end": p.get("end"), "source": "provider-reported",
                                          "eps_consensus": eps.get(k), "eps_mean": None, "eps_n": None, "rev_mean": None, "rev_n": None,
                                          "up7": None, "up30": None, "down7": None, "down30": None})
     df = pd.DataFrame(rows)
@@ -77,10 +83,13 @@ def history(snaps: list[tuple[str, dict]]) -> pd.DataFrame:
 
 
 def variables(snaps: list[tuple[str, dict]]) -> dict:
-    days = [d for d, _ in snaps]
-    today, j = snaps[-1]
-    t_lag = (date.fromisoformat(today) - timedelta(days=30)).isoformat()
-    base_day = max([d for d in days if d <= t_lag], default=None)
+    """The variables as of T = the latest availability date: today's snapshot is the latest with available_from <= T,
+    the base the latest with available_from <= T - 30 days (observed values only)."""
+    avail = {d: snapshot_available_from(j) for d, j in snaps}
+    T = max(avail.values())
+    today = max(d for d in avail if avail[d] <= T); j = dict(snaps)[today]
+    t_lag = (date.fromisoformat(T) - timedelta(days=30)).isoformat()
+    base_day = max([d for d in avail if avail[d] <= t_lag], default=None)
     base = dict(snaps)[base_day]["names"] if base_day else {}
     names = {}
     for tk, rec in (j.get("names") or {}).items():
@@ -95,7 +104,7 @@ def variables(snaps: list[tuple[str, dict]]) -> dict:
             "an_eps_rev_30": round(eps_now / eps_then - 1, 5) if (eps_now is not None and eps_then not in (None, 0) and same_fy and base_day) else None,
             "an_eps_breadth_30": round((up30 - down30) / n, 4) if (up30 is not None and down30 is not None and n) else None,
             "an_rev_rev_30": round(rev_now / rev_then - 1, 5) if (rev_now is not None and rev_then not in (None, 0) and same_fy and base_day) else None,
-            "fiscal_year_end": p.get("end"), "analysts": n, "base_snapshot": base_day,
+            "fiscal_year_end": p.get("end"), "analysts": n, "base_snapshot": base_day, "as_of": T, "snapshot": today,
         }
         if not same_fy:
             rec_out["note"] = "the fiscal year rolled between the two snapshots; the revision is not comparable"
@@ -132,6 +141,9 @@ def main() -> int:
     }
     if ready:
         payload["base_snapshot"] = variables(snaps)["base_snapshot"]
+    payload["availability_rule"] = ("a snapshot serves a date only from available_from, the first trading session whose close is at or after its capture; "
+                                    "provider-reported rows (the first file's 7/30/60/90-day look-backs) are cards-only and never a test input")
+    payload["history_rows_by_source"] = h["source"].value_counts().to_dict() if len(h) else {}
     OUT.write_text(json.dumps(payload, indent=1, allow_nan=False))
     log(f"{len(days)} snapshot days ({days[0] if days else '—'}..{days[-1] if days else '—'}); history rows {len(h)}; status: {payload['status']}")
     return 0

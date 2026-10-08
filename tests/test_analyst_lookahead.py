@@ -128,10 +128,38 @@ def test_price_target_before_a_split_is_rebased():
     assert abs(r2["price_nominal"] - 200.0) < 1e-9 and abs(r2["an_pt_gap"] - (220.0 / 200.0 - 1)) < 1e-9, r2
 
 
+def test_snapshot_availability_date():
+    """F4: a snapshot named 30 October captured at 04:31 ET on 2 November is not used for the 30-October month-end; one
+    captured at 17:30 ET on its own session date is used for that date."""
+    import snapshot_common as sc
+    late = {"session": "2026-10-30", "captured_at": "2026-11-02T04:31:00-05:00", "names": {}}
+    assert sc.snapshot_available_from(late) == "2026-11-02"
+    assert not sc.usable_for(late, "2026-10-30") and sc.usable_for(late, "2026-11-02")
+    same = {"session": "2026-10-07", "captured_at": "2026-10-07T17:30:00-04:00", "names": {}}
+    assert sc.snapshot_available_from(same) == "2026-10-07" and sc.usable_for(same, "2026-10-07")
+    assert sc.snapshot_available_from({"captured_at": "2026-10-10T10:00:00-04:00"}) == "2026-10-12"      # a Saturday capture: Monday
+    assert sc.snapshot_available_from({"captured_at": "2026-01-01T09:00:00-05:00", "available_from": "2026-01-02"}) == "2026-01-02"   # the field wins
+
+
+def test_provider_reported_rows_are_cards_only():
+    """F4: the first snapshot's 7/30/60/90-day look-backs are dated rows for the cards only; the builder marks them
+    cards_only and the test loader never takes them."""
+    import build_revisions as br
+    snap = {"session": "2026-10-06", "captured_at": "2026-10-07T04:31:00-04:00", "first_run": True,
+            "names": {"X": {"periods": {"0y": {"end": "2027-08-31", "eps": {"current": 10.0, "d7": 9.5, "d30": 9.0, "d60": 8.5, "d90": 8.0},
+                                                "rev": {"up7": 1, "up30": 2, "down30": 0, "down7": 0}, "eps_est": {"avg": 10.0, "n": 20}, "rev_est": {"avg": 1e9, "n": 20}}}}}}
+    h = br.history([("2026-10-06", snap)])
+    prov = h[h["source"] == "provider-reported"]; obs = h[h["source"] == "observed"]
+    assert len(prov) == 4 and prov["cards_only"].all() and len(obs) == 1 and not obs["cards_only"].any()
+    assert (h["available_from"] == "2026-10-07").all()                      # captured before the open of the 7th: available from the 7th
+    assert sorted(prov["date"].dt.strftime("%Y-%m-%d")) == ["2026-07-08", "2026-08-07", "2026-09-06", "2026-09-29"]
+
+
 if __name__ == "__main__":
     for fn in [test_future_rating_row_does_not_enter_the_month, test_rating_rows_outside_the_90_day_window_are_out,
                test_after_close_report_counts_next_trading_day, test_dollar_volume_uses_split_adjusted_close_only,
-               test_placebo_shift_moves_the_future_value_onto_t, test_ranks_within_members_only, test_price_target_before_a_split_is_rebased]:
+               test_placebo_shift_moves_the_future_value_onto_t, test_ranks_within_members_only, test_price_target_before_a_split_is_rebased,
+               test_snapshot_availability_date, test_provider_reported_rows_are_cards_only]:
         run(fn)
     n_fail = sum(1 for _, ok in RESULTS if not ok)
     print(f"\n{len(RESULTS) - n_fail} passed, {n_fail} failed")
