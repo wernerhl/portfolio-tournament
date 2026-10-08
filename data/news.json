@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-06",
- "fetched_at": "2026-10-07T15:45:04-04:00",
+ "as_of": "2026-10-07",
+ "fetched_at": "2026-10-07T20:01:16-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=95 (parsed 41 names)",
+  "edgar": "ok n=92 (parsed 41 names)",
   "ir_avgo": "ok n=0 (parsed 10)",
   "ir_nvda": "ok n=0 (parsed 20)",
   "ir_gev": "ok n=3 (parsed 20)",
@@ -81,17 +81,33 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 5,
-  "out_of_window": 27452,
+  "irrelevant": 6,
+  "out_of_window": 27455,
   "unparseable": 0
  },
  "counts": {
-  "items": 147,
-  "tier1": 140,
-  "tier2": 7,
-  "last24h": 3
+  "items": 137,
+  "tier1": 137,
+  "tier2": 0,
+  "last24h": 4
  },
  "items": [
+  {
+   "id": "8deb30869e692184653ccfc2d09b0acb96de7721",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326015324/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-07T18:09:06-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "eeb8f6b78f01907993fa53874099ec62313d0028",
    "tier": 1,
@@ -2251,204 +2267,18 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-09-30 · PRIMARY DOCUMENT",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "04680932e761ce4bb3e9f335a584f70121944102",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "VIG Cannot Own Meta’s or Alphabet’s Dividends Until 2035 at the Earliest: The 10-Year Rule Written Into Its Index",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://247wallst.com/investing/etf/2026/09/30/vig-cannot-own-metas-or-alphabets-dividends-until-2035-at-the-earliest-the-10-year-rule-written-into-its-index/",
-   "timestamp": "2026-09-30T18:35:21-04:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c9ea7169cdca70f27aa560e1309b87b6143c869e",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Google Unveils New AI Model Gemini 4 Argon, Sending Alphabet Stock Higher",
-   "source": "Barrons.com",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.barrons.com/articles/google-ai-gemini-4-argon-alphabet-stock-d3df631c?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-09-30T17:35:00-04:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Barrons.com · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fb8a31a5b98901880f880edbcc5425205021bb7d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Blackstone Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526409256/xslF345X06/ownership.xml",
-   "timestamp": "2026-09-30T17:17:15-04:00",
-   "tickers": [
-    "BX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-30 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Google Stock Rises On Gemini 4 Argon Release After New AI Model Delays",
-   "source": "Investor's Business Daily",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.investors.com/news/technology/google-stock-rises-on-gemini-4-argon-release-after-new-ai-model-delays/?src=A00220&yptr=yahoo",
-   "timestamp": "2026-09-30T17:04:26-04:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investor's Business Daily · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "671cf6312e0d2c949ce0a5decaaa91504949e9a5",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Airbnb, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1559720/000119312526409153/xslF345X06/ownership.xml",
-   "timestamp": "2026-09-30T16:43:43-04:00",
-   "tickers": [
-    "ABNB"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-30 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "87f489c49538e82cbc8c2e47234bece5259a7348",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Alphabet stock slips on report of internal doubts over Gemini 4",
-   "source": "Investing.com",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-stock-slips-report-internal-203029696.html",
-   "timestamp": "2026-09-30T16:30:29-04:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investing.com · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1bcee7ed45e125457ddc0a92df535467f585c668",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Airbnb, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1559720/000119312526409120/xslF345X06/ownership.xml",
-   "timestamp": "2026-09-30T16:30:08-04:00",
-   "tickers": [
-    "ABNB"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-30 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia, AMD Collaborator Teases Breakout To Record High. These Clues Bode Well.",
-   "source": "Investor's Business Daily",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://www.investors.com/research/breakout-stocks-technical-analysis/semtech-stock-teases-record-high-nvidia-amd-enter-buy-range/?src=A00220&yptr=yahoo",
-   "timestamp": "2026-09-30T16:19:14-04:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2d629c83797c2dc7f59d1fc31e51ca7024ce22c2",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DEXCOM INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000181/xslF345X06/wk-form4_1790799305.xml",
-   "timestamp": "2026-09-30T16:15:09-04:00",
-   "tickers": [
-    "DXCM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-09-30 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fea9a4b6bfb1358de0627932c86bdda03e88a486",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "GE Vernova (GEV) Secures NRC Permit For New Reactor Design",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://finance.yahoo.com/energy/articles/ge-vernova-gev-secures-nrc-201009594.html",
-   "timestamp": "2026-09-30T16:10:09-04:00",
-   "tickers": [
-    "GEV",
-    "GE"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about GEV, GE",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3208241e531ffc00aa3f5f5d73b07a040ecb13a5",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "SCHD’s Rules Sold Broadcom in March 2024. The Stock Is Up About 183% Since, and SCHD Holders Missed the Run",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://247wallst.com/investing/etf/2026/09/30/schds-rules-sold-broadcom-in-march-2024-the-stock-is-up-about-183-since-and-schd-holders-missed-the-run/",
-   "timestamp": "2026-09-30T16:01:47-04:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about AVGO",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
    "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3",
    "3ad0a32bd03623acbcfb75653d8df234d56bbe25",
-   "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f",
-   "fea9a4b6bfb1358de0627932c86bdda03e88a486"
+   "95d53391e1fc2e675f4168b4ecc5efc2c13eca6f"
   ],
-  "NVDA": [
-   "4e507b14ffbe4d714e141ad2fd4ce8b771433c9b"
-  ],
-  "AVGO": [
-   "3208241e531ffc00aa3f5f5d73b07a040ecb13a5"
-  ],
+  "NVDA": [],
+  "AVGO": [],
   "GOOG": [
-   "36f921eed4fe550b89ce248a4b75b183a4e325f3",
-   "04680932e761ce4bb3e9f335a584f70121944102",
-   "c9ea7169cdca70f27aa560e1309b87b6143c869e",
-   "748e15b42f1f82a2c1860393b07c1e91c23a2fbe",
-   "87f489c49538e82cbc8c2e47234bece5259a7348"
+   "36f921eed4fe550b89ce248a4b75b183a4e325f3"
   ],
   "BMNR": [
    "7c0dbaae6001220b04ceca5e9d276740ee1f52bb",
@@ -2456,6 +2286,7 @@
   ]
  },
  "last24h": [
+  "8deb30869e692184653ccfc2d09b0acb96de7721",
   "eeb8f6b78f01907993fa53874099ec62313d0028",
   "7c0dbaae6001220b04ceca5e9d276740ee1f52bb",
   "0438248e1accacee204739d672e26b9c61718ca3"
