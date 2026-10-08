@@ -114,6 +114,8 @@ jobs:
           ref: main
       - name: Parse-check the front-end scripts (1-Oct-2026 — a broken script must never deploy; the last good site stays)
         run: for f in app.js common.js pages.js charts.js screen.js; do node --check "$f" || { echo "::error::$f does not parse"; exit 1; }; done
+      - name: Keep the research folder out of the site (F5, 7-Oct-2026)
+        run: rm -rf research
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

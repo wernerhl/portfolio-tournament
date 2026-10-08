@@ -1,0 +1,21 @@
+{
+ "task": "F5 of the follow-up order (7 October 2026): EDGAR company facts -> TTM fundamental records with filing dates, stored raw, never rewritten",
+ "downloaded_on": "2026-10-07",
+ "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+ "user_agent": "SEC_USER_AGENT (the declared contact; not recorded)",
+ "rate": "under 4 requests a second",
+ "requests": 654,
+ "elapsed_s": 312,
+ "tickers": {
+  "requested": 674,
+  "with_cik": 657,
+  "no_facts": []
+ },
+ "records": 38973,
+ "companies": 651,
+ "avail_range": [
+  "2009-04-15",
+  "2026-10-07"
+ ],
+ "method": "research/ml_stratification_test/fund.py: annual facts plus quarterly differences give TTM values at each quarter end; lags of 1, 4 and 5 quarters; SUE = the change in TTM net income over its 8-quarter standard deviation; shares to today's basis by the splits after the filing"
+}

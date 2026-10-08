@@ -47,6 +47,12 @@ AN = REPO / "data" / "analyst"
 OUT = AN / "walkforward_test.json"
 AN_VARS = ["an_net_up_90", "an_pt_rev_90", "an_pt_gap", "an_n_act_90", "an_surprise", "an_sue", "an_surprise_streak"]
 BASE_VARS = ["mom_12_1", "ret_1m", "vol_12m", "hi_12m", "log_dv"]
+# the design workspace's 43 variables (research/ml_stratification_test/feats2.py; scripts/analyst/features_ext.py)
+EXT_PRICE_VARS = ["mom_12_1", "mom_6_1", "mom_12_7", "rev_1m", "mom_36_13", "vol_63", "beta_252", "ivol_126", "resmom_12_1", "hi52", "dd_3y", "d200",
+                  "skew_126", "pctpos_252", "dvol", "volchg", "max5", "ejump", "mom_accel", "season", "sec_mom"]
+EXT_FUND_VARS = ["f_ey", "f_fcfy", "f_sy", "f_bm", "f_gpa", "f_roe", "f_opm", "f_cfoa", "f_rev_g", "f_rev_gq", "f_rev_acc", "f_oi_g", "f_ni_g", "f_sue",
+                 "f_ag", "f_capex_a", "f_capex_g", "f_acc", "f_sh_g", "f_rd_s", "f_lev", "f_size"]
+EXT_VARS = [v for v in EXT_PRICE_VARS if v not in BASE_VARS] + EXT_FUND_VARS      # mom_12_1 and rev_1m already in the base set
 TEST_YEARS = list(range(2014, 2027))
 COST_BPS = 10.0
 RIDGE_LAMBDA = 1.0
@@ -143,9 +149,14 @@ def shift_analyst_frame(an: pd.DataFrame, k: int) -> pd.DataFrame:
 
 
 # ── the table ────────────────────────────────────────────────────────────────────────────────
-def build_table(stamp: str, shift_analyst: int = 0) -> tuple[pd.DataFrame, dict]:
+def build_table(stamp: str, shift_analyst: int = 0, hold_delisted: bool = True, clip: float | None = None,
+                ext: bool = False, liquid_only: bool = False, sector_known_only: bool = False) -> tuple[pd.DataFrame, dict]:
     """One row per (month, member) with features, outcomes and the excess over the average member.
-    shift_analyst: the placebo shift in months of the analyst variables (+12 = values from the future)."""
+    shift_analyst: the placebo shift in months of the analyst variables (+12 = values from the future).
+    hold_delisted: a name whose bars end inside the horizon is held to its last price (False: dropped, as in the
+    design workspace). clip: cap the forward return (the workspace used 3.0). ext: join the 43 variables of
+    data/analyst/panel_ext_monthly.parquet. liquid_only / sector_known_only: the workspace's two universe filters
+    (63-day dollar volume of at least $3 million; a current sector label) — the second drops the delisted names."""
     panel = pd.read_parquet(AN / "panel_monthly.parquet")
     mp = monthly_prices()
     mem = pd.read_parquet(AN / "sp500_membership_history.parquet")
@@ -173,10 +184,12 @@ def build_table(stamp: str, shift_analyst: int = 0) -> tuple[pd.DataFrame, dict]
     delisted = ends_before_end.any(axis=0)
     def fwd(h):
         f = adj.shift(-h) / adj - 1
-        gone = ends_before_end.shift(-h).fillna(False) & adj.notna()            # no bar h months on, name since ended
-        gone = gone & delisted & (last_adj.shift(-h).notna())
-        fill = last_adj.shift(-h) / adj - 1
-        return f.where(~gone, fill)
+        if hold_delisted:
+            gone = ends_before_end.shift(-h).fillna(False) & adj.notna()        # no bar h months on, name since ended
+            gone = gone & delisted & (last_adj.shift(-h).notna())
+            fill = last_adj.shift(-h) / adj - 1
+            f = f.where(~gone, fill)
+        return f.clip(upper=clip) if clip else f
     outs = {"fwd12": fwd(12), "fwd1": fwd(1)}
     long = []
     for k, v in {**feats, **outs}.items():
@@ -189,9 +202,17 @@ def build_table(stamp: str, shift_analyst: int = 0) -> tuple[pd.DataFrame, dict]
     an = shift_analyst_frame(panel[["p", "ticker"] + AN_VARS].copy(), shift_analyst)
     T = T.merge(an, on=["p", "ticker"], how="left")
     T = T[T["member"]].copy()
+    if ext or liquid_only or sector_known_only:
+        X = pd.read_parquet(AN / "panel_ext_monthly.parquet"); X["p"] = pd.to_datetime(X["month_end"]).dt.to_period("M")
+        keep = ["p", "ticker", "liquid", "has_fund"] + [v for v in EXT_VARS if v in X.columns]
+        T = T.merge(X[keep], on=["p", "ticker"], how="left")
+        if liquid_only:
+            T = T[T["liquid"].fillna(False)]
+        if sector_known_only:
+            T = T[T["sec_mom"].notna()]
     T["month_end"] = T["p"].dt.to_timestamp("M")
     # ranks within the members of each month: base features and (re-ranked after any shift) analyst variables
-    for v in BASE_VARS + AN_VARS:
+    for v in BASE_VARS + AN_VARS + ([x for x in EXT_VARS if x in T.columns] if ext else []):
         T[v + "_rk"] = T.groupby("p")[v].transform(rank_scaled)
     T["an_present"] = T[["an_n_act_90", "an_surprise", "an_sue"]].notna().any(axis=1).astype(float)
     for h in ("fwd12", "fwd1"):
@@ -204,7 +225,7 @@ def build_table(stamp: str, shift_analyst: int = 0) -> tuple[pd.DataFrame, dict]
 
 
 # ── evaluation ───────────────────────────────────────────────────────────────────────────────
-def portfolio_series(T: pd.DataFrame, score: str, horizon: str, top_share: float) -> pd.DataFrame:
+def portfolio_series(T: pd.DataFrame, score: str, horizon: str, top_share: float, cost_bps: float = COST_BPS) -> pd.DataFrame:
     """Per month: the top-share equal-weighted excess return of the horizon, before and after costs, and turnover."""
     rows, prev = [], set()
     for p, g in T[T[score].notna() & T[horizon + "_x"].notna()].groupby("p"):
@@ -214,7 +235,7 @@ def portfolio_series(T: pd.DataFrame, score: str, horizon: str, top_share: float
         names = set(top["ticker"])
         turnover = 1.0 if not prev else (len(names - prev) + len(prev - names)) / (2.0 * len(names))     # one-way share
         ex = float(top[horizon + "_x"].mean())
-        cost = 2 * COST_BPS / 1e4 if horizon == "fwd12" else 2 * turnover * COST_BPS / 1e4
+        cost = 2 * cost_bps / 1e4 if horizon == "fwd12" else 2 * turnover * cost_bps / 1e4
         rows.append({"p": str(p), "n": n, "k": k, "excess": ex, "excess_net": ex - cost, "turnover": turnover})
         prev = names
     return pd.DataFrame(rows)
@@ -231,21 +252,26 @@ def summarize_series(ps: pd.DataFrame, horizon: str) -> dict:
             "lags": lags}
 
 
-def walk_forward(T: pd.DataFrame, feats: list[str], target: str, model: str, label: str) -> str:
+def walk_forward(T: pd.DataFrame, feats: list[str], target: str, model: str, label: str, rank_target: bool = False,
+                 lam: float = RIDGE_LAMBDA) -> str:
     """Predictions for every test year, retrained each January on month-ends whose 12-month outcome was complete
-    before the test year. Returns the name of the score column."""
+    before the test year. rank_target: train on the within-month percentile rank of the outcome (the workspace's
+    choice) instead of the excess return; lam: the ridge penalty. Returns the name of the score column."""
     col = f"score_{label}"
     T[col] = np.nan
+    if rank_target and target + "_rk" not in T.columns:
+        T[target + "_rk"] = T.groupby("p")[target].transform(lambda s: s.rank(pct=True) - 0.5)
+    ytgt = target + "_rk" if rank_target else target
     for Y in TEST_YEARS:
         cutoff = pd.Period(f"{Y - 1}-12", freq="M") - 12                        # t + 12 months <= Dec of Y-1
         tr = T[(T["p"] <= cutoff) & T["fwd12"].notna() & T[target].notna()]
         te = T["p"].dt.year == Y
         if len(tr) < 500 or not te.any():
             continue
-        Xtr = tr[feats].fillna(0.0).values; ytr = tr[target].values
+        Xtr = tr[feats].fillna(0.0).values; ytr = tr[ytgt].values
         Xte = T.loc[te, feats].fillna(0.0).values
         if model == "ridge":
-            T.loc[te, col] = ridge_predict(ridge_fit(Xtr, ytr), Xte)
+            T.loc[te, col] = ridge_predict(ridge_fit(Xtr, ytr, lam), Xte)
         else:
             T.loc[te, col] = gbm_fit(Xtr, ytr).predict(Xte)
     return col

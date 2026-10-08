@@ -1,0 +1,104 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-07",
+ "order": "follow-up order of 7 October 2026, F5",
+ "repository_table": {
+  "months": 177,
+  "rows": 75586,
+  "first": "2012-01",
+  "last": "2026-09",
+  "members_per_month_avg": 427.0,
+  "members_without_12m_outcome_share": 0.1022,
+  "members_in_file_without_prices": 13491
+ },
+ "workspace_filtered_table": {
+  "months": 177,
+  "rows": 66521,
+  "first": "2012-01",
+  "last": "2026-09",
+  "members_per_month_avg": 375.8,
+  "members_without_12m_outcome_share": 0.0883,
+  "members_in_file_without_prices": 22556
+ },
+ "steps": [
+  {
+   "step": "0 repository result (5 variables, 20 bps a holding, delisted held to the last price, excess-return target, penalty 1)",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.6,
+   "t_nw": 0.76,
+   "t_nw_workspace_formula": 0.76,
+   "members_per_month": 427.0,
+   "features": 5
+  },
+  {
+   "step": "1 no cost",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.8,
+   "t_nw": 0.81,
+   "t_nw_workspace_formula": 0.81,
+   "members_per_month": 427.0,
+   "features": 5
+  },
+  {
+   "step": "2 + the workspace's return treatment (delisted dropped, returns capped at 300%)",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.09,
+   "t_nw": 0.68,
+   "t_nw_workspace_formula": 0.68,
+   "members_per_month": 427.0,
+   "features": 5
+  },
+  {
+   "step": "3 + the workspace's fit (percentile-rank target, penalty 100)",
+   "months": 141,
+   "top_tenth_pts_per_year": -2.55,
+   "t_nw": -1.07,
+   "t_nw_workspace_formula": -1.07,
+   "members_per_month": 427.0,
+   "features": 5
+  },
+  {
+   "step": "4 + the workspace's universe filters (dollar volume >= $3M, a current sector label)",
+   "months": 141,
+   "top_tenth_pts_per_year": 4.03,
+   "t_nw": 1.66,
+   "t_nw_workspace_formula": 1.66,
+   "members_per_month": 375.8,
+   "features": 5
+  },
+  {
+   "step": "5 + the workspace's 21 price variables",
+   "months": 141,
+   "top_tenth_pts_per_year": 5.6,
+   "t_nw": 1.67,
+   "t_nw_workspace_formula": 1.67,
+   "members_per_month": 375.8,
+   "features": 21
+  },
+  {
+   "step": "6 + the 22 fundamental variables (43 in all; names with fundamentals)",
+   "months": 141,
+   "top_tenth_pts_per_year": 4.53,
+   "t_nw": 2.04,
+   "t_nw_workspace_formula": 2.04,
+   "members_per_month": 359.4,
+   "features": 43
+  }
+ ],
+ "workspace_reported": {
+  "res_all.csv": {
+   "set": "all",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.64,
+   "t_nw": 2.06
+  },
+  "res_price.csv": {
+   "set": "price",
+   "months": 141,
+   "top_tenth_pts_per_year": 2.85,
+   "t_nw": 1.95
+  }
+ },
+ "newey_west": "the same Bartlett-weighted formula in both (ml2.py nw_t run on the repository's series gives the t beside each step)",
+ "months": "141 twelve-month test months in both (2014-01 to 2025-09)"
+}
