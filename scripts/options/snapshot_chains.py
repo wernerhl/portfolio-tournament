@@ -171,7 +171,12 @@ def publish(session: str, pulled_hm: str) -> str:
     git("-c", "user.name=Tournament Bot", "-c", "user.email=bot@tournament", "commit", "-q", "-m",
         f"🧾 options vintage {session} · pulled {pulled_hm} ET · {trig}", check=True)
     # F6 (7-Oct-2026): six attempts with a longer backoff (the 6- and 7-Oct vintages were pulled and then lost to
-    # push_failed after three quick attempts); a rebase that fails on a shallow history is retried after unshallowing
+    # push_failed after three quick attempts); a rebase that fails on a shallow history is retried after unshallowing.
+    # 8-Oct-2026 (third follow-up, H6 check 1): the 6-, 7- and 8-Oct vintages were pulled and lost because every
+    # rebase failed - the rebase replays the vintage commit and needs a committer identity, which this step never
+    # configured (the commit above carries its own through -c; the workflow sets git config only in a later step);
+    # the rebase now carries the same identity, and a failure logs git's own message instead of an empty status
+    ident = ["-c", "user.name=Tournament Bot", "-c", "user.email=bot@tournament"]
     for attempt in range(1, 7):
         if git("push", "origin", "HEAD:main").returncode == 0:
             return "written"
@@ -179,12 +184,14 @@ def publish(session: str, pulled_hm: str) -> str:
         if origin_has(session):
             git("reset", "-q", "--hard", "origin/main")               # discard the local vintage
             return "push_conflict"
-        if git("rebase", "-q", "origin/main").returncode != 0:          # an unrelated bot commit: replay ours on top
+        r = git(*ident, "rebase", "-q", "origin/main")                   # an unrelated bot commit: replay ours on top
+        if r.returncode != 0:
             git("rebase", "--abort")
             git("fetch", "-q", "--unshallow", "origin", "main")
-            if git("rebase", "-q", "origin/main").returncode != 0:
+            r = git(*ident, "rebase", "-q", "origin/main")
+            if r.returncode != 0:
                 git("rebase", "--abort")
-                log(f"rebase onto origin/main failed (attempt {attempt}); {git('status', '--short').stdout.strip()[:200]}")
+                log(f"rebase onto origin/main failed (attempt {attempt}): {(r.stderr or r.stdout).strip()[:300]!r}; status {git('status', '--short').stdout.strip()[:100]!r}")
                 if attempt == 6:
                     return "push_failed"
         time.sleep(5 * attempt)
