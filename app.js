@@ -3160,7 +3160,8 @@ function renderLeaderboardBlock(){
     const d0 = comp.length ? comp[0].date : null, d1 = comp.length ? comp[comp.length - 1].date : null;
     const bench = (allSeries.bench[BENCH_FOR_TIER["5_werner"]] || []).filter(b => d0 && d1 && b.date >= d0 && b.date <= d1);
     const cm = tierMetrics(comp, bench);
-    if (cm) { tmMap["5_werner"] = {...tmMap["5_werner"], w1: cm.w1, m1: cm.m1, sharpe: cm.sharpe, maxDD: cm.maxDD, alpha: cm.alpha, fromComparable: true};
+    // H5 (third follow-up, 7-Oct-2026): TOTAL too — the published NAV ratio carries the re-seed steps (+20.5% vs +1.7%)
+    if (cm) { tmMap["5_werner"] = {...tmMap["5_werner"], total: cm.total, w1: cm.w1, m1: cm.m1, sharpe: cm.sharpe, maxDD: cm.maxDD, alpha: cm.alpha, fromComparable: true};
       werSeriesNote = `comparable series (daily returns chain-linked with each re-seed step excluded, errata applied), ${d0} to ${d1}; vs BENCH = this series against ${(BENCH_FOR_TIER["5_werner"] || "SPY").toUpperCase()} over the same dates; TOTAL and NAV stay as published`; }
   }
   let leader = null, leaderRet = -Infinity;
@@ -3257,7 +3258,7 @@ function renderLeaderboardBlock(){
         <div class="tier-desc">${notComp ? `excluded from the ranking: ${(wc.comparable_reason || "").substring(0, 120)}… · re-seed ${(wc.reseed_events || []).map(e => e.date + " " + (e.step_pct >= 0 ? "+" : "") + e.step_pct + "%").join(", ") || "—"} · comparable series (step excluded) $${wcLast ? fmt(wcLast.nav_comparable) : "—"}` : `${(t.description||"").substring(0,80)}${(t.description||"").length>80?"…":""}`}</div>
       </td>
       <td class="num" title="${(() => { const cr = S.tournament && S.tournament.cost_restatement && S.tournament.cost_restatement.tiers && S.tournament.cost_restatement.tiers[tid]; return cr ? `pre-cost $${fmt(cr.nav_pre_cost_last)} · restated net (spread+impact model) $${fmt(cr.nav_net_restated_last)} · cumulative cost charged ${cr.cumulative_cost_flat_pct}% (flat, as published) vs ${cr.cumulative_cost_model_pct}% (model) · one-way turnover ${cr.turnover_one_way_total} over ${cr.n_rebalances} rebalances` : "net of costs"; })()}">${navVal ? "$"+fmt(navVal) : "—"}</td>
-      <td class="num ${pnlc(m.total)}"><span data-tween="tot-${tid}" data-val="${m.total}" data-fmt="p">${fmtP(m.total)}</span>${(() => {
+      <td class="num ${pnlc(m.total)}" title="${m.fromComparable ? escText30("TOTAL from the " + werSeriesNote) : "total return of the as-published NAV series over the period"}"><span data-tween="tot-${tid}" data-val="${m.total}" data-fmt="p">${fmtP(m.total)}</span>${(() => {
         if (!condMode) return "";
         const cc = condFor(tid);
         if (!cc || cc.shrunk_ann_return == null) return ` <small class="c-3">· n=0</small>`;
