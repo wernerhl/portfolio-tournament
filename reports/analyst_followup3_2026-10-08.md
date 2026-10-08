@@ -194,9 +194,20 @@ title text; NAV net stays as published. Verified on the local preview (tournamen
 
 ## 6. H6 — the three checks
 
-1. **The 8-October options pull pushed its vintage (G9 check 2).** Pending at the time of this report: the pull
-   runs at 15:45 ET on 8 October; the session's scheduled check (16:07 ET) reads the options index on `origin/main`
-   and records the result here in a follow-up commit.
+1. **The 8-October options pull pushed its vintage (G9 check 2) — NO.** Checked at 16:07 ET on 8 October on
+   `origin/main`: the last vintage on the branch is **2026-10-02**; the index records 6 and 7 October as `missing,
+   push_failed` (runs 49 and 51). The 8-October run (the 13:00 UTC backup cron, delivered at 15:12 ET; the step ran
+   inside the 15:30–16:00 window) **pulled all 44 chains at 15:50–15:52 ET and then lost them**: `push_failed` after
+   six rebase attempts, each logged as "rebase onto origin/main failed" with an empty status. Cause, found from the
+   script and reproduced locally: the push is rejected because the bots commit every few minutes (intraday 19:05Z,
+   analytics 19:40Z, market-open 19:41Z), so the step must rebase its vintage commit onto `origin/main`; the rebase
+   replays the commit and needs a committer identity, which the step never has — the commit itself carries one
+   through `-c user.name/-c user.email`, the workflow configures git only in a later step, and a runner cannot
+   auto-detect one (`git -c user.useConfigOnly=true rebase` → rc 128, "Committer identity unknown"; with the identity
+   passed, rc 0). The F6 repair (fetch-depth 0, six attempts) could not help: it retried the same failing command.
+   Fix in the `[H6]` follow-up commit: the rebase carries the same identity as the commit, and a failure logs git's
+   own message. Three sessions (6, 7, 8 October) were pulled and lost; the as-published index stays as written and
+   the next scheduled pull is the first test of the fix.
 2. **After H1, `membership:duplicate_current_symbol` reports nothing.** Confirmed: the referee's after-run (section
    7) carries no such finding; the rebuilt file has 0 duplicate (month-end, current symbol) pairs against 183 at
    `bdc9266`. The index-gap list it reports — the one list, as H4 asks — is `universe:index_gap`: **BE, FDXF, FERG,
