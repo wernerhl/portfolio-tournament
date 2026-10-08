@@ -27,12 +27,12 @@ jobs:
       run: ${{ steps.g.outputs.run }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts/ops
       - name: Deploy watchdog (F3, 7-Oct-2026 — cancel deploy jobs stuck for more than 30 minutes before anything else)
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/ops/deploy_watchdog.py --max-age-min 30 || true
-        with:
-          sparse-checkout: scripts/ops
       - id: g
         env:
           GH_TOKEN: ${{ github.token }}
