@@ -1328,6 +1328,15 @@ def main(troot, sroot, today=None):
         else: add('INFO','site:session',f'live site session {_lsess or "unknown"}, {_age} h since its last publish (last session {ls})')
     except Exception as _e:
         add('MEDIUM','site:unreachable',f'the live status.json could not be read: {type(_e).__name__}: {str(_e)[:120]}')
+    # ---------- H2: every workflow file passes actionlint (a YAML parser accepts what GitHub rejects)
+    try:
+        sys.path.insert(0,os.path.abspath(os.path.join(troot,os.pardir,'scripts','ops')))
+        import workflow_lint as _wl
+        try:
+            _n,_out=_wl.lint(os.path.abspath(os.path.join(troot,os.pardir)))
+            if _n: add('HIGH','ops:workflow_lint',f"actionlint {_wl.VERSION}: {_n} error(s) in .github/workflows: "+' | '.join(ln for ln in _out.splitlines() if ln.startswith('.github/'))[:400])
+        except _wl.LinterUnavailable as _e: add('MEDIUM','ops:workflow_lint',f'the linter could not run ({str(_e)[:120]})')
+    except Exception as _e: add('MEDIUM','ops:workflow_lint',f'check could not run ({type(_e).__name__})')
     # ---------- report ----------
     order={'CRITICAL':0,'HIGH':1,'MEDIUM':2,'INFO':3}
     F.sort(key=lambda x:order[x[0]])

@@ -26,6 +26,11 @@ on:
     - cron: '0 8 * * 2-6'    # 04:00 ET morning publish (lands 04:00–07:00 ET with GitHub's delay, before the open) when the evening run found no close bar
     - cron: '41 10 * * 2-6'  # 06:41 ET last pre-open retry (2-Oct-2026)
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched (the run-name shows it; H2, 7-Oct-2026: the expression needs a declared input)"
+        required: false
+        default: manual
 
 permissions:
   contents: write

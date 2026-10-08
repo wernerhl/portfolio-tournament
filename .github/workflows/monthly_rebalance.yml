@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '0 14 1 * *'   # 1st of month, 10am ET (≈14:00 UTC)
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched (the run-name shows it; H2, 7-Oct-2026: the expression needs a declared input)"
+        required: false
+        default: manual
 
 permissions:
   contents: write
