@@ -1,6 +1,6 @@
 # Follow-up to the analyst-data report: referee, errata, deploy watchdog, snapshot timing, one test harness — report, 7 October 2026
 
-Commits: [F1] b644107, [F2] 3ef5e9e, [F3] (see below), [F4] 99e5561, [F5] and [F6] below. The referee output before this order is `reports/audit_2026-10-07_analyst_after.txt` (29 findings, 1 CRITICAL, from the previous order's close); after, `reports/audit_2026-10-07_followup_after.txt` (section 7).
+Commits: [F1] b644107, [F2] 3ef5e9e, [F3] be56027, [F4] 99e5561, [F5] d9f2ee4, [F6] dfa3163 (this report; amended with the watchdog's acceptance result). The referee output before this order is `reports/audit_2026-10-07_analyst_after.txt` (29 findings, 1 CRITICAL, from the previous order's close); after, `reports/audit_2026-10-07_followup_after.txt` (section 7).
 
 ## 1. F1 — the referee fails closed
 
@@ -61,7 +61,7 @@ After the change no day beyond 10% in either direction remains on 6 October; 7 O
 - `scripts/ops/deploy_watchdog.py` lists runs whose `deploy` job has been waiting, queued or in progress for more than 30 minutes and cancels them with the workflow's own `GITHUB_TOKEN` (`actions: write`), skipping its own run. It runs first in the nightly and intraday workflows and every 30 minutes on weekdays from `watchdog.yml`. No new credential.
 - Referee `site:session` (INFO, every run) and `site:stale` (HIGH when the live session is more than one trading session behind); `scripts/site_alerts.py` opens one issue labelled `site-stale` while that holds and closes it when the site catches up.
 
-**The watchdog's first runs and the acceptance test:** _filled in below._
+**The watchdog's first runs and the acceptance test.** The test run (`watchdog_test.yml`, a `deploy` job that only waits) was dispatched at 20:14 ET. The watchdog's first run, dispatched by hand at 20:23 ET, found nothing to cancel ("no deploy job older than 30 min in the waiting/queued/in-progress states" — the test job was nine minutes old). GitHub did not deliver the scheduled 00:30 or 01:00 UTC runs by 21:28 ET (the nightly's own 22:00 UTC cron was likewise undelivered three and a half hours after its time that evening), so the watchdog was dispatched by hand again at 21:29 ET and cancelled the test run: `CANCELLED run 1 (Deploy watchdog test, id 37706691839): deploy job in_progress since 2026-10-08T00:14:21+00:00 (74.9 min)`; the run shows `completed cancelled` at 21:29:38 ET. The cancel path is verified end to end; the 60-minute bound of the acceptance holds when the 30-minute cron is delivered on time, which GitHub does not promise — the same step running first in every nightly and intraday run (every 30 minutes during market hours) is the second path, and a deploy job can no longer outlive its 15-minute timeout once it has started.
 
 **The site age the referee reports:** `[INFO] site:session — live site session 2026-10-06, 23.0 h since its last publish (last session 2026-10-07)` (run at 20:20 ET on 7 October, before tonight's nightly).
 
