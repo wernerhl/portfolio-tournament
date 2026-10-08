@@ -3151,6 +3151,18 @@ function renderLeaderboardBlock(){
   // brokerage transactions export — it never enters the ranking or the leader banner.
   const wc = S.tournament && S.tournament.werner_comparable;
   const werNotComparable = !!(wc && wc.comparable === false);
+  // G8 (second follow-up, 7-Oct-2026): while the tier is not comparable its 1M, 1W, SHARPE and MAX DD come from the
+  // comparable series (re-seed steps excluded, errata applied) and vs BENCH from the benchmark over the tier's own
+  // dates; the as-published NAV series showed the 30-Sept re-seed step as a 29.6% drawdown and a 1M of +20%
+  let werSeriesNote = "";
+  if (werNotComparable && wc.series && wc.series.length > 1 && tmMap["5_werner"]) {
+    const comp = applyPeriod(wc.series.filter(x => x.nav_comparable != null).map(x => ({date: x.date, nav: x.nav_comparable})), S.period);
+    const d0 = comp.length ? comp[0].date : null, d1 = comp.length ? comp[comp.length - 1].date : null;
+    const bench = (allSeries.bench[BENCH_FOR_TIER["5_werner"]] || []).filter(b => d0 && d1 && b.date >= d0 && b.date <= d1);
+    const cm = tierMetrics(comp, bench);
+    if (cm) { tmMap["5_werner"] = {...tmMap["5_werner"], w1: cm.w1, m1: cm.m1, sharpe: cm.sharpe, maxDD: cm.maxDD, alpha: cm.alpha, fromComparable: true};
+      werSeriesNote = `comparable series (daily returns chain-linked with each re-seed step excluded, errata applied), ${d0} to ${d1}; vs BENCH = this series against ${(BENCH_FOR_TIER["5_werner"] || "SPY").toUpperCase()} over the same dates; TOTAL and NAV stay as published`; }
+  }
   let leader = null, leaderRet = -Infinity;
   Object.entries(tmMap).forEach(([tid, m]) => { if (werNotComparable && tid === "5_werner") return; if (m && m.total > leaderRet) { leaderRet = m.total; leader = tid; } });
 
@@ -3258,11 +3270,11 @@ function renderLeaderboardBlock(){
         const live = cr ? ` · live to date ${cr.turnover_one_way_total}× one-way over ${cr.n_rebalances} rebalances, model cost ${cr.cumulative_cost_model_pct}% cumulative (flat as published ${cr.cumulative_cost_flat_pct}%)` : "";
         return `<td class="num" title="backtest basis: ${bm.turnover_one_way_annual}× one-way per year${live}">${(bm.turnover_one_way_annual * 100).toFixed(0)}%</td>
       <td class="num" title="backtest basis: ${bm.cost_drag_cagr_pp} pp of CAGR per year${live}">${Math.round(bm.cost_drag_cagr_pp * 100)} bps</td>`; })()}
-      <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
-      <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
-      <td class="num"><span data-tween="sh-${tid}" data-val="${m.sharpe}" data-fmt="n2">${m.sharpe.toFixed(2)}</span></td>
-      <td class="num neg" title="${c2TierTitle(tid)}"><span data-tween="dd-${tid}" data-val="${m.maxDD}" data-fmt="p1">${fmtP1(m.maxDD)}</span>${c2TierSub(tid)}</td>
-      <td class="num ${m.alpha!=null?pnlc(m.alpha):'neut'}">${m.alpha!=null?fmtP1(m.alpha):"—"}</td>
+      <td class="num ${m.m1!=null?pnlc(m.m1):'neut'}" title="${m.fromComparable ? escText30("1M from the " + werSeriesNote) : "1M from the as-published NAV series"}">${m.m1!=null?fmtP1(m.m1):"—"}</td>
+      <td class="num ${m.w1!=null?pnlc(m.w1):'neut'}" title="${m.fromComparable ? escText30("1W from the " + werSeriesNote) : "1W from the as-published NAV series"}">${m.w1!=null?fmtP1(m.w1):"—"}</td>
+      <td class="num" title="${m.fromComparable ? escText30("Sharpe from the " + werSeriesNote) : "Sharpe from the as-published NAV series"}"><span data-tween="sh-${tid}" data-val="${m.sharpe}" data-fmt="n2">${m.sharpe.toFixed(2)}</span></td>
+      <td class="num neg" title="${m.fromComparable ? escText30("max drawdown from the " + werSeriesNote) : c2TierTitle(tid)}"><span data-tween="dd-${tid}" data-val="${m.maxDD}" data-fmt="p1">${fmtP1(m.maxDD)}</span>${m.fromComparable ? "" : c2TierSub(tid)}</td>
+      <td class="num ${m.alpha!=null?pnlc(m.alpha):'neut'}" title="${m.fromComparable ? escText30("vs BENCH from the " + werSeriesNote) : "tier total return less the benchmark's over the same period"}">${m.alpha!=null?fmtP1(m.alpha):"—"}</td>
       <td class="num">${nPos != null ? nPos : "—"}</td>
       <td><span class="chev ${open?"open":""}">›</span></td>
     </tr>`;
