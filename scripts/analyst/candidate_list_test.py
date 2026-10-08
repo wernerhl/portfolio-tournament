@@ -21,7 +21,9 @@ single harness (walkforward_test.py). Every parameter is the registration's
                tenth positive with t > 2
   checks       placebo shifts of +12 and -12 months on all 43 variables; current_universe_only off
 
-Output: data/analyst/candidate_list_test_result.json. Label: free data, members with prices only.
+Output: data/analyst/candidate_list_test_result.json (or --out). Label: free data, members with prices only.
+Reporting (H4, third follow-up): momentum_12_1_top_tenth_test_months summarises the momentum top tenth on the
+candidate series' own test months - the figure the paired difference is measured against.
 """
 from __future__ import annotations
 
@@ -114,8 +116,10 @@ def run_set(stamp: str, which: str, hold: bool, shift: int = 0) -> tuple[dict, d
             if lam == 100.0:
                 r["top_tenth_quarter_end"] = summarize_q(quarter_end_series(T, col, h), h)
                 r["top_fifth_monthly"] = wf.summarize_series(wf.portfolio_series(T, col, h, 0.20), h)
-                r["paired_vs_momentum_12_1_top_tenth"] = paired(ps, momentum_top_tenth(T, h), h, lags)
-                r["momentum_12_1_top_tenth"] = wf.summarize_series(momentum_top_tenth(T, h), h)
+                mom = momentum_top_tenth(T, h)
+                r["paired_vs_momentum_12_1_top_tenth"] = paired(ps, mom, h, lags)
+                r["momentum_12_1_top_tenth"] = wf.summarize_series(mom, h)                       # every month with a momentum rank
+                r["momentum_12_1_top_tenth_test_months"] = wf.summarize_series(mom[mom["p"].isin(set(ps["p"]))], h)   # H4: the candidate series' test months, what the paired difference is measured against
                 r["excess_return_target_ridge_only"] = wf.summarize_series(wf.portfolio_series(T, wf.walk_forward(T[T["p"] >= pd.Period(TRAIN_FROM[which], freq="M")].copy(), feats, h + "_x", "ridge", f"cl_raw_{which}_{h}_{int(hold)}", rank_target=False, lam=lam), h, 0.10), h) if False else None
             res[f"penalty_{int(lam)}"] = r
         out[h] = res
@@ -126,6 +130,7 @@ def main() -> int:
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--quick", action="store_true", help="the primary configuration only")
+    ap.add_argument("--out", default=None, help="result path (default data/analyst/candidate_list_test_result.json; a rerun beside a published result names its own file)")
     a = ap.parse_args()
     reg = json.loads(REG.read_text()); reg_sha = hashlib.sha256(REG.read_bytes()).hexdigest()
     stamp = wf.latest_stamp()
@@ -152,7 +157,8 @@ def main() -> int:
                "pass_rule": {"checks": checks, "passed": passed, "sentence": sentence},
                "consequence": ("the candidate list stays out of the score (the proposal's fallback is the 50 largest members)" if not passed
                                else "a pass on free data stays out of the score until it is confirmed on Sharadar or Norgate")}
-    OUT.write_text(json.dumps(payload, indent=1, default=str))
+    out = Path(a.out) if a.out else OUT
+    out.write_text(json.dumps(payload, indent=1, default=str))
     log(sentence)
     for k, r in runs.items():
         t12 = r["fwd12"]["penalty_100"]["top_tenth_monthly"]; q = r["fwd12"]["penalty_100"]["top_tenth_quarter_end"]
