@@ -86,6 +86,7 @@ jobs:
       cancel-in-progress: false
     needs: snapshot
     runs-on: ubuntu-24.04
+    timeout-minutes: 15   # F3 (7-Oct-2026): a deploy takes about a minute; a stuck one must not hold the queue
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

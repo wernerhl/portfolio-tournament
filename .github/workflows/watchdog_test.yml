@@ -1,0 +1,31 @@
+name: Deploy watchdog test
+run-name: "Deploy watchdog test · ${{ inputs.trigger || github.event_name }}"
+
+# Acceptance test of F3 (follow-up order of 7 October 2026): a job named `deploy` that does nothing but wait. Left
+# alone it would run for the number of minutes given; the watchdog (watchdog.yml, every 30 minutes) must cancel it
+# within 60 minutes. Dispatch only; never scheduled. It uses no concurrency group, so it blocks nothing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched"
+        required: false
+        default: manual
+      minutes:
+        description: "how long the fake deploy job waits"
+        required: false
+        default: "120"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Wait (a stuck deploy, for the watchdog to find)
+        run: |
+          echo "fake deploy job waiting ${{ inputs.minutes || '120' }} minutes; the watchdog should cancel this run"
+          sleep $(( ${{ inputs.minutes || '120' }} * 60 ))

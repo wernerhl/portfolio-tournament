@@ -1,0 +1,36 @@
+name: Deploy watchdog
+run-name: "Deploy watchdog · ${{ github.event_name == 'schedule' && github.event.schedule || inputs.trigger || github.event_name }}"
+
+# Follow-up order of 7 October 2026, F3. A Pages deploy job that has been waiting, queued or in progress for more
+# than 30 minutes is stuck (a deploy takes about a minute) and holds the shared pages-deploy concurrency group,
+# cancelling every later deploy. Every 30 minutes on weekdays this lists such runs and cancels them with the
+# workflow's own token; the same step runs first in the nightly and intraday workflows. No new credential.
+
+on:
+  schedule:
+    - cron: '*/30 * * * 1-5'
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: "who dispatched"
+        required: false
+        default: manual
+      max_age_min:
+        description: "cancel deploy jobs stuck longer than this many minutes"
+        required: false
+        default: "30"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Cancel deploy jobs stuck for more than 30 minutes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/ops/deploy_watchdog.py --max-age-min "${{ inputs.max_age_min || '30' }}"

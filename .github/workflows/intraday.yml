@@ -16,7 +16,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
-  actions: read     # the backup-cron gate reads this workflow's run history
+  actions: write    # the backup-cron gate reads this workflow's run history; F3: the deploy watchdog cancels stuck deploy jobs
 
 jobs:
   # 5-Oct-2026 order, 2.7: the external scheduler dispatches this workflow (docs/scheduling.md); a GitHub
@@ -27,6 +27,10 @@ jobs:
       run: ${{ steps.g.outputs.run }}
     steps:
       - uses: actions/checkout@v7
+      - name: Deploy watchdog (F3, 7-Oct-2026 — cancel deploy jobs stuck for more than 30 minutes before anything else)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/ops/deploy_watchdog.py --max-age-min 30 || true
         with:
           sparse-checkout: scripts/ops
       - id: g
@@ -74,6 +78,7 @@ jobs:
       cancel-in-progress: false
     needs: intraday
     runs-on: ubuntu-24.04
+    timeout-minutes: 15   # F3 (7-Oct-2026): a deploy takes about a minute; a stuck one must not hold the queue
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

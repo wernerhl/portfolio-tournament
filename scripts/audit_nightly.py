@@ -1252,6 +1252,22 @@ def main(troot, sroot, today=None):
             if s.get('failure_reason') and 'exit 1' in str(s['failure_reason']): add('MEDIUM','status:opaque','tournament failure_reason does not name the failing assertion')
     except Exception as _e:
         add('CRITICAL','referee:check_failed:status',f'the status checks did not finish: {type(_e).__name__}: {str(_e)[:200]}')
+    # ---------- the live site (F3, 7-Oct-2026) ----------
+    # The served status.json of the live site: its session and its age in hours are reported every run; more than one
+    # trading session behind the last session is HIGH (scripts/site_alerts.py opens the site-stale issue).
+    try:
+        import urllib.request as _ur, datetime as _dt2
+        _req=_ur.Request('https://wernerhl.github.io/portfolio-tournament/data/status.json?t='+str(int(_dt2.datetime.now().timestamp())),headers={'User-Agent':'portfolio-tournament referee'})
+        with _ur.urlopen(_req,timeout=20) as _r: _live=json.load(_r)
+        _lsess=str(_live.get('session_date') or '')[:10]; _ok=_live.get('last_success')
+        _age=round((_dt2.datetime.now(_dt2.timezone.utc)-_dt2.datetime.fromisoformat(str(_ok)).astimezone(_dt2.timezone.utc)).total_seconds()/3600,1) if _ok else None
+        _allowed=prev_trading_day(ls) if callable(globals().get('prev_trading_day')) else None
+        if _allowed is None:
+            from trading_calendar import prev_trading_day as _ptd2; _allowed=_ptd2(ls)
+        if _lsess and _lsess<str(_allowed): add('HIGH','site:stale',f'the live site serves session {_lsess} ({_age} h since its last publish); the last session is {ls} and one session behind ({_allowed}) is the most allowed')
+        else: add('INFO','site:session',f'live site session {_lsess or "unknown"}, {_age} h since its last publish (last session {ls})')
+    except Exception as _e:
+        add('MEDIUM','site:unreachable',f'the live status.json could not be read: {type(_e).__name__}: {str(_e)[:120]}')
     # ---------- report ----------
     order={'CRITICAL':0,'HIGH':1,'MEDIUM':2,'INFO':3}
     F.sort(key=lambda x:order[x[0]])

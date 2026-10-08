@@ -32,13 +32,18 @@ permissions:
   pages: write
   id-token: write
   issues: write   # signal_alerts.py opens/closes labelled issues with the job token
-  actions: read   # 5-Oct order 2.3: vintage_index.py reads the options-snapshot run history (gh api, job token)
+  actions: write  # 5-Oct order 2.3: vintage_index.py reads the options-snapshot run history (gh api, job token); F3: the deploy watchdog cancels stuck deploy jobs
 
 jobs:
   update:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+
+      - name: Deploy watchdog (F3, 7-Oct-2026 — cancel deploy jobs stuck for more than 30 minutes before anything else)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/ops/deploy_watchdog.py --max-age-min 30 || true
 
       - uses: actions/setup-python@v7
         with:
@@ -157,6 +162,7 @@ jobs:
           python scripts/signal_alerts.py --write-state || true
           python scripts/options/snapshot_alerts.py sync || true   # 5-Oct order 2.4: the missed-snapshot issue, re-synced nightly
           python scripts/analyst/snapshot_alerts.py sync || true   # 7-Oct order C: the missed analyst-snapshot issue
+          python scripts/site_alerts.py sync || true               # 7-Oct follow-up F3: the site-stale issue
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
           if git add data/alert_state.json 2>/dev/null && ! git diff --cached --quiet; then
@@ -183,6 +189,7 @@ jobs:
     # status.json so the pages can surface the failure.
     if: always()
     runs-on: ubuntu-24.04
+    timeout-minutes: 15   # F3 (7-Oct-2026): a deploy takes about a minute; a stuck one must not hold the queue
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
