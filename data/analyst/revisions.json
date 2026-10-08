@@ -1,20 +1,20 @@
 {
  "cadence": "daily",
- "session_date": "2026-10-06",
- "as_of": "2026-10-06",
- "computed_at": "2026-10-07T18:16:12-06:00",
+ "session_date": "2026-10-07",
+ "as_of": "2026-10-07",
+ "computed_at": "2026-10-08T01:47:35+00:00",
  "order": "free-analyst-data order (7 October 2026), task C",
  "label": "DIAGNOSTIC",
  "in_score": false,
- "label_reason": "1 snapshot day(s) spanning 1 calendar days; the variables need 30 days to exist and 12 months (12) before the registered test can judge them; until then they are description, not a score input",
+ "label_reason": "2 snapshot day(s) spanning 2 calendar days; the variables need 30 days to exist and 12 months (12) before the registered test can judge them; until then they are description, not a score input",
  "snapshots": {
   "first": "2026-10-06",
-  "latest": "2026-10-06",
-  "n": 1,
-  "span_days": 1,
-  "months": 0.03
+  "latest": "2026-10-07",
+  "n": 2,
+  "span_days": 2,
+  "months": 0.07
  },
- "status": "waiting: 1 of 30 days of snapshots",
+ "status": "waiting: 2 of 30 days of snapshots",
  "definitions": {
   "an_eps_rev_30": "consensus EPS for the current fiscal year today / its value in the snapshot 30 days earlier - 1",
   "an_eps_breadth_30": "(upward - downward revisions in 30 days) / the number of analysts, current fiscal year",
@@ -25,6 +25,6 @@
  "availability_rule": "a snapshot serves a date only from available_from, the first trading session whose close is at or after its capture; provider-reported rows (the first file's 7/30/60/90-day look-backs) are cards-only and never a test input",
  "history_rows_by_source": {
   "provider-reported": 8468,
-  "observed": 2120
+  "observed": 4240
  }
 }

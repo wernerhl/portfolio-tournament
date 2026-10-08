@@ -1,13 +1,13 @@
 {
   "cadence": "daily",
-  "session_date": "2026-10-06",
-  "as_of": "2026-10-06",
-  "computed_at": "2026-10-06T22:53:33-04:00",
+  "session_date": "2026-10-07",
+  "as_of": "2026-10-07",
+  "computed_at": "2026-10-07T23:22:31-04:00",
   "history_years": 6,
   "reaction_rule": "before-open releases: prior close to the release-day close; after-close releases: release-day close to the next close. The timing comes from the company's 8-K (Item 2.02) acceptance time in EDGAR when one was filed on the release day, otherwise from the provider's stamp (hour 12 or later = after the close); each release records its source (order 6-Oct-2026, section 5)",
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
-    "store_through": "2026-10-06",
+    "store_through": "2026-10-07",
     "overlay": null
   },
   "names": {
@@ -14208,6 +14208,220 @@
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
       "retrieved_at": "2026-10-06T22:53:33-04:00",
+      "history_years": 6
+    },
+    "IDXX": {
+      "next": {
+        "date": "2026-11-02",
+        "time_of_day": "before_open",
+        "provider_stamp": "2026-11-02T07:00:00"
+      },
+      "history": [
+        {
+          "date": "2020-10-29",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:31 ET (before the open)",
+          "pre_date": "2020-10-28",
+          "post_date": "2020-10-29",
+          "reaction": 0.04472
+        },
+        {
+          "date": "2021-02-02",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:31 ET (before the open)",
+          "pre_date": "2021-02-01",
+          "post_date": "2021-02-02",
+          "reaction": 0.0289
+        },
+        {
+          "date": "2021-05-04",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2021-05-03",
+          "post_date": "2021-05-04",
+          "reaction": -0.04183
+        },
+        {
+          "date": "2021-07-30",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:38 ET (before the open)",
+          "pre_date": "2021-07-29",
+          "post_date": "2021-07-30",
+          "reaction": -0.0364
+        },
+        {
+          "date": "2021-11-02",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:33 ET (before the open)",
+          "pre_date": "2021-11-01",
+          "post_date": "2021-11-02",
+          "reaction": -0.05871
+        },
+        {
+          "date": "2022-02-02",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2022-02-01",
+          "post_date": "2022-02-02",
+          "reaction": 0.04035
+        },
+        {
+          "date": "2022-05-04",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:31 ET (before the open)",
+          "pre_date": "2022-05-03",
+          "post_date": "2022-05-04",
+          "reaction": -0.05654
+        },
+        {
+          "date": "2022-08-02",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:31 ET (before the open)",
+          "pre_date": "2022-08-01",
+          "post_date": "2022-08-02",
+          "reaction": 0.00201
+        },
+        {
+          "date": "2022-11-01",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:59 ET (before the open)",
+          "pre_date": "2022-10-31",
+          "post_date": "2022-11-01",
+          "reaction": 0.098
+        },
+        {
+          "date": "2023-02-06",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:31 ET (before the open)",
+          "pre_date": "2023-02-03",
+          "post_date": "2023-02-06",
+          "reaction": 0.00647
+        },
+        {
+          "date": "2023-05-02",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:34 ET (before the open)",
+          "pre_date": "2023-05-01",
+          "post_date": "2023-05-02",
+          "reaction": -0.04538
+        },
+        {
+          "date": "2023-08-01",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2023-07-31",
+          "post_date": "2023-08-01",
+          "reaction": -0.04043
+        },
+        {
+          "date": "2023-11-01",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2023-10-31",
+          "post_date": "2023-11-01",
+          "reaction": -0.01031
+        },
+        {
+          "date": "2024-02-05",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2024-02-02",
+          "post_date": "2024-02-05",
+          "reaction": 0.08533
+        },
+        {
+          "date": "2024-05-01",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2024-04-30",
+          "post_date": "2024-05-01",
+          "reaction": -0.05017
+        },
+        {
+          "date": "2024-08-06",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2024-08-05",
+          "post_date": "2024-08-06",
+          "reaction": 0.0314
+        },
+        {
+          "date": "2024-10-31",
+          "time_of_day": "before_open",
+          "timing_source": "provider stamp 06:00; 8-K accepted 13:23 ET",
+          "pre_date": "2024-10-30",
+          "post_date": "2024-10-31",
+          "reaction": -0.0979
+        },
+        {
+          "date": "2025-02-03",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2025-01-31",
+          "post_date": "2025-02-03",
+          "reaction": 0.11134
+        },
+        {
+          "date": "2025-05-01",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2025-04-30",
+          "post_date": "2025-05-01",
+          "reaction": 0.08952
+        },
+        {
+          "date": "2025-08-04",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
+          "pre_date": "2025-08-01",
+          "post_date": "2025-08-04",
+          "reaction": 0.27494
+        },
+        {
+          "date": "2025-11-03",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:34 ET (before the open)",
+          "pre_date": "2025-10-31",
+          "post_date": "2025-11-03",
+          "reaction": 0.14842
+        },
+        {
+          "date": "2026-02-02",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:39 ET (before the open)",
+          "pre_date": "2026-01-30",
+          "post_date": "2026-02-02",
+          "reaction": -0.04603
+        },
+        {
+          "date": "2026-05-05",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:31 ET (before the open)",
+          "pre_date": "2026-05-04",
+          "post_date": "2026-05-05",
+          "reaction": -0.00027
+        },
+        {
+          "date": "2026-08-04",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:32 ET (before the open)",
+          "pre_date": "2026-08-03",
+          "post_date": "2026-08-04",
+          "reaction": 0.03566
+        }
+      ],
+      "stats": {
+        "n": 24,
+        "mean_abs": 0.06171,
+        "median_abs": 0.04505,
+        "max_abs": 0.27494,
+        "max_date": "2025-08-04",
+        "n_last8": 8,
+        "median_abs_last8": 0.09371,
+        "mean_abs_last8": 0.10051
+      },
+      "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
+      "retrieved_at": "2026-10-07T23:22:31-04:00",
       "history_years": 6
     }
   },
