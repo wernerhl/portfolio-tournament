@@ -1,31 +1,40 @@
 {
   "cadence": "daily",
-  "session_date": "2026-10-06",
-  "as_of": "2026-10-06",
-  "updated": "2026-10-07T02:59:22+00:00",
+  "session_date": "2026-10-07",
+  "as_of": "2026-10-07",
+  "updated": "2026-10-08T03:28:17+00:00",
   "schema": 1,
   "regime": {
-    "label": "LOW RISK",
-    "served_label": "LOW RISK",
-    "R_full": 0.2746,
-    "session": "2026-10-06"
+    "label": "ELEVATED",
+    "served_label": "ELEVATED",
+    "R_full": 0.3727,
+    "session": "2026-10-07"
   },
   "shock": {
     "active": false,
     "reasons": [],
-    "session": "2026-10-06"
+    "session": "2026-10-07"
   },
   "complacency": {
     "kind": "active",
-    "reason": "SKEW 141 > 140 (canonical close (2026-10-06)) and VIX 15.0 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
-    "session": "2026-10-06"
+    "reason": "SKEW 142 > 140 (canonical close (2026-10-07)) and VIX 15.1 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
+    "session": "2026-10-07"
   },
   "intraday": {
-    "session_date": "2026-10-06",
-    "timestamp": "2026-10-07T02:54:50"
+    "session_date": "2026-10-07",
+    "timestamp": "2026-10-08T03:23:50"
   },
   "issues": {
-    "regime": null,
+    "regime": {
+      "number": 6,
+      "url": "https://github.com/wernerhl/portfolio-tournament/issues/6",
+      "dry_run": false,
+      "opened_session": "2026-10-07",
+      "from": "LOW RISK",
+      "to": "ELEVATED",
+      "R_full": 0.3727,
+      "session": "2026-10-07"
+    },
     "shock": null,
     "complacency": {
       "number": 2,
@@ -37,15 +46,15 @@
     }
   },
   "last_opened": {
-    "regime": null,
+    "regime": "2026-10-07",
     "shock": null,
     "complacency": "2026-09-15"
   },
   "last_run": {
-    "session_date": "2026-10-06",
+    "session_date": "2026-10-07",
     "mode": "live",
     "actions": [
-      "no state change"
+      "[regime] opened LOW RISK -> ELEVATED"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
