@@ -885,6 +885,17 @@ def main(troot, sroot, today=None):
                     if cov_ is None or cov_<0.95: add('HIGH','analyst:snapshot_coverage',f'snapshot {L_} covers {cov_!r} of the universe ({lj_.get("captured")} of {un_}; at least 95% required)')
                     if lj_.get('immutable') is not True: add('HIGH','analyst:snapshot_flag',f'snapshot {L_} is not flagged immutable')
                 except Exception as e: add('HIGH','analyst:snapshot_unreadable',f'snapshot {L_}: {e}')
+                try:                                            # G5: available_from is derived on every read; a stored value that differs is reported
+                    sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'analyst'))
+                    from snapshot_common import stored_differs as _sdiff, snapshot_available_from as _savail
+                    _rest=[]
+                    for f_ in snaps_:
+                        try:
+                            sj_=json.load(open(os.path.join(asn_,f_+'.json')))
+                            if _sdiff(sj_): _rest.append(f'{f_}: stored {sj_.get("available_from")} -> {_savail(sj_)}')
+                        except Exception: pass
+                    if _rest: add('INFO','analyst:available_from_restated',f'{len(_rest)} snapshot file(s) whose stored available_from differs from the derived date (G5 rule; files unchanged): {_rest[:4]}')
+                except Exception as _e: add('MEDIUM','analyst:available_from_restated',f'check could not run ({type(_e).__name__})')
                 if os.path.exists(aix_):
                     try:
                         import hashlib as _hl

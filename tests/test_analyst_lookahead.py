@@ -129,16 +129,22 @@ def test_price_target_before_a_split_is_rebased():
 
 
 def test_snapshot_availability_date():
-    """F4: a snapshot named 30 October captured at 04:31 ET on 2 November is not used for the 30-October month-end; one
-    captured at 17:30 ET on its own session date is used for that date."""
+    """G5: available_from is the capture's ET date when that is a trading day and the capture came before its close
+    (16:00, or 13:00 on an early-close day); otherwise the next trading session. 15:50 ET on d gives d; 17:30 ET on d
+    the next session; 04:31 ET on d+1 gives d+1; a Saturday capture gives Monday; 13:30 ET on an early-close day the
+    next session. Readers derive the date on every read; a stored field that differs is reported, not used."""
     import snapshot_common as sc
-    late = {"session": "2026-10-30", "captured_at": "2026-11-02T04:31:00-05:00", "names": {}}
-    assert sc.snapshot_available_from(late) == "2026-11-02"
+    assert sc.available_from("2026-10-07T15:50:00-04:00") == "2026-10-07"          # before the close: that session
+    assert sc.available_from("2026-10-07T17:30:00-04:00") == "2026-10-08"          # after the close: the next session
+    assert sc.available_from("2026-11-02T04:31:00-05:00") == "2026-11-02"          # before the open of d+1: d+1
+    assert sc.available_from("2026-10-10T10:00:00-04:00") == "2026-10-12"          # Saturday: Monday
+    assert sc.available_from("2026-11-27T13:30:00-05:00") == "2026-11-30"          # early close (13:00): the next session
+    assert sc.available_from("2026-11-27T12:30:00-05:00") == "2026-11-27"          # before an early close: that session
+    late = {"session": "2026-10-30", "captured_at": "2026-11-02T04:31:00-05:00", "available_from": "2026-10-30"}
+    assert sc.snapshot_available_from(late) == "2026-11-02" and sc.stored_differs(late)      # derived on read; the stored value is reported
     assert not sc.usable_for(late, "2026-10-30") and sc.usable_for(late, "2026-11-02")
-    same = {"session": "2026-10-07", "captured_at": "2026-10-07T17:30:00-04:00", "names": {}}
-    assert sc.snapshot_available_from(same) == "2026-10-07" and sc.usable_for(same, "2026-10-07")
-    assert sc.snapshot_available_from({"captured_at": "2026-10-10T10:00:00-04:00"}) == "2026-10-12"      # a Saturday capture: Monday
-    assert sc.snapshot_available_from({"captured_at": "2026-01-01T09:00:00-05:00", "available_from": "2026-01-02"}) == "2026-01-02"   # the field wins
+    same = {"session": "2026-10-07", "captured_at": "2026-10-07T17:30:00-04:00", "available_from": "2026-10-07"}
+    assert sc.snapshot_available_from(same) == "2026-10-08" and not sc.usable_for(same, "2026-10-07") and sc.stored_differs(same)
 
 
 def test_provider_reported_rows_are_cards_only():

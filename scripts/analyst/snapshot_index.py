@@ -125,6 +125,7 @@ def file_entry(day: str) -> dict:
         j = {}
     from snapshot_common import snapshot_available_from
     return {"date": day, "status": "captured", "captured_at": j.get("captured_at"), "available_from": snapshot_available_from(j) if j.get("captured_at") else None,
+            "available_from_stored": j.get("available_from"),
             "tickers": j.get("captured"),
             "universe": (j.get("universe") or {}).get("n"), "coverage": j.get("coverage"), "first_run": bool(j.get("first_run")),
             "sha256": hashlib.sha256(body).hexdigest(), "size_kb": round(len(body) / 1024, 1)}
