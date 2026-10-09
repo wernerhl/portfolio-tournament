@@ -4,6 +4,9 @@ Compute today's NAV for all 5 tiers + 4 benchmarks.
 Tiers 1-4 (algorithmic): hold the picks from data/tier_holdings.json (regenerated monthly).
                          Equal-weight on the equity sleeve; cash sleeve sized by R_t.
 Tier 5 (Werner manual):  hold the positions in data/holdings.json (the only holdings source), plus cash.
+Tier 6 (STRATIFIED, paper): order 8-Oct-2026 J6 — the registered candidate-list score's top tenth, equal weights,
+                         fully invested, no regime cash, quarter-end rebalances (scripts/strat_tier.py); outside
+                         the ranking; written only from its first session.
 Benchmarks: SPY, QQQ, 60/40 SPY/TLT, SSO (synthetic 1.5×). All $100K notional, compounded.
 
 Output: data/tournament.json  (frontend consumes this)
@@ -16,6 +19,8 @@ from pathlib import Path
 import pandas as pd
 import yfinance as yf
 
+import strat_tier   # J6 (order 8-Oct-2026): the STRATIFIED paper tier's accounting
+
 warnings.filterwarnings("ignore")
 
 REPO = Path(__file__).resolve().parent.parent
@@ -25,6 +30,9 @@ BENCHMARK_TICKERS = ["SPY", "TLT", "QQQ", "SSO"]
 BENCHMARK_KEYS = ["spy", "qqq", "sso", "tlt"]   # canonical lowercase storage keys
 INCEPTION_FILE = DATA / "benchmark_inception.json"
 START_CAPITAL = 100000.0
+# J6: the action log covers the four tiers and the operator; the paper tier's rebalances are recorded in its own row
+# (`rebalance`) and in its immutable holdings files, so it stays apart from everything that assumes these five.
+ACTION_LOG_TIERS = ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical", "5_werner")
 
 
 def load_json(p): return json.load(open(p))
@@ -355,6 +363,7 @@ def log_actions(history: list, entry: dict, inputs_hash: str) -> int:
     n = 0
     with open(DATA / "actions.jsonl", "a") as f:
         for tid, cur in (entry.get("tiers") or {}).items():
+            if tid not in ACTION_LOG_TIERS: continue
             old = (prev.get("tiers") or {}).get(tid)
             if not old: continue
             w_old = {p["ticker"]: p.get("weight") for p in (old.get("positions") or []) if p.get("value")}
@@ -459,6 +468,10 @@ def main():
         all_tickers.update(tickers)
     all_tickers.update(werner_tickers)
     all_tickers.update(BENCHMARK_TICKERS)
+    # J6: the STRATIFIED paper tier's names — the previous row's, plus the holdings file in force when a rebalance is due
+    strat_spec = strat_tier.load_spec(cfg)
+    _hist0 = load_json(DATA / "tournament.json").get("history", []) if (DATA / "tournament.json").exists() else []
+    all_tickers.update(strat_tier.names_for_session(_hist0, today, strat_spec))
     print(f"Fetching prices for {len(all_tickers)} tickers...")
     prices = fetch_prices(sorted(all_tickers), session=today)   # closes OF the session being published (repair 2026-09-16)
     print(f"  got {len(prices)}/{len(all_tickers)} prices")
@@ -656,6 +669,13 @@ def main():
         "holdings_sig": holdings_sig, "cash_source": cash_source, "reseeded": reseeded,   # 1-Oct-2026 repair, additive
     }
 
+    # ----- TIER 6 (STRATIFIED paper tier — order 8-Oct-2026 J6; scripts/strat_tier.py) -----
+    # Written only from its first session (config.json strat_tier.first_session); equal weights over the latest
+    # holdings file at or before the session, fully invested, no regime cash, C1 cost on every trade; outside the ranking.
+    _s6 = strat_tier.compute_row(history, today, prices, strat_spec, COST_RT, COST_LABEL, effr_daily)
+    if _s6:
+        tier_outputs[strat_tier.TIER_ID] = _s6
+
     # ----- BENCHMARKS (inception-anchored: NAV = $100k × current/inception) -----
     # The old day-over-day chaining looked up prev_benchmarks["SPY"] but storage
     # was lowercase ("spy") → prev was always {} → NAV froze at 100000 forever.
@@ -718,7 +738,7 @@ def main():
 
     # Pretty print
     for tid, td in tier_outputs.items():
-        name = tier_specs[tid]["short"] if tid in tier_specs else werner_spec["short"]
+        name = tier_specs[tid]["short"] if tid in tier_specs else (strat_spec["short"] if (strat_spec and tid == strat_tier.TIER_ID) else werner_spec["short"])
         print(f"  {name:<11}  NAV ${td['nav']:>11,.2f}  "
               f"({td['n_positions']} pos, cash {td['actual_cash_pct']:.0f}% vs target {td['target_cash_pct']:.0f}%)")
     for b, bv in bench_normalized.items():

@@ -3165,6 +3165,47 @@ function renderErrataNote(tierFilter){
   }).join(" · ");
   return `<div class="mono t1 c-3 mt1 lh16">errata: ${txt} · the published row keeps its values; every figure here uses the corrected ones · <a class="c-3" href="data/errata.json">data/errata.json</a></div>`;
 }
+// ── J6 (order 8-Oct-2026): the STRATIFIED paper tier — one row below the four tiers, outside the ranking ──
+// The registered candidate-list score failed its test on 8 October 2026; the owner keeps a live record of its top
+// tenth (equal weights, fully invested, no regime cash, quarter-end rebalances; scripts/strat_tier.py) apart from
+// the four tiers. TOTAL and the two comparisons run from the tier's FIRST SESSION whatever period button is on,
+// straight from the as-published rows of data/tournament.json (tier NAV and the inception-anchored SPY/QQQ NAVs of
+// the same rows). No rank, no leader logic, no detail panel; the link opens the holdings file in force. Before the
+// first session the row states the planned seeding. One function, one call site (renderLeaderboardBlock).
+function renderStratPaperRow(){
+  const sp = (S.config && S.config.strat_tier) || {};
+  const tid = sp.id || "6_strat";
+  const label = sp.label || "paper tier · DIAGNOSTIC · its registered test failed on 8 October 2026";
+  const rows = ((S.tournament && S.tournament.history) || []).filter(h => h.tiers && h.tiers[tid] && h.tiers[tid].nav > 0);
+  const first = rows[0] || null, last = rows.length ? rows[rows.length - 1] : null;
+  const t = last ? last.tiers[tid] : null;
+  const file = (t && t.holdings_file) || `${sp.holdings_dir || "data/tournament/strat_holdings"}/${sp.seed_month_end || "2026-09-30"}.json`;
+  const total = (first && t && first.tiers[tid].nav > 0) ? (t.nav / first.tiers[tid].nav - 1) * 100 : null;
+  const bench = k => { const a = first && first.benchmarks && first.benchmarks[k], b = last && last.benchmarks && last.benchmarks[k];
+    return (a && b && a.nav > 0 && b.nav > 0) ? (b.nav / a.nav - 1) * 100 : null; };
+  const vs = k => { const r = bench(k); return (total != null && r != null) ? total - r : null; };
+  const vsQ = vs("qqq"), vsS = vs("spy");
+  const since = first ? `since ${first.date} (${rows.length} session${rows.length === 1 ? "" : "s"})`
+                      : `seeds ${sp.first_session || "2026-10-09"} with the ${sp.seed_month_end || "2026-09-30"} holdings`;
+  const reb = t && t.rebalance ? ` · ${t.rebalance.kind} to the ${t.rebalance.month_end} holdings: turnover ${t.rebalance.turnover_one_way}×, cost ${t.rebalance.cost_pct}%` : "";
+  const cell = (v, title) => `<td class="num ${v != null ? pnlc(v) : "neut"}" title="${escText30(title)}">${v != null ? fmtP1(v) : "—"}</td>`;
+  return `<tr class="strat-paper-row dim">
+      <td class="rank" title="outside the ranking">—</td>
+      <td>
+        <span class="tier-dot"></span>
+        <span class="tier-name">${escText30(sp.short || "STRATIFIED")}</span> <span class="mono t1 w6 r1 x2 c-warn">PAPER TIER</span>
+        <div class="tier-desc">${escText30(label)} · ${escText30(since)} · ${escText30(sp.weights || "equal weights, fully invested, no regime cash")} · outside the ranking · no verdict rule${escText30(reb)}</div>
+      </td>
+      <td class="num" title="as-published NAV, net of the C1 cost on every trade">${t ? "$" + fmt(t.nav) : "—"}</td>
+      <td class="num ${total != null ? pnlc(total) : "neut"}" title="total return since the tier's first session (independent of the period button)">${total != null ? fmtP(total) : "—"}</td>
+      <td class="num c-3" title="costed by the C1 model on every trade; no backtest basis">—</td>
+      <td class="num c-3" title="no backtest basis">—</td>
+      <td class="num c-3">—</td><td class="num c-3">—</td><td class="num c-3">—</td><td class="num c-3">—</td>
+      <td class="num" title="the tier's total return less the benchmark's since its first session (inception-anchored benchmark NAVs of the same rows)"><div class="mono t1">vs QQQ ${vsQ != null ? `<span class="${pnlc(vsQ)}">${fmtP1(vsQ)}</span>` : "—"}</div><div class="mono t1">vs SPY ${vsS != null ? `<span class="${pnlc(vsS)}">${fmtP1(vsS)}</span>` : "—"}</div></td>
+      <td class="num">${t && t.n_positions != null ? t.n_positions : "—"}</td>
+      <td><a class="c-info" href="${escText30(file)}" title="the holdings file in force: names in rank order with scores, the count scored, the model's training window, the registration's sha256">holdings</a></td>
+    </tr>`;
+}
 function renderLeaderboardBlock(){
   const live = S.tournament && S.tournament.history && S.tournament.history.length > 0
     ? S.tournament.history[S.tournament.history.length-1] : null;
@@ -3314,6 +3355,7 @@ function renderLeaderboardBlock(){
       h += `<tr><td colspan="13" class="p0"><div class="tier-detail open">${renderTierDetail(tid)}</div></td></tr>`;
     }
   });
+  h += renderStratPaperRow();   // J6: the STRATIFIED paper tier, below the ranked rows and outside the ranking
   h += `</table></div>`;
   return {html: h, allSeries};
 }

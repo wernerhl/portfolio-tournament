@@ -121,6 +121,24 @@
       "hedging": "none_until_crisis"
     }
   },
+  "strat_tier": {
+    "_note": "Order 8-Oct-2026 J6: the STRATIFIED paper tier (scripts/strat_tier.py, scripts/analyst/strat_holdings.py). The registered candidate-list score failed its test on 8 October 2026 (data/analyst/candidate_list_test_result.json); the owner keeps a live record of it apart from the four tiers. Not a tier_specs entry: nothing that iterates tier_specs sees it; it is outside the ranking.",
+    "id": "6_strat",
+    "name": "Stratified",
+    "short": "STRATIFIED",
+    "label": "paper tier · DIAGNOSTIC · its registered test failed on 8 October 2026",
+    "first_session": "2026-10-09",
+    "seed_month_end": "2026-09-30",
+    "start_capital": 100000,
+    "holdings_dir": "data/tournament/strat_holdings",
+    "rebalance_months": [3, 6, 9, 12],
+    "rebalance_rule": "on the last session of March, June, September and December, to the holdings file of that month-end (the latest file at or before the session); a file that appears later is applied on the first session it exists, recorded as late",
+    "weights": "equal weights, fully invested, no regime cash",
+    "cost": "the C1 model (system_settings.cost_model): 10 bps one-way on NAV-weight turnover, on every trade",
+    "score": "43 variables; the mean of the within-month percentile ranks of the ridge with penalty 100 and the harness's boosted tree; refitted each January on month-ends whose 12-month outcome ended before that year (scripts/analyst/candidate_list_test.py on walkforward_test.py)",
+    "registration": "data/analyst/candidate_list_test_registration.json (its sha256 is recorded in every holdings file)",
+    "verdict": "no verdict rule; each quarter-end scripts/strat_quarter_report.py gives the return since inception against QQQ, SPY and RSP"
+  },
   "continuous_rules": {
     "_note": "Audit order 30-Sept-2026 4.1: the twins' execution rule. compute_twins.py reads rules_file; any parameter present here must equal the file's or the run is refused.",
     "rules_file": "data/tournament/continuous_rules.json",

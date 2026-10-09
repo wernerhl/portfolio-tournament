@@ -61,7 +61,9 @@ def tickers_of_interest() -> list[str]:
     tp = DATA / "tournament.json"
     if tp.exists():
         try:
-            for t in json.load(open(tp))["history"][-1]["tiers"].values():
+            for tid, t in json.load(open(tp))["history"][-1]["tiers"].items():
+                if tid not in ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical", "5_werner"):   # J6: the paper tier stays apart
+                    continue
                 out |= {str(x["ticker"]).upper() for x in t.get("positions", []) if (x.get("shares") or 0) > 0}
         except (KeyError, IndexError, TypeError, AttributeError):
             pass

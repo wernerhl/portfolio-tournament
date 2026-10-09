@@ -31,6 +31,7 @@ DATA = REPO / "data"
 sys.path.insert(0, str(HERE))
 from trading_calendar import is_trading_day, now_et  # noqa: E402
 from regime_label import label_with_corridor  # noqa: E402
+import strat_tier  # noqa: E402  (J6: the STRATIFIED paper tier is carried forward, never seeded, by a backfill)
 
 TIERS = ["1_cap_pres", "2_balanced", "3_aggressive", "4_tactical"]
 
@@ -68,6 +69,7 @@ class Closes:
         if self.vol is not None:
             self.vol.index = pd.to_datetime(self.vol.index)
         self._sso = None
+        self._prov: dict[str, pd.Series] = {}
         self.notes: list[str] = []
 
     def _last_on_or_before(self, s: pd.Series, d: str, label: str):
@@ -89,7 +91,19 @@ class Closes:
                 self.notes.append(f"SSO: provider unavailable ({type(e).__name__})"); self._sso = pd.Series(dtype=float)
         return self._sso
 
-    def close(self, tk: str, d: str):
+    def provider_series(self, tk: str) -> pd.Series:
+        """J6: a name outside every store (a paper-tier member the universe does not carry) from the provider, cached."""
+        if tk not in self._prov:
+            try:
+                import yfinance as yf
+                h = yf.Ticker(tk).history(period="6mo", auto_adjust=True)
+                s = h["Close"]; s.index = pd.to_datetime(s.index).tz_localize(None)
+                self._prov[tk] = s
+            except Exception as e:  # noqa: BLE001
+                self.notes.append(f"{tk}: provider unavailable ({type(e).__name__})"); self._prov[tk] = pd.Series(dtype=float)
+        return self._prov[tk]
+
+    def close(self, tk: str, d: str, provider_ok: bool = False):
         tk = tk.upper()
         if tk in self.px.columns:
             return self._last_on_or_before(self.px[tk], d, tk)
@@ -100,6 +114,9 @@ class Closes:
         if tk == "SSO":
             s = self.sso_series()
             return self._last_on_or_before(s, d, tk) if s is not None and not s.empty else None
+        if provider_ok:
+            s = self.provider_series(tk)
+            return self._last_on_or_before(s, d, tk + " (provider)") if not s.empty else None
         return None
 
 
@@ -171,6 +188,11 @@ def build_row(prev: dict, session: str, closes: Closes, cfg: dict, inception: di
                          "actual_cash_pct": round(wcash / wtot * 100, 1) if wtot > 0 else 0,
                          "n_positions": len([p for p in wpos if p.get("value")]), "holdings": [p["ticker"] for p in wpos if p.get("value")],
                          "positions": wpos}
+    # J6: the STRATIFIED paper tier is carried forward only when the previous row has it (a backfill never seeds it;
+    # a rebalance happens only in a published row). Its names come from the stores, else from the provider.
+    if prev["tiers"].get(strat_tier.TIER_ID):
+        tiers[strat_tier.TIER_ID] = strat_tier.carry_forward_row(prev["tiers"][strat_tier.TIER_ID], session,
+                                                                 lambda tk, d: closes.close(tk, d, provider_ok=True), effr_daily)
     prices_lower = {"spy": closes.close("SPY", session), "qqq": closes.close("QQQ", session), "sso": closes.close("SSO", session), "tlt": closes.close("TLT", session)}
     bench = benchmark_navs_from_prices({k: v for k, v in prices_lower.items() if v is not None}, inception)
     return {"date": session, "R_t": round(R, 4), "regime": label, "effr_daily_pct": prev.get("effr_daily_pct"),

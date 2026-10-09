@@ -330,9 +330,12 @@ def universe_and_cards() -> tuple[list[str], dict[str, list[str]]]:
     except Exception:  # noqa: BLE001
         pass
     tiers = []
+    card_tiers = ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical", "5_werner")   # J6: the paper tier 6_strat gets no cards
     try:
         last = json.loads((DATA / "tournament.json").read_text())["history"][-1]["tiers"]
         for tid, t in last.items():
+            if tid not in card_tiers:
+                continue
             tiers += [str(p["ticker"]).upper() for p in t.get("positions", []) if (p.get("shares") or 0) > 0]
     except Exception:  # noqa: BLE001
         pass

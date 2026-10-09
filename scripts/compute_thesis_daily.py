@@ -335,9 +335,14 @@ def main():
     }
 
     # ── Per-tier exposure (latest snapshot) ────────────────────────────
+    # J6 (order 8-Oct-2026): the thesis layer covers the four tiers and the operator; the STRATIFIED paper tier
+    # (6_strat, some 49 S&P names outside the register) is kept apart from it.
+    THESIS_TIERS = ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical", "5_werner")
     tiers_out = {}
     last = history[-1]
     for tid, td in last["tiers"].items():
+        if tid not in THESIS_TIERS:
+            continue
         equity = float(td.get("equity") or 0)
         cash = float(td.get("cash") or 0)
         inv, total, uncl_names = exposure_for_positions(td.get("positions", []), equity, cash, nw)
@@ -594,6 +599,8 @@ def main():
     holdings_changed = []
     if len(history) >= 2:
         for tid in history[-1]["tiers"]:
+            if tid not in THESIS_TIERS:
+                continue
             h_now = set(history[-1]["tiers"][tid].get("holdings", []))
             h_prev = set(history[-2]["tiers"].get(tid, {}).get("holdings", []))
             if h_now != h_prev:

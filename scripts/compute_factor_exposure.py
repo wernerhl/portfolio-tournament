@@ -116,12 +116,17 @@ def book_shares() -> tuple[dict[str, float], str]:
     return shares, "config.json:werner_picks.holdings"
 
 
+FACTOR_TIERS = ("1_cap_pres", "2_balanced", "3_aggressive", "4_tactical", "5_werner")   # J6: the paper tier 6_strat stays apart
+
+
 def tier_positions() -> tuple[dict[str, dict[str, float]], str]:
-    """{tier_id: {ticker: position value}} from the last row of tournament.json."""
+    """{tier_id: {ticker: position value}} from the last row of tournament.json (the four tiers and the operator)."""
     t = json.load(open(DATA / "tournament.json"))
     last = t["history"][-1]
     tiers = {}
     for tid, tv in last["tiers"].items():
+        if tid not in FACTOR_TIERS:
+            continue
         vals: dict[str, float] = {}
         for p in tv.get("positions", []):
             vals[p["ticker"]] = vals.get(p["ticker"], 0.0) + float(p["value"])

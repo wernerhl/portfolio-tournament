@@ -35,7 +35,9 @@ scripts = [
     "score_universe.py",           # scoring view 1 (tournament): technical + fundamental, nightly (selection stays monthly)
     "screen/build_json.py",        # scoring view 2 (the screen): 4-factor board, vintages, tripwires (relocated, 6.1)
     "screen/reconcile_views.py",   # 6.3: rank correlation of the two views and the ten largest divergences
-    "compute_nav.py",              # tier NAVs (closes OF the session or a rejection), action log; backfills a missed session first (T1); corridor label (T3)
+    "analyst/strat_holdings.py",   # J6 (8-Oct order): the STRATIFIED paper tier's quarter-end holdings file, written once (exists on every other night: nothing computed; exits 2 while the panel lacks the month-end)
+    "compute_nav.py",              # tier NAVs (closes OF the session or a rejection), action log; backfills a missed session first (T1); corridor label (T3); the paper tier 6_strat from its first session (J6)
+    "strat_quarter_report.py",     # J6: the paper tier's since-inception return against QQQ, SPY and RSP at each quarter-end and as of the session (no verdict rule)
     "tournament_audit.py",         # T2: what the tournament does, recomputed nightly for the tournament page (retention, cash gaps, spells, the label)
     "compute_signals.py",          # signals: position mode for held names, setup readings otherwise
     "backfill_tier_logs.py",       # T4 (audit order 30-Sept, 4.3): the monthly tiers' trades and spells (idempotent; new reconstitutions, +20/+60 follow-ups)
@@ -424,6 +426,7 @@ SERVED_CADENCE = {
     "book.json": "daily",                                                      # 1.3 (order 16-Sept)
     "tournament/audit.json": "daily", "tournament/twins.json": "daily",       # T2 / T4 (audit order 30-Sept)
     "tournament/continuous_rules.json": "static",
+    "tournament/strat_quarter_report.json": "daily",                          # J6 (8-Oct order): the paper tier's quarter report
     "entry_state.json": "daily", "entry_state_config.json": "static",         # E1 (entry-state order 2-Oct)
     "options/vintages/_index.json": "daily",                                   # 5-Oct order 2.3
     "long_range.json": "daily", "provider_flags.json": "daily", "earnings_dates.json": "daily",   # 6-Oct order §3–§5
