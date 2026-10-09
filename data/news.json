@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-07",
- "fetched_at": "2026-10-08T15:40:42-04:00",
+ "as_of": "2026-10-08",
+ "fetched_at": "2026-10-08T20:09:01-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,15 +57,15 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=5 (parsed 20)",
+  "fed_press": "ok n=6 (parsed 20)",
   "fed_speeches": "ok n=2 (parsed 15)",
   "bea": "ok n=1 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=134 (parsed 41 names)",
-  "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
+  "edgar": "ok n=133 (parsed 41 names)",
+  "ir_avgo": "ok n=1 (parsed 10)",
   "ir_nvda": "ok n=1 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
@@ -82,16 +82,78 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 4,
-  "out_of_window": 28040,
+  "out_of_window": 28051,
   "unparseable": 0
  },
  "counts": {
-  "items": 164,
-  "tier1": 164,
+  "items": 165,
+  "tier1": 165,
   "tier2": 0,
-  "last24h": 41
+  "last24h": 45
  },
  "items": [
+  {
+   "id": "7ba00aeb2f5e7621f8d779a5819c22b09304ab8d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000376/axp-20261008.htm",
+   "timestamp": "2026-10-08T16:38:48-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-08 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e95750d1b74189d76d9f160e024f4551b574ab53",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces enforcement action against American Express Company to address, among other things, the firm’s failure to sufficiently detect and report certain suspicious activity…",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261008a.htm",
+   "timestamp": "2026-10-08T16:30:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by GARTNER INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/749251/000119312526417937/d158580d8k.htm",
+   "timestamp": "2026-10-08T16:15:37-04:00",
+   "tickers": [
+    "IT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-08 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6ccb54362efd76f95cbe445e7f65346392fac504",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Broadcom Redefines AI Infrastructure with Industry-Leading Networking Innovations at 2026 OCP Global Summit",
+   "source": "Broadcom investor relations",
+   "source_id": "ir_avgo",
+   "url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-redefines-ai-infrastructure-industry-leading-networking",
+   "timestamp": "2026-10-08T12:00:15-04:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · AVGO · Broadcom investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1",
    "tier": 1,
@@ -2655,54 +2717,6 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-01 · FORM 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "8b63440eac4a2cbb0a0ac5603d00afd1abbdd0c7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by ORACLE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000134143926000099/xslF345X06/form4.xml",
-   "timestamp": "2026-10-01T17:42:53-04:00",
-   "tickers": [
-    "ORCL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-01 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a96858cbb7c8ed2fcbc2211ebdc354f6a30478e6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by LOCKHEED MARTIN CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/936468/000122520826008067/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-01T17:33:14-04:00",
-   "tickers": [
-    "LMT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-01 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "947501f044bbc0fe59a13ec7ff6cc7922cb42d23",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by LOCKHEED MARTIN CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/936468/000122520826008066/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-01T17:33:13-04:00",
-   "tickers": [
-    "LMT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-01 · 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -2713,7 +2727,9 @@
   "NVDA": [
    "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1"
   ],
-  "AVGO": [],
+  "AVGO": [
+   "6ccb54362efd76f95cbe445e7f65346392fac504"
+  ],
   "GOOG": [
    "36f921eed4fe550b89ce248a4b75b183a4e325f3"
   ],
@@ -2723,6 +2739,10 @@
   ]
  },
  "last24h": [
+  "7ba00aeb2f5e7621f8d779a5819c22b09304ab8d",
+  "e95750d1b74189d76d9f160e024f4551b574ab53",
+  "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47",
+  "6ccb54362efd76f95cbe445e7f65346392fac504",
   "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1",
   "14f1c53bc6ede62e2f8bca4b580fafe1b232e0ba",
   "b0dd44e4e69c2552f3b966be242c1b96eb775fb6",
