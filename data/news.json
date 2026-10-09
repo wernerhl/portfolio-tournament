@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-08",
- "fetched_at": "2026-10-08T23:38:29-04:00",
+ "fetched_at": "2026-10-09T15:16:19-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -61,11 +61,11 @@
   "fed_speeches": "ok n=2 (parsed 15)",
   "bea": "ok n=1 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
-  "bls_release_day": "ok n=1 (constructed 1)",
+  "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=140 (parsed 41 names)",
-  "ir_avgo": "ok n=1 (parsed 10)",
+  "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=1 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
@@ -81,17 +81,31 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 4,
-  "out_of_window": 27947,
+  "irrelevant": 2,
+  "out_of_window": 27940,
   "unparseable": 0
  },
  "counts": {
-  "items": 187,
-  "tier1": 187,
+  "items": 186,
+  "tier1": 186,
   "tier2": 0,
-  "last24h": 37
+  "last24h": 4
  },
  "items": [
+  {
+   "id": "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board releases results of the 2025 Survey of Consumer Finances, which provides the public and policymakers with detailed insights into the economic condition of American families",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/other20261009a.htm",
+   "timestamp": "2026-10-09T10:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Other Announcements · topics: none",
+   "disclosure_lag_label": null
+  },
   {
    "id": "7ba00aeb2f5e7621f8d779a5819c22b09304ab8d",
    "tier": 1,
@@ -100,7 +114,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000376/axp-20261008.htm",
-   "timestamp": "2026-10-08T16:38:48-04:00",
+   "timestamp": "2026-10-08T20:38:48-04:00",
    "tickers": [
     "AXP"
    ],
@@ -155,6 +169,118 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "b0dd44e4e69c2552f3b966be242c1b96eb775fb6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000724/xslF345X06/wk-form4_1791455755.xml",
+   "timestamp": "2026-10-08T10:35:58-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "93b48194b8876ae935b419606e66246047a71dfc",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000723/xslF345X06/wk-form4_1791455750.xml",
+   "timestamp": "2026-10-08T10:35:53-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8d75255b8863b8f0e444a81ec3ed7ae11b41f19e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000722/xslF345X06/wk-form4_1791455743.xml",
+   "timestamp": "2026-10-08T10:35:46-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e196fe27c67521fddfba76dea90ebfc819fb301e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000721/xslF345X06/wk-form4_1791455737.xml",
+   "timestamp": "2026-10-08T10:35:40-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6ebccc4362c879d607939b64e09abef48a5ceaec",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000716/xslF345X06/wk-form4_1791455553.xml",
+   "timestamp": "2026-10-08T10:32:36-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "446788e256c44094f339a7ffc87d72c81df2e5b3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000715/xslF345X06/wk-form4_1791455546.xml",
+   "timestamp": "2026-10-08T10:32:29-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a7b6dc5e61634b429d9e9246a1feb2ef61681fe3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000714/xslF345X06/wk-form4_1791455539.xml",
+   "timestamp": "2026-10-08T10:32:22-04:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1",
    "tier": 1,
    "tier_label": "primary",
@@ -171,134 +297,6 @@
    "disclosure_lag_label": null
   },
   {
-   "id": "14f1c53bc6ede62e2f8bca4b580fafe1b232e0ba",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Unemployment Insurance Weekly Claims Report",
-   "source": "Department of Labor release",
-   "source_id": "dol",
-   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261008",
-   "timestamp": "2026-10-08T08:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "CLAIMS"
-   ],
-   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b0dd44e4e69c2552f3b966be242c1b96eb775fb6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000724/xslF345X06/wk-form4_1791455755.xml",
-   "timestamp": "2026-10-08T06:35:58-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "93b48194b8876ae935b419606e66246047a71dfc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000723/xslF345X06/wk-form4_1791455750.xml",
-   "timestamp": "2026-10-08T06:35:53-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8d75255b8863b8f0e444a81ec3ed7ae11b41f19e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000722/xslF345X06/wk-form4_1791455743.xml",
-   "timestamp": "2026-10-08T06:35:46-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e196fe27c67521fddfba76dea90ebfc819fb301e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000721/xslF345X06/wk-form4_1791455737.xml",
-   "timestamp": "2026-10-08T06:35:40-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6ebccc4362c879d607939b64e09abef48a5ceaec",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000716/xslF345X06/wk-form4_1791455553.xml",
-   "timestamp": "2026-10-08T06:32:36-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "446788e256c44094f339a7ffc87d72c81df2e5b3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000715/xslF345X06/wk-form4_1791455546.xml",
-   "timestamp": "2026-10-08T06:32:29-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a7b6dc5e61634b429d9e9246a1feb2ef61681fe3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000714/xslF345X06/wk-form4_1791455539.xml",
-   "timestamp": "2026-10-08T06:32:22-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
    "id": "c0287c777362ca9c77958cddd0124e3d95259322",
    "tier": 1,
    "tier_label": "primary",
@@ -306,7 +304,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000710/xslF345X06/wk-form4_1791455413.xml",
-   "timestamp": "2026-10-08T06:30:17-04:00",
+   "timestamp": "2026-10-08T10:30:17-04:00",
    "tickers": [
     "TSM"
    ],
@@ -322,7 +320,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000709/xslF345X06/wk-form4_1791455406.xml",
-   "timestamp": "2026-10-08T06:30:10-04:00",
+   "timestamp": "2026-10-08T10:30:10-04:00",
    "tickers": [
     "TSM"
    ],
@@ -338,7 +336,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000708/xslF345X06/wk-form4_1791455401.xml",
-   "timestamp": "2026-10-08T06:30:04-04:00",
+   "timestamp": "2026-10-08T10:30:04-04:00",
    "tickers": [
     "TSM"
    ],
@@ -354,7 +352,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000704/xslF345X06/wk-form4_1791455244.xml",
-   "timestamp": "2026-10-08T06:27:28-04:00",
+   "timestamp": "2026-10-08T10:27:28-04:00",
    "tickers": [
     "TSM"
    ],
@@ -370,7 +368,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000703/xslF345X06/wk-form4_1791455238.xml",
-   "timestamp": "2026-10-08T06:27:22-04:00",
+   "timestamp": "2026-10-08T10:27:22-04:00",
    "tickers": [
     "TSM"
    ],
@@ -386,7 +384,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000702/xslF345X06/wk-form4_1791455231.xml",
-   "timestamp": "2026-10-08T06:27:14-04:00",
+   "timestamp": "2026-10-08T10:27:14-04:00",
    "tickers": [
     "TSM"
    ],
@@ -402,7 +400,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000698/xslF345X06/wk-form4_1791455100.xml",
-   "timestamp": "2026-10-08T06:25:04-04:00",
+   "timestamp": "2026-10-08T10:25:04-04:00",
    "tickers": [
     "TSM"
    ],
@@ -418,7 +416,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000697/xslF345X06/wk-form4_1791455093.xml",
-   "timestamp": "2026-10-08T06:24:56-04:00",
+   "timestamp": "2026-10-08T10:24:56-04:00",
    "tickers": [
     "TSM"
    ],
@@ -434,7 +432,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000696/xslF345X06/wk-form4_1791455086.xml",
-   "timestamp": "2026-10-08T06:24:49-04:00",
+   "timestamp": "2026-10-08T10:24:49-04:00",
    "tickers": [
     "TSM"
    ],
@@ -450,7 +448,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000692/xslF345X06/wk-form4_1791454881.xml",
-   "timestamp": "2026-10-08T06:21:25-04:00",
+   "timestamp": "2026-10-08T10:21:25-04:00",
    "tickers": [
     "TSM"
    ],
@@ -466,7 +464,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000691/xslF345X06/wk-form4_1791454873.xml",
-   "timestamp": "2026-10-08T06:21:17-04:00",
+   "timestamp": "2026-10-08T10:21:17-04:00",
    "tickers": [
     "TSM"
    ],
@@ -482,7 +480,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000690/xslF345X06/wk-form4_1791454868.xml",
-   "timestamp": "2026-10-08T06:21:11-04:00",
+   "timestamp": "2026-10-08T10:21:11-04:00",
    "tickers": [
     "TSM"
    ],
@@ -498,7 +496,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000686/xslF345X06/wk-form4_1791454668.xml",
-   "timestamp": "2026-10-08T06:17:51-04:00",
+   "timestamp": "2026-10-08T10:17:51-04:00",
    "tickers": [
     "TSM"
    ],
@@ -514,7 +512,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000685/xslF345X06/wk-form4_1791454663.xml",
-   "timestamp": "2026-10-08T06:17:46-04:00",
+   "timestamp": "2026-10-08T10:17:46-04:00",
    "tickers": [
     "TSM"
    ],
@@ -530,7 +528,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000684/xslF345X06/wk-form4_1791454656.xml",
-   "timestamp": "2026-10-08T06:17:39-04:00",
+   "timestamp": "2026-10-08T10:17:39-04:00",
    "tickers": [
     "TSM"
    ],
@@ -546,7 +544,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000679/xslF345X06/wk-form4_1791454355.xml",
-   "timestamp": "2026-10-08T06:12:39-04:00",
+   "timestamp": "2026-10-08T10:12:39-04:00",
    "tickers": [
     "TSM"
    ],
@@ -562,7 +560,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000678/xslF345X06/wk-form4_1791454349.xml",
-   "timestamp": "2026-10-08T06:12:32-04:00",
+   "timestamp": "2026-10-08T10:12:32-04:00",
    "tickers": [
     "TSM"
    ],
@@ -578,7 +576,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000677/xslF345X06/wk-form4_1791454342.xml",
-   "timestamp": "2026-10-08T06:12:25-04:00",
+   "timestamp": "2026-10-08T10:12:25-04:00",
    "tickers": [
     "TSM"
    ],
@@ -594,7 +592,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000676/xslF345X06/wk-form4_1791454335.xml",
-   "timestamp": "2026-10-08T06:12:18-04:00",
+   "timestamp": "2026-10-08T10:12:18-04:00",
    "tickers": [
     "TSM"
    ],
@@ -610,7 +608,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000675/xslF345X06/wk-form4_1791454329.xml",
-   "timestamp": "2026-10-08T06:12:12-04:00",
+   "timestamp": "2026-10-08T10:12:12-04:00",
    "tickers": [
     "TSM"
    ],
@@ -626,7 +624,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000674/xslF345X06/wk-form4_1791454322.xml",
-   "timestamp": "2026-10-08T06:12:05-04:00",
+   "timestamp": "2026-10-08T10:12:05-04:00",
    "tickers": [
     "TSM"
    ],
@@ -642,7 +640,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000673/xslF345X06/wk-form4_1791454315.xml",
-   "timestamp": "2026-10-08T06:11:58-04:00",
+   "timestamp": "2026-10-08T10:11:58-04:00",
    "tickers": [
     "TSM"
    ],
@@ -658,12 +656,28 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000672/xslF345X06/wk-form4_1791454308.xml",
-   "timestamp": "2026-10-08T06:11:51-04:00",
+   "timestamp": "2026-10-08T10:11:51-04:00",
    "tickers": [
     "TSM"
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "14f1c53bc6ede62e2f8bca4b580fafe1b232e0ba",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Unemployment Insurance Weekly Claims Report",
+   "source": "Department of Labor release",
+   "source_id": "dol",
+   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261008",
+   "timestamp": "2026-10-08T08:00:00-04:00",
+   "tickers": [],
+   "topics": [
+    "CLAIMS"
+   ],
+   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
   },
   {
@@ -2309,6 +2323,118 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "9aeacaea8a62d187a5d657e31d0dffc596d6b411",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000374/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:16:43-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "22f9a97a9add119bd85f69105ea9c9fee29e9d59",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000373/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:15:14-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "26e8eb1fc27a04a1f3893248f8630e9792cbd1ab",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000372/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:13:19-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dab94ae251f1644cfbf316ad0fac9e55a112d16a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000371/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:11:48-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "adf400e64ae44f26d54b6c07c7aa30d62c59b743",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000370/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:10:18-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4beee92dc55de2f6d1c06dfc44a2d29f598838cb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000369/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:08:19-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e59c4068950a0beca1102d7fe975ba146aa5ff8f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000368/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:06:38-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "340922c7d9bb7fbf534f765156fb30c34a5a889e",
    "tier": 1,
    "tier_label": "primary",
@@ -2322,6 +2448,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b3a83f59e043078fdea6ae9862d94286ca8baae4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000366/xslF345X06/form4.xml",
+   "timestamp": "2026-10-02T20:04:05-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
    "disclosure_lag_label": null
   },
   {
@@ -2627,102 +2769,6 @@
    "disclosure_lag_label": null
   },
   {
-   "id": "9aeacaea8a62d187a5d657e31d0dffc596d6b411",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000374/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:16:43-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "22f9a97a9add119bd85f69105ea9c9fee29e9d59",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000373/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:15:14-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "26e8eb1fc27a04a1f3893248f8630e9792cbd1ab",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000372/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:13:19-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "dab94ae251f1644cfbf316ad0fac9e55a112d16a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000371/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:11:48-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "adf400e64ae44f26d54b6c07c7aa30d62c59b743",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000370/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:10:18-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4beee92dc55de2f6d1c06dfc44a2d29f598838cb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000369/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:08:19-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
    "id": "66ac498936c3a3c13608ed2b0db89180df3698db",
    "tier": 1,
    "tier_label": "primary",
@@ -2768,22 +2814,6 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e59c4068950a0beca1102d7fe975ba146aa5ff8f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000368/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:06:38-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
    "disclosure_lag_label": null
   },
   {
@@ -2931,22 +2961,6 @@
    "disclosure_lag_label": null
   },
   {
-   "id": "b3a83f59e043078fdea6ae9862d94286ca8baae4",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000366/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T16:04:05-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
    "id": "70530c161e07603cc46163dbb4bf29b0e7e559a2",
    "tier": 1,
    "tier_label": "primary",
@@ -3039,36 +3053,6 @@
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Banking and Consumer Regulatory Policy · topics: none",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "59322cafa4d9f76dca8bc4850eda31b90807cc87",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board issues enforcement action with Ontario Bancorporation, Inc.",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261002a.htm",
-   "timestamp": "2026-10-02T11:00:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "41fc3bba10375d65288d084c3a41157b578ee87c",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "BLS release: Employment Situation (September 2026)",
-   "source": "BLS (release page)",
-   "source_id": "bls_release_day",
-   "url": "https://www.bls.gov/news.release/empsit.nr0.htm#2026-10-02",
-   "timestamp": "2026-10-02T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "NFP"
-   ],
-   "summary": "scheduled release at 08:30 ET; print not fetched",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -3091,42 +3075,9 @@
   ]
  },
  "last24h": [
+  "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734",
   "7ba00aeb2f5e7621f8d779a5819c22b09304ab8d",
   "e95750d1b74189d76d9f160e024f4551b574ab53",
-  "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47",
-  "6ccb54362efd76f95cbe445e7f65346392fac504",
-  "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1",
-  "14f1c53bc6ede62e2f8bca4b580fafe1b232e0ba",
-  "b0dd44e4e69c2552f3b966be242c1b96eb775fb6",
-  "93b48194b8876ae935b419606e66246047a71dfc",
-  "8d75255b8863b8f0e444a81ec3ed7ae11b41f19e",
-  "e196fe27c67521fddfba76dea90ebfc819fb301e",
-  "6ebccc4362c879d607939b64e09abef48a5ceaec",
-  "446788e256c44094f339a7ffc87d72c81df2e5b3",
-  "a7b6dc5e61634b429d9e9246a1feb2ef61681fe3",
-  "c0287c777362ca9c77958cddd0124e3d95259322",
-  "a68d173da96c2b5fa6f9fb88a68abddc4d7248cf",
-  "860b4f1c78b1ebb19c7d3b9e61da038b311f2666",
-  "f4eb78f2f135de96ec27a9e19b35cc1448348bb8",
-  "5739df6ad6aab3c1511541a2d73555fd7d541864",
-  "accf7e295b93f04fa880b9d6e8519dd02e66a100",
-  "0dc220aca89964350c3f875fc9ad413b5e80ea97",
-  "7b8a6a690bcdd4a4388de7cde7828e168800f365",
-  "963db091bb10d47701398e666036d3e3eadb90cc",
-  "62721451b4be5e861d6a79b16ea928e2c283283d",
-  "56617693e106b3ef88696d5893c160623c18f67a",
-  "1a66a142c9e6cfc4d9510048dd9f4c4c5dfa1f1f",
-  "bca24cfded5be356adc411c09dda3b8a7d5f664f",
-  "8abaa216479aa59fbccc84f4b8d29798506fbd7a",
-  "5592a0201f9b021d9b31d7d746d27b380570b257",
-  "f274e4ab12b9e6bfe69925e66f11a9190a4f589f",
-  "c3b28369831068036bfa8312aeee7a7b9ead8460",
-  "6b391c01871197cd49c8c8417f56c1f4eb36de94",
-  "c2b2929f3ab4306592d05d0a28fc734b54146ac8",
-  "0a67d0fed8b7de4de39b2ffb92b78cea7f12642d",
-  "b2c47b3bfe9b31a709634fa994c096a59d591b1e",
-  "ad3745b4cabb89f199a7dec479b75833deb3db7e",
-  "52eb4b57ee1640c8634145e5f3194c4d358b13a1",
-  "f5d6fc297d1acc5a9a109cf9d5ff7560543fed11"
+  "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47"
  ]
 }
