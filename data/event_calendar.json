@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-10-07",
+  "rebuilt_at": "2026-10-08",
   "cadence": "weekly",
-  "as_of": "2026-10-07",
+  "as_of": "2026-10-08",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule; Treasury auctions from TreasuryDirect TA_WS and Treasury's tentative auction schedule, never a weekday pattern). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -25,34 +25,21 @@
     "ta_ws_upcoming": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-07",
-      "items": [
-        {
-          "date": "2026-10-08",
-          "tenor": "30Y",
-          "tips": false,
-          "reopening": true,
-          "security_type": "Bond",
-          "security_term": "29-Year 10-Month",
-          "original_term": "30-Year",
-          "cusip": "912810UW6",
-          "announcement_date": "2026-10-01",
-          "time_et": "13:00"
-        }
-      ]
+      "retrieved_at": "2026-10-08",
+      "items": []
     },
     "ta_ws_auctioned": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/search?startDate={start}&endDate={end}&dateFieldName=auctionDate&type={kind}&format=json",
-      "retrieved_at": "2026-10-07",
+      "retrieved_at": "2026-10-08",
       "start": "2024-01-01",
-      "n": 266
+      "n": 267
     },
     "tentative_schedule": {
       "source": "live",
       "url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
       "pdf": "https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf",
-      "retrieved_at": "2026-10-07",
+      "retrieved_at": "2026-10-08",
       "parse": "XML (xml.etree), fetched at build time",
       "name": "Aug2026 Refunding Auction Calendar Official Ver 2",
       "start": "2026-08-05",
@@ -61,7 +48,7 @@
     "refunding": {
       "source": "live",
       "url": "https://home.treasury.gov/policy-issues/financing-the-government/quarterly-refunding/most-recent-quarterly-refunding-documents",
-      "retrieved_at": "2026-10-07",
+      "retrieved_at": "2026-10-08",
       "latest": "2026-08-05",
       "next": "2026-11-04"
     },
@@ -6597,6 +6584,17 @@
     },
     {
       "date": "2026-08-27",
+      "type": "EARNINGS",
+      "ticker": "WDAY",
+      "name": "Earnings \u00b7 WDAY",
+      "label": "WDAY",
+      "source_url": "https://finance.yahoo.com/quote/WDAY/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-08-27",
       "type": "TREASURY",
       "name": "7-Year Note auction",
       "label": "7Y",
@@ -7019,9 +7017,9 @@
       "name": "30-Year Bond auction (reopening, 29-Year 10-Month)",
       "label": "30Y reopening",
       "impact": "low",
-      "source_url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-01",
-      "provenance": "announced (TreasuryDirect TA_WS upcoming; announced 2026-10-01)",
+      "source_url": "https://www.treasurydirect.gov/TA_WS/securities/search?cusip=912810UW6&format=json",
+      "retrieved_at": "2026-10-08",
+      "provenance": "auctioned (TreasuryDirect TA_WS auction record)",
       "time_et": "13:00",
       "tenor": "30Y",
       "reopening": true,
@@ -7032,7 +7030,7 @@
       "cusip": "912810UW6",
       "announcement_date": "2026-10-01",
       "tentative": false,
-      "status": "announced"
+      "status": "auctioned"
     },
     {
       "date": "2026-10-14",
@@ -7409,7 +7407,7 @@
       "name": "Earnings \u00b7 NXPI",
       "label": "NXPI",
       "source_url": "https://finance.yahoo.com/quote/NXPI/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-09-29T22:47:28-04:00",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -7685,6 +7683,24 @@
     },
     {
       "date": "2026-10-29",
+      "type": "EARNINGS",
+      "ticker": "TROW",
+      "name": "Earnings \u00b7 TROW",
+      "label": "TROW",
+      "source_url": "https://finance.yahoo.com/quote/TROW/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "history": [
+        {
+          "date": "2026-10-30",
+          "retrieved_at": "2026-09-29T22:47:28-04:00",
+          "replaced": "2026-10-08T23:36:41-04:00"
+        }
+      ],
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-29",
       "type": "GDP",
       "name": "GDP, 3rd Quarter 2026 (Advance Estimate)",
       "label": "GDP",
@@ -7744,17 +7760,6 @@
       "name": "Earnings \u00b7 CBOE",
       "label": "CBOE",
       "source_url": "https://finance.yahoo.com/quote/CBOE/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-09-29T22:47:28-04:00",
-      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
-      "impact": "medium"
-    },
-    {
-      "date": "2026-10-30",
-      "type": "EARNINGS",
-      "ticker": "TROW",
-      "name": "Earnings \u00b7 TROW",
-      "label": "TROW",
-      "source_url": "https://finance.yahoo.com/quote/TROW/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-09-29T22:47:28-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
@@ -7894,6 +7899,17 @@
     {
       "date": "2026-11-04",
       "type": "EARNINGS",
+      "ticker": "ALL",
+      "name": "Earnings \u00b7 ALL",
+      "label": "ALL",
+      "source_url": "https://finance.yahoo.com/quote/ALL/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-11-04",
+      "type": "EARNINGS",
       "ticker": "APP",
       "name": "Earnings \u00b7 APP",
       "label": "APP",
@@ -7922,6 +7938,24 @@
       "source_url": "https://finance.yahoo.com/quote/DASH/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-10-07T23:24:12-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-11-04",
+      "type": "EARNINGS",
+      "ticker": "EXPE",
+      "name": "Earnings \u00b7 EXPE",
+      "label": "EXPE",
+      "source_url": "https://finance.yahoo.com/quote/EXPE/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "history": [
+        {
+          "date": "2026-11-05",
+          "retrieved_at": "2026-09-29T22:47:28-04:00",
+          "replaced": "2026-10-08T23:36:41-04:00"
+        }
+      ],
       "impact": "medium"
     },
     {
@@ -8011,22 +8045,22 @@
     {
       "date": "2026-11-05",
       "type": "EARNINGS",
-      "ticker": "EXPE",
-      "name": "Earnings \u00b7 EXPE",
-      "label": "EXPE",
-      "source_url": "https://finance.yahoo.com/quote/EXPE/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-09-29T22:47:28-04:00",
+      "ticker": "GEN",
+      "name": "Earnings \u00b7 GEN",
+      "label": "GEN",
+      "source_url": "https://finance.yahoo.com/quote/GEN/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-02T06:23:56-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
     {
       "date": "2026-11-05",
       "type": "EARNINGS",
-      "ticker": "GEN",
-      "name": "Earnings \u00b7 GEN",
-      "label": "GEN",
-      "source_url": "https://finance.yahoo.com/quote/GEN/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-10-02T06:23:56-04:00",
+      "ticker": "HSY",
+      "name": "Earnings \u00b7 HSY",
+      "label": "HSY",
+      "source_url": "https://finance.yahoo.com/quote/HSY/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -8433,7 +8467,7 @@
       "name": "Earnings \u00b7 ADSK",
       "label": "ADSK",
       "source_url": "https://finance.yahoo.com/quote/ADSK/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-09-29T22:47:28-04:00",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -8480,6 +8514,17 @@
       "retrieved_at": "2026-09-30",
       "provenance": "official",
       "time_et": "10:00"
+    },
+    {
+      "date": "2026-12-02",
+      "type": "EARNINGS",
+      "ticker": "CRM",
+      "name": "Earnings \u00b7 CRM",
+      "label": "CRM",
+      "source_url": "https://finance.yahoo.com/quote/CRM/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
     },
     {
       "date": "2026-12-02",
@@ -8695,6 +8740,17 @@
       "label": "FDS",
       "source_url": "https://finance.yahoo.com/quote/FDS/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-12-18",
+      "type": "EARNINGS",
+      "ticker": "PAYX",
+      "name": "Earnings \u00b7 PAYX",
+      "label": "PAYX",
+      "source_url": "https://finance.yahoo.com/quote/PAYX/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-08T23:36:41-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
