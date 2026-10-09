@@ -20,6 +20,9 @@ single harness (walkforward_test.py). Every parameter is the registration's
   pass         top tenth > 2 points a year after costs, t > 3, and a paired difference against the 12-1 momentum top
                tenth positive with t > 2
   checks       placebo shifts of +12 and -12 months on all 43 variables; current_universe_only off
+  beside       J1 (fourth follow-up): every top-tenth and top-fifth summary carries `benchmarks` - the names' average
+               return beside SPY, QQQ, RSP and the average member over the same formation months, with the paired
+               differences against SPY and QQQ (walkforward_test.benchmark_block)
 
 Output: data/analyst/candidate_list_test_result.json (or --out). Label: free data, members with prices only.
 Reporting (H4, third follow-up): momentum_12_1_top_tenth_test_months summarises the momentum top tenth on the
@@ -75,7 +78,8 @@ def quarter_end_series(T: pd.DataFrame, score: str, horizon: str) -> pd.DataFram
 def summarize_q(ps: pd.DataFrame, horizon: str) -> dict:
     ann = 1.0 if horizon == "fwd12" else 4.0
     mu, t, n = wf.newey_west_t(ps["excess_net"].values, 3)
-    return {"quarters": n, "excess_pts_per_year_net": round(mu * ann * 100, 2), "t_nw_net": round(t, 2), "lags": 3}
+    return {"quarters": n, "excess_pts_per_year_net": round(mu * ann * 100, 2), "t_nw_net": round(t, 2), "lags": 3,
+            "benchmarks": wf.benchmark_block(ps, horizon, 3)}
 
 
 def momentum_top_tenth(T: pd.DataFrame, horizon: str) -> pd.DataFrame:

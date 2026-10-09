@@ -66,7 +66,27 @@ def main() -> int:
         out[int(y)] = {"member_months": tot, "members_per_month": round(tot / n, 1), "with_prices_per_month": round(int(tab.loc[y, "with prices"]) / n, 1),
                        "share_with_prices": round(int(tab.loc[y, "with prices"]) / tot, 3),
                        "ticker_change_not_mapped": int(tab.loc[y, "ticker change not mapped"]), "no_bars_at_the_provider": int(tab.loc[y, "no bars at the provider"])}
-    OUT.write_text(json.dumps({"cadence": "static", "as_of": datetime.now().strftime("%Y-%m-%d"), "order": "second follow-up of 7 Oct 2026, G2",
+    # J1 (fourth follow-up, 8 Oct 2026): the average member with prices against RSP, the equal-weighted S&P 500 fund,
+    # over the registered test's formation months - the measured size of the free data's survivorship tilt (RSP holds
+    # every member, including the companies that later disappeared)
+    tilt = None
+    try:
+        import walkforward_test as wf
+        T, _ = wf.build_table(wf.latest_stamp(), shift_analyst=0, hold_delisted=True)
+        M = T[T["fwd12"].notna() & (T["p"] >= pd.Period("2014-01", freq="M"))].groupby("p")["fwd12"].mean()
+        etf = wf.etf_returns(12)
+        rows = [(str(p), float(v), etf["RSP"].get(p), etf["SPY"].get(p)) for p, v in M.items() if etf["RSP"].get(p) is not None and etf["SPY"].get(p) is not None]
+        if rows:
+            R = pd.DataFrame(rows, columns=["p", "avg_member", "rsp", "spy"])
+            mu, t, n = wf.newey_west_t((R["avg_member"] - R["rsp"]).values, 11)
+            tilt = {"formation_months": f"{R['p'].min()} to {R['p'].max()}", "months": int(n),
+                    "average_member_with_prices_12m_pct": round(float(R["avg_member"].mean()) * 100, 2), "RSP_12m_pct": round(float(R["rsp"].mean()) * 100, 2), "SPY_12m_pct": round(float(R["spy"].mean()) * 100, 2),
+                    "gap_pts_per_year": round(mu * 100, 2), "t_nw": round(t, 2), "lags": 11,
+                    "reading": "RSP holds every member, including the companies that later disappeared, and charges about 0.2% a year; the gap is the survivorship tilt of the free data (members with prices only)"}
+    except Exception as e:  # noqa: BLE001
+        tilt = {"error": f"could not compute ({type(e).__name__}: {str(e)[:80]})"}
+    OUT.write_text(json.dumps({"cadence": "static", "as_of": datetime.now().strftime("%Y-%m-%d"), "order": "second follow-up of 7 Oct 2026, G2; J1 of the fourth follow-up (the RSP gap)",
+                               "survivorship_tilt_vs_RSP": tilt,
                                "definitions": {"ticker change not mapped": "no bar under the mapped symbol while the SEC lists the member's CIK under another ticker that has bars, or the symbol is an `old` of the change table whose current symbol has no bars",
                                                "no bars at the provider": "the current symbol has no bars at all (delisted, or never at the provider)"},
                                "by_year": out}, indent=1))

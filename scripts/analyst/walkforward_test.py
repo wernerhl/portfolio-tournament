@@ -241,7 +241,9 @@ def portfolio_series(T: pd.DataFrame, score: str, horizon: str, top_share: float
         turnover = 1.0 if not prev else (len(names - prev) + len(prev - names)) / (2.0 * len(names))     # one-way share
         ex = float(top[horizon + "_x"].mean())
         cost = 2 * cost_bps / 1e4 if horizon == "fwd12" else 2 * turnover * cost_bps / 1e4
-        rows.append({"p": str(p), "n": n, "k": k, "excess": ex, "excess_net": ex - cost, "turnover": turnover})
+        ret = float(top[horizon].mean()) if horizon in top.columns else None                 # J1: the names' raw return, for the funds beside
+        rows.append({"p": str(p), "n": n, "k": k, "excess": ex, "excess_net": ex - cost, "turnover": turnover,
+                     "ret": ret, "ret_net": (ret - cost) if ret is not None else None, "avg_member": float(g[horizon].mean()) if horizon in g.columns else None})
         prev = names
     return pd.DataFrame(rows)
 
@@ -254,7 +256,66 @@ def summarize_series(ps: pd.DataFrame, horizon: str) -> dict:
     return {"months": n, "excess_pts_per_year_net": round(mu * ann * 100, 2), "t_nw_net": round(t, 2),
             "excess_pts_per_year_gross": round(mu_g * ann * 100, 2), "t_nw_gross": round(t_g, 2),
             "turnover_one_way_avg": round(float(ps["turnover"].mean()), 3) if len(ps) else None,
-            "lags": lags}
+            "lags": lags, "benchmarks": benchmark_block(ps, horizon, lags)}
+
+
+# ── J1 (fourth follow-up, 8 Oct 2026): every selection series beside SPY, QQQ and RSP over the same formation months
+_ETF_CACHE: dict = {}
+BENCH_FUNDS = ("SPY", "QQQ", "RSP")
+
+
+def etf_returns(h: int) -> dict:
+    """{fund: {Period(M): h-month return}} from the raw monthly history (adjusted closes; the latest download per
+    name and month-end)."""
+    if h in _ETF_CACHE:
+        return _ETF_CACHE[h]
+    files = sorted((AN / "history").glob("monthly_prices_*.parquet"))
+    out = {f: {} for f in BENCH_FUNDS}
+    if files:
+        mp = pd.concat([pd.read_parquet(f).assign(_src=f.name) for f in files], ignore_index=True)
+        mp = mp[mp["ticker"].isin(BENCH_FUNDS)]
+        if len(mp):
+            mp["month_end"] = pd.to_datetime(mp["month_end"])
+            mp = mp.sort_values(["ticker", "month_end", "_src"]).drop_duplicates(["ticker", "month_end"], keep="last")
+            for f, g in mp.groupby("ticker"):
+                s = g.set_index(g["month_end"].dt.to_period("M"))["adj_close"].astype(float)
+                s = s[~s.index.duplicated()].sort_index()
+                full = s.reindex(pd.period_range(s.index.min(), s.index.max(), freq="M"))
+                r = full.shift(-h) / full - 1
+                out[f] = {p: float(v) for p, v in r.items() if pd.notna(v)}
+    _ETF_CACHE[h] = out
+    return out
+
+
+def benchmark_block(ps: pd.DataFrame, horizon: str, lags: int) -> dict | None:
+    """The series' average horizon return (net of the harness's cost) beside SPY, QQQ, RSP and the average member
+    with prices over the same formation months, and the paired differences against SPY and against QQQ with their
+    Newey-West t. None when the funds' bars are missing."""
+    if "ret_net" not in ps.columns or not len(ps):
+        return None
+    h = 12 if horizon == "fwd12" else 1
+    ann = 1.0 if horizon == "fwd12" else 12.0
+    etf = etf_returns(h)
+    rows = []
+    for p_, r_, a_ in zip(ps["p"], ps["ret_net"], ps["avg_member"] if "avg_member" in ps.columns else [None] * len(ps)):
+        per = pd.Period(str(p_), freq="M")
+        vals = [etf[f].get(per) for f in BENCH_FUNDS]
+        if r_ is None or pd.isna(r_) or any(v is None for v in vals):
+            continue
+        rows.append((per, float(r_), *vals, (float(a_) if a_ is not None and not pd.isna(a_) else None)))
+    if not rows:
+        return None
+    R = pd.DataFrame(rows, columns=["p", "series", "spy", "qqq", "rsp", "avg_member"])
+    d_spy = (R["series"] - R["spy"]).values; d_qqq = (R["series"] - R["qqq"]).values
+    mu_s, t_s, _ = newey_west_t(d_spy, lags); mu_q, t_q, _ = newey_west_t(d_qqq, lags)
+    avg = lambda c: round(float(R[c].mean()) * 100 * (1.0 if h == 12 else 1.0), 2)
+    return {"months": int(len(R)), "formation_months": f"{R['p'].min()} to {R['p'].max()}",
+            "horizon_months": h, "return_basis": ("average 12-month return, %" if h == 12 else "average 1-month return, %"),
+            "series_net": avg("series"), "SPY": avg("spy"), "QQQ": avg("qqq"), "RSP": avg("rsp"),
+            "average_member_with_prices": (round(float(R["avg_member"].mean()) * 100, 2) if R["avg_member"].notna().all() else None),
+            "minus_SPY": {"pts_per_year": round(mu_s * ann * 100, 2), "t_nw": round(t_s, 2), "lags": lags},
+            "minus_QQQ": {"pts_per_year": round(mu_q * ann * 100, 2), "t_nw": round(t_q, 2), "lags": lags},
+            "note": "the series net of the harness's cost; the funds as traded (adjusted closes, their fees inside); the average member with prices is the harness's own benchmark"}
 
 
 def walk_forward(T: pd.DataFrame, feats: list[str], target: str, model: str, label: str, rank_target: bool = False,

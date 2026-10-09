@@ -100,6 +100,7 @@ def decompose(S: pd.DataFrame, score: str) -> dict:
         rows.append({"p": p, "year": p.year, "n": n, "k": k,
                      "top_vs_avg_net": top_x - COST, "allocation_gross": alloc, "selection_net": sel - COST,
                      "within_vs_avg_net": ws_x - COST, "within_vs_own_net": ws_own - COST,
+                     "top_ret_net": float(top["fwd12"].mean()) - COST, "within_ret_net": float(ws["fwd12"].mean()) - COST, "avg_member": float(g["fwd12"].mean()),   # J1: raw returns for the funds beside
                      "tech_share_top": float((top["sector"] == TECH).mean()), "tech_share_members": float((g["sector"] == TECH).mean()),
                      **{f"tilt_{v}": float(top[v + "_rk"].mean()) for v in TILT_VARS if v + "_rk" in top.columns}})
     return pd.DataFrame(rows)
@@ -137,6 +138,9 @@ def main() -> int:
         {"quantity": "past placebo, registered version over the average member", **nw(DP["top_vs_avg_net"])},
     ]
     alloc_share = round(float(D["allocation_gross"].mean() / D["top_vs_avg_net"].mean()), 3) if D["top_vs_avg_net"].mean() else None
+    # J1 (fourth follow-up): the two top tenths beside SPY, QQQ, RSP and the average member over the same formation months
+    bench = {"registered_top_tenth": wf.benchmark_block(pd.DataFrame({"p": D["p"].astype(str), "ret_net": D["top_ret_net"], "avg_member": D["avg_member"]}), "fwd12", 11),
+             "within_sector_top_tenth": wf.benchmark_block(pd.DataFrame({"p": D["p"].astype(str), "ret_net": D["within_ret_net"], "avg_member": D["avg_member"]}), "fwd12", 11)}
     reg_path = AN / "candidate_list_test_registration.json"
     payload = {
         "cadence": "static", "as_of": datetime.now().strftime("%Y-%m-%d"), "label": "DIAGNOSTIC",
@@ -151,6 +155,7 @@ def main() -> int:
         "cost": "20 bps a holding (10 bps a trade, both ways), charged to the top tenth, the selection term and the within-sector portfolios; the allocation term is gross",
         "table": table,
         "allocation_share_of_result": alloc_share,
+        "benchmarks": bench,
         "technology": {"share_of_top_tenth": round(float(D["tech_share_top"].mean()), 3), "share_of_members": round(float(D["tech_share_members"].mean()), 3)},
         "top_tenth_mean_rank": {TILT_VARS[v]: round(float(D[f"tilt_{v}"].mean()), 3) for v in TILT_VARS if f"tilt_{v}" in D.columns},
         "reading": ("the past placebo stays high because R&D to sales and gross profitability change little from one year to the next: "

@@ -113,5 +113,172 @@
   "gross profit to assets": 0.119,
   "leverage": 0.105
  },
- "reading": "the past placebo stays high because R&D to sales and gross profitability change little from one year to the next: that placebo was built to catch look-ahead in variables that change quickly; for slow characteristics it is expected to stay high and does not indicate a leak"
+ "reading": "the past placebo stays high because R&D to sales and gross profitability change little from one year to the next: that placebo was built to catch look-ahead in variables that change quickly; for slow characteristics it is expected to stay high and does not indicate a leak",
+ "benchmarks": {
+  "registered_top_tenth": {
+   "months": 141,
+   "formation_months": "2014-01 to 2025-09",
+   "horizon_months": 12,
+   "return_basis": "average 12-month return, %",
+   "series_net": 16.58,
+   "SPY": 14.34,
+   "QQQ": 20.37,
+   "RSP": 11.41,
+   "average_member_with_prices": 12.54,
+   "minus_SPY": {
+    "pts_per_year": 2.24,
+    "t_nw": 1.37,
+    "lags": 11
+   },
+   "minus_QQQ": {
+    "pts_per_year": -3.79,
+    "t_nw": -1.64,
+    "lags": 11
+   },
+   "note": "the series net of the harness's cost; the funds as traded (adjusted closes, their fees inside); the average member with prices is the harness's own benchmark"
+  },
+  "within_sector_top_tenth": {
+   "months": 141,
+   "formation_months": "2014-01 to 2025-09",
+   "horizon_months": 12,
+   "return_basis": "average 12-month return, %",
+   "series_net": 14.93,
+   "SPY": 14.34,
+   "QQQ": 20.37,
+   "RSP": 11.41,
+   "average_member_with_prices": 12.54,
+   "minus_SPY": {
+    "pts_per_year": 0.59,
+    "t_nw": 0.53,
+    "lags": 11
+   },
+   "minus_QQQ": {
+    "pts_per_year": -5.44,
+    "t_nw": -2.07,
+    "lags": 11
+   },
+   "note": "the series net of the harness's cost; the funds as traded (adjusted closes, their fees inside); the average member with prices is the harness's own benchmark"
+  }
+ },
+ "fields_added": [
+  {
+   "fields": "benchmarks (J1, fourth follow-up of 8 Oct 2026): SPY, QQQ, RSP and the average member beside every top-tenth and top-fifth series, with the paired differences against SPY and QQQ",
+   "added_on": "2026-10-08",
+   "basis": "a rerun of the diagnostic on the J2 membership (panels rebuilt 9 Oct 2026)",
+   "verdict_fields": "as first written; nothing above was changed",
+   "recomputed_values_differing": [
+    {
+     "path": "/table[0]/pts_per_year",
+     "as_written": 4.2,
+     "recomputed": 4.17
+    },
+    {
+     "path": "/table[0]/t_nw",
+     "as_written": 2.68,
+     "recomputed": 2.62
+    },
+    {
+     "path": "/table[1]/pts_per_year",
+     "as_written": 1.83,
+     "recomputed": 1.78
+    },
+    {
+     "path": "/table[1]/t_nw",
+     "as_written": 1.87,
+     "recomputed": 1.84
+    },
+    {
+     "path": "/table[2]/pts_per_year",
+     "as_written": 2.37,
+     "recomputed": 2.39
+    },
+    {
+     "path": "/table[2]/t_nw",
+     "as_written": 2.12,
+     "recomputed": 2.02
+    },
+    {
+     "path": "/table[3]/pts_per_year",
+     "as_written": 2.47,
+     "recomputed": 2.52
+    },
+    {
+     "path": "/table[3]/t_nw",
+     "as_written": 3.5,
+     "recomputed": 3.32
+    },
+    {
+     "path": "/table[4]/pts_per_year",
+     "as_written": 2.34,
+     "recomputed": 2.39
+    },
+    {
+     "path": "/table[4]/t_nw",
+     "as_written": 3.23,
+     "recomputed": 3.09
+    },
+    {
+     "path": "/table[5]/pts_per_year",
+     "as_written": 2.08,
+     "recomputed": 2.01
+    },
+    {
+     "path": "/table[5]/t_nw",
+     "as_written": 2.18,
+     "recomputed": 1.96
+    },
+    {
+     "path": "/table[6]/pts_per_year",
+     "as_written": 2.87,
+     "recomputed": 3.04
+    },
+    {
+     "path": "/table[6]/t_nw",
+     "as_written": 2.9,
+     "recomputed": 2.83
+    },
+    {
+     "path": "/table[7]/pts_per_year",
+     "as_written": 3.68,
+     "recomputed": 3.71
+    },
+    {
+     "path": "/table[7]/t_nw",
+     "as_written": 1.8,
+     "recomputed": 1.74
+    },
+    {
+     "path": "/table[8]/pts_per_year",
+     "as_written": 4.74,
+     "recomputed": 4.64
+    },
+    {
+     "path": "/table[8]/t_nw",
+     "as_written": 2.12,
+     "recomputed": 2.04
+    },
+    {
+     "path": "/allocation_share_of_result",
+     "as_written": 0.436,
+     "recomputed": 0.427
+    },
+    {
+     "path": "/technology/share_of_top_tenth",
+     "as_written": 0.298,
+     "recomputed": 0.296
+    },
+    {
+     "path": "/top_tenth_mean_rank/R&D to sales",
+     "as_written": 0.187,
+     "recomputed": 0.186
+    },
+    {
+     "path": "/top_tenth_mean_rank/leverage",
+     "as_written": 0.105,
+     "recomputed": 0.103
+    }
+   ],
+   "note": "the blocks come from a rerun of the same registered configuration on the membership corrected in J2 (components-list rows without a price no longer sit in the cross-section ranks); the rerun's own figures that differ from the ones written here are listed above, none by more than a few hundredths"
+  }
+ ]
 }
