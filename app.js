@@ -3781,6 +3781,13 @@ function briefEntryHtml(e, full){
     <div class="serif t2 c-1 lh16 mt1">${escText30(e.text)}</div>
     <div class="mt1">${rules || '<span class="mono t1 c-3">no rule fired</span>'}${full ? ` <span class="mono t1 c-3">· payload ${String(e.payload_sha256 || "").slice(0, 10)} · entry ${String(e.entry_sha256 || "").slice(0, 10)} · logged ${String(e.logged_at || "").slice(0, 16)}</span>` : ""}</div></div>`;
 }
+// J5 (8-Oct-2026): one line under the daily brief — the READY names on the board today, linked to the Screen block
+function renderReadyHomeLine(){
+  if (!S.screen || !S.entryState) return "";
+  const rs = readyStrip(S.screen, S.entryState);
+  if (rs.stale) return `<div class="mono t1 c-warn mt1">READY on the board today: stale (entry states ${escText30(rs.session_entry || "—")}, board ${escText30(rs.session_scores || "—")}) · <a href="screen.html#ready">Screen</a></div>`;
+  return `<div class="mono t1 c-2 mt1">READY on the board today: <span class="w7 c-1">${rs.full.length}</span> full size, <span class="w7 c-1">${rs.half.length}</span> half size · <a href="screen.html#ready">Screen</a> <span class="mono t1 w6 r1 x2 c-warn ls06">${escText30(rs.label)}</span></div>`;
+}
 function renderBriefStrip(n){   // home: the vertical strip, newest first (B3)
   const L = Array.isArray(S.dailyLog) ? S.dailyLog : [];
   if (!L.length) return `<div class="rcc-card"><h3>THE DAILY BRIEF</h3><div class="mono t1 c-3">no entry yet (data/daily_log.jsonl is written by the nightly)</div></div>`;

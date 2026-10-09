@@ -259,6 +259,24 @@ function renderBook(P){
   </div>`;
 }
 
+// J5 (8-Oct-2026): the READY block above the board — the board's READY and READY-HALF rows, from the two files
+// the page already loads (common.js readyStrip; the same rule in scripts/screen/ready_strip.py for the test and the
+// referee). Rank order; each name wraps as a unit on a phone.
+function renderReadyStrip(D){
+  const rs = readyStrip(D, SC.entryState); const reg = SC.regime || {};
+  // each name is one unit (the earnings count is a second unit that may move to the next line): no break inside a unit
+  const fmtItem = (x, half) => `<span class="ready-item"><span class="nowrap">#${x.rank != null ? x.rank : '—'} <span class="w7 c-1">${esEsc(x.ticker)}</span>${x.held ? ' ' + HELD : ''} ${fmtD(x.close)} · stop ${fmtD(x.stop)}${x.dist_pct != null ? ` <span class="c-3">(${x.dist_pct.toFixed(1)}%)</span>` : ''}</span>${half ? ` <span class="nowrap">· earnings in ${x.sessions_to_earnings != null ? x.sessions_to_earnings : '?'} sessions</span>` : ''}</span>`;
+  const badge = `<span class="mono t1 w6 r1 x2 c-warn ls06" title="rule outputs; the registered validation has not reported">${esEsc(rs.label)}</span>`;
+  const regime = reg.regime ? `<span class="ready-regime c-2" title="the day's regime label, as on the home page">regime <span class="w7">${esEsc(reg.regime)}</span>${reg.R_full != null ? ` · R ${Number(reg.R_full).toFixed(3)}` : ''}</span>` : '';
+  let body;
+  if (rs.stale) body = `<div class="ready-line c-warn">entry states as of ${esEsc(rs.session_entry || '—')} · the board as of ${esEsc(rs.session_scores || '—')} · <span class="w7">stale</span> · nothing is listed until both carry the same session</div>`;
+  else body = `<div class="ready-line"><span class="ready-k">Full size:</span>${rs.full.length ? rs.full.map(x => fmtItem(x, false)).join('') : '<span class="c-3">none</span>'}</div>
+    <div class="ready-line"><span class="ready-k">Half size (earnings within 20 sessions):</span>${rs.half.length ? rs.half.map(x => fmtItem(x, true)).join('') : '<span class="c-3">none</span>'}</div>
+    <div class="ready-line"><span class="ready-k">Changed since the previous session:</span>${rs.changed.length ? rs.changed.map(t => `<span class="ready-item">${esEsc(t.ticker)} ${esEsc(t.from)} → ${esEsc(t.to)}<span class="c-3"> (${esEsc(t.reason)})</span></span>`).join('') : '<span class="c-3">none</span>'}</div>`;
+  return `<div class="lbtable ready-block"><div class="lb-h"><h2>READY ON THE BOARD · close of ${esEsc(rs.session_scores || '—')} ${badge}</h2>${regime}</div>${body}
+    <div class="t1 c-3 mt1">States are rule outputs from the entry-state rules, version 3. They have not passed their registered validation. The page gives no buy or sell instruction.</div></div>`;
+}
+
 function render(){
   const a = document.getElementById('app');
   if (!SC.data) { a.innerHTML = renderNav('screen') + '<div class="ld">No screen data (data/screen/scores.json).</div>'; return; }
@@ -268,6 +286,8 @@ function render(){
   const d3 = (title, html) => html ? `<details class="t3-panel"${isMobile ? '' : ' open'}><summary>${title}</summary>${html}</details>` : '';
   let h = renderNav('screen') + pageHeader('THE SCREEN', `${U.total || 0} tickers scored · 4-factor model · daily refresh · as of ${asOf}${D.session_date ? ` · session ${D.session_date}` : ''}`);
   h += `<section class="tier tier-1">${renderStrips(D)}</section>`;
+  // J5 (8-Oct-2026): the READY block above the board, from the two files the page already loads
+  h += `<section class="tier tier-2" id="ready">${renderReadyStrip(D)}</section>`;
   h += `<section class="tier tier-2"><h2 class="tier-title">THE BOARD</h2>${renderWatchlist(W, U)}${renderDrawdownWatch(DW)}</section>`;
   h += `<section class="tier tier-3"><h2 class="tier-title">REGISTRY, RECONCILIATION, UNIVERSE</h2>
     ${d3('VISIBILITY REGISTRY', renderVisibilityRegistry())}
@@ -290,7 +310,7 @@ function render(){
 }
 
 async function init(){
-  await loadFiles(['screen', 'screenStatus', 'visReg', 'reconciliation', 'universeMeta', 'optionsLens', 'entryState'], SC);
+  await loadFiles(['screen', 'screenStatus', 'visReg', 'reconciliation', 'universeMeta', 'optionsLens', 'entryState', 'regime'], SC);
   SC.data = SC.screen; SC.status = SC.screenStatus; SC.recon = SC.reconciliation;
   render();
 }

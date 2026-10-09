@@ -1323,6 +1323,18 @@ def main(troot, sroot, today=None):
                 _cases=sorted({f"{str(me)[:7]} {cur} <- {'/'.join(sorted(set(g['ticker'])))}" for (me,cur),g in _d.groupby(['month_end','ticker_current'])})
                 add('HIGH','membership:duplicate_current_symbol',f"{_d.groupby(['month_end','ticker_current']).ngroups} month-end/symbol pairs where one current symbol appears twice (a ticker change applied to the wrong company or month): {_cases[:6]}")
     except Exception as _e: add('MEDIUM','membership:duplicate_current_symbol',f'check could not run ({type(_e).__name__})')
+    # ---------- J5 (fourth follow-up, 8-Oct-2026): the Screen page's READY block must list the board's READY rows
+    try:
+        _sp=os.path.join(sroot,'scores.json'); _ep=os.path.join(troot,'entry_state.json')
+        if os.path.exists(_sp) and os.path.exists(_ep):
+            sys.path.insert(0,os.path.abspath(os.path.join(troot,os.pardir,'scripts','screen')))
+            import ready_strip as _rs
+            _sc=json.load(open(_sp)); _es=json.load(open(_ep))
+            _b=_rs.build(_sc,_es); _full=[x['ticker'] for x in _b['full']]; _half=[x['ticker'] for x in _b['half']]
+            _bf=_rs.board_ready_rows(_sc,_es,'READY'); _bh=_rs.board_ready_rows(_sc,_es,'READY-HALF')
+            if _b['stale']: add('HIGH','screen:ready_strip',f"the READY block is stale and lists nothing: entry states {_b['session_entry']}, board {_b['session_scores']}; the board's READY rows: {(_bf+_bh)[:12]}")
+            elif _full!=_bf or _half!=_bh: add('HIGH','screen:ready_strip',f"the READY block's names differ from the board's READY rows: full {_full[:10]} vs {_bf[:10]}; half {_half[:10]} vs {_bh[:10]}")
+    except Exception as _e: add('MEDIUM','screen:ready_strip',f'check could not run ({type(_e).__name__})')
     # ---------- the live site (F3, 7-Oct-2026) ----------
     # The served status.json of the live site: its session and its age in hours are reported every run; more than one
     # trading session behind the last session is HIGH (scripts/site_alerts.py opens the site-stale issue).

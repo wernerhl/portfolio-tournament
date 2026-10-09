@@ -218,3 +218,23 @@ function renderNav(page){
 function pageHeader(title, sub){
   return `<div class="hd2"><div><span class="hd-dot"></span><h1 class="inl">${title}</h1><span class="mono t1 c-3 ml2">v3.0</span><div class="hd2-sub">${sub || ""}</div></div></div>`;
 }
+
+// ── J5 (fourth follow-up, 8-Oct-2026): the READY block's rule, shared by the screen page and the home-page line.
+// Reads only data/screen/scores.json (the board rows, in rank order) and data/entry_state.json (the states, stops,
+// transitions). No state is computed here. When the two files carry different session dates the block is stale and
+// lists nothing. The same rule lives in scripts/screen/ready_strip.py for the test and the referee.
+function readyStrip(scores, es){
+  const W = (scores && scores.watchlist) || []; const names = (es && es.names) || {};
+  const sd = scores && scores.session_date, ed = es && es.session_date;
+  const stale = !!(sd && ed && sd !== ed) || !sd || !ed;
+  const isReady = s => s === "READY" || s === "READY-HALF";
+  const rows = stale ? [] : W.filter(r => names[r.ticker] && isReady(names[r.ticker].state)).slice().sort((a, b) => (a.rank == null ? 1e9 : a.rank) - (b.rank == null ? 1e9 : b.rank));
+  const item = r => { const e = names[r.ticker]; const close = e.close != null ? e.close : r.current_price; const stop = e.stop;
+    return {rank: r.rank, ticker: r.ticker, held: !!r.held, state: e.state, close, stop, dist_pct: (close && stop) ? (stop / close - 1) * 100 : null, sessions_to_earnings: e.sessions_to_earnings}; };
+  const full = rows.filter(r => names[r.ticker].state === "READY").map(item);
+  const half = rows.filter(r => names[r.ticker].state === "READY-HALF").map(item);
+  const board = new Set(W.map(r => r.ticker));
+  const changed = stale ? [] : ((es && es.transitions_today) || []).filter(t => board.has(t.ticker) && (isReady(t.to) || isReady(t.from)))
+    .map(t => ({ticker: t.ticker, from: t.from, to: t.to, reason: t.reason || ""}));
+  return {session_scores: sd || null, session_entry: ed || null, stale, full, half, changed, label: (es && es.label) || "DIAGNOSTIC", rules_version: es ? es.rules_version : null};
+}

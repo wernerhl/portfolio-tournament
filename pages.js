@@ -77,13 +77,13 @@ function renderUniverseCard(){   // system page: the one universe (6.2)
 const PAGES = {
   home: {
     title: "PORTFOLIO TOURNAMENT", sub: () => `${updatedStr()} · the regime index and the book's drawdown · 4 algo tiers + Werner`,
-    loads: ["config","tournament","errata","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens","bondsStates","globalRatesHome"],
+    loads: ["config","tournament","errata","regime","regimeDaily","regimePub","regimeV4","v4Cal","v4Attr","status","holdingsFile","intraday","volRegime","book","backtestDD","c3","comparators","eventCal","indicatorSeries","dailyLog","news","optionsLens","bondsStates","globalRatesHome","screen","entryState"],
     compose(){
       const live = liveRow(); const R = live ? live.R_t : null;
       const rv = renderRegimeCommandCenter(R); const strip = renderStatusStrip();
       let h = renderTopBanner();
       // order 30-Sept: the brief (B3) with the news panel (B4) beside it, the events board (B5) below the log
-      h += `<div class="tier tier-1"><h2 class="tier-title">THE BRIEF</h2><div class="brief-grid">${renderBriefStrip(10)}${renderNewsPanel()}</div>${renderEventsBoard()}</div>`;
+      h += `<div class="tier tier-1"><h2 class="tier-title">THE BRIEF</h2><div class="brief-grid">${renderBriefStrip(10)}${renderNewsPanel()}</div>${renderReadyHomeLine()}${renderEventsBoard()}</div>`;
       h += `<div class="tier tier-1"><h2 class="tier-title">REGIME</h2>${strip ? `<div class="only-mobile">${strip}</div>` : ""}<div class="tier1-grid">${rv.gauge}${renderDrawdownCard()}</div>${renderRatesStrip()}</div>`;
       h += `<div class="tier tier-2"><h2 class="tier-title">CONTEXT</h2><div class="tier2-grid">${renderRegimeOverlayPanel()}<div>${rv.timeline}${rv.deployment}</div></div></div>`;
       h += `<div class="tier tier-3"><h2 class="tier-title">READINGS</h2><div class="only-desktop">${strip}</div>${d3("INDICATOR READINGS", rv.indicators)}${d3("CALENDAR", renderCalendarCard())}</div>`;
