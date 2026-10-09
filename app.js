@@ -1078,7 +1078,17 @@ function buildSeries(){
       benchSeries[b].sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
     });
   }
-  return {tiers:series, bench:benchSeries};
+  // J8 (fourth follow-up, 8-Oct-2026): while the operator tier is marked not comparable, its line is the comparable
+  // series (daily returns chain-linked with each re-seed step excluded, errata applied); the published NAV, which
+  // carries the re-syncs of 29-Sept to 1-Oct and the missing prices of 6-Oct, is kept aside for a thin dotted line
+  const published = {}, note = {};
+  const wc = S.tournament && S.tournament.werner_comparable;
+  if (wc && wc.comparable === false && Array.isArray(wc.series) && wc.series.length > 1) {
+    published["5_werner"] = series["5_werner"] || [];
+    series["5_werner"] = wc.series.filter(x => x.nav_comparable != null).map(x => ({date: x.date, nav: x.nav_comparable, live: true}));
+    note["5_werner"] = "comparable series (re-seed steps excluded, errata applied)";
+  }
+  return {tiers:series, bench:benchSeries, published, note};
 }
 
 function applyPeriod(series, period){
@@ -1148,13 +1158,24 @@ function renderChart(allSeries, period){
     const periodSer = applyPeriod(ser, period);
     const rebased = rebase(periodSer);
     datasets.push({
-      label: t.short, role: tid === "4_tactical" ? "headline" : "series",
+      label: t.short + (allSeries.note && allSeries.note[tid] ? " (comparable)" : ""), role: tid === "4_tactical" ? "headline" : "series",
       data: rebased.map(r => ({x:r.date, y:r.nav})),
       borderColor: CC.tier[tid],
       backgroundColor: CHARTS.alpha(CC.tier[tid], 0.13),
       tension: 0.05,
     });
   });
+  // J8: the operator's published NAV as a thin dotted line while the tier is drawn from the comparable series
+  const pub = allSeries.published && allSeries.published["5_werner"];
+  if (pub && pub.length > 1) {
+    const reb = rebase(applyPeriod(pub, period));
+    datasets.push({
+      label: "WERNER as published, includes re-syncs", role: "benchmark",
+      data: reb.map(r => ({x:r.date, y:r.nav})),
+      borderColor: CHARTS.alpha(CC.tier["5_werner"], 0.6), backgroundColor: "transparent",
+      borderDash: [2, 4], borderWidth: 1, tension: 0.05,
+    });
+  }
   // SPY benchmark
   const spy = applyPeriod(allSeries.bench.spy, period);
   if (spy.length > 0){
@@ -2711,8 +2732,18 @@ function renderDrawdownChart(){
     const rows = range === "1M" ? hist.slice(-22) : range === "3M" ? hist.slice(-64) : hist;
     const t0 = rows.length ? rows[rows.length - 1].tiers[TIER_ORDER[0]] : null;
     if (!t0 || t0.drawdown == null) { ctx.parentElement.innerHTML = '<div class="ld">drawdown series not yet published (written by compute_nav.py at the next nightly)</div>'; return; }
+    // J8 (8-Oct-2026): the operator's depth from the comparable series while the tier is not comparable
+    const wc = S.tournament && S.tournament.werner_comparable;
+    const wcSer = (wc && wc.comparable === false && Array.isArray(wc.series)) ? wc.series.filter(x => x.nav_comparable != null) : null;
     TIER_ORDER.forEach(tid => {
-      const pts = rows.filter(r => r.tiers && r.tiers[tid] && r.tiers[tid].drawdown != null).map(r => ({x: r.date, y: r.tiers[tid].drawdown * 100}));
+      let pts, lastDepth;
+      if (tid === "5_werner" && wcSer && wcSer.length > 1) {
+        const dates = new Set(rows.map(r => r.date)); let peak = -Infinity; pts = [];
+        wcSer.forEach(x => { peak = Math.max(peak, x.nav_comparable); const d = x.nav_comparable / peak - 1; if (dates.has(x.date)) pts.push({x: x.date, y: d * 100}); lastDepth = d; });
+        if (pts.length) { const ds = mk(tid, pts, lastDepth); ds.label = "WERNER (comparable)"; ds.directLabel = `WERNER comp. ${(lastDepth * 100).toFixed(1)}%`; datasets.push(ds); }
+        return;
+      }
+      pts = rows.filter(r => r.tiers && r.tiers[tid] && r.tiers[tid].drawdown != null).map(r => ({x: r.date, y: r.tiers[tid].drawdown * 100}));
       if (pts.length) datasets.push(mk(tid, pts, rows[rows.length - 1].tiers[tid] && rows[rows.length - 1].tiers[tid].drawdown));
     });
     ["spy", "qqq", "60_40", "sso", "tlt"].forEach(b => {
