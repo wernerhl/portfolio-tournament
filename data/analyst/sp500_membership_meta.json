@@ -1,6 +1,6 @@
 {
  "cadence": "static",
- "as_of": "2026-10-07",
+ "as_of": "2026-10-08",
  "sources": {
   "2004-06 to 2012-01-31": "github.com/fja05680/sp500, 'S&P 500 Historical Components & Changes (Updated)', MIT licence (cached copy)",
   "2012-01-31 to date": "Wikipedia, List of S&P 500 companies: the revision in force at each month-end (CIK and Security where the revision carries them)"
@@ -15,8 +15,8 @@
   "Wikipedia rows": "the symbol of the revision, mapped to today's symbol by the change table"
  },
  "tickers_ever": 1026,
- "tickers_current_ever": 961,
- "rows_with_a_mapped_ticker": 6892,
+ "tickers_current_ever": 967,
+ "rows_with_a_mapped_ticker": 6387,
  "ticker_changes": {
   "rows": 77,
   "by_method": {
@@ -65,6 +65,67 @@
   ],
   "collisions_unmapped": [],
   "duplicate_pairs_left": 0
+ },
+ "j2_price_history_bound": {
+  "rule": "a change applied to a components-list row (no name, no CIK) holds only when the current symbol's price history at the provider starts on or before the row's month-end; otherwise the row keeps its own symbol (no bars at the provider)",
+  "reverted": [
+   {
+    "symbol": "ARNC",
+    "was_mapped_to": "HWM",
+    "rows": 91,
+    "from": "2004-06",
+    "to": "2011-12",
+    "price_history_starts": "2016-11"
+   },
+   {
+    "symbol": "COG",
+    "was_mapped_to": "CTRA",
+    "rows": 43,
+    "from": "2008-06",
+    "to": "2011-12",
+    "price_history_starts": null
+   },
+   {
+    "symbol": "ESV",
+    "was_mapped_to": "VAL",
+    "rows": 35,
+    "from": "2007-01",
+    "to": "2009-11",
+    "price_history_starts": "2021-05"
+   },
+   {
+    "symbol": "HSH",
+    "was_mapped_to": "SLE",
+    "rows": 91,
+    "from": "2004-06",
+    "to": "2011-12",
+    "price_history_starts": "2019-02"
+   },
+   {
+    "symbol": "MWV",
+    "was_mapped_to": "WRK",
+    "rows": 91,
+    "from": "2004-06",
+    "to": "2011-12",
+    "price_history_starts": null
+   },
+   {
+    "symbol": "Q",
+    "was_mapped_to": "IQV",
+    "rows": 82,
+    "from": "2004-06",
+    "to": "2011-03",
+    "price_history_starts": "2013-05"
+   },
+   {
+    "symbol": "VIAB",
+    "was_mapped_to": "PARA",
+    "rows": 72,
+    "from": "2006-01",
+    "to": "2011-12",
+    "price_history_starts": "2021-02"
+   }
+  ]
  },
  "wikipedia_revisions": {
   "2012-01-31": {

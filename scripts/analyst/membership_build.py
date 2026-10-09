@@ -454,6 +454,34 @@ def main() -> int:
             for o in olds[1:]:
                 df.loc[(df["ticker"] == o) & (df["ticker_current"] == sym), "ticker_current"] = o
                 unmapped_collisions.append({"symbol": o, "collides_with": keep, "on": sym})
+    # ── J2 (fourth follow-up, 8 Oct 2026): a components-list row carries no name and no CIK, so a change applied to it
+    # rests on the symbol alone; it applies only when the current symbol's price history at the provider starts on or
+    # before the row's month-end (Qwest's Q of 2004-2011 is not Quintiles' Q -> IQV, whose bars start in 2013); otherwise
+    # the row keeps its own symbol and counts as "no bars at the provider"
+    price_start = {}
+    try:
+        sys.path.insert(0, str(HERE))
+        import build_panel as _bp
+        _mp = _bp.read_all("monthly_prices", _bp.all_stamps())
+        price_start = pd.to_datetime(_mp.groupby("ticker")["month_end"].min()).to_dict()
+    except Exception as _e:  # noqa: BLE001
+        log(f"J2 price-history bound: no monthly prices readable ({type(_e).__name__}); bound not applied")
+    j2_reverted = []
+    if price_start:
+        # a symbol set apart as an earlier holder (CB-201512) is not a change from the list: it stays set apart
+        comp_rows = df[(df["source"].str.startswith("fja05680")) & (df["ticker_current"] != df["ticker"]) & ~df["ticker_current"].str.match(r".*-\d{6}$")]
+        for r in comp_rows.itertuples():
+            ps = price_start.get(r.ticker_current)
+            if ps is None or ps > r.month_end:
+                df.at[r.Index, "ticker_current"] = r.ticker
+                j2_reverted.append((r.ticker, r.ticker_current, r.month_end.strftime("%Y-%m")))
+        if j2_reverted:
+            summ = {}
+            for o, c, m in j2_reverted:
+                summ.setdefault((o, c), []).append(m)
+            log("J2 price-history bound reverted " + "; ".join(f"{o}->{c}: {len(ms)} rows {min(ms)}..{max(ms)}" for (o, c), ms in sorted(summ.items())))
+    j2_summary = [{"symbol": o, "was_mapped_to": c, "rows": len(ms), "from": min(ms), "to": max(ms), "price_history_starts": (price_start[c].strftime("%Y-%m") if c in price_start else None)}
+                  for (o, c), ms in sorted({(o, c): [m for oo, cc, m in j2_reverted if (oo, cc) == (o, c)] for o, c, _ in j2_reverted}.items())]
     dups_left = int(df.duplicated(["month_end", "ticker_current"]).sum())
     changes.to_csv(CHANGES, index=False)
     log(f"H1 bounds: blocked by date {blocked['date']}, CIK {blocked['cik']}, name {blocked['name']}, coexistence {blocked['coexistence']}; "
@@ -483,6 +511,8 @@ def main() -> int:
         "h1_bounds": {"rule": "a change applies to a row under the old symbol only up to valid_to (the last month-end the old symbol is listed before the new symbol first appears), only when the row's CIK (where carried) is the change's, only when the row's name (where carried, no CIK) shares a word with a name the company had under the old symbol, and not when the new symbol is listed in the same month-end for another company",
                       "blocked": blocked, "share_classes_not_mapped": changes.loc[~changes["applies"], ["old", "new", "note"]].to_dict("records"),
                       "earlier_holders_set_apart": prior_holders, "collisions_unmapped": unmapped_collisions, "duplicate_pairs_left": dups_left},
+        "j2_price_history_bound": {"rule": "a change applied to a components-list row (no name, no CIK) holds only when the current symbol's price history at the provider starts on or before the row's month-end; otherwise the row keeps its own symbol (no bars at the provider)",
+                                   "reverted": j2_summary},
         "wikipedia_revisions": revmeta,
         "limits": "volunteer-maintained lists; a change can lag by days; delisted members have no bars at the price provider and enter a test only where bars exist",
     }, indent=1, default=str))
