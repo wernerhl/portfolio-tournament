@@ -20,8 +20,23 @@ cost model (C1: 10 bps one-way on |Δweight| in NAV space), differing ONLY in th
   SEED: on a twin's first session the top K are bought at equal weight from all cash with the
   regime cash target (SEED is added to the order's reason codes).
 
-Runs nightly AFTER score_universe.py, compute_regime_v2.py and compute_nav.py (the session's scores,
-closes, R and corridor label must exist). Executes at the session's closes from the price store and
+Entry-state twins 1e–4e (order of 8 October 2026, J7 — item 8). Identical to 1c–4c (same rules above,
+same scores, cash formula, costs and start capital; `entry_state_twins` block of continuous_rules.json)
+and differing ONLY in three rules, read from data/entry_state.json (rules version 3, config sha256 pinned):
+    entry     a RANK_ENTRY or SEED buys a name only when its entry state on the session is READY (full
+              slot weight) or READY-HALF (half the slot weight; the other half stays in cash). WATCH, AVOID
+              and names without a state are skipped and the next-ranked READY name is taken (down to rank
+              2K, the exit buffer; beyond it the slot stays in cash)
+    stop      the entry-state stop recorded on the day of purchase stays fixed for the spell; a close below
+              it sells the name with reason STOP_EXIT. RANK_EXIT stays as in the c twins
+    re-entry  a name sold at its stop is bought again only after a later session shows it READY/READY-HALF
+  Rule (d) and (e) targets are evaluated per slot for the e twins (a slot of (1 − target_cash)/K holds its
+  size factor, 1, 0.5 or 0 when empty), so the cash the entry rule leaves is not re-invested by the cash
+  gap or the drift rule. The e twins start on the block's first_session; before it they produce nothing.
+  They are served under twins.json → entry_state_twins (not the twins map the tournament page renders).
+
+Runs nightly AFTER score_universe.py, compute_regime_v2.py, compute_nav.py and entry_state.py (the session's
+scores, closes, R, corridor label and entry states must exist). Executes at the session's closes from the price store and
 charges the C1 cost exactly as compute_nav does — once per session, 10 bps × one-way turnover, where
 one-way turnover = 0.5 × Σ|w_after − w_before| over every name and the cash sleeve on the session's
 pre-trade NAV (a swap of A for B of value x costs 10 bps × x; so does a cash-funded buy of x) — levied
@@ -59,7 +74,10 @@ sys.path.insert(0, str(HERE))
 from select_tiers import apply_filter          # noqa: E402  (the tier's universe filter, verbatim)
 from trading_calendar import is_trading_day, last_completed_session, prev_trading_day  # noqa: E402
 
-REASONS = ("SEED", "RANK_ENTRY", "RANK_EXIT", "REGIME_CASH", "DRIFT", "RECONSTITUTION")
+REASONS = ("SEED", "RANK_ENTRY", "RANK_EXIT", "REGIME_CASH", "DRIFT", "RECONSTITUTION", "STOP_EXIT")
+READY_STATES = ("READY", "READY-HALF")           # the entry states that admit a purchase (e twins)
+E_BLOCK = "entry_state_twins"                    # the e twins' block in continuous_rules.json
+E_KEYS = ("first_session", "twins", "entry_state_rules_version", "entry_state_config_sha256")
 ET = ZoneInfo("America/New_York")
 EPS_SHARES = 1e-9
 
@@ -110,7 +128,61 @@ def load_rules(rules_path: Path, cfg: dict | None) -> tuple[dict, Path]:
             if k in blk and blk[k] != rules[k]:
                 raise SystemExit(f"continuous_rules_disagree: config.json continuous_rules.{k}={blk[k]!r} "
                                  f"!= {rules_path.name} {k}={rules[k]!r}")
+    e_blk = rules.get(E_BLOCK)
+    if e_blk is not None:
+        if not isinstance(e_blk, dict) or [k for k in E_KEYS if k not in e_blk]:
+            raise SystemExit(f"continuous_rules_incomplete: {E_BLOCK} needs {list(E_KEYS)} in {rules_path}")
+        clash = [t for t in e_blk["twins"] if t in rules["twins"]]
+        if clash:
+            raise SystemExit(f"continuous_rules_invalid: {E_BLOCK} twin ids {clash} collide with the c twins")
     return rules, rules_path
+
+
+def e_twins_active(rules: dict, session: str) -> bool:
+    """The e twins exist from the block's first_session on; before it they produce nothing at all."""
+    blk = rules.get(E_BLOCK) or {}
+    return bool(blk.get("twins")) and session >= str(blk["first_session"])
+
+
+def load_entry_states(data_dir: Path, session: str, blk: dict) -> dict:
+    """The e twins' input for the session: the entry-state file (default data/entry_state.json) with its
+    session_date equal to the session, its rules_version equal to the block's, and the frozen config
+    (default data/entry_state_config.json) at the registered sha256. Any mismatch leaves `ok` False with
+    the reason: the e twins then do not trade on that session and their state is left as it is (a later
+    run of the same session with the right file processes them — the nightly is restartable).
+    `names` is {ticker: {state, stop, close, size_factor}}."""
+    es_path = data_dir / str(blk.get("entry_state_file") or "entry_state.json")
+    cfg_path = data_dir / str(blk.get("entry_state_config_file") or "entry_state_config.json")
+    res = {"ok": False, "reason": None, "file": es_path.name, "session_date": None, "rules_version": None,
+           "config_file": cfg_path.name, "config_sha256_registered": blk.get("entry_state_config_sha256"),
+           "config_sha256_at_run": sha256_file(cfg_path), "names": {}}
+    if not es_path.exists():
+        res["reason"] = f"entry_state_missing: {es_path.name} absent"
+        return res
+    try:
+        j = json.load(open(es_path))
+    except Exception as e:                                   # noqa: BLE001
+        res["reason"] = f"entry_state_unreadable: {type(e).__name__}: {e}"
+        return res
+    res["session_date"] = str(j.get("session_date") or "")[:10] or None
+    res["rules_version"] = j.get("rules_version")
+    want_v = blk.get("entry_state_rules_version")
+    if res["session_date"] != session:
+        res["reason"] = f"entry_state_stale: {es_path.name} is for {res['session_date']}, not {session}"
+    elif want_v is not None and str(res["rules_version"]) != str(want_v):
+        res["reason"] = f"entry_state_rules_version: {es_path.name} carries version {res['rules_version']}, the twins are registered on {want_v}"
+    elif res["config_sha256_at_run"] is None:
+        res["reason"] = f"entry_state_config_missing: {cfg_path.name} absent"
+    elif res["config_sha256_registered"] and res["config_sha256_at_run"] != res["config_sha256_registered"]:
+        res["reason"] = (f"entry_state_config_changed: {cfg_path.name} sha256 {res['config_sha256_at_run'][:12]} differs from the "
+                         f"registered {str(res['config_sha256_registered'])[:12]} (a change of rules starts a new set of twins)")
+    else:
+        res["ok"] = True
+        for tk, v in (j.get("names") or {}).items():
+            if isinstance(v, dict):
+                res["names"][str(tk).upper()] = {"state": v.get("state"), "stop": v.get("stop"), "close": v.get("close"),
+                                                 "size_factor": v.get("size_factor")}
+    return res
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -592,9 +664,20 @@ def load_score_book(data_dir: Path, tier_specs: dict) -> ScoreBook:
 # The twin engine
 # ──────────────────────────────────────────────────────────────────────────────
 class Twin:
-    def __init__(self, twin_id: str, parent: str, spec: dict, st: dict | None, rules: dict):
+    """One twin. `mode` "rank" is a c twin (the 30-Sept rules verbatim); "entry_state" is an e twin (J7):
+    the same engine with the entry, stop and re-entry rules switched in (every branch below that reads
+    self.entry_mode) and per-slot cash/drift targets."""
+
+    def __init__(self, twin_id: str, parent: str, spec: dict, st: dict | None, rules: dict, mode: str = "rank"):
         self.id, self.parent, self.spec, self.rules = twin_id, parent, spec, rules
+        self.mode = mode
+        self.entry_mode = mode == "entry_state"
         st = st or {}
+        # e twins: the entry-state stop recorded at purchase (fixed for the spell) with the size factor, and
+        # the names sold at their stop that no later session has yet shown READY/READY-HALF (rule 3)
+        self.entry_stops: dict[str, dict] = dict(st.get("entry_stops") or {})
+        self.stopped_out: dict[str, dict] = dict(st.get("stopped_out") or {})
+        self.entry_log: dict = {"skipped": [], "taken": [], "stops": [], "cleared": []}     # per-session scratch (e)
         self.positions: dict[str, float] = dict(st.get("positions") or {})
         self.cash: float = float(st.get("cash", rules["start_capital"]))
         self.last_session: str | None = st.get("last_session")
@@ -654,6 +737,7 @@ class Twin:
             left = held - shares
             if left <= EPS_SHARES or all_shares:
                 self.positions.pop(tk, None)
+                self.entry_stops.pop(tk, None)           # e twins: the spell's stop ends with the spell
             else:
                 self.positions[tk] = left
         self._traded += value
@@ -664,14 +748,138 @@ class Twin:
         self.trade_counts[reason] = self.trade_counts.get(reason, 0) + 1
         return row
 
-    def _open_spell(self, session: str, row: dict) -> None:
+    def _open_spell(self, session: str, row: dict, detail: str | None = None, extra: dict | None = None) -> None:
         sid = f"{self.id}-{row['ticker']}-{session}"
         sp = {"spell_id": sid, "tier": self.id, "ticker": row["ticker"], "entry_session": session,
               "entry_trade_id": row["trade_id"], "entry_price": row["price"],
               "scores_at_entry": {k: row.get(k) for k in ("tier_composite", "tier_rank", "composite_rank", "bq_score", "tn_score")}}
+        if extra:
+            sp.update(extra)                             # e twins: entry state, size factor and the fixed stop
         self.open_spells[row["ticker"]] = sp
         self.spell_events.append(spell_event(sid, "opened", self.id, row["ticker"], session, row["trade_id"],
-                                             row["price"], sp["scores_at_entry"]))
+                                             row["price"], sp["scores_at_entry"], detail=detail))
+
+    # ── the e twins' rules (every method below is a no-op or the c value in rank mode) ──
+    def _entry_check(self, tk: str, ctx: dict) -> tuple[bool, float, float | None, str | None, str | None]:
+        """(ok, size_factor, stop, state, reason). Rule 1: READY buys the full slot, READY-HALF half of it;
+        WATCH, AVOID and a name without a state are skipped. Rule 3: a name sold at its stop waits for a
+        later READY/READY-HALF session (cleared in _clear_stopped before the session's trades)."""
+        if not self.entry_mode:
+            return True, 1.0, None, None, None
+        rec = (ctx.get("entry_states") or {}).get(tk) or {}
+        state = rec.get("state")
+        if state not in READY_STATES:
+            return False, 0.0, None, state, ("no entry state" if state is None else f"entry state {state}")
+        so = self.stopped_out.get(tk)
+        if so:
+            return False, 0.0, None, state, f"sold at its stop on {so['session']}; a later session must show it READY first"
+        stop, close = rec.get("stop"), rec.get("close")
+        if stop is None:
+            return False, 0.0, None, state, "no stop in the entry state"
+        if close is not None and float(stop) >= float(close):
+            return False, 0.0, None, state, f"the entry-state stop {float(stop):.2f} is not below the close {float(close):.2f}"
+        return True, (0.5 if state == "READY-HALF" else 1.0), float(stop), state, None
+
+    def _record_entry(self, tk: str, session: str, factor: float, stop: float | None, state: str | None) -> dict:
+        rec = {"stop": None if stop is None else round(stop, 4), "entry_session": session, "size_factor": factor, "state": state}
+        if self.entry_mode:
+            self.entry_stops[tk] = rec
+            self.stopped_out.pop(tk, None)
+        return rec
+
+    def _fill_slots(self, session: str, ctx: dict, ranked: pd.DataFrame, rank_of: dict, slot_w: float, want: int,
+                    reason: str, notes: list) -> list[str]:
+        """e twins, SEED and the open slots of RANK_ENTRY: walk the ranking from the top, past held names and
+        past names the entry rule refuses, taking READY/READY-HALF names (with a close on the session) until
+        `want` slots are filled or rank 2K is reached (a name beyond 2K would exit at the next evaluation)."""
+        prices = ctx["prices"]
+        taken = []
+        for tk in list(ranked["ticker"].head(self.K2)):
+            if len(taken) >= want:
+                break
+            if tk in self.positions:
+                continue
+            r = rank_of.get(tk)
+            in_top = r is not None and r <= self.K
+            ok, f, stop, state, why = self._entry_check(tk, ctx)
+            if not ok:
+                self.entry_log["skipped"].append({"ticker": tk, "rank": r, "state": state, "reason": why, "top_k": in_top})
+                if in_top:
+                    notes.append(f"{tk}: rank {r} but {why}; skipped, the next READY name is taken")
+                continue
+            if not self._fresh(tk, prices, session):
+                notes.append(f"{tk}: {'top-K' if in_top else 'replacement'} (rank {r}) but no close on {session}; slot stays open")
+                continue
+            _, nav = self.value(prices)
+            half = " (half the slot; the other half stays in cash)" if f < 1.0 else ""
+            repl = "" if in_top else "; replaces a top-K name the entry rule skipped"
+            detail = f"{'seed' if reason == 'SEED' else 'open slot'}; rank {r}; entry state {state}{half}; stop {stop:.2f}{repl}"
+            row = self._exec(session, tk, "buy", f * slot_w * nav, prices[tk][0], reason, ctx, detail=detail)
+            if row:
+                rec = self._record_entry(tk, session, f, stop, state)
+                self._open_spell(session, row, detail=f"entry state {state}; size factor {f}; stop {stop:.2f}",
+                                 extra={"entry_state": state, "size_factor": f, "stop": rec["stop"]})
+                self.entry_log["taken"].append({"ticker": tk, "rank": r, "state": state, "size_factor": f, "stop": rec["stop"],
+                                                "slot": "top_k" if in_top else "replacement", "reason": reason})
+                taken.append(tk)
+        return taken
+
+    def _clear_stopped(self, session: str, ctx: dict, notes: list) -> None:
+        """Rule 3: a name sold at its stop is eligible again from the first LATER session whose entry state is
+        READY or READY-HALF (the stop session itself never clears it)."""
+        if not self.entry_mode:
+            return
+        es = ctx.get("entry_states") or {}
+        for tk, so in list(self.stopped_out.items()):
+            if str(so.get("session") or "") >= session:
+                continue
+            st = (es.get(tk) or {}).get("state")
+            if st in READY_STATES:
+                self.stopped_out.pop(tk)
+                self.entry_log["cleared"].append({"ticker": tk, "stopped_on": so.get("session"), "state": st})
+                notes.append(f"{tk}: sold at its stop on {so.get('session')}; {st} on {session}, may be bought again")
+
+    def _stop_exits(self, session: str, ctx: dict, notes: list) -> None:
+        """Rule 2: a close below the entry-state stop recorded at purchase (fixed for the spell) sells the
+        name, reason STOP_EXIT. Evaluated on the session's own close only."""
+        if not self.entry_mode:
+            return
+        prices = ctx["prices"]
+        for tk in list(self.positions):
+            rec = self.entry_stops.get(tk) or {}
+            stop = rec.get("stop")
+            if stop is None:
+                notes.append(f"{tk}: held without a recorded entry stop; the stop rule cannot apply")
+                continue
+            if not self._fresh(tk, prices, session):
+                notes.append(f"{tk}: no close on {session}; the stop is not evaluated")
+                continue
+            px = prices[tk][0]
+            if px < float(stop):
+                detail = f"close {px:.2f} below the entry-state stop {float(stop):.2f} recorded at entry on {rec.get('entry_session')}"
+                row = self._exec(session, tk, "sell", 0.0, px, "STOP_EXIT", ctx, detail=detail, all_shares=True)
+                if row:
+                    self._close_spell(session, row, ctx, detail=detail)
+                    self.stopped_out[tk] = {"session": session, "close": round(px, 4), "stop": float(stop)}
+                    self.entry_log["stops"].append({"ticker": tk, "close": round(px, 4), "stop": float(stop),
+                                                    "entry_session": rec.get("entry_session")})
+
+    def _target_weights(self, cp: float) -> dict:
+        """Rule (e)'s target per held name: the c twins spread the equity sleeve over the names held; the e
+        twins hold each name at its size factor times the slot weight (1 − cp)/K, so a half slot stays half
+        and an empty slot's share stays in cash."""
+        if not self.entry_mode:
+            n = len(self.positions)
+            return {t: (1.0 - cp) / n for t in self.positions} if n else {}
+        slot_w = (1.0 - cp) / self.K
+        return {t: float((self.entry_stops.get(t) or {}).get("size_factor", 1.0)) * slot_w for t in self.positions}
+
+    def _target_cash(self, cp: float) -> float:
+        """Rule (d)'s target: the formula value for the c twins; for the e twins the formula value plus the
+        part of the equity sleeve the entry rule left in cash (empty and half slots)."""
+        if not self.entry_mode:
+            return cp
+        return 1.0 - sum(self._target_weights(cp).values())
 
     def _close_spell(self, session: str, row: dict, ctx: dict, detail: str | None = None) -> None:
         sp = self.open_spells.pop(row["ticker"], None)
@@ -689,6 +897,8 @@ class Twin:
         comp_of = {t: float(c) for t, c in zip(ranked["ticker"], ranked["tier_composite"])}
         top_k = list(ranked["ticker"].head(self.K))
         notes = []
+        self.entry_log = {"skipped": [], "taken": [], "stops": [], "cleared": []}
+        slot_w = (1.0 - cp) / self.K                                     # one slot of the equity sleeve
 
         if self.last_session is None:                                    # ── SEED
             self.start_date = session
@@ -696,14 +906,17 @@ class Twin:
             self.positions = {}
             _, nav = self.value(prices)
             nav_pre, w_before = nav, {"_cash": 1.0}
-            w = (1.0 - cp) / self.K
-            for tk in top_k:
-                if not self._fresh(tk, prices, session):
-                    notes.append(f"{tk}: no close on {session}; not seeded")
-                    continue
-                row = self._exec(session, tk, "buy", w * nav, prices[tk][0], "SEED", ctx)
-                if row:
-                    self._open_spell(session, row)
+            if self.entry_mode:                                          # e: the top K that are READY/READY-HALF, half slots for READY-HALF
+                self._fill_slots(session, ctx, ranked, rank_of, slot_w, self.K, "SEED", notes)
+            else:
+                w = (1.0 - cp) / self.K
+                for tk in top_k:
+                    if not self._fresh(tk, prices, session):
+                        notes.append(f"{tk}: no close on {session}; not seeded")
+                        continue
+                    row = self._exec(session, tk, "buy", w * nav, prices[tk][0], "SEED", ctx)
+                    if row:
+                        self._open_spell(session, row)
         else:
             # cash accrues EFFR for every trading day since the last processed session
             d = self.last_session
@@ -715,6 +928,7 @@ class Twin:
             # pre-trade weight vector on the session's closes (from here only trades move it)
             _, nav_pre = self.value(prices)
             w_before = self.weights(prices, nav_pre)
+            self._clear_stopped(session, ctx, notes)                     # e: rule 3, before any trade of the session
             # (b) RANK_EXIT
             for tk in list(self.positions):
                 r = rank_of.get(tk)
@@ -730,9 +944,44 @@ class Twin:
                 row = self._exec(session, tk, "sell", 0.0, px, "RANK_EXIT", ctx, detail=detail, all_shares=True)
                 if row:
                     self._close_spell(session, row, ctx, detail=detail)
+            # (b′) STOP_EXIT — e twins only: a close below the stop recorded at purchase
+            self._stop_exits(session, ctx, notes)
             # (c) RANK_ENTRY — open slots first, then displacement by δ
             cands = [t for t in top_k if t not in self.positions]
             filled = []
+            if self.entry_mode:                                          # e: rule 1 on the open slots and on the entrant
+                open_slots = self.K - len(self.positions)
+                if open_slots > 0:
+                    filled = self._fill_slots(session, ctx, ranked, rank_of, slot_w, open_slots, "RANK_ENTRY", notes)
+                cands = [t for t in top_k if t not in self.positions]
+                for tk in cands:
+                    if not self._fresh(tk, prices, session) or not self.positions:
+                        continue
+                    ok, f, stop, state, why = self._entry_check(tk, ctx)
+                    if not ok:
+                        if not any(s["ticker"] == tk for s in self.entry_log["skipped"]):
+                            self.entry_log["skipped"].append({"ticker": tk, "rank": rank_of.get(tk), "state": state, "reason": why, "top_k": True})
+                        continue
+                    weakest = min(self.positions, key=lambda t: comp_of.get(t, float("-inf")))
+                    margin = comp_of.get(tk, float("-inf")) - comp_of.get(weakest, float("-inf"))
+                    if margin < self.delta - 1e-12 or not self._fresh(weakest, prices, session):
+                        continue
+                    d1 = f"displaced by {tk}: margin {margin:.3f} ≥ δ {self.delta}"
+                    srow = self._exec(session, weakest, "sell", 0.0, prices[weakest][0], "RANK_EXIT", ctx, detail=d1, all_shares=True)
+                    if srow:
+                        self._close_spell(session, srow, ctx, detail=d1)
+                    _, nav = self.value(prices)
+                    half = " (half the slot; the other half stays in cash)" if f < 1.0 else ""
+                    d2 = (f"displaces {weakest}: margin {margin:.3f} ≥ δ {self.delta}; rank {rank_of.get(tk)}; "
+                          f"entry state {state}{half}; stop {stop:.2f}")
+                    brow = self._exec(session, tk, "buy", f * slot_w * nav, prices[tk][0], "RANK_ENTRY", ctx, detail=d2)
+                    if brow:
+                        rec = self._record_entry(tk, session, f, stop, state)
+                        self._open_spell(session, brow, detail=f"entry state {state}; size factor {f}; stop {stop:.2f}",
+                                         extra={"entry_state": state, "size_factor": f, "stop": rec["stop"]})
+                        self.entry_log["taken"].append({"ticker": tk, "rank": rank_of.get(tk), "state": state, "size_factor": f,
+                                                        "stop": rec["stop"], "slot": "displacement", "reason": "RANK_ENTRY"})
+                cands = []                                               # the c displacement loop below is then empty
             while len(self.positions) < self.K and cands:
                 tk = cands.pop(0)
                 if not self._fresh(tk, prices, session):
@@ -760,33 +1009,38 @@ class Twin:
                 brow = self._exec(session, tk, "buy", (1.0 - cp) / self.K * nav, prices[tk][0], "RANK_ENTRY", ctx, detail=d2)
                 if brow:
                     self._open_spell(session, brow)
-            # (d) REGIME_CASH
+            # (d) REGIME_CASH — on the twin's cash target: the formula value (c), or the formula value plus the
+            #     part of the equity sleeve the entry rule left in cash (e: empty and half slots)
             eq, nav = self.value(prices)
+            tc = self._target_cash(cp)
             if nav > 0:
                 actual = self.cash / nav
-                gap_pts = (cp - actual) * 100.0
+                gap_pts = (tc - actual) * 100.0
                 if abs(gap_pts) > self.gap_pts and eq > 0:
-                    delta_cash = (cp - actual) * nav
+                    delta_cash = (tc - actual) * nav
                     tradable = [t for t in self.positions if self._fresh(t, prices, session)]
                     eq_tr = sum(self.positions[t] * prices[t][0] for t in tradable)
-                    d3 = f"cash {actual*100:.1f}% vs target {cp*100:.1f}% (gap {gap_pts:+.1f} pts > {self.gap_pts}); label {ctx['label']}"
+                    d3 = f"cash {actual*100:.1f}% vs target {tc*100:.1f}% (gap {gap_pts:+.1f} pts > {self.gap_pts}); label {ctx['label']}"
+                    if self.entry_mode and abs(tc - cp) > 1e-9:
+                        d3 += f"; formula cash {cp*100:.1f}% plus the slots the entry rule left in cash"
                     for t in tradable:
                         v = self.positions[t] * prices[t][0] * abs(delta_cash) / eq_tr if eq_tr > 0 else 0.0
                         if delta_cash > 0:
                             self._exec(session, t, "sell", v, prices[t][0], "REGIME_CASH", ctx, detail=d3)
                         else:
                             self._exec(session, t, "buy", v, prices[t][0], "REGIME_CASH", ctx, detail=d3)
-            # (e) DRIFT
+            # (e) DRIFT — against each name's target: (1 − cp)/n_held (c), size factor × (1 − cp)/K (e)
             eq, nav = self.value(prices)
             n = len(self.positions)
             if n and nav > 0:
-                tw = (1.0 - cp) / n
+                tw_of = self._target_weights(cp)
                 for t in sorted(self.positions, key=lambda x: rank_of.get(x, 10 ** 6)):
                     if not self._fresh(t, prices, session):
                         continue
                     _, nav = self.value(prices)
                     v = self.positions[t] * prices[t][0]
                     w = v / nav
+                    tw = tw_of[t]
                     if abs(w - tw) > self.drift * tw:
                         d4 = f"weight {w*100:.2f}% vs target {tw*100:.2f}% ({(w/tw-1)*100:+.1f}% of target > {self.drift*100:.0f}%)"
                         target_v = tw * nav
@@ -805,11 +1059,16 @@ class Twin:
         allocate_session_cost(self.trades, cost)
         eq, nav = self.value(prices)
         self.last_session = session
+        tc = self._target_cash(cp)                                       # c: cp itself
         hrow = {"date": session, "nav": round(nav, 2), "equity": round(eq, 2), "cash": round(self.cash, 2),
-                "target_cash_pct": round(cp * 100, 1), "actual_cash_pct": round(self.cash / nav * 100, 1) if nav else None,
+                "target_cash_pct": round(tc * 100, 1), "actual_cash_pct": round(self.cash / nav * 100, 1) if nav else None,
                 "n_positions": len(self.positions), "R_t": round(R, 4), "regime": ctx["label"],
                 "n_trades": len(self.trades), "nav_pre": round(nav_pre, 2),
                 "turnover_one_way": round(turnover, 6), "cost": round(cost, 4)}
+        if self.entry_mode:
+            hrow["formula_cash_pct"] = round(cp * 100, 1)
+            hrow["n_half_slots"] = sum(1 for r in self.entry_stops.values() if float(r.get("size_factor", 1.0)) < 1.0)
+            hrow["n_stopped_out"] = len(self.stopped_out)
         self.history.append(hrow)
         return {"row": hrow, "notes": notes, "cp": cp, "rank_of": rank_of, "comp_of": comp_of}
 
@@ -822,34 +1081,56 @@ class Twin:
         return cur.isoformat()
 
     def state(self) -> dict:
-        return {"parent_tier": self.parent, "start_date": self.start_date, "last_session": self.last_session,
-                "cash": round(self.cash, 6), "positions": {t: round(s, 6) for t, s in sorted(self.positions.items())},
-                "open_spells": self.open_spells, "trade_counts": self.trade_counts,
-                "cost_paid_total": round(self.cost_paid, 4), "history": self.history}
+        st = {"parent_tier": self.parent, "start_date": self.start_date, "last_session": self.last_session,
+              "cash": round(self.cash, 6), "positions": {t: round(s, 6) for t, s in sorted(self.positions.items())},
+              "open_spells": self.open_spells, "trade_counts": self.trade_counts,
+              "cost_paid_total": round(self.cost_paid, 4), "history": self.history}
+        if self.entry_mode:                                              # restartable: the fixed stops and the stop flags
+            st["mode"] = self.mode
+            st["entry_stops"] = {t: self.entry_stops[t] for t in sorted(self.entry_stops)}
+            st["stopped_out"] = {t: self.stopped_out[t] for t in sorted(self.stopped_out)}
+        return st
 
-    def served(self, prices: dict, cp: float, rank_of: dict, comp_of: dict, parent_nav) -> dict:
+    def served(self, prices: dict, cp: float, rank_of: dict, comp_of: dict, parent_nav, not_processed: str | None = None) -> dict:
         eq, nav = self.value(prices)
         n = len(self.positions)
-        tw = (1.0 - cp) / n if n else None
+        tw_of = self._target_weights(cp)
+        tc = self._target_cash(cp)
         pos = []
         for t, s in sorted(self.positions.items(), key=lambda kv: rank_of.get(kv[0], 10 ** 6)):
             px = prices.get(t, (None, None))
             v = s * px[0] if px[0] is not None else None
-            pos.append({"ticker": t, "shares": round(s, 6), "price": None if px[0] is None else round(px[0], 2),
-                        "price_date": px[1], "value": None if v is None else round(v, 2),
-                        "weight": None if (v is None or not nav) else round(v / nav * 100, 2),
-                        "target_weight": None if tw is None else round(tw * 100, 2),
-                        "tier_rank": rank_of.get(t), "tier_composite": None if t not in comp_of else round(comp_of[t], 3),
-                        "entry_session": (self.open_spells.get(t) or {}).get("entry_session")})
-        return {"parent_tier": self.parent, "short": self.spec.get("short"), "color": self.spec.get("color"),
-                "K": self.K, "exit_rank_buffer": self.K2, "start_date": self.start_date, "last_session": self.last_session,
-                "nav": round(nav, 2), "equity": round(eq, 2), "cash": round(self.cash, 2),
-                "target_cash_pct": round(cp * 100, 1), "actual_cash_pct": round(self.cash / nav * 100, 1) if nav else None,
-                "n_positions": n, "positions": pos, "trade_counts": self.trade_counts,
-                "n_trades": sum(self.trade_counts.values()), "cost_paid_total": round(self.cost_paid, 2),
-                "open_spells": len(self.open_spells), "parent_nav_same_session": parent_nav,
-                "return_since_start_pct": round((nav / float(self.rules["start_capital"]) - 1) * 100, 3),
-                "history": self.history}
+            tw = tw_of.get(t)
+            p = {"ticker": t, "shares": round(s, 6), "price": None if px[0] is None else round(px[0], 2),
+                 "price_date": px[1], "value": None if v is None else round(v, 2),
+                 "weight": None if (v is None or not nav) else round(v / nav * 100, 2),
+                 "target_weight": None if tw is None else round(tw * 100, 2),
+                 "tier_rank": rank_of.get(t), "tier_composite": None if t not in comp_of else round(comp_of[t], 3),
+                 "entry_session": (self.open_spells.get(t) or {}).get("entry_session")}
+            if self.entry_mode:
+                rec = self.entry_stops.get(t) or {}
+                p.update({"size_factor": rec.get("size_factor"), "entry_stop": rec.get("stop"), "entry_state_at_entry": rec.get("state")})
+            pos.append(p)
+        out = {"parent_tier": self.parent, "short": self.spec.get("short"), "color": self.spec.get("color"),
+               "K": self.K, "exit_rank_buffer": self.K2, "start_date": self.start_date, "last_session": self.last_session,
+               "nav": round(nav, 2), "equity": round(eq, 2), "cash": round(self.cash, 2),
+               "target_cash_pct": round(tc * 100, 1), "actual_cash_pct": round(self.cash / nav * 100, 1) if nav else None,
+               "n_positions": n, "positions": pos, "trade_counts": self.trade_counts,
+               "n_trades": sum(self.trade_counts.values()), "cost_paid_total": round(self.cost_paid, 2),
+               "open_spells": len(self.open_spells), "parent_nav_same_session": parent_nav,
+               "return_since_start_pct": round((nav / float(self.rules["start_capital"]) - 1) * 100, 3),
+               "history": self.history}
+        if self.entry_mode:
+            e_blk = self.rules.get(E_BLOCK) or {}
+            out.update({"mode": self.mode, "twin_of": (e_blk.get("twin_of") or {}).get(self.id),
+                        "entry_state_rules_version": e_blk.get("entry_state_rules_version"),
+                        "entry_state_config_sha256": e_blk.get("entry_state_config_sha256"),
+                        "formula_cash_pct": round(cp * 100, 1), "slot_weight_pct": round((1.0 - cp) / self.K * 100, 2),
+                        "n_half_slots": sum(1 for r in self.entry_stops.values() if float(r.get("size_factor", 1.0)) < 1.0),
+                        "n_empty_slots": self.K - n, "stopped_out": self.stopped_out, "entry_log_session": self.entry_log})
+        if not_processed:
+            out["not_processed"] = not_processed
+        return out
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -869,10 +1150,19 @@ def main(argv=None) -> int:
     ap.add_argument("--etfs", default=None, help="ETF store parquet with `spy` (default: <data-dir>/source/sector_etfs.parquet)")
     ap.add_argument("--tournament", default=None, help="tournament.json for EFFR and the parents' NAVs ('none' to skip)")
     ap.add_argument("--dry-run", action="store_true", help="compute and print; write nothing")
+    ap.add_argument("--out-dir", default=None,
+                    help="write twins.json, twins_state.json and the session's NEW trades.jsonl / spells.jsonl rows to this "
+                         "directory instead of the live paths (the live state and logs are read, never written; a directory "
+                         "under <repo>/data is refused)")
     args = ap.parse_args(argv)
 
     data_dir = Path(args.data_dir) if args.data_dir else REPO / "data"
     tdir = data_dir / "tournament"
+    out_dir = Path(args.out_dir).resolve() if args.out_dir else None
+    if out_dir is not None:
+        live_data = (REPO / "data").resolve()
+        if out_dir == live_data or live_data in out_dir.parents:
+            raise SystemExit(f"out_dir_under_data: {out_dir} is under {live_data}; an out-dir run never writes under data/")
     cfg_path = Path(args.config) if args.config else REPO / "config.json"
     cfg = json.load(open(cfg_path))
     tier_specs = cfg["tier_specs"]
@@ -895,10 +1185,16 @@ def main(argv=None) -> int:
 
     state = json.load(open(state_p)) if state_p.exists() else {"twins": {}}
     twins_state = state.get("twins", {})
-    done = [tw for tw, st in twins_state.items() if (st or {}).get("last_session") and st["last_session"] >= session]
-    if done and len(done) == len(rules["twins"]):
+    # the twins of the session: the c twins, plus the e twins from their first_session on (J7)
+    e_blk = rules.get(E_BLOCK) or {}
+    e_active = e_twins_active(rules, session)
+    twin_list = [(tw, parent, "rank") for tw, parent in rules["twins"].items()]
+    if e_active:
+        twin_list += [(tw, parent, "entry_state") for tw, parent in e_blk["twins"].items()]
+    done = [tw for tw, _, _ in twin_list if (twins_state.get(tw) or {}).get("last_session") and twins_state[tw]["last_session"] >= session]
+    if done and len(done) == len(twin_list):
         print(f"[compute_twins] session {session} already processed (state last_session "
-              f"{max(st['last_session'] for st in twins_state.values())}) — no-op")
+              f"{max(twins_state[tw]['last_session'] for tw in done)}) — no-op")
         return 0
 
     # inputs of the session
@@ -928,22 +1224,46 @@ def main(argv=None) -> int:
     print(f"[compute_twins] session {session}  R_full {R:.4f}  label {label} ({label_src})  rules {rules_path.name} "
           f"sha {rules_sha[:12]}  effr {'row' if session in effr else 'default 4%'}")
 
-    new_trades, new_spells, served, new_state = [], [], {}, {}
-    for tw_id, parent in rules["twins"].items():
+    # the e twins' input: the session's entry states under the registered rules (else they sit out the session)
+    es = None
+    if e_active:
+        es = load_entry_states(data_dir, session, e_blk)
+        if es["ok"]:
+            n_ready = sum(1 for v in es["names"].values() if v.get("state") in READY_STATES)
+            print(f"  entry states: {es['file']} for {session}, rules version {es['rules_version']}, config sha "
+                  f"{str(es['config_sha256_at_run'])[:12]} (registered) — {len(es['names'])} names, {n_ready} READY/READY-HALF")
+        else:
+            print(f"  entry states NOT usable: {es['reason']} — the e twins do not trade on {session}; their state is unchanged")
+
+    new_trades, new_spells, served, served_e, new_state = [], [], {}, {}, {}
+    for tw_id, parent, mode in twin_list:
         spec = tier_specs[parent]
-        twin = Twin(tw_id, parent, spec, twins_state.get(tw_id), rules)
+        twin = Twin(tw_id, parent, spec, twins_state.get(tw_id), rules, mode=mode)
+        target = served_e if twin.entry_mode else served
+        ranked = book.ranking(parent)
+        need = set(twin.positions) | set(ranked["ticker"].head(twin.K2))
+        prices = {t: store.close(t, session) for t in need}
+        rank_of = {t: int(r) for t, r in zip(ranked["ticker"], ranked["tier_rank"])}
+        comp_of = {t: float(c) for t, c in zip(ranked["ticker"], ranked["tier_composite"])}
+        cp = cash_pct_from_formula(R, spec)
         if twin.last_session and twin.last_session >= session:
             print(f"  {tw_id}: already at {twin.last_session} — skipped")
             new_state[tw_id] = twin.state()
+            target[tw_id] = twin.served(prices, cp, rank_of, comp_of, pnavs.get(parent))
+            continue
+        if twin.entry_mode and not (es and es["ok"]):
+            reason = (es or {}).get("reason") or "entry states unavailable"
+            print(f"  {tw_id}: not processed for {session} ({reason}); state at {twin.last_session or 'not started'}")
+            if twin.last_session:
+                new_state[tw_id] = twin.state()
+                target[tw_id] = twin.served(prices, cp, rank_of, comp_of, pnavs.get(parent), not_processed=reason)
             continue
         if any(t.get("tier") == tw_id and t.get("session") == session for t in existing_trades):
             raise SystemExit(f"trades_exist_for_session: {trades_p.name} already carries {tw_id} trades for {session} "
                              f"while the state is at {twin.last_session} — state and log disagree; not reprocessing")
         twin._ids = set()                                       # ids minted this session (repeat = suffix)
-        ranked = book.ranking(parent)
-        need = set(twin.positions) | set(ranked["ticker"].head(twin.K2))
-        prices = {t: store.close(t, session) for t in need}
-        ctx = {"prices": prices, "book": book, "R": R, "label": label, "effr": effr, "store": store, "registry": registry}
+        ctx = {"prices": prices, "book": book, "R": R, "label": label, "effr": effr, "store": store, "registry": registry,
+               "entry_states": es["names"] if twin.entry_mode else None}
         res = twin.run_session(session, ctx)
         for n in res["notes"]:
             print(f"    note {tw_id}: {n}")
@@ -954,13 +1274,19 @@ def main(argv=None) -> int:
         new_trades += twin.trades
         new_spells += twin.spell_events
         new_state[tw_id] = twin.state()
-        served[tw_id] = twin.served(prices, res["cp"], res["rank_of"], res["comp_of"], pnavs.get(parent))
+        target[tw_id] = twin.served(prices, res["cp"], res["rank_of"], res["comp_of"], pnavs.get(parent))
         r = res["row"]
         by_reason = {}
         for t in twin.trades:
             by_reason[t["reason"]] = by_reason.get(t["reason"], 0) + 1
+        extra = ""
+        if twin.entry_mode:
+            lg = twin.entry_log
+            extra = (f"  [entry rule: {len(lg['taken'])} taken, {sum(1 for x in lg['taken'] if x['slot'] == 'replacement')} replacements, "
+                     f"{sum(1 for x in lg['taken'] if x['size_factor'] < 1)} half; {len(lg['skipped'])} skipped; "
+                     f"{len(lg['stops'])} stops; {len(lg['cleared'])} cleared]")
         print(f"  {tw_id} ({spec.get('short')}): NAV {r['nav']:,.2f}  cash {r['actual_cash_pct']}% vs target {r['target_cash_pct']}%  "
-              f"{r['n_positions']} pos  trades {len(twin.trades)} {by_reason if by_reason else ''}")
+              f"{r['n_positions']} pos  trades {len(twin.trades)} {by_reason if by_reason else ''}{extra}")
 
     # follow-ups for every closed spell in the file (twins and monthly tiers alike)
     fu = followup_events(existing_spells + new_spells, session, store, registry)
@@ -984,17 +1310,56 @@ def main(argv=None) -> int:
                  "trades_this_session": len(new_trades), "spell_events_this_session": len(new_spells)},
         "twins": served,
     }
+    if e_blk:
+        # the e twins live under their own key: the tournament page renders every key of `twins` (no page shows them)
+        e_start = [s.get("start_date") for tw, s in new_state.items() if tw in e_blk["twins"] and s.get("start_date")]
+        out[E_BLOCK] = {
+            "order": e_blk.get("order"), "first_session": e_blk["first_session"], "active": e_active,
+            "start_date": min(e_start) if e_start else None,
+            "twin_of": e_blk.get("twin_of"), "parents": e_blk["twins"],
+            "entry_state_rules_version": e_blk["entry_state_rules_version"],
+            "entry_state_config_file": e_blk.get("entry_state_config_file", "entry_state_config.json"),
+            "entry_state_config_sha256": e_blk["entry_state_config_sha256"],
+            "entry_state_config_sha256_at_run": (es or {}).get("config_sha256_at_run") if e_active else None,
+            "entry_state_file": e_blk.get("entry_state_file", "entry_state.json"),
+            "entry_state_session": (es or {}).get("session_date") if e_active else None,
+            "check": ({"ok": es["ok"], "reason": es["reason"]} if es else {"ok": None, "reason": "before first_session" if not e_active else None}),
+            "reason_code_added": "STOP_EXIT",
+            "comparison": e_blk.get("comparison"),
+            "rules_summary": e_blk.get("differs_only_in"),
+            "label": e_blk.get("label") or rules.get("label"),
+            "twins": served_e,
+        }
     if args.dry_run:
         print("  dry run — nothing written")
         for t in new_trades:
             print(f"    {t['tier']} {t['action']:4s} {t['ticker']:6s} {t['shares']:>12.4f} @ {t['price']:>9.2f}  {t['reason']:12s} {t['detail'] or ''}")
         return 0
 
+    state_out = {"cadence": "daily", "session_date": session, "rules_sha256": rules_sha, "twins": new_state,
+                 "updated": now_et_iso()}
+    if e_blk:
+        state_out["entry_state_config_sha256"] = e_blk["entry_state_config_sha256"]
+    if out_dir is not None:
+        # an inspection run: the would-be outputs land here, the live state and logs stay as they are
+        out_dir.mkdir(parents=True, exist_ok=True)
+        with open(out_dir / "trades.jsonl", "w") as f:
+            for r in new_trades:
+                f.write(json.dumps(r, default=str) + "\n")
+        with open(out_dir / "spells.jsonl", "w") as f:
+            for r in new_spells:
+                f.write(json.dumps(r, default=str) + "\n")
+        with open(out_dir / "twins_state.json", "w") as f:
+            json.dump(state_out, f, indent=1, default=str)
+        with open(out_dir / "twins.json", "w") as f:
+            json.dump(out, f, indent=1, default=str)
+        print(f"  out-dir run — wrote twins.json, twins_state.json and the session's {len(new_trades)} trade / {len(new_spells)} spell "
+              f"rows to {out_dir}; nothing under the live paths was written")
+        return 0
+
     tdir.mkdir(parents=True, exist_ok=True)
     append_jsonl(trades_p, new_trades)
     append_jsonl(spells_p, new_spells)
-    state_out = {"cadence": "daily", "session_date": session, "rules_sha256": rules_sha, "twins": new_state,
-                 "updated": now_et_iso()}
     with open(state_p, "w") as f:
         json.dump(state_out, f, indent=1, default=str)
     with open(out_p, "w") as f:

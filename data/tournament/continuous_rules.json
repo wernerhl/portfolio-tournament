@@ -17,8 +17,40 @@
     "3c": "3_aggressive",
     "4c": "4_tactical"
   },
-  "reason_codes": ["SEED", "RANK_ENTRY", "RANK_EXIT", "REGIME_CASH", "DRIFT", "RECONSTITUTION"],
-  "reason_codes_note": "SEED is added to the order's five codes: a twin's first session buys the top K from all cash (and the monthly tiers' inception row of 2026-05-20 is logged as SEED by the backfill). A displacement by score margin is logged as RANK_EXIT (the displaced name) plus RANK_ENTRY (the entrant), with the margin in `detail`.",
+  "entry_state_twins": {
+    "order": "8 October 2026 — J7: entry-state twins and their comparison (item 8)",
+    "as_of": "2026-10-08",
+    "frozen_at": "2026-10-08",
+    "first_session": "2026-10-09",
+    "twins": {"1e": "1_cap_pres", "2e": "2_balanced", "3e": "3_aggressive", "4e": "4_tactical"},
+    "twin_of": {"1e": "1c", "2e": "2c", "3e": "3c", "4e": "4c"},
+    "identical_to": "the c twin of the same tier: the parameters above (K, the 2K exit buffer, δ, the 5-point cash gap, the 25% drift band, the start capital, the C1 cost), the same tier scores and ranks, the same cash formula on R_full; before first_session the e twins produce nothing (no rows, no trades)",
+    "differs_only_in": {
+      "entry": "a RANK_ENTRY or SEED buys a name only when its entry state on that session is READY (the full slot weight, (1 − target_cash)/K) or READY-HALF (half the slot weight; the other half stays in cash). A name in WATCH or AVOID is skipped and the next-ranked name in a READY state is taken",
+      "stop": "the stop is the entry-state stop recorded on the day of purchase and stays fixed. A close below it sells the name with reason code STOP_EXIT. RANK_EXIT stays as in the c twins",
+      "re_entry": "a name sold at its stop can be bought again only after a later session shows it READY or READY-HALF"
+    },
+    "implementation": {
+      "replacement_bound": "the next READY name is searched in rank order down to rank 2K (the exit buffer): a name beyond it would leave at the next evaluation, so the slot stays in cash",
+      "no_state": "a name without an entry state on the session (no bar, insufficient history) is skipped like WATCH; a name whose entry-state stop is not below its close is skipped",
+      "slot_targets": "rules (d) and (e) act on per-slot targets: a held name's target is its size factor (1 or 0.5, fixed at entry) times (1 − target_cash)/K, and the twin's cash target is the formula value plus the part of the equity sleeve the entry rule left in cash, so an empty or half slot is not re-invested by the cash gap or the drift rule (history rows carry both target_cash_pct and formula_cash_pct)",
+      "stop_evaluation": "on the session's own close from the price store, strictly below the recorded stop; a name without a close on the session is not evaluated; the check runs after RANK_EXIT and before RANK_ENTRY, and a name sold at its stop is not bought back on the same session",
+      "re_entry_clearing": "the flag clears on the first session after the stop session whose entry state is READY or READY-HALF; the name may be bought on that session's close (rule 1 still applies)",
+      "stale_states": "when the entry-state file is not for the session, carries another rules version, or the frozen config's sha256 differs from the registered one, the e twins do not trade on that session and their state is left unchanged (the c twins proceed; a later run of the same session with the right file processes the e twins)"
+    },
+    "entry_state_file": "entry_state.json",
+    "entry_state_config_file": "entry_state_config.json",
+    "entry_state_rules_version": 3,
+    "entry_state_config_frozen_at": "2026-10-06",
+    "entry_state_config_sha256": "962fe81cf48b33370e1caf85e28f15a0413b9a8029f4ca031373fb8ebd87cdf0",
+    "entry_state_config_sha256_source": "sha256 of data/entry_state_config.json as committed in 4f3719b (6 October 2026, rules version 3), the sha the validation registration data/entry_state_validation_registration_v4.json pins; a change of the entry-state rules starts a new set of twins and leaves these running",
+    "reason_code_added": "STOP_EXIT",
+    "served": "twins.json → entry_state_twins.twins (not the twins map the tournament page renders; no page shows the e twins); state in twins_state.json (entry_stops and stopped_out per twin); trades and spells in the shared logs under tiers 1e–4e",
+    "comparison": "data/tournament/twins_e_comparison.json (registered 2026-10-08, before any data); report scripts/twins_e_report.py → data/tournament/twins_e_comparison_report.json; no automatic consequence for any tier or page",
+    "label": "descriptive record of a rule-driven paper tournament; nothing here is a recommendation to trade"
+  },
+  "reason_codes": ["SEED", "RANK_ENTRY", "RANK_EXIT", "REGIME_CASH", "DRIFT", "RECONSTITUTION", "STOP_EXIT"],
+  "reason_codes_note": "SEED is added to the order's five codes: a twin's first session buys the top K from all cash (and the monthly tiers' inception row of 2026-05-20 is logged as SEED by the backfill). A displacement by score margin is logged as RANK_EXIT (the displaced name) plus RANK_ENTRY (the entrant), with the margin in `detail`. STOP_EXIT (8-Oct order, J7) is the entry-state twins' stop: a close below the stop recorded at purchase; the c twins never log it.",
   "rules_text": {
     "4.1": "Design: daily evaluation, banded execution. Rank buffer. A name enters when its composite rank is within the tier's top K and a slot is open or it displaces the weakest holding by a score margin δ; a held name exits only when its rank falls below 2K. K is the tier's position count; δ and the 2K buffer are in configuration. Regime cash. Executed daily when the gap between target and actual cash exceeds 5 points, using the corrected hysteresis label. Weight drift. A position is resized when its weight deviates from target by more than 25 percent of target. No other exit rules are added; the Trade-Now stops remain unvalidated and do not trade.",
     "4.2": "Add four twins, 1c to 4c, identical to tiers 1 to 4 in universe, scores, targets, and costs, differing only in the execution rule of 4.1, all starting from the same date with the same capital. The monthly tiers stay as controls.",

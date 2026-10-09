@@ -41,7 +41,6 @@ scripts = [
     "tournament_audit.py",         # T2: what the tournament does, recomputed nightly for the tournament page (retention, cash gaps, spells, the label)
     "compute_signals.py",          # signals: position mode for held names, setup readings otherwise
     "backfill_tier_logs.py",       # T4 (audit order 30-Sept, 4.3): the monthly tiers' trades and spells (idempotent; new reconstitutions, +20/+60 follow-ups)
-    "compute_twins.py",            # T4: the continuous twins 1c–4c — daily evaluation, banded execution; trades and spells logged (after signals: the session's Trade-Now at decision)
     "compute_book.py",             # 1.3/1.5/1.6/5: book analytics, stress, sleeves
     "compute_comparators.py",      # 1.4/4: the C3 rules and every rule translated to the book's beta
     "picks_vs_qqq.py",             # 6-Oct order (revised) 6b: the operator's picks and the algorithmic tiers against a QQQ shadow (after compute_nav)
@@ -64,6 +63,9 @@ scripts = [
     "earnings_dates.py",           # 6-Oct order §5: the next earnings date across sources, conflicts flagged, investor relations deciding
     "long_range.py",               # 6-Oct order §3: yearly highs, multi-year ceilings, 5-year and all-time highs (rolling weekly refresh)
     "entry_state.py",              # entry state per name, rules version 3 (6-Oct order, revised): gate, modifiers, ceiling cap, stop, size
+    # compute_twins.py (T4) moved after entry_state.py on 8-Oct-2026 (J7): the entry-state twins 1e-4e read the session's states
+    "compute_twins.py",            # T4: the continuous twins 1c-4c - daily evaluation, banded execution; trades and spells logged; J7 (8-Oct): the entry-state twins 1e-4e beside them
+    "twins_e_report.py",           # J7: the registered e-vs-c comparison (data/tournament/twins_e_comparison.json) recomputed from twins.json; no consequence for any tier or page
     "compute_thesis_daily.py",     # thesis exposure + attribution + auto-log (earnings dates against the register)
     # Order 30-Sept-2026 — read served data only, so they run last, before the referee:
     "compute_goals.py",            # D1/D2: the house goal in reais at the settled rate; the claims register's progress
@@ -427,6 +429,7 @@ SERVED_CADENCE = {
     "tournament/audit.json": "daily", "tournament/twins.json": "daily",       # T2 / T4 (audit order 30-Sept)
     "tournament/continuous_rules.json": "static",
     "tournament/strat_quarter_report.json": "daily",                          # J6 (8-Oct order): the paper tier's quarter report
+    "tournament/twins_e_comparison.json": "static", "tournament/twins_e_comparison_report.json": "daily",   # J7 (8-Oct order)
     "entry_state.json": "daily", "entry_state_config.json": "static",         # E1 (entry-state order 2-Oct)
     "options/vintages/_index.json": "daily",                                   # 5-Oct order 2.3
     "long_range.json": "daily", "provider_flags.json": "daily", "earnings_dates.json": "daily",   # 6-Oct order §3–§5

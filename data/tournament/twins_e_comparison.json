@@ -1,0 +1,52 @@
+{
+ "cadence": "static",
+ "as_of": "2026-10-08",
+ "registered_at": "2026-10-08",
+ "order": "8 October 2026 — J7: entry-state twins and their comparison (item 8)",
+ "status": "REGISTERED before any data: the e twins' first session is 2026-10-09 (data/tournament/continuous_rules.json → entry_state_twins.first_session)",
+ "sha256_note": "the sha256 of this file as registered is recorded in the commit message that adds it; an edit after the first session is a new registration, never a change of this one",
+ "twins": {
+  "e": ["1e", "2e", "3e", "4e"],
+  "c": ["1c", "2c", "3c", "4c"],
+  "pairs": {"1e": "1c", "2e": "2c", "3e": "3c", "4e": "4c"},
+  "rules": "data/tournament/continuous_rules.json: the c twins' rules (30-Sept order 4.1) and the entry_state_twins block (entry, stop, re-entry); entry-state rules version 3, config data/entry_state_config.json sha256 962fe81cf48b33370e1caf85e28f15a0413b9a8029f4ca031373fb8ebd87cdf0"
+ },
+ "start": {
+  "registered_first_session": "2026-10-09",
+  "rule": "the start is the e twins' first session (their start_date in twins.json; registered as 2026-10-09). All eight twins are compared from that session: it is the base session of every series below"
+ },
+ "series": {
+  "source": "data/tournament/twins.json: twins[1c..4c].history[].nav and entry_state_twins.twins[1e..4e].history[].nav, the NAV at the session's close after the session's C1 cost",
+  "daily_return": "nav_t / nav_prev − 1 between consecutive common sessions of a pair (a session missing on one side is skipped on both; the next common session's return spans the gap on both sides)",
+  "per_tier": "the daily return of the e twin minus the daily return of its c twin, after costs, on the pair's common sessions from the first common session; the first common session is the base of both NAV series, so the first difference falls on the session after it (the e twins' seeding cost on the base session is outside the series, as the c twins' seeding cost of 2026-09-29 is)",
+  "pooled": "the average across the four tiers of the per-tier differences on each session (the mean over the pairs that have a difference on that session)"
+ },
+ "monthly_report": {
+  "from": "the first month",
+  "content": [
+   "the pooled and the per-tier differences, annualised: the mean daily difference × 252",
+   "the Newey-West t of each difference with 5 lags: t = mean / sqrt(LRV / n), LRV = γ0 + 2 Σ_{k=1..5} (1 − k/6) γk, γk the lag-k autocovariance of the demeaned daily series divided by n (the formula of scripts/analyst/walkforward_test.py newey_west_t)",
+   "the largest drawdown of each twin: the deepest peak-to-trough decline of its NAV over the sessions from the base session",
+   "the pooled largest drawdown of the e twins and of the c twins: the largest drawdown of the equal-weight index of the four twins' NAVs, each rebased to 1 at the base session (the mean over the twins with a NAV on the session)"
+  ],
+  "by_month": "one row per month-end session (the last session of each calendar month inside the window), the statistics computed on the sessions from the base session through that month-end",
+  "output": "data/tournament/twins_e_comparison_report.json, written by scripts/twins_e_report.py (nightly after compute_twins.py; a readable summary is printed)"
+ },
+ "verdict": {
+  "no_verdict_before_months": 12,
+  "verdict_session": "the trading session (NYSE calendar) nearest the calendar date 12 months after the start: the smallest distance in calendar days, an equal distance taking the earlier session; the verdict uses the sessions from the base session through that session and later sessions do not change it",
+  "help": "the pooled annualised difference is positive, its Newey-West t (5 lags) is above 2, and the pooled largest drawdown of the e twins is no deeper than that of the c twins",
+  "hurt": "the pooled annualised difference is negative and its Newey-West t is below −2",
+  "otherwise": "no difference is shown",
+  "at_24_months": "the same rule applied once more, for the last time, at the session nearest 24 months after the start"
+ },
+ "power_statement": {
+  "after_months": 3,
+  "content": [
+   "the tracking volatility of the pooled difference: the annualised standard deviation of its daily values (sample standard deviation × √252)",
+   "the smallest annual difference that reaches t = 2 at 12 months and at 24 months: 2 × σ_LR × √(252 / n) with n = 252 and n = 504 sessions, σ_LR the Newey-West long-run standard deviation (5 lags) of the daily pooled difference, annualised (√(LRV × 252)); the statistic the verdict uses, so the owner knows in advance what the test can detect"
+  ]
+ },
+ "consequence": "none: no automatic consequence for any tier or page; the result enters the owner's diagnostic table",
+ "label": "descriptive record of a rule-driven paper tournament; nothing here is a recommendation to trade"
+}
