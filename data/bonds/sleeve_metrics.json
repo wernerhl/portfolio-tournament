@@ -1,21 +1,21 @@
 {
-  "cadence": "intraday",
-  "mode": "intraday",
-  "intraday": true,
-  "intraday_as_of": "2026-10-09T19:49:27-04:00",
-  "session_date": "2026-10-08",
-  "as_of": "2026-10-09",
-  "computed_at": "2026-10-09T19:49:27-04:00",
+  "cadence": "daily",
+  "mode": "close",
+  "intraday": false,
+  "intraday_as_of": null,
+  "session_date": "2026-10-09",
+  "as_of": "2026-10-10",
+  "computed_at": "2026-10-10T01:47:50+00:00",
   "level": "sleeve",
   "window": 126,
   "duration_source": "issuer fund fact-sheet category effective duration, approximate, as-of 2026-09; yfinance exposes no duration field, so the static category table is used for every sleeve",
   "yield_source": {
     "field": "yield",
     "provider": "yfinance",
-    "retrieved_at": "2026-10-09"
+    "retrieved_at": "2026-10-10"
   },
   "book": {
-    "equity": 88371.54,
+    "equity": 88288.53,
     "holdings_as_of": "2026-09-30",
     "n_positions": 5,
     "correlation_window": 126,
@@ -27,11 +27,11 @@
     "cash": "DGS3MO",
     "pickup_bp": "(curve-implied yield - DGS3MO) x 100",
     "breakeven_rise_bp": "pickup_bp / effective duration: the parallel rise in yield over one year that erases the pickup (dP/P = -D dy; roll-down and convexity omitted)",
-    "sigma_10y_daily_bp": 4.45,
+    "sigma_10y_daily_bp": 4.49,
     "sigma_window_sessions": 126,
     "sigma_series": "DGS10",
     "fred_store": "revised (as-published latest; point-in-time overlay rebuilds on the vintage workflow)",
-    "fred_through": "2026-10-08",
+    "fred_through": "2026-10-09",
     "config_frozen_at": "2026-10-01",
     "footnote": "CMT yields are par yields on a semiannual basis; a fund's portfolio yield differs by coupon, convexity and composition, so the field is named curve-implied."
   },
@@ -54,11 +54,11 @@
       "yield_per_duration": 0.1054,
       "near_zero_duration": true,
       "vol_126_ann": 0.0021,
-      "return_1y": 0.0363,
-      "correlation_to_book": 0.0954,
+      "return_1y": 0.0365,
+      "correlation_to_book": 0.0863,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 4.231,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 4.241,
       "curve_type": "treasury",
       "avg_maturity_years": 0.29,
       "avg_maturity_as_of": "2026-09-29",
@@ -66,18 +66,18 @@
       "inputs": {
         "us01y": {
           "series": "DGS1",
-          "value": 4.42,
-          "date": "2026-10-07",
+          "value": 4.44,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
       "pickup_bp": 1.1,
       "breakeven_rise_bp": 3.1,
@@ -97,11 +97,11 @@
       "yield_per_duration": 0.0197,
       "near_zero_duration": false,
       "vol_126_ann": 0.0147,
-      "return_1y": 0.0163,
-      "correlation_to_book": 0.3258,
+      "return_1y": 0.0164,
+      "correlation_to_book": 0.3318,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 4.731,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 4.716,
       "curve_type": "treasury",
       "avg_maturity_years": 1.89,
       "avg_maturity_as_of": "2026-09-29",
@@ -109,31 +109,31 @@
       "inputs": {
         "us01y": {
           "series": "DGS1",
-          "value": 4.42,
-          "date": "2026-10-07",
+          "value": 4.44,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us02y": {
           "series": "DGS2",
-          "value": 4.77,
-          "date": "2026-10-07",
+          "value": 4.75,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 51.1,
-      "breakeven_rise_bp": 27.6,
+      "pickup_bp": 48.6,
+      "breakeven_rise_bp": 26.3,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 6.2
+      "breakeven_rise_typical_moves": 5.9
     },
     {
       "ticker": "IEF",
@@ -146,11 +146,11 @@
       "yield_per_duration": 0.0057,
       "near_zero_duration": false,
       "vol_126_ann": 0.0512,
-      "return_1y": -0.0346,
-      "correlation_to_book": 0.3267,
+      "return_1y": -0.0353,
+      "correlation_to_book": 0.3326,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 5.212,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 5.162,
       "curve_type": "treasury",
       "avg_maturity_years": 8.42,
       "avg_maturity_as_of": "2026-09-29",
@@ -158,31 +158,31 @@
       "inputs": {
         "us07y": {
           "series": "DGS7",
-          "value": 5.15,
-          "date": "2026-10-07",
+          "value": 5.11,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us10y": {
           "series": "DGS10",
-          "value": 5.28,
-          "date": "2026-10-07",
+          "value": 5.22,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 99.2,
-      "breakeven_rise_bp": 13.6,
+      "pickup_bp": 93.2,
+      "breakeven_rise_bp": 12.8,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 3.1
+      "breakeven_rise_typical_moves": 2.9
     },
     {
       "ticker": "TLT",
@@ -195,11 +195,11 @@
       "yield_per_duration": 0.003,
       "near_zero_duration": false,
       "vol_126_ann": 0.095,
-      "return_1y": -0.0863,
-      "correlation_to_book": 0.2638,
+      "return_1y": -0.0857,
+      "correlation_to_book": 0.2681,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 5.686,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 5.616,
       "curve_type": "treasury",
       "avg_maturity_years": 26.03,
       "avg_maturity_as_of": "2026-09-29",
@@ -207,31 +207,31 @@
       "inputs": {
         "us20y": {
           "series": "DGS20",
-          "value": 5.71,
-          "date": "2026-10-07",
+          "value": 5.64,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us30y": {
           "series": "DGS30",
-          "value": 5.67,
-          "date": "2026-10-07",
+          "value": 5.6,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 146.6,
-      "breakeven_rise_bp": 8.9,
+      "pickup_bp": 138.6,
+      "breakeven_rise_bp": 8.4,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 2.0
+      "breakeven_rise_typical_moves": 1.9
     },
     {
       "ticker": "GOVT",
@@ -245,10 +245,10 @@
       "near_zero_duration": false,
       "vol_126_ann": 0.0378,
       "return_1y": -0.0171,
-      "correlation_to_book": 0.3323,
+      "correlation_to_book": 0.3352,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 5.166,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 5.124,
       "curve_type": "treasury",
       "avg_maturity_years": 7.37,
       "avg_maturity_as_of": "2026-09-29",
@@ -256,31 +256,31 @@
       "inputs": {
         "us07y": {
           "series": "DGS7",
-          "value": 5.15,
-          "date": "2026-10-07",
+          "value": 5.11,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us10y": {
           "series": "DGS10",
-          "value": 5.28,
-          "date": "2026-10-07",
+          "value": 5.22,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 94.6,
-      "breakeven_rise_bp": 16.0,
+      "pickup_bp": 89.4,
+      "breakeven_rise_bp": 15.2,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 3.6
+      "breakeven_rise_typical_moves": 3.4
     },
     {
       "ticker": "TIP",
@@ -293,10 +293,10 @@
       "yield_per_duration": 0.0069,
       "near_zero_duration": false,
       "vol_126_ann": 0.0369,
-      "return_1y": -0.0186,
-      "correlation_to_book": 0.279,
+      "return_1y": -0.0203,
+      "correlation_to_book": 0.2775,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": "real",
       "avg_maturity_years": 7.0,
@@ -305,24 +305,24 @@
       "inputs": {
         "tips_real_7y": {
           "series": "DFII7",
-          "value": 2.78,
-          "date": "2026-10-07",
+          "value": 2.74,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us07y": {
           "series": "DGS7",
-          "value": 5.15,
-          "date": "2026-10-07",
+          "value": 5.11,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": "a real yield (TIPS curve): excluded from nominal comparisons",
       "pickup_bp": null,
       "breakeven_rise_bp": null,
-      "real_yield_pct": 2.78,
+      "real_yield_pct": 2.74,
       "breakeven_at_maturity_pct": 2.37,
-      "nominal_equivalent_pct": 5.15,
+      "nominal_equivalent_pct": 5.11,
       "breakeven_rise_typical_moves": null
     },
     {
@@ -335,12 +335,12 @@
       "effective_duration": 2.6,
       "yield_per_duration": 0.0175,
       "near_zero_duration": false,
-      "vol_126_ann": 0.022,
-      "return_1y": 0.0136,
-      "correlation_to_book": 0.3764,
+      "vol_126_ann": 0.0219,
+      "return_1y": 0.0135,
+      "correlation_to_book": 0.3857,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 5.595,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 5.568,
       "curve_type": "ig",
       "avg_maturity_years": 3.1,
       "avg_maturity_as_of": "2026-08-31",
@@ -348,38 +348,38 @@
       "inputs": {
         "us02y": {
           "series": "DGS2",
-          "value": 4.77,
-          "date": "2026-10-07",
+          "value": 4.75,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us05y": {
           "series": "DGS5",
-          "value": 5.03,
-          "date": "2026-10-07",
+          "value": 4.99,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "ig_oas_3_5": {
           "series": "BAMLC2A0C35Y",
           "value": 0.73,
-          "date": "2026-10-07",
+          "date": "2026-10-08",
           "provider": "FRED (ICE BofA)",
           "bucket": "3-5 years"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 137.5,
-      "breakeven_rise_bp": 52.9,
+      "pickup_bp": 133.8,
+      "breakeven_rise_bp": 51.5,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 11.9
+      "breakeven_rise_typical_moves": 11.5
     },
     {
       "ticker": "VCIT",
@@ -392,11 +392,11 @@
       "yield_per_duration": 0.0082,
       "near_zero_duration": false,
       "vol_126_ann": 0.0461,
-      "return_1y": -0.0194,
-      "correlation_to_book": 0.3896,
+      "return_1y": -0.0191,
+      "correlation_to_book": 0.3962,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 6.186,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 6.142,
       "curve_type": "ig",
       "avg_maturity_years": 7.6,
       "avg_maturity_as_of": "2026-08-31",
@@ -404,38 +404,38 @@
       "inputs": {
         "us07y": {
           "series": "DGS7",
-          "value": 5.15,
-          "date": "2026-10-07",
+          "value": 5.11,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us10y": {
           "series": "DGS10",
-          "value": 5.28,
-          "date": "2026-10-07",
+          "value": 5.22,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "ig_oas_7_10": {
           "series": "BAMLC4A0C710Y",
           "value": 1.01,
-          "date": "2026-10-07",
+          "date": "2026-10-08",
           "provider": "FRED (ICE BofA)",
           "bucket": "7-10 years"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 196.6,
-      "breakeven_rise_bp": 31.7,
+      "pickup_bp": 191.2,
+      "breakeven_rise_bp": 30.8,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 7.1
+      "breakeven_rise_typical_moves": 6.9
     },
     {
       "ticker": "LQD",
@@ -447,12 +447,12 @@
       "effective_duration": 8.4,
       "yield_per_duration": 0.0058,
       "near_zero_duration": false,
-      "vol_126_ann": 0.0565,
-      "return_1y": -0.0364,
-      "correlation_to_book": 0.3766,
+      "vol_126_ann": 0.0564,
+      "return_1y": -0.0357,
+      "correlation_to_book": 0.3853,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 6.363,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 6.32,
       "curve_type": "ig",
       "avg_maturity_years": 12.62,
       "avg_maturity_as_of": "2026-09-29",
@@ -460,38 +460,38 @@
       "inputs": {
         "us10y": {
           "series": "DGS10",
-          "value": 5.28,
-          "date": "2026-10-07",
+          "value": 5.22,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us20y": {
           "series": "DGS20",
-          "value": 5.71,
-          "date": "2026-10-07",
+          "value": 5.64,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "ig_oas_10_15": {
           "series": "BAMLC7A0C1015Y",
-          "value": 0.97,
-          "date": "2026-10-07",
+          "value": 0.99,
+          "date": "2026-10-08",
           "provider": "FRED (ICE BofA)",
           "bucket": "10-15 years"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 214.3,
-      "breakeven_rise_bp": 25.5,
+      "pickup_bp": 209.0,
+      "breakeven_rise_bp": 24.9,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 5.7
+      "breakeven_rise_typical_moves": 5.5
     },
     {
       "ticker": "HYG",
@@ -503,12 +503,12 @@
       "effective_duration": 3.2,
       "yield_per_duration": 0.0192,
       "near_zero_duration": false,
-      "vol_126_ann": 0.0358,
-      "return_1y": 0.0129,
-      "correlation_to_book": 0.5253,
+      "vol_126_ann": 0.0354,
+      "return_1y": 0.0156,
+      "correlation_to_book": 0.5508,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 8.057,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 8.082,
       "curve_type": "hy",
       "avg_maturity_years": 4.27,
       "avg_maturity_as_of": "2026-09-29",
@@ -516,37 +516,37 @@
       "inputs": {
         "us02y": {
           "series": "DGS2",
-          "value": 4.77,
-          "date": "2026-10-07",
+          "value": 4.75,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us05y": {
           "series": "DGS5",
-          "value": 5.03,
-          "date": "2026-10-07",
+          "value": 4.99,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "hy_oas": {
           "series": "BAMLH0A0HYM2",
-          "value": 3.09,
-          "date": "2026-10-07",
+          "value": 3.15,
+          "date": "2026-10-08",
           "provider": "FRED (ICE BofA)"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 383.7,
-      "breakeven_rise_bp": 119.9,
+      "pickup_bp": 385.2,
+      "breakeven_rise_bp": 120.4,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 26.9
+      "breakeven_rise_typical_moves": 26.8
     },
     {
       "ticker": "JNK",
@@ -558,12 +558,12 @@
       "effective_duration": 3.3,
       "yield_per_duration": 0.0207,
       "near_zero_duration": false,
-      "vol_126_ann": 0.0353,
-      "return_1y": 0.0171,
-      "correlation_to_book": 0.5083,
+      "vol_126_ann": 0.035,
+      "return_1y": 0.0196,
+      "correlation_to_book": 0.5299,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
-      "curve_implied_yield_pct": 8.124,
+      "priced_through": "2026-10-09",
+      "curve_implied_yield_pct": 8.144,
       "curve_type": "hy",
       "avg_maturity_years": 5.07,
       "avg_maturity_as_of": "2026-09-29",
@@ -571,37 +571,37 @@
       "inputs": {
         "us05y": {
           "series": "DGS5",
-          "value": 5.03,
-          "date": "2026-10-07",
+          "value": 4.99,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "us07y": {
           "series": "DGS7",
-          "value": 5.15,
-          "date": "2026-10-07",
+          "value": 5.11,
+          "date": "2026-10-08",
           "provider": "FRED"
         },
         "hy_oas": {
           "series": "BAMLH0A0HYM2",
-          "value": 3.09,
-          "date": "2026-10-07",
+          "value": 3.15,
+          "date": "2026-10-08",
           "provider": "FRED (ICE BofA)"
         },
         "us03m": {
           "series": "DGS3MO",
-          "value": 4.22,
-          "date": "2026-10-07",
+          "value": 4.23,
+          "date": "2026-10-08",
           "provider": "FRED"
         }
       },
-      "inputs_date": "2026-10-07",
+      "inputs_date": "2026-10-08",
       "curve_implied_reason": null,
-      "pickup_bp": 390.4,
-      "breakeven_rise_bp": 118.3,
+      "pickup_bp": 391.4,
+      "breakeven_rise_bp": 118.6,
       "real_yield_pct": null,
       "breakeven_at_maturity_pct": null,
       "nominal_equivalent_pct": null,
-      "breakeven_rise_typical_moves": 26.6
+      "breakeven_rise_typical_moves": 26.4
     },
     {
       "ticker": "BKLN",
@@ -613,11 +613,11 @@
       "effective_duration": 0.2,
       "yield_per_duration": 0.3195,
       "near_zero_duration": true,
-      "vol_126_ann": 0.0196,
+      "vol_126_ann": 0.019,
       "return_1y": 0.0437,
-      "correlation_to_book": 0.3492,
+      "correlation_to_book": 0.3903,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,
@@ -645,9 +645,9 @@
       "near_zero_duration": true,
       "vol_126_ann": 0.0064,
       "return_1y": 0.0437,
-      "correlation_to_book": 0.2385,
+      "correlation_to_book": 0.2306,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,
@@ -673,11 +673,11 @@
       "effective_duration": 7.0,
       "yield_per_duration": 0.0077,
       "near_zero_duration": false,
-      "vol_126_ann": 0.0597,
-      "return_1y": 0.0078,
-      "correlation_to_book": 0.5004,
+      "vol_126_ann": 0.0598,
+      "return_1y": 0.0096,
+      "correlation_to_book": 0.5024,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,
@@ -703,11 +703,11 @@
       "effective_duration": 6.3,
       "yield_per_duration": 0.0054,
       "near_zero_duration": false,
-      "vol_126_ann": 0.0385,
-      "return_1y": -0.0236,
-      "correlation_to_book": 0.2788,
+      "vol_126_ann": 0.0388,
+      "return_1y": -0.0206,
+      "correlation_to_book": 0.283,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,
@@ -733,11 +733,11 @@
       "effective_duration": 5.9,
       "yield_per_duration": 0.0076,
       "near_zero_duration": false,
-      "vol_126_ann": 0.0526,
-      "return_1y": -0.0148,
-      "correlation_to_book": 0.3299,
+      "vol_126_ann": 0.0525,
+      "return_1y": -0.0145,
+      "correlation_to_book": 0.337,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,
@@ -764,10 +764,10 @@
       "yield_per_duration": 0.007,
       "near_zero_duration": false,
       "vol_126_ann": 0.0427,
-      "return_1y": -0.0162,
-      "correlation_to_book": 0.3521,
+      "return_1y": -0.0168,
+      "correlation_to_book": 0.3596,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,
@@ -795,9 +795,9 @@
       "near_zero_duration": false,
       "vol_126_ann": 0.0415,
       "return_1y": -0.016,
-      "correlation_to_book": 0.3448,
+      "correlation_to_book": 0.3517,
       "corr_n_obs": 124,
-      "priced_through": "2026-10-08",
+      "priced_through": "2026-10-09",
       "curve_implied_yield_pct": null,
       "curve_type": null,
       "avg_maturity_years": null,

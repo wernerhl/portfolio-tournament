@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-09",
- "fetched_at": "2026-10-09T19:49:29-04:00",
+ "fetched_at": "2026-10-09T23:23:34-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -16,55 +16,55 @@
   "top40": [
    "LMT",
    "GOOG",
-   "PATH",
    "AVGO",
    "RTX",
-   "GEV",
-   "NOC",
-   "EXPE",
+   "TSM",
    "ADBE",
    "NVDA",
-   "TSM",
-   "NFLX",
-   "AMP",
-   "NXPI",
-   "QCOM",
-   "PAYX",
-   "AXP",
-   "POWL",
-   "INCY",
-   "CINF",
-   "ALL",
-   "META",
-   "WDAY",
-   "APP",
-   "BRO",
-   "GDDY",
-   "HSY",
-   "MCO",
-   "ARES",
-   "ADSK",
-   "DASH",
-   "GE",
-   "CRM",
+   "GEV",
+   "NOC",
    "ORCL",
+   "PATH",
+   "AMP",
+   "QCOM",
+   "EXPE",
+   "GEN",
+   "NXPI",
+   "PAYX",
+   "ALL",
+   "AXP",
+   "CINF",
+   "INCY",
+   "BRO",
+   "POWL",
    "VRT",
+   "ADSK",
+   "NFLX",
+   "WDAY",
+   "CPAY",
    "BR",
-   "UBER",
+   "ARES",
+   "GDDY",
+   "APP",
+   "META",
+   "DXCM",
    "SCHW",
+   "HSY",
+   "MMM",
    "TROW",
-   "RJF"
+   "CRM",
+   "IT"
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=4 (parsed 20)",
+  "fed_press": "failed: HTTPError: HTTP Error 404: Not Found",
   "fed_speeches": "ok n=2 (parsed 15)",
   "bea": "ok n=1 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=115 (parsed 41 names)",
+  "edgar": "ok n=116 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=1 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
@@ -82,14 +82,14 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 3,
-  "out_of_window": 27968,
+  "out_of_window": 28012,
   "unparseable": 0
  },
  "counts": {
-  "items": 154,
-  "tier1": 154,
+  "items": 146,
+  "tier1": 146,
   "tier2": 0,
-  "last24h": 4
+  "last24h": 7
  },
  "items": [
   {
@@ -125,6 +125,70 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "caf88d9f6e1d4940dda5d938d657c84f2baafaef",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by 3M CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000296/xslF345X06/form4.xml",
+   "timestamp": "2026-10-09T16:10:04-04:00",
+   "tickers": [
+    "MMM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-09 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b7af6fff792df95b6454262c4c0987f90c64d843",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by 3M CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000294/xslF345X06/form4.xml",
+   "timestamp": "2026-10-09T16:08:22-04:00",
+   "tickers": [
+    "MMM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-09 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b254ce50a346c87f912f1e549458c5f3207c54d4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by 3M CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000293/xslF345X06/form4.xml",
+   "timestamp": "2026-10-09T16:06:51-04:00",
+   "tickers": [
+    "MMM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-09 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "79184cc4ef549f79290a13e9480e8eaa24e63ac1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Gen Digital Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/849399/000084939926000079/gen-20261006.htm",
+   "timestamp": "2026-10-09T16:05:19-04:00",
+   "tickers": [
+    "GEN"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-09 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734",
    "tier": 1,
    "tier_label": "primary",
@@ -136,6 +200,22 @@
    "tickers": [],
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Other Announcements · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "66dd1f886bb15db4880d62379e848b9ed0504b28",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Gen Digital Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/849399/000084939926000075/xslF345X06/wk-form4_1791494623.xml",
+   "timestamp": "2026-10-08T21:24:16-04:00",
+   "tickers": [
+    "GEN"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -155,6 +235,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by GARTNER INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/749251/000119312526417937/d158580d8k.htm",
+   "timestamp": "2026-10-08T20:15:37-04:00",
+   "tickers": [
+    "IT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-08 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "e95750d1b74189d76d9f160e024f4551b574ab53",
    "tier": 1,
    "tier_label": "primary",
@@ -166,22 +262,6 @@
    "tickers": [],
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by GARTNER INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/749251/000119312526417937/d158580d8k.htm",
-   "timestamp": "2026-10-08T16:15:37-04:00",
-   "tickers": [
-    "IT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-08 · 8-K",
    "disclosure_lag_label": null
   },
   {
@@ -2337,214 +2417,6 @@
    "topics": [],
    "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "e00cad86bad4f4347d7669678d302e1a257ddd65",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by INCYTE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/879169/000119312526412653/xslF345X06/ownership.xml",
-   "timestamp": "2026-10-02T21:54:32-04:00",
-   "tickers": [
-    "INCY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9aeacaea8a62d187a5d657e31d0dffc596d6b411",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000374/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:16:43-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "22f9a97a9add119bd85f69105ea9c9fee29e9d59",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000373/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:15:14-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "26e8eb1fc27a04a1f3893248f8630e9792cbd1ab",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000372/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:13:19-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "dab94ae251f1644cfbf316ad0fac9e55a112d16a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000371/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:11:48-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "adf400e64ae44f26d54b6c07c7aa30d62c59b743",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000370/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:10:18-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4beee92dc55de2f6d1c06dfc44a2d29f598838cb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000369/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:08:19-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e59c4068950a0beca1102d7fe975ba146aa5ff8f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000368/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:06:38-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "340922c7d9bb7fbf534f765156fb30c34a5a889e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by MOODYS CORP /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1059556/000206205026000009/xslF345X06/wk-form4_1790971485.xml",
-   "timestamp": "2026-10-02T20:04:48-04:00",
-   "tickers": [
-    "MCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b3a83f59e043078fdea6ae9862d94286ca8baae4",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000366/xslF345X06/form4.xml",
-   "timestamp": "2026-10-02T20:04:05-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "70ab53c82aa1c4fdad5d56af09754a83be1e56ba",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by MOODYS CORP /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1059556/000148115326000018/xslF345X06/wk-form4_1790971440.xml",
-   "timestamp": "2026-10-02T20:04:03-04:00",
-   "tickers": [
-    "MCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "34cef9ab3994d23406b9272ab1cd1f0259a35761",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by INCYTE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/879169/000140960126000015/xslF345X06/wk-form4_1790971354.xml",
-   "timestamp": "2026-10-02T20:02:39-04:00",
-   "tickers": [
-    "INCY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9587076141bc55f2e3ca03920651c14a29806594",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by INCYTE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/879169/000117791726000014/xslF345X06/wk-form4_1790971323.xml",
-   "timestamp": "2026-10-02T20:02:07-04:00",
-   "tickers": [
-    "INCY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-02 · FORM 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -2568,7 +2440,10 @@
  "last24h": [
   "e5d599a5d9c0743464daa42f33cde37b05e4d531",
   "992e155e586b95b1a9284778b344708766e94eb3",
-  "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734",
-  "7ba00aeb2f5e7621f8d779a5819c22b09304ab8d"
+  "caf88d9f6e1d4940dda5d938d657c84f2baafaef",
+  "b7af6fff792df95b6454262c4c0987f90c64d843",
+  "b254ce50a346c87f912f1e549458c5f3207c54d4",
+  "79184cc4ef549f79290a13e9480e8eaa24e63ac1",
+  "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734"
  ]
 }

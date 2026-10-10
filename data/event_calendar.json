@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-10-08",
+  "rebuilt_at": "2026-10-09",
   "cadence": "weekly",
-  "as_of": "2026-10-08",
+  "as_of": "2026-10-09",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule; Treasury auctions from TreasuryDirect TA_WS and Treasury's tentative auction schedule, never a weekday pattern). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -25,13 +25,38 @@
     "ta_ws_upcoming": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-08",
-      "items": []
+      "retrieved_at": "2026-10-09",
+      "items": [
+        {
+          "date": "2026-10-21",
+          "tenor": "20Y",
+          "tips": false,
+          "reopening": true,
+          "security_type": "Bond",
+          "security_term": "19-Year 10-Month",
+          "original_term": "20-Year",
+          "cusip": "912810UX4",
+          "announcement_date": "2026-10-15",
+          "time_et": "13:00"
+        },
+        {
+          "date": "2026-10-22",
+          "tenor": "TIPS 5Y",
+          "tips": true,
+          "reopening": false,
+          "security_type": "Note",
+          "security_term": "5-Year",
+          "original_term": "5-Year",
+          "cusip": "91282CRR4",
+          "announcement_date": "2026-10-15",
+          "time_et": "13:00"
+        }
+      ]
     },
     "ta_ws_auctioned": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/search?startDate={start}&endDate={end}&dateFieldName=auctionDate&type={kind}&format=json",
-      "retrieved_at": "2026-10-08",
+      "retrieved_at": "2026-10-09",
       "start": "2024-01-01",
       "n": 267
     },
@@ -39,7 +64,7 @@
       "source": "live",
       "url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
       "pdf": "https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf",
-      "retrieved_at": "2026-10-08",
+      "retrieved_at": "2026-10-09",
       "parse": "XML (xml.etree), fetched at build time",
       "name": "Aug2026 Refunding Auction Calendar Official Ver 2",
       "start": "2026-08-05",
@@ -48,7 +73,7 @@
     "refunding": {
       "source": "live",
       "url": "https://home.treasury.gov/policy-issues/financing-the-government/quarterly-refunding/most-recent-quarterly-refunding-documents",
-      "retrieved_at": "2026-10-08",
+      "retrieved_at": "2026-10-09",
       "latest": "2026-08-05",
       "next": "2026-11-04"
     },
@@ -6595,6 +6620,17 @@
     },
     {
       "date": "2026-08-27",
+      "type": "EARNINGS",
+      "ticker": "WDAY",
+      "name": "Earnings \u00b7 WDAY",
+      "label": "WDAY",
+      "source_url": "https://finance.yahoo.com/quote/WDAY/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-09T23:21:41-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-08-27",
       "type": "TREASURY",
       "name": "7-Year Note auction",
       "label": "7Y",
@@ -7212,23 +7248,23 @@
     {
       "date": "2026-10-21",
       "type": "TREASURY",
-      "name": "20-Year Bond auction (reopening)",
+      "name": "20-Year Bond auction (reopening, 19-Year 10-Month)",
       "label": "20Y reopening",
       "impact": "low",
-      "source_url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
-      "retrieved_at": "2026-10-01",
-      "provenance": "tentative (Treasury tentative auction schedule \"Aug2026 Refunding Auction Calendar Official Ver 2\", 2026-08-05 to 2027-01-30; PDF https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf; announcement scheduled 2026-10-15; replaced by the TA_WS announced date once announced)",
+      "source_url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
+      "retrieved_at": "2026-10-09",
+      "provenance": "announced (TreasuryDirect TA_WS upcoming; announced 2026-10-15)",
       "time_et": "13:00",
       "tenor": "20Y",
       "reopening": true,
       "tips": false,
       "security_type": "Bond",
-      "security_term": "20-Year",
+      "security_term": "19-Year 10-Month",
       "original_term": "20-Year",
-      "cusip": null,
+      "cusip": "912810UX4",
       "announcement_date": "2026-10-15",
-      "tentative": true,
-      "status": "tentative"
+      "tentative": false,
+      "status": "announced"
     },
     {
       "date": "2026-10-22",
@@ -7298,9 +7334,9 @@
       "name": "5-Year TIPS auction",
       "label": "TIPS 5Y",
       "impact": "low",
-      "source_url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
-      "retrieved_at": "2026-10-01",
-      "provenance": "tentative (Treasury tentative auction schedule \"Aug2026 Refunding Auction Calendar Official Ver 2\", 2026-08-05 to 2027-01-30; PDF https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf; announcement scheduled 2026-10-15; replaced by the TA_WS announced date once announced)",
+      "source_url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
+      "retrieved_at": "2026-10-09",
+      "provenance": "announced (TreasuryDirect TA_WS upcoming; announced 2026-10-15)",
       "time_et": "13:00",
       "tenor": "TIPS 5Y",
       "reopening": false,
@@ -7308,10 +7344,10 @@
       "security_type": "Note",
       "security_term": "5-Year",
       "original_term": "5-Year",
-      "cusip": null,
+      "cusip": "91282CRR4",
       "announcement_date": "2026-10-15",
-      "tentative": true,
-      "status": "tentative"
+      "tentative": false,
+      "status": "announced"
     },
     {
       "date": "2026-10-23",
