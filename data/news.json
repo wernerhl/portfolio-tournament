@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-09",
- "fetched_at": "2026-10-09T23:23:34-04:00",
+ "as_of": "2026-10-12",
+ "fetched_at": "2026-10-12T17:59:23-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,17 +57,17 @@
   ]
  },
  "sources_status": {
-  "fed_press": "failed: HTTPError: HTTP Error 404: Not Found",
+  "fed_press": "ok n=3 (parsed 20)",
   "fed_speeches": "ok n=2 (parsed 15)",
   "bea": "ok n=1 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=116 (parsed 41 names)",
+  "edgar": "ok n=114 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=1 (parsed 20)",
-  "ir_gev": "ok n=2 (parsed 20)",
+  "ir_nvda": "ok n=2 (parsed 20)",
+  "ir_gev": "ok n=1 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -82,16 +82,32 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 3,
-  "out_of_window": 28012,
+  "out_of_window": 28019,
   "unparseable": 0
  },
  "counts": {
-  "items": 146,
-  "tier1": 146,
+  "items": 138,
+  "tier1": 138,
   "tier2": 0,
-  "last24h": 7
+  "last24h": 1
  },
  "items": [
+  {
+   "id": "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA and Cisco Introduce New Pluggable Optics Form Factor to Scale AI Factories",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-and-cisco-introduce-new-pluggable-optics-form-factor-to-scale-ai-factories",
+   "timestamp": "2026-10-12T11:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "e5d599a5d9c0743464daa42f33cde37b05e4d531",
    "tier": 1,
@@ -100,7 +116,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/47111/000095014226002723/xslF345X06/es260841102_4-hsy.xml",
-   "timestamp": "2026-10-09T17:17:10-04:00",
+   "timestamp": "2026-10-09T21:17:10-04:00",
    "tickers": [
     "HSY"
    ],
@@ -116,7 +132,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119764726000011/xslF345X06/wk-form4_1791579847.xml",
-   "timestamp": "2026-10-09T17:04:09-04:00",
+   "timestamp": "2026-10-09T21:04:09-04:00",
    "tickers": [
     "NVDA"
    ],
@@ -132,7 +148,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000296/xslF345X06/form4.xml",
-   "timestamp": "2026-10-09T16:10:04-04:00",
+   "timestamp": "2026-10-09T20:10:04-04:00",
    "tickers": [
     "MMM"
    ],
@@ -148,7 +164,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000294/xslF345X06/form4.xml",
-   "timestamp": "2026-10-09T16:08:22-04:00",
+   "timestamp": "2026-10-09T20:08:22-04:00",
    "tickers": [
     "MMM"
    ],
@@ -164,7 +180,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000293/xslF345X06/form4.xml",
-   "timestamp": "2026-10-09T16:06:51-04:00",
+   "timestamp": "2026-10-09T20:06:51-04:00",
    "tickers": [
     "MMM"
    ],
@@ -180,7 +196,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/849399/000084939926000079/gen-20261006.htm",
-   "timestamp": "2026-10-09T16:05:19-04:00",
+   "timestamp": "2026-10-09T20:05:19-04:00",
    "tickers": [
     "GEN"
    ],
@@ -2275,156 +2291,14 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "a284ee3bb75500d9360336b5f39dc8811d9d880b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board announces approval of application by Isabella Bank Corporation",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20261005a.htm",
-   "timestamp": "2026-10-05T16:30:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Orders on Banking Applications · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3c63aba2178be2b4b7461aba912d4ca4a5b6ecf2",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Mastercard Inc",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000114/xslF345X06/wk-form4_1791231143.xml",
-   "timestamp": "2026-10-05T16:12:25-04:00",
-   "tickers": [
-    "MA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9a9b6a5949f78ff14db7aeb322fcf80e1968f0c2",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Mastercard Inc",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000113/xslF345X06/wk-form4_1791231116.xml",
-   "timestamp": "2026-10-05T16:11:58-04:00",
-   "tickers": [
-    "MA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0e36318f27a824c8194c457cf783c01df7b0df7a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Mastercard Inc",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000112/xslF345X06/wk-form4_1791231085.xml",
-   "timestamp": "2026-10-05T16:11:28-04:00",
-   "tickers": [
-    "MA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f7395c495e5f3ef41dc7e6c46e1c15a256ab69ea",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Mastercard Inc",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000111/xslF345X06/wk-form4_1791231065.xml",
-   "timestamp": "2026-10-05T16:11:07-04:00",
-   "tickers": [
-    "MA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e27dbb6a6c607b7aaddae1eac2db4c0f5d5f3451",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Mastercard Inc",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000110/xslF345X06/wk-form4_1791231030.xml",
-   "timestamp": "2026-10-05T16:10:33-04:00",
-   "tickers": [
-    "MA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3e59c8a05587930dfc76ff2dac09d5707efde06a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by BITMINE IMMERSION TECHNOLOGIES, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226045699/form8-k.htm",
-   "timestamp": "2026-10-05T12:52:06-04:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-05 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5fc6fd475e7d10f3d2ed89abc2f49d1358b97aad",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NXP Semiconductors N.V.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1413447/000181273026000006/xslF345X06/wk-form4_1791201741.xml",
-   "timestamp": "2026-10-05T12:02:23-04:00",
-   "tickers": [
-    "NXPI"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-05 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3ad0a32bd03623acbcfb75653d8df234d56bbe25",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova-powered projects receive 2026 POWER Magazine Awards for advancements in energy efficiency and decarbonization",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-powered-projects-receive-2026-power-magazine-awards-advancements-energy",
-   "timestamp": "2026-10-05T05:05:53-04:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
-   "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3",
-   "3ad0a32bd03623acbcfb75653d8df234d56bbe25"
+   "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3"
   ],
   "NVDA": [
+   "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
    "992e155e586b95b1a9284778b344708766e94eb3",
    "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1"
   ],
@@ -2433,17 +2307,10 @@
   ],
   "GOOG": [],
   "BMNR": [
-   "7c0dbaae6001220b04ceca5e9d276740ee1f52bb",
-   "3e59c8a05587930dfc76ff2dac09d5707efde06a"
+   "7c0dbaae6001220b04ceca5e9d276740ee1f52bb"
   ]
  },
  "last24h": [
-  "e5d599a5d9c0743464daa42f33cde37b05e4d531",
-  "992e155e586b95b1a9284778b344708766e94eb3",
-  "caf88d9f6e1d4940dda5d938d657c84f2baafaef",
-  "b7af6fff792df95b6454262c4c0987f90c64d843",
-  "b254ce50a346c87f912f1e549458c5f3207c54d4",
-  "79184cc4ef549f79290a13e9480e8eaa24e63ac1",
-  "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734"
+  "3db6fa880c18e0bbd261820b2edaf3f55d0144a3"
  ]
 }
