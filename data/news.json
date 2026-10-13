@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-12",
- "fetched_at": "2026-10-13T00:43:43-04:00",
+ "fetched_at": "2026-10-13T16:06:27-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,14 +57,14 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=3 (parsed 20)",
-  "fed_speeches": "ok n=2 (parsed 15)",
-  "bea": "ok n=1 (parsed 48)",
+  "fed_press": "ok n=4 (parsed 20)",
+  "fed_speeches": "ok n=1 (parsed 15)",
+  "bea": "ok n=0 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
-  "census": "ok n=1 (parsed 18)",
+  "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=49 (parsed 41 names)",
+  "edgar": "ok n=51 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=2 (parsed 20)",
   "ir_gev": "ok n=1 (parsed 20)",
@@ -82,16 +82,78 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 3,
-  "out_of_window": 27823,
+  "out_of_window": 27825,
   "unparseable": 0
  },
  "counts": {
-  "items": 74,
-  "tier1": 74,
+  "items": 67,
+  "tier1": 67,
   "tier2": 0,
-  "last24h": 1
+  "last24h": 4
  },
  "items": [
+  {
+   "id": "d85e5d3609348b2700cc8a38ee1fc8850c342f32",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Minutes of the Board's discount rate meetings on August 17, September 9, and September 16, 2026",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261013a.htm",
+   "timestamp": "2026-10-13T14:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Monetary Policy · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6168e34475797591f94fcec9654a74eeacf33e70",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Workday, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000132781126000051/wday-20261012.htm",
+   "timestamp": "2026-10-13T08:46:50-04:00",
+   "tickers": [
+    "WDAY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-13 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "756de2cadfdd708767ac22b921a7f82d5751d345",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by BITMINE IMMERSION TECHNOLOGIES, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226046744/form8-k.htm",
+   "timestamp": "2026-10-13T08:45:27-04:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-13 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d9ed85bdc1bcca39deaafd25cd9992386aeccb14",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova to announce third quarter 2026 financial results on October 28",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-announce-third-quarter-2026-financial-results-october-28",
+   "timestamp": "2026-10-13T07:49:12-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
    "tier": 1,
@@ -1093,185 +1155,11 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-06 · 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "1b7f09187e95e7c85c0126cb50eef93a242289fb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008290/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:43-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8f6c23a96b99d7224a00c8b9066a0f7aa2028340",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008292/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:42-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5324592e8d8d7fe1234683005008494739c063c9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008289/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:42-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6cc9f1d280309f6642ace1af2dc532a5553b264b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008291/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:41-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9e84c4516c2ad85fc3d605a93ee6a409e35b3938",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008288/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:40-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5cb8e586833204a19f64b553e4b46658f1ac9762",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008287/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:39-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f6aa36e2a7b16d6a93b3a8e8396679ae628bd295",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BROADRIDGE FINANCIAL SOLUTIONS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1383312/000122520826008286/xslF345X06/doc4.xml",
-   "timestamp": "2026-10-06T15:32:37-04:00",
-   "tickers": [
-    "BR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova to Double the Number of MIT Interns and Permanent Hires in 2027",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-double-number-mit-interns-permanent-hires-2027",
-   "timestamp": "2026-10-06T12:16:48-04:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "22c25dc7b07d5e45f1dd97367f7e19ee1c74537e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Bowman, Modernizing the Regulatory and Supervisory Landscape",
-   "source": "Federal Reserve speech",
-   "source_id": "fed_speeches",
-   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20261006a.htm",
-   "timestamp": "2026-10-06T10:45:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9b8edba94ffcd3ba004730ad10951151e3547a24",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "U.S. International Trade in Goods and Services, August 2026",
-   "source": "BEA release",
-   "source_id": "bea",
-   "url": "https://www.bea.gov/news/2026/us-international-trade-goods-and-services-august-2026",
-   "timestamp": "2026-10-06T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "TRADE"
-   ],
-   "summary": "Tier 1 · BEA release · topics: TRADE · next release November 4, 2026",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "40b5e58c982f2244ccf2a432d3a710e19e5ce0e9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "U.S. International Trade in Goods and Services",
-   "source": "Census Bureau economic indicator",
-   "source_id": "census",
-   "url": "https://www.census.gov/foreign-trade/index.html",
-   "timestamp": "2026-10-06T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "TRADE"
-   ],
-   "summary": "Tier 1 · Census Bureau economic indicator · topics: TRADE",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
-   "f4abc8cf322a0ff594abe358f1f9a8fa1ad8cfc3"
+   "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
    "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
@@ -1283,10 +1171,14 @@
   ],
   "GOOG": [],
   "BMNR": [
+   "756de2cadfdd708767ac22b921a7f82d5751d345",
    "7c0dbaae6001220b04ceca5e9d276740ee1f52bb"
   ]
  },
  "last24h": [
-  "3db6fa880c18e0bbd261820b2edaf3f55d0144a3"
+  "d85e5d3609348b2700cc8a38ee1fc8850c342f32",
+  "6168e34475797591f94fcec9654a74eeacf33e70",
+  "756de2cadfdd708767ac22b921a7f82d5751d345",
+  "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
  ]
 }
