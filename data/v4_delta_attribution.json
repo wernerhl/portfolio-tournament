@@ -1,15 +1,15 @@
 {
-  "as_of": "2026-10-09",
-  "session_date": "2026-10-09",
+  "as_of": "2026-10-12",
+  "session_date": "2026-10-12",
   "cadence": "daily",
-  "prev": "2026-10-08",
-  "raw_score_today": 0.342,
-  "raw_score_prev": 0.3761,
+  "prev": "2026-10-09",
+  "raw_score_today": 0.3471,
+  "raw_score_prev": 0.3421,
   "model_cols_scored_at": "2026-09-30",
   "model_cols_note": "p_*_logistic_pc / p_*_elastic_net are produced only by the monthly regime_v4_ml run; the nightly rescore preserves them (it used to blank the last 5 rows) \u2014 they advance monthly",
   "p_today": 0.2155,
-  "p_prev": 0.231,
-  "delta_pp": -1.55,
+  "p_prev": 0.2155,
+  "delta_pp": 0.0,
   "top3": [
     {
       "feature": "nfci",
@@ -45,7 +45,7 @@
     },
     {
       "feature": "breakeven_5y",
-      "delta_feature": -0.0829,
+      "delta_feature": 0.0006,
       "contribution_pp": 0.0
     },
     {
@@ -55,22 +55,22 @@
     },
     {
       "feature": "vix_term",
-      "delta_feature": -0.0861,
+      "delta_feature": 0.0686,
       "contribution_pp": 0.0
     },
     {
       "feature": "skew",
-      "delta_feature": -0.1694,
+      "delta_feature": -0.0091,
       "contribution_pp": 0.0
     },
     {
       "feature": "vix",
-      "delta_feature": -0.0451,
+      "delta_feature": 0.0297,
       "contribution_pp": 0.0
     },
     {
       "feature": "vvix",
-      "delta_feature": -0.0501,
+      "delta_feature": 0.0194,
       "contribution_pp": 0.0
     },
     {
@@ -100,50 +100,50 @@
     },
     {
       "feature": "hy_oas",
-      "delta_feature": -0.0017,
+      "delta_feature": -0.0014,
       "contribution_pp": 0.0
     },
     {
       "feature": "gold_spx",
-      "delta_feature": 0.0131,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "tlt_spx",
-      "delta_feature": -0.0013,
-      "contribution_pp": 0.0
-    },
-    {
-      "feature": "def_cyc",
       "delta_feature": -0.0046,
       "contribution_pp": 0.0
     },
     {
+      "feature": "tlt_spx",
+      "delta_feature": 0.0021,
+      "contribution_pp": 0.0
+    },
+    {
+      "feature": "def_cyc",
+      "delta_feature": 0.0361,
+      "contribution_pp": 0.0
+    },
+    {
       "feature": "dxy",
-      "delta_feature": 0.0008,
+      "delta_feature": 0.0025,
       "contribution_pp": 0.0
     },
     {
       "feature": "realized_vol",
-      "delta_feature": -0.0259,
+      "delta_feature": -0.0258,
       "contribution_pp": 0.0
     },
     {
       "feature": "spx_ret_60d",
-      "delta_feature": -0.1574,
+      "delta_feature": -0.0142,
       "contribution_pp": 0.0
     },
     {
       "feature": "spx_drawdown",
-      "delta_feature": -0.1137,
+      "delta_feature": 0.0094,
       "contribution_pp": 0.0
     },
     {
       "feature": "oil_60d_vel",
-      "delta_feature": -0.0628,
+      "delta_feature": -0.001,
       "contribution_pp": 0.0
     }
   ],
-  "residual_pp": -1.55,
+  "residual_pp": 0.0,
   "method": "finite difference through the isotonic curve, one feature at a time; contributions approximate (isotonic is piecewise-constant) \u2014 residual reported, not hidden"
 }
