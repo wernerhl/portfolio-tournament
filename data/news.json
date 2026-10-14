@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-13",
- "fetched_at": "2026-10-14T06:48:04-04:00",
+ "fetched_at": "2026-10-14T14:19:01-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -24,7 +24,6 @@
    "AVGO",
    "NVDA",
    "AMP",
-   "NVDA",
    "NXPI",
    "POWL",
    "GEN",
@@ -58,16 +57,16 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=4 (parsed 20)",
+  "fed_press": "ok n=3 (parsed 20)",
   "fed_speeches": "ok n=1 (parsed 15)",
   "bea": "ok n=0 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
-  "bls_release_day": "ok n=0 (constructed 0)",
+  "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=53 (parsed 41 names)",
+  "edgar": "ok n=52 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=3 (parsed 20)",
+  "ir_nvda": "ok n=4 (parsed 20)",
   "ir_gev": "ok n=1 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -83,16 +82,48 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 4,
-  "out_of_window": 27997,
+  "out_of_window": 27998,
   "unparseable": 0
  },
  "counts": {
   "items": 66,
   "tier1": 66,
   "tier2": 0,
-  "last24h": 9
+  "last24h": 7
  },
  "items": [
+  {
+   "id": "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA and Semiconductor Leaders Advance AI Across Chip Design and Manufacturing for AI-Defined Fabs",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-and-semiconductor-leaders-advance-ai-across-chip-design-and-manufacturing-for-ai-defined-labs",
+   "timestamp": "2026-10-14T12:10:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "62d8e08c57100e7f90dacd01c73010f9f7ad82e3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "BLS release: Consumer Price Index (September 2026)",
+   "source": "BLS (release page)",
+   "source_id": "bls_release_day",
+   "url": "https://www.bls.gov/news.release/cpi.nr0.htm#2026-10-14",
+   "timestamp": "2026-10-14T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "CPI"
+   ],
+   "summary": "scheduled release at 08:30 ET; print not fetched",
+   "disclosure_lag_label": null
+  },
   {
    "id": "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
    "tier": 1,
@@ -1108,38 +1139,6 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "eeb8f6b78f01907993fa53874099ec62313d0028",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Minutes of the Federal Open Market Committee, September 15-16, 2026",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm",
-   "timestamp": "2026-10-07T14:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "FOMC"
-   ],
-   "summary": "Tier 1 · Federal Reserve Board press release · Monetary Policy · topics: FOMC",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7c0dbaae6001220b04ceca5e9d276740ee1f52bb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by BITMINE IMMERSION TECHNOLOGIES, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226046088/form8-k.htm",
-   "timestamp": "2026-10-07T12:46:55-04:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-07 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1147,29 +1146,27 @@
    "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
+   "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
    "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
    "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
    "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
-   "992e155e586b95b1a9284778b344708766e94eb3",
-   "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1"
+   "992e155e586b95b1a9284778b344708766e94eb3"
   ],
   "AVGO": [
    "6ccb54362efd76f95cbe445e7f65346392fac504"
   ],
   "GOOG": [],
   "BMNR": [
-   "756de2cadfdd708767ac22b921a7f82d5751d345",
-   "7c0dbaae6001220b04ceca5e9d276740ee1f52bb"
+   "756de2cadfdd708767ac22b921a7f82d5751d345"
   ]
  },
  "last24h": [
+  "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
+  "62d8e08c57100e7f90dacd01c73010f9f7ad82e3",
   "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
   "f2eccff1ebf8009b8502d0bc36f9824554ab76bd",
   "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
   "c53a132ffdb09f6d7a7ca60efdba31588c4ad589",
-  "46af825b47bd7f5ebb434012c56261b18346cdae",
-  "d85e5d3609348b2700cc8a38ee1fc8850c342f32",
-  "6168e34475797591f94fcec9654a74eeacf33e70",
-  "756de2cadfdd708767ac22b921a7f82d5751d345"
+  "46af825b47bd7f5ebb434012c56261b18346cdae"
  ]
 }
