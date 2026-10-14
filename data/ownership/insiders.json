@@ -31,6 +31,12 @@
         "parsed": 0,
         "amendments_skipped": 0
       },
+      "ALL": {
+        "cik": "0000899051",
+        "filings": 12,
+        "parsed": 12,
+        "amendments_skipped": 0
+      },
       "AMP": {
         "cik": "0000820027",
         "filings": 7,
@@ -348,6 +354,7 @@
       "AVGO",
       "NVDA",
       "AMP",
+      "NVDA",
       "NXPI",
       "POWL",
       "GEN",
@@ -512,6 +519,50 @@
       },
       "sales_shown_label": "sales are mostly compensation or diversification",
       "window_trades": 0
+    },
+    "ALL": {
+      "card": false,
+      "cik": "0000899051",
+      "cluster": {
+        "flag": false,
+        "n_distinct_buyers_30d": 0,
+        "window_start": null,
+        "window_end": null,
+        "buyers": [],
+        "rule": "3 or more distinct opportunistic buyers with trade dates spanning at most 30 calendar days"
+      },
+      "counts": {
+        "purchases_90d": {
+          "opportunistic": 0,
+          "routine": 0,
+          "distinct_opportunistic_buyers": 0
+        },
+        "sales_90d": {
+          "opportunistic": 5,
+          "routine": 0,
+          "distinct_opportunistic_sellers": 2
+        }
+      },
+      "roles": [
+        "board"
+      ],
+      "routine_excluded": {
+        "purchases": 0,
+        "sales": 0
+      },
+      "sales_cluster": {
+        "flag": false,
+        "n_distinct_sellers_30d": 2,
+        "window_start": "2026-08-07",
+        "window_end": "2026-08-11",
+        "sellers": [
+          "Dugenske John E",
+          "Rizzo Mario"
+        ],
+        "rule": "3 or more distinct opportunistic sellers with trade dates spanning at most 30 calendar days"
+      },
+      "sales_shown_label": "sales are mostly compensation or diversification",
+      "window_trades": 5
     },
     "AMP": {
       "card": false,
@@ -2732,6 +2783,32 @@
           "opportunistic": 0,
           "routine": 0,
           "distinct_opportunistic_sellers": 0
+        }
+      },
+      "routine_excluded": {
+        "purchases": 0,
+        "sales": 0
+      },
+      "held": false
+    },
+    "ALL": {
+      "cluster_flag": false,
+      "n_distinct_buyers_30d": 0,
+      "cluster_window": [
+        null,
+        null
+      ],
+      "sales_cluster_flag": false,
+      "counts": {
+        "purchases_90d": {
+          "opportunistic": 0,
+          "routine": 0,
+          "distinct_opportunistic_buyers": 0
+        },
+        "sales_90d": {
+          "opportunistic": 5,
+          "routine": 0,
+          "distinct_opportunistic_sellers": 2
         }
       },
       "routine_excluded": {
