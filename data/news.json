@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-13",
- "fetched_at": "2026-10-14T14:19:01-04:00",
+ "as_of": "2026-10-14",
+ "fetched_at": "2026-10-14T18:59:17-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,10 +64,10 @@
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=52 (parsed 41 names)",
+  "edgar": "ok n=56 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=4 (parsed 20)",
-  "ir_gev": "ok n=1 (parsed 20)",
+  "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -82,16 +82,96 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 4,
-  "out_of_window": 27998,
+  "out_of_window": 27997,
   "unparseable": 0
  },
  "counts": {
-  "items": 66,
-  "tier1": 66,
+  "items": 71,
+  "tier1": 71,
   "tier2": 0,
-  "last24h": 7
+  "last24h": 12
  },
  "items": [
+  {
+   "id": "85fa35b13bb5c0da9b3c6073e78388cac1b19b27",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by HERSHEY CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/47111/000095014226002770/xslF345X06/es260842209_4-hsy.xml",
+   "timestamp": "2026-10-14T17:20:59-04:00",
+   "tickers": [
+    "HSY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · OWNERSHIP DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6f4811a01da4b661a352f9e6b257663b0d23b8fd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Airbnb, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1559720/000119312526421722/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-14T16:28:34-04:00",
+   "tickers": [
+    "ABNB"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "00d509e53813ca008e90ae1113dbb2f31339a665",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Workday, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000160231526000020/xslF345X06/wk-form4_1792009086.xml",
+   "timestamp": "2026-10-14T16:18:09-04:00",
+   "tickers": [
+    "WDAY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "968ce1989adc0642fd17e0394255f5949a4861e2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Net Zero Without Compromising Reliability: GE Vernova Shows How Spain Can Design a Power System That Achieves Both",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/net-zero-without-compromising-reliability-ge-vernova-shows-how-spain-can-design",
+   "timestamp": "2026-10-14T16:13:02-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "957882077f99db76b94d69e4cc4d3c203b6e8176",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000184970926000022/xslF345X06/form4-10142026_041001.xml",
+   "timestamp": "2026-10-14T16:10:07-04:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
    "tier": 1,
@@ -1143,6 +1223,7 @@
  ],
  "per_name": {
   "GEV": [
+   "968ce1989adc0642fd17e0394255f5949a4861e2",
    "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
@@ -1161,6 +1242,11 @@
   ]
  },
  "last24h": [
+  "85fa35b13bb5c0da9b3c6073e78388cac1b19b27",
+  "6f4811a01da4b661a352f9e6b257663b0d23b8fd",
+  "00d509e53813ca008e90ae1113dbb2f31339a665",
+  "968ce1989adc0642fd17e0394255f5949a4861e2",
+  "957882077f99db76b94d69e4cc4d3c203b6e8176",
   "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
   "62d8e08c57100e7f90dacd01c73010f9f7ad82e3",
   "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
