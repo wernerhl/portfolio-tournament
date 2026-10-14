@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-10-13",
+  "rebuilt_at": "2026-10-14",
   "cadence": "weekly",
-  "as_of": "2026-10-13",
+  "as_of": "2026-10-14",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule; Treasury auctions from TreasuryDirect TA_WS and Treasury's tentative auction schedule, never a weekday pattern). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -25,7 +25,7 @@
     "ta_ws_upcoming": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-13",
+      "retrieved_at": "2026-10-14",
       "items": [
         {
           "date": "2026-10-21",
@@ -56,7 +56,7 @@
     "ta_ws_auctioned": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/search?startDate={start}&endDate={end}&dateFieldName=auctionDate&type={kind}&format=json",
-      "retrieved_at": "2026-10-13",
+      "retrieved_at": "2026-10-14",
       "start": "2024-01-01",
       "n": 267
     },
@@ -64,7 +64,7 @@
       "source": "live",
       "url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
       "pdf": "https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf",
-      "retrieved_at": "2026-10-13",
+      "retrieved_at": "2026-10-14",
       "parse": "XML (xml.etree), fetched at build time",
       "name": "Aug2026 Refunding Auction Calendar Official Ver 2",
       "start": "2026-08-05",
@@ -73,7 +73,7 @@
     "refunding": {
       "source": "live",
       "url": "https://home.treasury.gov/policy-issues/financing-the-government/quarterly-refunding/most-recent-quarterly-refunding-documents",
-      "retrieved_at": "2026-10-13",
+      "retrieved_at": "2026-10-14",
       "latest": "2026-08-05",
       "next": "2026-11-04"
     },
@@ -6642,6 +6642,17 @@
     },
     {
       "date": "2026-08-27",
+      "type": "EARNINGS",
+      "ticker": "WDAY",
+      "name": "Earnings \u00b7 WDAY",
+      "label": "WDAY",
+      "source_url": "https://finance.yahoo.com/quote/WDAY/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-14T06:46:06-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-08-27",
       "type": "TREASURY",
       "name": "7-Year Note auction",
       "label": "7Y",
@@ -8000,7 +8011,7 @@
       "name": "Earnings \u00b7 IT",
       "label": "IT",
       "source_url": "https://finance.yahoo.com/quote/IT/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-10-05T22:14:23-04:00",
+      "retrieved_at": "2026-10-14T06:46:06-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -8045,6 +8056,17 @@
       "label": "APP",
       "source_url": "https://finance.yahoo.com/quote/APP/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-10-02T06:14:54-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-11-04",
+      "type": "EARNINGS",
+      "ticker": "CF",
+      "name": "Earnings \u00b7 CF",
+      "label": "CF",
+      "source_url": "https://finance.yahoo.com/quote/CF/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-14T06:46:06-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },

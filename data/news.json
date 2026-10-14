@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-12",
- "fetched_at": "2026-10-13T16:06:27-04:00",
+ "as_of": "2026-10-13",
+ "fetched_at": "2026-10-14T06:48:04-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -16,44 +16,44 @@
   "top40": [
    "LMT",
    "GOOG",
-   "TSM",
    "RTX",
-   "NOC",
-   "NVDA",
+   "TSM",
    "GEV",
+   "NOC",
    "PATH",
    "AVGO",
-   "EXPE",
-   "INCY",
+   "NVDA",
    "AMP",
    "NXPI",
    "POWL",
-   "QCOM",
-   "ORCL",
-   "GDDY",
    "GEN",
    "ADBE",
-   "PAYX",
+   "QCOM",
    "BX",
+   "PAYX",
+   "ORCL",
    "DASH",
-   "ARES",
-   "NFLX",
-   "WDAY",
-   "SCHW",
-   "META",
+   "MCO",
+   "TROW",
    "VRT",
-   "CINF",
-   "ADSK",
+   "SCHW",
+   "GDDY",
    "MMM",
-   "UBER",
+   "ADSK",
    "HSY",
    "ABNB",
+   "CF",
+   "ARES",
+   "CPAY",
+   "IT",
+   "WDAY",
+   "NFLX",
    "GE",
-   "GL",
-   "BKNG",
-   "TROW",
-   "AOS",
-   "BMY"
+   "NEM",
+   "BMY",
+   "DXCM",
+   "IDXX",
+   "CINF"
   ]
  },
  "sources_status": {
@@ -64,9 +64,9 @@
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=51 (parsed 41 names)",
+  "edgar": "ok n=53 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=2 (parsed 20)",
+  "ir_nvda": "ok n=3 (parsed 20)",
   "ir_gev": "ok n=1 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -81,17 +81,97 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 3,
-  "out_of_window": 27825,
+  "irrelevant": 4,
+  "out_of_window": 27997,
   "unparseable": 0
  },
  "counts": {
-  "items": 67,
-  "tier1": 67,
+  "items": 66,
+  "tier1": 66,
   "tier2": 0,
-  "last24h": 4
+  "last24h": 9
  },
  "items": [
+  {
+   "id": "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA Commits $250 Million to Advance UK Agentic Safety and Security Research Over the Next Five Years",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-commits-250-million-to-advance-uk-agentic-safety-and-security-research-over-the-next-five-years",
+   "timestamp": "2026-10-14T02:01:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f2eccff1ebf8009b8502d0bc36f9824554ab76bd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Workday, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000093807126000067/xslF345X06/wk-form4_1791929007.xml",
+   "timestamp": "2026-10-13T22:03:30-04:00",
+   "tickers": [
+    "WDAY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4/A filed by NVIDIA CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000215218826000007/xslF345X06/wk-form4a_1791925767.xml",
+   "timestamp": "2026-10-13T21:09:29-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4/A · filed 2026-10-13 · FORM 4/A",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c53a132ffdb09f6d7a7ca60efdba31588c4ad589",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by UiPath, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1734722/000154340126000008/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-10-13T20:20:55-04:00",
+   "tickers": [
+    "PATH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "46af825b47bd7f5ebb434012c56261b18346cdae",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by UiPath, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1734722/000212729326000012/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-10-13T20:20:23-04:00",
+   "tickers": [
+    "PATH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
   {
    "id": "d85e5d3609348b2700cc8a38ee1fc8850c342f32",
    "tier": 1,
@@ -114,7 +194,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1327811/000132781126000051/wday-20261012.htm",
-   "timestamp": "2026-10-13T08:46:50-04:00",
+   "timestamp": "2026-10-13T12:46:50-04:00",
    "tickers": [
     "WDAY"
    ],
@@ -130,7 +210,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226046744/form8-k.htm",
-   "timestamp": "2026-10-13T08:45:27-04:00",
+   "timestamp": "2026-10-13T12:45:27-04:00",
    "tickers": [
     "BMNR"
    ],
@@ -1059,102 +1139,6 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-07 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "693c17e4e494235f1deb08c11f67143382f50643",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000148/xslF345X06/form4.xml",
-   "timestamp": "2026-10-06T20:25:55-04:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "89c4706c89b9ab00611f5c8d973dda771fa6ab52",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000146/xslF345X06/form4.xml",
-   "timestamp": "2026-10-06T20:22:22-04:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "45d456c949c31ef4b45f9803eca3be6b4f7a9a32",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Vertiv Holdings Co",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026065239/xslF345X06/wk-form4_1791317920.xml",
-   "timestamp": "2026-10-06T20:18:43-04:00",
-   "tickers": [
-    "VRT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8d3f6cc2a91a6207086f6a58412412b9efdf1a6c",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000144/xslF345X06/form4.xml",
-   "timestamp": "2026-10-06T20:16:46-04:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c2f1a97cb3d29ad6173c4e6ffb9149a5d1d591e9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000142/xslF345X06/form4.xml",
-   "timestamp": "2026-10-06T20:12:39-04:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0438248e1accacee204739d672e26b9c61718ca3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DoorDash, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183261426000035/xslF345X06/form4-10062026_041001.xml",
-   "timestamp": "2026-10-06T20:10:06-04:00",
-   "tickers": [
-    "DASH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-06 · 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1162,6 +1146,8 @@
    "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
+   "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
+   "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
    "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
    "992e155e586b95b1a9284778b344708766e94eb3",
    "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1"
@@ -1176,6 +1162,11 @@
   ]
  },
  "last24h": [
+  "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
+  "f2eccff1ebf8009b8502d0bc36f9824554ab76bd",
+  "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
+  "c53a132ffdb09f6d7a7ca60efdba31588c4ad589",
+  "46af825b47bd7f5ebb434012c56261b18346cdae",
   "d85e5d3609348b2700cc8a38ee1fc8850c342f32",
   "6168e34475797591f94fcec9654a74eeacf33e70",
   "756de2cadfdd708767ac22b921a7f82d5751d345",
