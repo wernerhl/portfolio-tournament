@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-14",
- "fetched_at": "2026-10-15T06:22:38-04:00",
+ "fetched_at": "2026-10-15T14:01:13-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -61,12 +61,12 @@
   "fed_speeches": "ok n=1 (parsed 15)",
   "bea": "ok n=0 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
-  "bls_release_day": "ok n=1 (constructed 1)",
-  "census": "ok n=0 (parsed 18)",
-  "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=55 (parsed 41 names)",
+  "bls_release_day": "ok n=2 (constructed 2)",
+  "census": "ok n=1 (parsed 18)",
+  "dol": "ok n=0 (parsed 10)",
+  "edgar": "ok n=27 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=4 (parsed 20)",
+  "ir_nvda": "ok n=5 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -82,16 +82,112 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 4,
-  "out_of_window": 28161,
+  "out_of_window": 28190,
   "unparseable": 0
  },
  "counts": {
-  "items": 69,
-  "tier1": 69,
+  "items": 42,
+  "tier1": 42,
   "tier2": 0,
-  "last24h": 13
+  "last24h": 17
  },
  "items": [
+  {
+   "id": "982bbbceda046eae1b61ef6e87ea0750d9162dae",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Volvo Cars and NVIDIA Expand Partnership to Advance Safe Automated Driving",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/volvo-cars-and-nvidia-expand-partnership-to-advance-safe-automated-driving",
+   "timestamp": "2026-10-15T13:30:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Adobe and NVIDIA Expand Collaboration to Speed Agentic Creation",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/adobe-and-nvidia-expand-collaboration-to-speed-agentic-creation",
+   "timestamp": "2026-10-15T13:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000383/axp-20261015.htm",
+   "timestamp": "2026-10-15T12:00:20-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "83145ecc4ca8d132e6d56b26aba3dfcca503425e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Advance Monthly Sales for Retail and Food Services",
+   "source": "Census Bureau economic indicator",
+   "source_id": "census",
+   "url": "https://www.census.gov/retail/index.html",
+   "timestamp": "2026-10-15T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "RETAIL"
+   ],
+   "summary": "Tier 1 · Census Bureau economic indicator · topics: RETAIL",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3f13a6923eb5f7139b0eda11569f3646554b31eb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "BLS release: Producer Price Index (September 2026)",
+   "source": "BLS (release page)",
+   "source_id": "bls_release_day",
+   "url": "https://www.bls.gov/news.release/ppi.nr0.htm#2026-10-15",
+   "timestamp": "2026-10-15T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "PPI"
+   ],
+   "summary": "scheduled release at 08:30 ET; print not fetched",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c2c32aeb286e2db4239700d9f71273af24ed58a0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by ALLSTATE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000150/all-20261015.htm",
+   "timestamp": "2026-10-15T07:41:31-04:00",
+   "tickers": [
+    "ALL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
+   "disclosure_lag_label": null
+  },
   {
    "id": "aed5a53b11e0418eb26f535f068f4047efd7e3ac",
    "tier": 1,
@@ -659,534 +755,6 @@
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "6ccb54362efd76f95cbe445e7f65346392fac504",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Broadcom Redefines AI Infrastructure with Industry-Leading Networking Innovations at 2026 OCP Global Summit",
-   "source": "Broadcom investor relations",
-   "source_id": "ir_avgo",
-   "url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-redefines-ai-infrastructure-industry-leading-networking",
-   "timestamp": "2026-10-08T12:00:15-04:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · AVGO · Broadcom investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b0dd44e4e69c2552f3b966be242c1b96eb775fb6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000724/xslF345X06/wk-form4_1791455755.xml",
-   "timestamp": "2026-10-08T10:35:58-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "93b48194b8876ae935b419606e66246047a71dfc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000723/xslF345X06/wk-form4_1791455750.xml",
-   "timestamp": "2026-10-08T10:35:53-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8d75255b8863b8f0e444a81ec3ed7ae11b41f19e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000722/xslF345X06/wk-form4_1791455743.xml",
-   "timestamp": "2026-10-08T10:35:46-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e196fe27c67521fddfba76dea90ebfc819fb301e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000721/xslF345X06/wk-form4_1791455737.xml",
-   "timestamp": "2026-10-08T10:35:40-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6ebccc4362c879d607939b64e09abef48a5ceaec",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000716/xslF345X06/wk-form4_1791455553.xml",
-   "timestamp": "2026-10-08T10:32:36-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "446788e256c44094f339a7ffc87d72c81df2e5b3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000715/xslF345X06/wk-form4_1791455546.xml",
-   "timestamp": "2026-10-08T10:32:29-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a7b6dc5e61634b429d9e9246a1feb2ef61681fe3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000714/xslF345X06/wk-form4_1791455539.xml",
-   "timestamp": "2026-10-08T10:32:22-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "aa0546b9f2cd9cb4b38fe2f2b5d57e939cb48fe1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "NVIDIA Commits $1 Billion to Advance US Science Over the Next Five Years",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/nvidia-commits-1-billion-to-advance-us-science-over-the-next-five-years",
-   "timestamp": "2026-10-08T10:31:00-04:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c0287c777362ca9c77958cddd0124e3d95259322",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000710/xslF345X06/wk-form4_1791455413.xml",
-   "timestamp": "2026-10-08T10:30:17-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a68d173da96c2b5fa6f9fb88a68abddc4d7248cf",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000709/xslF345X06/wk-form4_1791455406.xml",
-   "timestamp": "2026-10-08T10:30:10-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "860b4f1c78b1ebb19c7d3b9e61da038b311f2666",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000708/xslF345X06/wk-form4_1791455401.xml",
-   "timestamp": "2026-10-08T10:30:04-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f4eb78f2f135de96ec27a9e19b35cc1448348bb8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000704/xslF345X06/wk-form4_1791455244.xml",
-   "timestamp": "2026-10-08T10:27:28-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5739df6ad6aab3c1511541a2d73555fd7d541864",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000703/xslF345X06/wk-form4_1791455238.xml",
-   "timestamp": "2026-10-08T10:27:22-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "accf7e295b93f04fa880b9d6e8519dd02e66a100",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000702/xslF345X06/wk-form4_1791455231.xml",
-   "timestamp": "2026-10-08T10:27:14-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0dc220aca89964350c3f875fc9ad413b5e80ea97",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000698/xslF345X06/wk-form4_1791455100.xml",
-   "timestamp": "2026-10-08T10:25:04-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7b8a6a690bcdd4a4388de7cde7828e168800f365",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000697/xslF345X06/wk-form4_1791455093.xml",
-   "timestamp": "2026-10-08T10:24:56-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "963db091bb10d47701398e666036d3e3eadb90cc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000696/xslF345X06/wk-form4_1791455086.xml",
-   "timestamp": "2026-10-08T10:24:49-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "62721451b4be5e861d6a79b16ea928e2c283283d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000692/xslF345X06/wk-form4_1791454881.xml",
-   "timestamp": "2026-10-08T10:21:25-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "56617693e106b3ef88696d5893c160623c18f67a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000691/xslF345X06/wk-form4_1791454873.xml",
-   "timestamp": "2026-10-08T10:21:17-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1a66a142c9e6cfc4d9510048dd9f4c4c5dfa1f1f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000690/xslF345X06/wk-form4_1791454868.xml",
-   "timestamp": "2026-10-08T10:21:11-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "bca24cfded5be356adc411c09dda3b8a7d5f664f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000686/xslF345X06/wk-form4_1791454668.xml",
-   "timestamp": "2026-10-08T10:17:51-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8abaa216479aa59fbccc84f4b8d29798506fbd7a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000685/xslF345X06/wk-form4_1791454663.xml",
-   "timestamp": "2026-10-08T10:17:46-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5592a0201f9b021d9b31d7d746d27b380570b257",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000684/xslF345X06/wk-form4_1791454656.xml",
-   "timestamp": "2026-10-08T10:17:39-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f274e4ab12b9e6bfe69925e66f11a9190a4f589f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000679/xslF345X06/wk-form4_1791454355.xml",
-   "timestamp": "2026-10-08T10:12:39-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c3b28369831068036bfa8312aeee7a7b9ead8460",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000678/xslF345X06/wk-form4_1791454349.xml",
-   "timestamp": "2026-10-08T10:12:32-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6b391c01871197cd49c8c8417f56c1f4eb36de94",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000677/xslF345X06/wk-form4_1791454342.xml",
-   "timestamp": "2026-10-08T10:12:25-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c2b2929f3ab4306592d05d0a28fc734b54146ac8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000676/xslF345X06/wk-form4_1791454335.xml",
-   "timestamp": "2026-10-08T10:12:18-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0a67d0fed8b7de4de39b2ffb92b78cea7f12642d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000675/xslF345X06/wk-form4_1791454329.xml",
-   "timestamp": "2026-10-08T10:12:12-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b2c47b3bfe9b31a709634fa994c096a59d591b1e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000674/xslF345X06/wk-form4_1791454322.xml",
-   "timestamp": "2026-10-08T10:12:05-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ad3745b4cabb89f199a7dec479b75833deb3db7e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000673/xslF345X06/wk-form4_1791454315.xml",
-   "timestamp": "2026-10-08T10:11:58-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "52eb4b57ee1640c8634145e5f3194c4d358b13a1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000672/xslF345X06/wk-form4_1791454308.xml",
-   "timestamp": "2026-10-08T10:11:51-04:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "14f1c53bc6ede62e2f8bca4b580fafe1b232e0ba",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Unemployment Insurance Weekly Claims Report",
-   "source": "Department of Labor release",
-   "source_id": "dol",
-   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261008",
-   "timestamp": "2026-10-08T08:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "CLAIMS"
-   ],
-   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1195,21 +763,25 @@
    "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
+   "982bbbceda046eae1b61ef6e87ea0750d9162dae",
+   "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
    "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
    "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
-   "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
-   "3db6fa880c18e0bbd261820b2edaf3f55d0144a3",
-   "992e155e586b95b1a9284778b344708766e94eb3"
+   "e0e56aada0d7bb177b4318dbf173dfbebf98c862"
   ],
-  "AVGO": [
-   "6ccb54362efd76f95cbe445e7f65346392fac504"
-  ],
+  "AVGO": [],
   "GOOG": [],
   "BMNR": [
    "756de2cadfdd708767ac22b921a7f82d5751d345"
   ]
  },
  "last24h": [
+  "982bbbceda046eae1b61ef6e87ea0750d9162dae",
+  "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
+  "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
+  "83145ecc4ca8d132e6d56b26aba3dfcca503425e",
+  "3f13a6923eb5f7139b0eda11569f3646554b31eb",
+  "c2c32aeb286e2db4239700d9f71273af24ed58a0",
   "aed5a53b11e0418eb26f535f068f4047efd7e3ac",
   "acdd4fef03c465afaae6cadc288cff4601a7c7bf",
   "c24aec792b0226f573b7936dc08d374041abccc2",
@@ -1220,8 +792,6 @@
   "00d509e53813ca008e90ae1113dbb2f31339a665",
   "957882077f99db76b94d69e4cc4d3c203b6e8176",
   "6f4811a01da4b661a352f9e6b257663b0d23b8fd",
-  "968ce1989adc0642fd17e0394255f5949a4861e2",
-  "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
-  "62d8e08c57100e7f90dacd01c73010f9f7ad82e3"
+  "968ce1989adc0642fd17e0394255f5949a4861e2"
  ]
 }
