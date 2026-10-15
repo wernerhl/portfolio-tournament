@@ -1,9 +1,9 @@
 {
-  "updated": "2026-10-14T09:08:59.445839",
-  "as_of": "2026-10-13",
-  "session_date": "2026-10-13",
+  "updated": "2026-10-15T08:43:11.490049",
+  "as_of": "2026-10-14",
+  "session_date": "2026-10-14",
   "cadence": "daily",
-  "tradable_at": "2026-10-14",
+  "tradable_at": "2026-10-15",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -370,6 +370,12 @@
       "state": "contango",
       "spread": -2.69,
       "source": "cboe"
+    },
+    {
+      "d": "2026-10-14",
+      "state": "contango",
+      "spread": -1.92,
+      "source": "cboe"
     }
   ],
   "backfill_note": "2026-07-20 onward recomputed from the repaired canonical closes (Cboe official history overlaid on vol_indicators); source recorded per day",
@@ -390,11 +396,11 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 12,
-  "spread": -2.69,
-  "delta_spread": 0.03,
-  "sigma_threshold": 0.398,
-  "trigger_fired": false,
+  "state_age": 13,
+  "spread": -1.92,
+  "delta_spread": 0.77,
+  "sigma_threshold": 0.435,
+  "trigger_fired": true,
   "entry": {
     "current_entry_dspread": 0.9,
     "state_mean_entry": -0.088,
@@ -461,54 +467,64 @@
     }
   },
   "curve": {
-    "spot_vix": 15.27,
-    "vix1d": 10.72,
-    "vix3m": 17.96,
-    "spread_spot_3m": -2.69,
+    "spot_vix": 16.87,
+    "vix1d": 14.11,
+    "vix3m": 18.79,
+    "spread_spot_3m": -1.92,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-10-14",
+    "date": "2026-10-15",
     "types": [
+      "CLAIMS",
+      "EARNINGS",
+      "EARNINGS",
+      "PPI",
+      "RETAIL"
+    ],
+    "sessions_away": 1
+  },
+  "event_today": [
+    "CPI",
+    "EARNINGS",
+    "EARNINGS"
+  ],
+  "conditioning": {
+    "event_flag": true,
+    "event_types": [
       "CPI",
       "EARNINGS",
       "EARNINGS"
     ],
-    "sessions_away": 1
-  },
-  "event_today": [],
-  "conditioning": {
-    "event_flag": false,
-    "event_types": [],
-    "delta_2y_bps": 2.4,
+    "delta_2y_bps": -3.2,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 0.3,
-    "held_close": false
+    "held_close_proxy": 1.0,
+    "held_close": true
   },
   "attribution": {
-    "primary_driver": "no_trigger",
-    "primary_reversion": "n/a",
+    "primary_driver": "event_bump_sticky",
+    "primary_reversion": "med",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.005,
-      "breadth_delta_pp": -0.0,
+      "smh_1d_return": -0.04,
+      "breadth_delta_pp": -0.19,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.968,
-      "breadth_z": -0.0,
+      "breadth_delta_sigma_1y_pp": 4.952,
+      "breadth_z": -0.04,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
   "overlay_scalar": {
-    "value": 0.7,
+    "value": 0.3,
     "label": "DIAGNOSTIC",
     "caption": "Regime-sized overlay scalar. Gated as DIAGNOSTIC until backtest shows regime-conditional sizing beats static sizing on risk-adjusted return. Do not execute on this value."
   },
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-10-13",
+      "today_excluded_from_metrics": "2026-10-14",
       "all_triggers_reversion": {
         "n": 799,
         "n_reverted": 685,
@@ -542,11 +558,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-10-13",
-      "state": "contango",
-      "spread": -1.9
-    },
     {
       "d": "2025-10-14",
       "state": "contango",
@@ -1801,15 +1812,14 @@
       "d": "2026-10-13",
       "state": "contango",
       "spread": -2.69
+    },
+    {
+      "d": "2026-10-14",
+      "state": "contango",
+      "spread": -1.92
     }
   ],
   "past_spikes": [
-    {
-      "d": "2026-03-20",
-      "delta_spread": 0.83,
-      "state": "flattening",
-      "event": null
-    },
     {
       "d": "2026-03-27",
       "delta_spread": 1.5,
@@ -1923,6 +1933,12 @@
       "delta_spread": 0.9,
       "state": "contango",
       "event": null
+    },
+    {
+      "d": "2026-10-14",
+      "delta_spread": 0.77,
+      "state": "contango",
+      "event": "CPI"
     }
   ]
 }

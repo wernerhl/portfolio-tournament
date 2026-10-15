@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-14",
- "fetched_at": "2026-10-14T18:59:17-04:00",
+ "fetched_at": "2026-10-15T06:22:38-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -14,46 +14,46 @@
    "BMNR"
   ],
   "top40": [
-   "LMT",
-   "GOOG",
-   "RTX",
-   "TSM",
    "GEV",
-   "NOC",
+   "LMT",
+   "TSM",
+   "GOOG",
    "PATH",
+   "NOC",
    "AVGO",
-   "NVDA",
-   "AMP",
+   "RTX",
+   "INCY",
    "NXPI",
-   "POWL",
-   "GEN",
-   "ADBE",
+   "NVDA",
    "QCOM",
-   "BX",
-   "PAYX",
-   "ORCL",
-   "DASH",
-   "MCO",
-   "TROW",
-   "VRT",
-   "SCHW",
-   "GDDY",
-   "MMM",
-   "ADSK",
-   "HSY",
-   "ABNB",
-   "CF",
-   "ARES",
-   "CPAY",
-   "IT",
-   "WDAY",
-   "NFLX",
-   "GE",
-   "NEM",
-   "BMY",
+   "ADBE",
+   "HOOD",
    "DXCM",
-   "IDXX",
-   "CINF"
+   "GDDY",
+   "GE",
+   "CPAY",
+   "TROW",
+   "AXP",
+   "MMM",
+   "AMP",
+   "WDAY",
+   "SCHW",
+   "UBER",
+   "BMY",
+   "META",
+   "HSY",
+   "DASH",
+   "VRTX",
+   "NEM",
+   "POWL",
+   "NFLX",
+   "IT",
+   "GEN",
+   "MCO",
+   "BX",
+   "ALL",
+   "CINF",
+   "ORCL"
   ]
  },
  "sources_status": {
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=56 (parsed 41 names)",
+  "edgar": "ok n=55 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=4 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
@@ -82,16 +82,62 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 4,
-  "out_of_window": 27997,
+  "out_of_window": 28161,
   "unparseable": 0
  },
  "counts": {
-  "items": 71,
-  "tier1": 71,
+  "items": 69,
+  "tier1": 69,
   "tier2": 0,
-  "last24h": 12
+  "last24h": 13
  },
  "items": [
+  {
+   "id": "aed5a53b11e0418eb26f535f068f4047efd7e3ac",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Blackstone Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526421998/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-14T23:18:26-04:00",
+   "tickers": [
+    "BX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "acdd4fef03c465afaae6cadc288cff4601a7c7bf",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Bowman, Supervisory Modernization After Silicon Valley Bank",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20261014a.htm",
+   "timestamp": "2026-10-14T22:55:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c24aec792b0226f573b7936dc08d374041abccc2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326015598/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-14T22:20:42-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "85fa35b13bb5c0da9b3c6073e78388cac1b19b27",
    "tier": 1,
@@ -100,12 +146,92 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/47111/000095014226002770/xslF345X06/es260842209_4-hsy.xml",
-   "timestamp": "2026-10-14T17:20:59-04:00",
+   "timestamp": "2026-10-14T21:20:59-04:00",
    "tickers": [
     "HSY"
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-14 · OWNERSHIP DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6fc03b889c8eea99f4a66d4f6d9f9034109afba2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Uber Technologies, Inc",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000119069926000005/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-10-14T20:22:16-04:00",
+   "tickers": [
+    "UBER"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a7bf903f6bc9d28e01bc6238bf1362a171ec8cb7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Uber Technologies, Inc",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000146823326000011/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-10-14T20:20:39-04:00",
+   "tickers": [
+    "UBER"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4c3e74c5b4256f94411ee592f4596aefc9ecec2d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Uber Technologies, Inc",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000109035526000008/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-10-14T20:19:54-04:00",
+   "tickers": [
+    "UBER"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "00d509e53813ca008e90ae1113dbb2f31339a665",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Workday, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000160231526000020/xslF345X06/wk-form4_1792009086.xml",
+   "timestamp": "2026-10-14T20:18:09-04:00",
+   "tickers": [
+    "WDAY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "957882077f99db76b94d69e4cc4d3c203b6e8176",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000184970926000022/xslF345X06/form4-10142026_041001.xml",
+   "timestamp": "2026-10-14T20:10:07-04:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · 4",
    "disclosure_lag_label": null
   },
   {
@@ -125,22 +251,6 @@
    "disclosure_lag_label": null
   },
   {
-   "id": "00d509e53813ca008e90ae1113dbb2f31339a665",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000160231526000020/xslF345X06/wk-form4_1792009086.xml",
-   "timestamp": "2026-10-14T16:18:09-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
    "id": "968ce1989adc0642fd17e0394255f5949a4861e2",
    "tier": 1,
    "tier_label": "primary",
@@ -154,22 +264,6 @@
    ],
    "topics": [],
    "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "957882077f99db76b94d69e4cc4d3c203b6e8176",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DoorDash, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000184970926000022/xslF345X06/form4-10142026_041001.xml",
-   "timestamp": "2026-10-14T16:10:07-04:00",
-   "tickers": [
-    "DASH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-14 · 4",
    "disclosure_lag_label": null
   },
   {
@@ -250,6 +344,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 4/A · filed 2026-10-13 · FORM 4/A",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "47f6bcd017f359503a539f83587608960e82fdeb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000151/xslF345X06/wk-form4_1791924571.xml",
+   "timestamp": "2026-10-13T20:49:34-04:00",
+   "tickers": [
+    "HOOD"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -376,6 +486,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-09 · OWNERSHIP DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "931301bef415e0753a3aebd9023c38a4bc872b7f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000149/xslF345X06/wk-form4_1791580113.xml",
+   "timestamp": "2026-10-09T21:08:37-04:00",
+   "tickers": [
+    "HOOD"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-09 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -1061,164 +1187,6 @@
    ],
    "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "f5d6fc297d1acc5a9a109cf9d5ff7560543fed11",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Waller, The Signaling Value of the Summary of Economic Projections",
-   "source": "Federal Reserve speech",
-   "source_id": "fed_speeches",
-   "url": "https://www.federalreserve.gov/newsevents/speech/waller20261008a.htm",
-   "timestamp": "2026-10-08T04:30:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8deb30869e692184653ccfc2d09b0acb96de7721",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Meta Platforms, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326015324/xslF345X06/ownership.xml",
-   "timestamp": "2026-10-07T22:09:06-04:00",
-   "tickers": [
-    "META"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8b32aea9020d2f7687f9c3c5b5b0377928cdd1f1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000160231526000018/xslF345X06/wk-form4_1791410613.xml",
-   "timestamp": "2026-10-07T22:03:35-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5eabbe7cab71ce62004a2e4adadc1f72e834ad4b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000178794426000013/xslF345X06/wk-form4_1791410549.xml",
-   "timestamp": "2026-10-07T22:02:32-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b3ec85b3914af2de6acceba3fa14ea44999f7edd",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000192890826000017/xslF345X06/wk-form4_1791410486.xml",
-   "timestamp": "2026-10-07T22:01:29-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "628d2a4c5119a4cf4f79a944984c4c026e08f392",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000144415826000020/xslF345X06/wk-form4_1791410429.xml",
-   "timestamp": "2026-10-07T22:00:32-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "424ee85d9ec9870367bcf1fc4c2baa835d2221b1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000119657926000014/xslF345X06/wk-form4_1791410360.xml",
-   "timestamp": "2026-10-07T21:59:22-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f32e98009f0b7498ccfc29178601b4a21e11b6cc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000206077426000017/xslF345X06/wk-form4_1791410284.xml",
-   "timestamp": "2026-10-07T21:58:07-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "24920b0824b210131ef4d572fc23e6c35130a61f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by HERSHEY CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/47111/000095014226002698/xslF345X06/es260839242_4-hsy.xml",
-   "timestamp": "2026-10-07T20:54:43-04:00",
-   "tickers": [
-    "HSY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · OWNERSHIP DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a3c2a1b9a2cc88a7bd5825add3dce1af3b49bca5",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Workday, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000093807126000065/xslF345X06/wk-form4_1791404470.xml",
-   "timestamp": "2026-10-07T20:21:13-04:00",
-   "tickers": [
-    "WDAY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-07 · FORM 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1242,17 +1210,18 @@
   ]
  },
  "last24h": [
+  "aed5a53b11e0418eb26f535f068f4047efd7e3ac",
+  "acdd4fef03c465afaae6cadc288cff4601a7c7bf",
+  "c24aec792b0226f573b7936dc08d374041abccc2",
   "85fa35b13bb5c0da9b3c6073e78388cac1b19b27",
-  "6f4811a01da4b661a352f9e6b257663b0d23b8fd",
+  "6fc03b889c8eea99f4a66d4f6d9f9034109afba2",
+  "a7bf903f6bc9d28e01bc6238bf1362a171ec8cb7",
+  "4c3e74c5b4256f94411ee592f4596aefc9ecec2d",
   "00d509e53813ca008e90ae1113dbb2f31339a665",
-  "968ce1989adc0642fd17e0394255f5949a4861e2",
   "957882077f99db76b94d69e4cc4d3c203b6e8176",
+  "6f4811a01da4b661a352f9e6b257663b0d23b8fd",
+  "968ce1989adc0642fd17e0394255f5949a4861e2",
   "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
-  "62d8e08c57100e7f90dacd01c73010f9f7ad82e3",
-  "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
-  "f2eccff1ebf8009b8502d0bc36f9824554ab76bd",
-  "e0e56aada0d7bb177b4318dbf173dfbebf98c862",
-  "c53a132ffdb09f6d7a7ca60efdba31588c4ad589",
-  "46af825b47bd7f5ebb434012c56261b18346cdae"
+  "62d8e08c57100e7f90dacd01c73010f9f7ad82e3"
  ]
 }
