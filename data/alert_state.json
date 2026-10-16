@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-10-14",
   "as_of": "2026-10-14",
-  "updated": "2026-10-15T11:56:42+00:00",
+  "updated": "2026-10-16T02:01:02+00:00",
   "schema": 1,
   "regime": {
     "label": "ELEVATED",
@@ -16,13 +16,13 @@
     "session": "2026-10-14"
   },
   "complacency": {
-    "kind": null,
-    "reason": null,
+    "kind": "active",
+    "reason": "SKEW 157 > 140 (canonical close (2026-10-14)) and VIX 16.5 < 17 \u2014 tail priced, spot fear absent \u2014 market complacent",
     "session": "2026-10-14"
   },
   "intraday": {
     "session_date": "2026-10-15",
-    "timestamp": "2026-10-15T10:19:56"
+    "timestamp": "2026-10-15T23:11:47"
   },
   "issues": {
     "regime": {
@@ -36,18 +36,25 @@
       "session": "2026-10-07"
     },
     "shock": null,
-    "complacency": null
+    "complacency": {
+      "number": 9,
+      "url": "https://github.com/wernerhl/portfolio-tournament/issues/9",
+      "dry_run": false,
+      "opened_session": "2026-10-14",
+      "kind": "active",
+      "session": "2026-10-14"
+    }
   },
   "last_opened": {
     "regime": "2026-10-07",
     "shock": null,
-    "complacency": "2026-09-15"
+    "complacency": "2026-10-14"
   },
   "last_run": {
     "session_date": "2026-10-14",
     "mode": "live",
     "actions": [
-      "no state change"
+      "[complacency] opened (active)"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
