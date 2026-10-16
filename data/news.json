@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-15",
- "fetched_at": "2026-10-15T18:54:23-04:00",
+ "fetched_at": "2026-10-16T06:20:41-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -15,45 +15,45 @@
   ],
   "top40": [
    "GEV",
-   "LMT",
    "TSM",
+   "LMT",
    "GOOG",
-   "PATH",
-   "NOC",
-   "AVGO",
    "RTX",
-   "INCY",
-   "NXPI",
+   "NOC",
    "NVDA",
-   "QCOM",
-   "ADBE",
-   "HOOD",
-   "DXCM",
-   "GDDY",
-   "GE",
-   "CPAY",
-   "TROW",
-   "AXP",
-   "MMM",
-   "AMP",
-   "WDAY",
+   "AVGO",
+   "NXPI",
    "SCHW",
-   "UBER",
-   "BMY",
-   "META",
-   "HSY",
-   "DASH",
-   "VRTX",
-   "NEM",
-   "POWL",
-   "NFLX",
-   "IT",
-   "GEN",
-   "MCO",
    "BX",
-   "ALL",
+   "NFLX",
+   "INCY",
+   "PATH",
+   "GE",
+   "AMP",
+   "META",
+   "TROW",
+   "QCOM",
+   "MMM",
+   "NEM",
+   "ADBE",
+   "RJF",
+   "APP",
+   "ANET",
+   "BMY",
+   "POWL",
    "CINF",
-   "ORCL"
+   "GDDY",
+   "DASH",
+   "ARES",
+   "VRTX",
+   "AXP",
+   "HOOD",
+   "CRDO",
+   "ORCL",
+   "GS",
+   "AMAT",
+   "DXCM",
+   "CSCO"
   ]
  },
  "sources_status": {
@@ -64,9 +64,9 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=31 (parsed 41 names)",
+  "edgar": "ok n=33 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=5 (parsed 20)",
+  "ir_nvda": "ok n=6 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -82,16 +82,96 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 4,
-  "out_of_window": 28190,
+  "out_of_window": 26748,
   "unparseable": 0
  },
  "counts": {
-  "items": 46,
-  "tier1": 46,
+  "items": 60,
+  "tier1": 60,
   "tier2": 0,
-  "last24h": 20
+  "last24h": 13
  },
  "items": [
+  {
+   "id": "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Mercedes-Benz and NVIDIA Expand Strategic Partnership to Advance Safe Highly Automated Driving in the Next Decade",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/mercedes-benz-and-nvidia-expand-strategic-partnership-to-advance-safe-highly-automated-driving-in-the-next-decade",
+   "timestamp": "2026-10-16T04:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a4c64f0554321c67e591d387fdf5e25499387dc9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526423187/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-16T00:26:15-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-15 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a13cbf43ad6af337c60d1cd528348615f72d332e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000153/xslF345X06/wk-form4_1792096397.xml",
+   "timestamp": "2026-10-15T20:33:21-04:00",
+   "tickers": [
+    "HOOD"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-15 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5679f30c696ad690f9615638c1b2f631b2932ac7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by SCHWAB CHARLES CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/316709/000031670926000035/schw-20261015.htm",
+   "timestamp": "2026-10-15T20:18:01-04:00",
+   "tickers": [
+    "SCHW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "58d043263e46643b91c88047dbb00a6bc81cff42",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Blackstone Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526422888/d59966d8k.htm",
+   "timestamp": "2026-10-15T20:12:04-04:00",
+   "tickers": [
+    "BX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
+   "disclosure_lag_label": null
+  },
   {
    "id": "2f4ec169070bdb1e971353b745121d99759a0c39",
    "tier": 1,
@@ -109,48 +189,16 @@
    "disclosure_lag_label": null
   },
   {
-   "id": "a13cbf43ad6af337c60d1cd528348615f72d332e",
+   "id": "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
    "tier": 1,
    "tier_label": "primary",
-   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "headline": "8-K filed by AMERICAN EXPRESS CO",
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000153/xslF345X06/wk-form4_1792096397.xml",
-   "timestamp": "2026-10-15T16:33:21-04:00",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000383/axp-20261015.htm",
+   "timestamp": "2026-10-15T16:00:20-04:00",
    "tickers": [
-    "HOOD"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-15 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5679f30c696ad690f9615638c1b2f631b2932ac7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by SCHWAB CHARLES CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/316709/000031670926000035/schw-20261015.htm",
-   "timestamp": "2026-10-15T16:18:01-04:00",
-   "tickers": [
-    "SCHW"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "58d043263e46643b91c88047dbb00a6bc81cff42",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Blackstone Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526422888/d59966d8k.htm",
-   "timestamp": "2026-10-15T16:12:04-04:00",
-   "tickers": [
-    "BX"
+    "AXP"
    ],
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
@@ -186,22 +234,6 @@
    ],
    "topics": [],
    "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000383/axp-20261015.htm",
-   "timestamp": "2026-10-15T12:00:20-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
    "disclosure_lag_label": null
   },
   {
@@ -328,6 +360,118 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-14 · OWNERSHIP DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "11024acf5adfa7b85cb20858f5653b509950c4ec",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065887/xslF345X06/wk-form4_1792009775.xml",
+   "timestamp": "2026-10-14T20:29:38-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9c131419e2604b8d22593902ab2d948d932aca2e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065886/xslF345X06/wk-form4_1792009757.xml",
+   "timestamp": "2026-10-14T20:29:19-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "446f64f2b671d89f96a337edc0b9f1b2d6407034",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065885/xslF345X06/wk-form4_1792009742.xml",
+   "timestamp": "2026-10-14T20:29:04-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6cbb9e6e97ba0d1bea206b93178c323ad5ad7934",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065884/xslF345X06/wk-form4_1792009723.xml",
+   "timestamp": "2026-10-14T20:28:45-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7a7d48966e86abe356a82b49b602b9304caeabd8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065883/xslF345X06/wk-form4_1792009707.xml",
+   "timestamp": "2026-10-14T20:28:29-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a0dec98aa78a25c9ae48d75f2650f59a0961c5eb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065882/xslF345X06/wk-form4_1792009683.xml",
+   "timestamp": "2026-10-14T20:28:05-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f6cdb75906d22d74e05e5423c38d75c382a36242",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065881/xslF345X06/wk-form4_1792009659.xml",
+   "timestamp": "2026-10-14T20:27:42-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-14 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -491,6 +635,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "ba4dc8b1b3cec62d600969dcc413f8d5ee412339",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Arista Networks, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000244/xslF345X06/edgardoc.xml",
+   "timestamp": "2026-10-13T23:09:50-04:00",
+   "tickers": [
+    "ANET"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "f2eccff1ebf8009b8502d0bc36f9824554ab76bd",
    "tier": 1,
    "tier_label": "primary",
@@ -571,6 +731,54 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "aa55c089b4866fe51cded52ca7ad73a4d27939ee",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000163/xslF345X06/wk-form4_1791922426.xml",
+   "timestamp": "2026-10-13T20:13:48-04:00",
+   "tickers": [
+    "CSCO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bada429f70e3cfd050163b2cf6a7b6fe39bc5227",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000162/xslF345X06/wk-form4_1791922312.xml",
+   "timestamp": "2026-10-13T20:11:55-04:00",
+   "tickers": [
+    "CSCO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6400f7dc158322bd21db2e3b739ccd68d3f83384",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065684/xslF345X06/wk-form4_1791921670.xml",
+   "timestamp": "2026-10-13T20:01:13-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-13 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "d85e5d3609348b2700cc8a38ee1fc8850c342f32",
    "tier": 1,
    "tier_label": "primary",
@@ -617,6 +825,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "129ea07d3f7c89361d580fd32c66b9693ecd4cb2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by GOLDMAN SACHS GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/886982/000088698226000529/gs-20261013.htm",
+   "timestamp": "2026-10-13T11:32:56-04:00",
+   "tickers": [
+    "GS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-13 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "d9ed85bdc1bcca39deaafd25cd9992386aeccb14",
    "tier": 1,
    "tier_label": "primary",
@@ -646,6 +870,22 @@
    ],
    "topics": [],
    "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e447a0e49c5fdc08dd3df6b3666b20bb133791d1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Arista Networks, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000242/xslF345X06/edgardoc.xml",
+   "timestamp": "2026-10-09T23:13:37-04:00",
+   "tickers": [
+    "ANET"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-09 · PRIMARY DOCUMENT",
    "disclosure_lag_label": null
   },
   {
@@ -713,6 +953,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "72057881b0ea35126be73c17be0141c64849cd0d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by CISCO SYSTEMS, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000156/csco-20261007.htm",
+   "timestamp": "2026-10-09T20:08:49-04:00",
+   "tickers": [
+    "CSCO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-09 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "b7af6fff792df95b6454262c4c0987f90c64d843",
    "tier": 1,
    "tier_label": "primary",
@@ -761,6 +1017,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "b959b1f089e63b5a48448f578bca2cf5a7842c7c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026065523/xslF345X06/wk-form4_1791576067.xml",
+   "timestamp": "2026-10-09T20:01:10-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-09 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734",
    "tier": 1,
    "tier_label": "primary",
@@ -773,54 +1045,6 @@
    "topics": [],
    "summary": "Tier 1 · Federal Reserve Board press release · Other Announcements · topics: none",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "66dd1f886bb15db4880d62379e848b9ed0504b28",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Gen Digital Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/849399/000084939926000075/xslF345X06/wk-form4_1791494623.xml",
-   "timestamp": "2026-10-08T21:24:16-04:00",
-   "tickers": [
-    "GEN"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-08 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7ba00aeb2f5e7621f8d779a5819c22b09304ab8d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000376/axp-20261008.htm",
-   "timestamp": "2026-10-08T20:38:48-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-08 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "73a56ca5366438fb8a5cbeeac9dfc2dc0703de47",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by GARTNER INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/749251/000119312526417937/d158580d8k.htm",
-   "timestamp": "2026-10-08T20:15:37-04:00",
-   "tickers": [
-    "IT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-08 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -829,38 +1053,33 @@
    "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
+   "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
    "982bbbceda046eae1b61ef6e87ea0750d9162dae",
    "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
    "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
-   "cb6feec1d4749d7d0bc3c23537ba257cb46b960c",
-   "e0e56aada0d7bb177b4318dbf173dfbebf98c862"
+   "cb6feec1d4749d7d0bc3c23537ba257cb46b960c"
   ],
   "AVGO": [],
-  "GOOG": [],
+  "GOOG": [
+   "a4c64f0554321c67e591d387fdf5e25499387dc9"
+  ],
   "BMNR": [
    "756de2cadfdd708767ac22b921a7f82d5751d345"
   ]
  },
  "last24h": [
-  "2f4ec169070bdb1e971353b745121d99759a0c39",
+  "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
+  "a4c64f0554321c67e591d387fdf5e25499387dc9",
   "a13cbf43ad6af337c60d1cd528348615f72d332e",
   "5679f30c696ad690f9615638c1b2f631b2932ac7",
   "58d043263e46643b91c88047dbb00a6bc81cff42",
+  "2f4ec169070bdb1e971353b745121d99759a0c39",
+  "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
   "982bbbceda046eae1b61ef6e87ea0750d9162dae",
   "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
-  "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
   "83145ecc4ca8d132e6d56b26aba3dfcca503425e",
   "3f13a6923eb5f7139b0eda11569f3646554b31eb",
   "58dac369e976cb8b3801fb278baa7e9a24e2f396",
-  "c2c32aeb286e2db4239700d9f71273af24ed58a0",
-  "aed5a53b11e0418eb26f535f068f4047efd7e3ac",
-  "acdd4fef03c465afaae6cadc288cff4601a7c7bf",
-  "c24aec792b0226f573b7936dc08d374041abccc2",
-  "85fa35b13bb5c0da9b3c6073e78388cac1b19b27",
-  "6fc03b889c8eea99f4a66d4f6d9f9034109afba2",
-  "a7bf903f6bc9d28e01bc6238bf1362a171ec8cb7",
-  "4c3e74c5b4256f94411ee592f4596aefc9ecec2d",
-  "00d509e53813ca008e90ae1113dbb2f31339a665",
-  "957882077f99db76b94d69e4cc4d3c203b6e8176"
+  "c2c32aeb286e2db4239700d9f71273af24ed58a0"
  ]
 }
