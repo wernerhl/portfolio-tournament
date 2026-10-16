@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-15",
- "fetched_at": "2026-10-16T13:49:04-04:00",
+ "as_of": "2026-10-16",
+ "fetched_at": "2026-10-16T16:32:08-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=33 (parsed 41 names)",
+  "edgar": "ok n=37 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=7 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
@@ -81,17 +81,81 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 3,
-  "out_of_window": 26748,
+  "irrelevant": 4,
+  "out_of_window": 26747,
   "unparseable": 0
  },
  "counts": {
-  "items": 61,
-  "tier1": 61,
+  "items": 65,
+  "tier1": 65,
   "tier2": 0,
-  "last24h": 9
+  "last24h": 12
  },
  "items": [
+  {
+   "id": "9aa6f09debe227fd7b04fe5ff449f9a24521628d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GOLDMAN SACHS GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/886982/000121410726000010/xslF345X06/wk-form4_1792181588.xml",
+   "timestamp": "2026-10-16T16:13:11-04:00",
+   "tickers": [
+    "GS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-16 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e5c104b0499a97cf41b5b2ebdbdd399e9c98c546",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GOLDMAN SACHS GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/886982/000119310726000010/xslF345X06/wk-form4_1792181457.xml",
+   "timestamp": "2026-10-16T16:11:00-04:00",
+   "tickers": [
+    "GS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-16 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f9903274d1580e54fe00076eb25bfb167a1c73ec",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GOLDMAN SACHS GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/886982/000108799726000012/xslF345X06/wk-form4_1792181211.xml",
+   "timestamp": "2026-10-16T16:06:54-04:00",
+   "tickers": [
+    "GS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-16 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d58b1418e82ab93c5916cce4a45a01830145b16f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by GOLDMAN SACHS GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/886982/000152070026000010/xslF345X06/wk-form4_1792181104.xml",
+   "timestamp": "2026-10-16T16:05:06-04:00",
+   "tickers": [
+    "GS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-16 · FORM 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "70363c9b200b07abea3c7ffb070f9ef38a3b7051",
    "tier": 1,
@@ -1084,6 +1148,10 @@
   ]
  },
  "last24h": [
+  "9aa6f09debe227fd7b04fe5ff449f9a24521628d",
+  "e5c104b0499a97cf41b5b2ebdbdd399e9c98c546",
+  "f9903274d1580e54fe00076eb25bfb167a1c73ec",
+  "d58b1418e82ab93c5916cce4a45a01830145b16f",
   "70363c9b200b07abea3c7ffb070f9ef38a3b7051",
   "7fcb7288fa569c2e59edd3f09a5a8e2342680c25",
   "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
@@ -1091,7 +1159,6 @@
   "a13cbf43ad6af337c60d1cd528348615f72d332e",
   "5679f30c696ad690f9615638c1b2f631b2932ac7",
   "58d043263e46643b91c88047dbb00a6bc81cff42",
-  "2f4ec169070bdb1e971353b745121d99759a0c39",
-  "2a6e9c19d61bb77757410d45bfe06ab4c9f94944"
+  "2f4ec169070bdb1e971353b745121d99759a0c39"
  ]
 }
