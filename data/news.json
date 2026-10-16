@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-15",
- "fetched_at": "2026-10-16T06:20:41-04:00",
+ "fetched_at": "2026-10-16T13:49:04-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -66,7 +66,7 @@
   "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=33 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=6 (parsed 20)",
+  "ir_nvda": "ok n=7 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -81,17 +81,47 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 4,
+  "irrelevant": 3,
   "out_of_window": 26748,
   "unparseable": 0
  },
  "counts": {
-  "items": 60,
-  "tier1": 60,
+  "items": 61,
+  "tier1": 61,
   "tier2": 0,
-  "last24h": 13
+  "last24h": 9
  },
  "items": [
+  {
+   "id": "70363c9b200b07abea3c7ffb070f9ef38a3b7051",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces termination of enforcement actions with Gardner Bancshares, Inc. and Small Business Bank",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261016a.htm",
+   "timestamp": "2026-10-16T11:00:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7fcb7288fa569c2e59edd3f09a5a8e2342680c25",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA RTX Spark PCs Available Today — A New Beginning for Windows PCs",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-rtx-spark-pcs-available-today-a-new-beginning-for-windows-pcs",
+   "timestamp": "2026-10-16T08:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
    "tier": 1,
@@ -1031,20 +1061,6 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-09 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "15b4b4b5fa4c87a39d59adb1762b1d49aeeed734",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board releases results of the 2025 Survey of Consumer Finances, which provides the public and policymakers with detailed insights into the economic condition of American families",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/other20261009a.htm",
-   "timestamp": "2026-10-09T10:00:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Other Announcements · topics: none",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1053,11 +1069,11 @@
    "d9ed85bdc1bcca39deaafd25cd9992386aeccb14"
   ],
   "NVDA": [
+   "7fcb7288fa569c2e59edd3f09a5a8e2342680c25",
    "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
    "982bbbceda046eae1b61ef6e87ea0750d9162dae",
    "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
-   "ef03e1cd1e54734aafe4b831b7b8c6e54321e845",
-   "cb6feec1d4749d7d0bc3c23537ba257cb46b960c"
+   "ef03e1cd1e54734aafe4b831b7b8c6e54321e845"
   ],
   "AVGO": [],
   "GOOG": [
@@ -1068,18 +1084,14 @@
   ]
  },
  "last24h": [
+  "70363c9b200b07abea3c7ffb070f9ef38a3b7051",
+  "7fcb7288fa569c2e59edd3f09a5a8e2342680c25",
   "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
   "a4c64f0554321c67e591d387fdf5e25499387dc9",
   "a13cbf43ad6af337c60d1cd528348615f72d332e",
   "5679f30c696ad690f9615638c1b2f631b2932ac7",
   "58d043263e46643b91c88047dbb00a6bc81cff42",
   "2f4ec169070bdb1e971353b745121d99759a0c39",
-  "2a6e9c19d61bb77757410d45bfe06ab4c9f94944",
-  "982bbbceda046eae1b61ef6e87ea0750d9162dae",
-  "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
-  "83145ecc4ca8d132e6d56b26aba3dfcca503425e",
-  "3f13a6923eb5f7139b0eda11569f3646554b31eb",
-  "58dac369e976cb8b3801fb278baa7e9a24e2f396",
-  "c2c32aeb286e2db4239700d9f71273af24ed58a0"
+  "2a6e9c19d61bb77757410d45bfe06ab4c9f94944"
  ]
 }
