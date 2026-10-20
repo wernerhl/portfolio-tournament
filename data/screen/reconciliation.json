@@ -1,25 +1,25 @@
 {
  "cadence": "daily",
- "session_date": "2026-10-15",
- "computed_at": "2026-10-16T04:43:05-04:00",
+ "session_date": "2026-10-19",
+ "computed_at": "2026-10-20T05:03:21-04:00",
  "built_by": "scripts/screen/reconcile_views.py (order 6.2, 2026-09-16)",
  "inputs": {
   "tournament": {
    "path": "data/scored_universe.csv",
    "n": 541,
-   "file_mtime": "2026-10-16T04:42:20-04:00",
+   "file_mtime": "2026-10-20T05:02:42-04:00",
    "composite": "tech_score + fund_score (0\u201350), rank-based factor scores; rebuilt monthly"
   },
   "screen": {
    "path": "data/screen/scored_universe.csv",
    "n": 532,
-   "session_date": "2026-10-15",
+   "session_date": "2026-10-19",
    "composite": "fundamental + technical + visibility + corr_penalty + leverage_penalty (0\u201375); rebuilt nightly",
    "data_source": {
     "mode": "canonical",
     "base": ".",
-    "canonical_session": "2026-10-15",
-    "canonical_built_at": "2026-10-16T08:41:50+00:00",
+    "canonical_session": "2026-10-19",
+    "canonical_built_at": "2026-10-20T09:02:16+00:00",
     "canonical_coverage_pct": 99.6,
     "fund_topups": [
      "CFLT",
@@ -50,9 +50,9 @@
  ],
  "only_screen": [],
  "spearman": {
-  "composite": 0.6179,
-  "technical": 0.3751,
-  "fundamental": 0.6662
+  "composite": 0.5839,
+  "technical": 0.3238,
+  "fundamental": 0.6671
  },
  "method": {
   "correlation": "Spearman rank correlation on the common names: composite vs composite, tech_score vs technical, fund_score vs fundamental",
@@ -65,25 +65,25 @@
    "ticker": "LMT",
    "name": "Lockheed Martin Corporation",
    "sector": "Industrials",
-   "divergence_pct_points": -83.72,
+   "divergence_pct_points": -85.38,
    "direction": "screen ranks it higher (further up the board) than the tournament",
    "tournament": {
-    "rank": 456,
+    "rank": 467,
     "n": 541,
-    "pct": 84.29,
-    "composite": 20.03,
-    "tech_score": 9.83,
+    "pct": 86.32,
+    "composite": 19.84,
+    "tech_score": 9.64,
     "fund_score": 10.21
    },
    "screen": {
-    "rank": 3,
+    "rank": 5,
     "n": 532,
-    "pct": 0.56,
-    "rank_method_min": 3,
-    "composite": 54.5,
+    "pct": 0.94,
+    "rank_method_min": 5,
+    "composite": 54.0,
     "fundamental": 18.0,
-    "technical": 15.0,
-    "technical_precap": 15.0,
+    "technical": 14.5,
+    "technical_precap": 14.5,
     "visibility": 22.0,
     "visibility_fallback": 10.0,
     "sector_prior": 14.0,
@@ -98,63 +98,63 @@
    "components": {
     "visibility_override_excess": {
      "contribution_pts": 12.0,
-     "counterfactual_rank": 189,
+     "counterfactual_rank": 191,
      "rank_points": -34.96
     },
     "correlation_penalty": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 3,
+     "counterfactual_rank": 5,
      "rank_points": 0.0
     },
     "leverage_penalty": {
      "contribution_pts": -0.5,
-     "counterfactual_rank": 3,
-     "rank_points": 0.0
+     "counterfactual_rank": 4,
+     "rank_points": 0.19
     },
     "broken_base_cap": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 3,
+     "counterfactual_rank": 5,
      "rank_points": 0.0
     },
     "technical_disagreement": {
-     "tournament_pct": 79.89,
-     "screen_pct": 57.33,
-     "rank_points": -22.56
+     "tournament_pct": 80.83,
+     "screen_pct": 63.16,
+     "rank_points": -17.67
     },
     "fundamental_disagreement": {
      "tournament_pct": 74.25,
-     "screen_pct": 33.08,
-     "rank_points": -41.17
+     "screen_pct": 33.46,
+     "rank_points": -40.79
     }
    },
    "cause": "fundamental_disagreement",
-   "cause_rank_points": -41.17,
-   "cause_share_of_divergence": 0.49,
+   "cause_rank_points": -40.79,
+   "cause_share_of_divergence": 0.48,
    "cause_flag": null
   },
   {
    "ticker": "NOC",
    "name": "Northrop Grumman Corporation",
    "sector": "Industrials",
-   "divergence_pct_points": -77.98,
+   "divergence_pct_points": -83.54,
    "direction": "screen ranks it higher (further up the board) than the tournament",
    "tournament": {
-    "rank": 428,
+    "rank": 456,
     "n": 541,
-    "pct": 79.11,
-    "composite": 20.89,
-    "tech_score": 11.02,
+    "pct": 84.29,
+    "composite": 20.06,
+    "tech_score": 10.2,
     "fund_score": 9.86
    },
    "screen": {
-    "rank": 6,
+    "rank": 4,
     "n": 532,
-    "pct": 1.13,
-    "rank_method_min": 6,
-    "composite": 52.6,
+    "pct": 0.75,
+    "rank_method_min": 4,
+    "composite": 54.4,
     "fundamental": 17.0,
-    "technical": 16.1,
-    "technical_precap": 16.1,
+    "technical": 17.9,
+    "technical_precap": 17.9,
     "visibility": 21.0,
     "visibility_fallback": 10.0,
     "sector_prior": 14.0,
@@ -169,63 +169,63 @@
    "components": {
     "visibility_override_excess": {
      "contribution_pts": 11.0,
-     "counterfactual_rank": 240,
-     "rank_points": -43.98
+     "counterfactual_rank": 132,
+     "rank_points": -24.06
     },
     "correlation_penalty": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 6,
+     "counterfactual_rank": 4,
      "rank_points": 0.0
     },
     "leverage_penalty": {
      "contribution_pts": -1.5,
-     "counterfactual_rank": 4,
-     "rank_points": 0.38
+     "counterfactual_rank": 3,
+     "rank_points": 0.19
     },
     "broken_base_cap": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 6,
+     "counterfactual_rank": 4,
      "rank_points": 0.0
     },
     "technical_disagreement": {
-     "tournament_pct": 67.11,
-     "screen_pct": 37.59,
-     "rank_points": -29.51
+     "tournament_pct": 76.69,
+     "screen_pct": 11.47,
+     "rank_points": -65.23
     },
     "fundamental_disagreement": {
      "tournament_pct": 78.2,
-     "screen_pct": 44.55,
-     "rank_points": -33.65
+     "screen_pct": 44.74,
+     "rank_points": -33.46
     }
    },
-   "cause": "visibility_override_excess",
-   "cause_rank_points": -43.98,
-   "cause_share_of_divergence": 0.56,
+   "cause": "technical_disagreement",
+   "cause_rank_points": -65.23,
+   "cause_share_of_divergence": 0.78,
    "cause_flag": null
   },
   {
    "ticker": "RTX",
    "name": "RTX Corporation",
    "sector": "Industrials",
-   "divergence_pct_points": -70.78,
+   "divergence_pct_points": -76.48,
    "direction": "screen ranks it higher (further up the board) than the tournament",
    "tournament": {
-    "rank": 388,
+    "rank": 427,
     "n": 541,
-    "pct": 71.72,
-    "composite": 22.04,
-    "tech_score": 13.24,
+    "pct": 78.93,
+    "composite": 20.94,
+    "tech_score": 12.15,
     "fund_score": 8.79
    },
    "screen": {
-    "rank": 5,
+    "rank": 13,
     "n": 532,
-    "pct": 0.94,
-    "rank_method_min": 5,
-    "composite": 53.3,
+    "pct": 2.44,
+    "rank_method_min": 13,
+    "composite": 50.8,
     "fundamental": 15.5,
-    "technical": 17.3,
-    "technical_precap": 17.3,
+    "technical": 14.8,
+    "technical_precap": 14.8,
     "visibility": 21.0,
     "visibility_fallback": 10.0,
     "sector_prior": 14.0,
@@ -240,59 +240,201 @@
    "components": {
     "visibility_override_excess": {
      "contribution_pts": 11.0,
-     "counterfactual_rank": 200,
-     "rank_points": -36.65
+     "counterfactual_rank": 314,
+     "rank_points": -56.58
     },
     "correlation_penalty": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 5,
+     "counterfactual_rank": 13,
      "rank_points": 0.0
     },
     "leverage_penalty": {
      "contribution_pts": -0.5,
-     "counterfactual_rank": 5,
+     "counterfactual_rank": 11,
+     "rank_points": 0.38
+    },
+    "broken_base_cap": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 13,
+     "rank_points": 0.0
+    },
+    "technical_disagreement": {
+     "tournament_pct": 53.57,
+     "screen_pct": 58.65,
+     "rank_points": 5.08
+    },
+    "fundamental_disagreement": {
+     "tournament_pct": 87.59,
+     "screen_pct": 66.17,
+     "rank_points": -21.43
+    }
+   },
+   "cause": "visibility_override_excess",
+   "cause_rank_points": -56.58,
+   "cause_share_of_divergence": 0.74,
+   "cause_flag": null
+  },
+  {
+   "ticker": "COIN",
+   "name": "Coinbase Global, Inc.",
+   "sector": "Financial Services",
+   "divergence_pct_points": -76.16,
+   "direction": "screen ranks it higher (further up the board) than the tournament",
+   "tournament": {
+    "rank": 531,
+    "n": 541,
+    "pct": 98.15,
+    "composite": 15.82,
+    "tech_score": 9.48,
+    "fund_score": 6.34
+   },
+   "screen": {
+    "rank": 117,
+    "n": 532,
+    "pct": 21.99,
+    "rank_method_min": 117,
+    "composite": 43.9,
+    "fundamental": 15.0,
+    "technical": 18.9,
+    "technical_precap": 18.9,
+    "visibility": 10.0,
+    "visibility_fallback": 10.0,
+    "sector_prior": 14.0,
+    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
+    "visibility_legacy": 16.0,
+    "registry_override": false,
+    "override_rationale": null,
+    "corr_penalty": 0.0,
+    "leverage_penalty": 0.0,
+    "broken_base": false
+   },
+   "components": {
+    "visibility_override_excess": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 117,
+     "rank_points": 0.0
+    },
+    "correlation_penalty": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 117,
+     "rank_points": 0.0
+    },
+    "leverage_penalty": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 117,
      "rank_points": 0.0
     },
     "broken_base_cap": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 5,
+     "counterfactual_rank": 117,
      "rank_points": 0.0
     },
     "technical_disagreement": {
-     "tournament_pct": 40.98,
-     "screen_pct": 21.99,
-     "rank_points": -18.98
+     "tournament_pct": 82.89,
+     "screen_pct": 4.32,
+     "rank_points": -78.57
     },
     "fundamental_disagreement": {
-     "tournament_pct": 87.59,
-     "screen_pct": 65.98,
-     "rank_points": -21.62
+     "tournament_pct": 97.18,
+     "screen_pct": 71.62,
+     "rank_points": -25.56
     }
    },
-   "cause": "visibility_override_excess",
-   "cause_rank_points": -36.65,
-   "cause_share_of_divergence": 0.52,
+   "cause": "technical_disagreement",
+   "cause_rank_points": -78.57,
+   "cause_share_of_divergence": 1.03,
+   "cause_flag": null
+  },
+  {
+   "ticker": "CINF",
+   "name": "Cincinnati Financial Corporati",
+   "sector": "Financial Services",
+   "divergence_pct_points": -68.5,
+   "direction": "screen ranks it higher (further up the board) than the tournament",
+   "tournament": {
+    "rank": 397,
+    "n": 541,
+    "pct": 73.38,
+    "composite": 21.82,
+    "tech_score": 11.0,
+    "fund_score": 10.82
+   },
+   "screen": {
+    "rank": 26,
+    "n": 532,
+    "pct": 4.89,
+    "rank_method_min": 26,
+    "composite": 47.6,
+    "fundamental": 22.0,
+    "technical": 15.6,
+    "technical_precap": 15.6,
+    "visibility": 10.0,
+    "visibility_fallback": 10.0,
+    "sector_prior": 14.0,
+    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
+    "visibility_legacy": 14.0,
+    "registry_override": false,
+    "override_rationale": null,
+    "corr_penalty": 0.0,
+    "leverage_penalty": 0.0,
+    "broken_base": false
+   },
+   "components": {
+    "visibility_override_excess": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 26,
+     "rank_points": 0.0
+    },
+    "correlation_penalty": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 26,
+     "rank_points": 0.0
+    },
+    "leverage_penalty": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 26,
+     "rank_points": 0.0
+    },
+    "broken_base_cap": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 26,
+     "rank_points": 0.0
+    },
+    "technical_disagreement": {
+     "tournament_pct": 69.17,
+     "screen_pct": 46.8,
+     "rank_points": -22.37
+    },
+    "fundamental_disagreement": {
+     "tournament_pct": 68.23,
+     "screen_pct": 2.07,
+     "rank_points": -66.17
+    }
+   },
+   "cause": "fundamental_disagreement",
+   "cause_rank_points": -66.17,
+   "cause_share_of_divergence": 0.97,
    "cause_flag": null
   },
   {
    "ticker": "VEEV",
    "name": "Veeva Systems Inc.",
    "sector": "Healthcare",
-   "divergence_pct_points": 67.7,
+   "divergence_pct_points": 67.15,
    "direction": "screen ranks it lower (further down the board) than the tournament",
    "tournament": {
-    "rank": 10,
+    "rank": 13,
     "n": 541,
-    "pct": 1.85,
-    "composite": 34.54,
-    "tech_score": 16.46,
+    "pct": 2.4,
+    "composite": 34.51,
+    "tech_score": 16.43,
     "fund_score": 18.08
    },
    "screen": {
     "rank": 370,
     "n": 532,
     "pct": 69.55,
-    "rank_method_min": 370,
+    "rank_method_min": 369,
     "composite": 38.5,
     "fundamental": 18.0,
     "technical": 10.5,
@@ -311,276 +453,63 @@
    "components": {
     "visibility_override_excess": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 370,
+     "counterfactual_rank": 369,
      "rank_points": 0.0
     },
     "correlation_penalty": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 370,
+     "counterfactual_rank": 369,
      "rank_points": 0.0
     },
     "leverage_penalty": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 370,
+     "counterfactual_rank": 369,
      "rank_points": 0.0
     },
     "broken_base_cap": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 370,
+     "counterfactual_rank": 369,
      "rank_points": 0.0
     },
     "technical_disagreement": {
-     "tournament_pct": 8.83,
-     "screen_pct": 98.31,
-     "rank_points": 89.47
+     "tournament_pct": 10.71,
+     "screen_pct": 98.12,
+     "rank_points": 87.41
     },
     "fundamental_disagreement": {
      "tournament_pct": 7.52,
-     "screen_pct": 33.08,
-     "rank_points": 25.56
+     "screen_pct": 33.46,
+     "rank_points": 25.94
     }
    },
    "cause": "technical_disagreement",
-   "cause_rank_points": 89.47,
-   "cause_share_of_divergence": 1.32,
-   "cause_flag": null
-  },
-  {
-   "ticker": "CINF",
-   "name": "Cincinnati Financial Corporati",
-   "sector": "Financial Services",
-   "divergence_pct_points": -63.87,
-   "direction": "screen ranks it higher (further up the board) than the tournament",
-   "tournament": {
-    "rank": 374,
-    "n": 541,
-    "pct": 69.13,
-    "composite": 22.48,
-    "tech_score": 11.66,
-    "fund_score": 10.82
-   },
-   "screen": {
-    "rank": 28,
-    "n": 532,
-    "pct": 5.26,
-    "rank_method_min": 28,
-    "composite": 48.0,
-    "fundamental": 22.0,
-    "technical": 16.0,
-    "technical_precap": 16.0,
-    "visibility": 10.0,
-    "visibility_fallback": 10.0,
-    "sector_prior": 14.0,
-    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
-    "visibility_legacy": 14.0,
-    "registry_override": false,
-    "override_rationale": null,
-    "corr_penalty": 0.0,
-    "leverage_penalty": 0.0,
-    "broken_base": false
-   },
-   "components": {
-    "visibility_override_excess": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 28,
-     "rank_points": 0.0
-    },
-    "correlation_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 28,
-     "rank_points": 0.0
-    },
-    "leverage_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 28,
-     "rank_points": 0.0
-    },
-    "broken_base_cap": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 28,
-     "rank_points": 0.0
-    },
-    "technical_disagreement": {
-     "tournament_pct": 60.34,
-     "screen_pct": 40.04,
-     "rank_points": -20.3
-    },
-    "fundamental_disagreement": {
-     "tournament_pct": 68.23,
-     "screen_pct": 2.26,
-     "rank_points": -65.98
-    }
-   },
-   "cause": "fundamental_disagreement",
-   "cause_rank_points": -65.98,
-   "cause_share_of_divergence": 1.03,
-   "cause_flag": null
-  },
-  {
-   "ticker": "XYL",
-   "name": "Xylem Inc.",
-   "sector": "Industrials",
-   "divergence_pct_points": -63.78,
-   "direction": "screen ranks it higher (further up the board) than the tournament",
-   "tournament": {
-    "rank": 461,
-    "n": 541,
-    "pct": 85.21,
-    "composite": 19.9,
-    "tech_score": 10.23,
-    "fund_score": 9.68
-   },
-   "screen": {
-    "rank": 114,
-    "n": 532,
-    "pct": 21.43,
-    "rank_method_min": 112,
-    "composite": 44.3,
-    "fundamental": 16.0,
-    "technical": 18.3,
-    "technical_precap": 18.3,
-    "visibility": 10.0,
-    "visibility_fallback": 10.0,
-    "sector_prior": 14.0,
-    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
-    "visibility_legacy": 14.0,
-    "registry_override": false,
-    "override_rationale": null,
-    "corr_penalty": 0.0,
-    "leverage_penalty": 0.0,
-    "broken_base": false
-   },
-   "components": {
-    "visibility_override_excess": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 112,
-     "rank_points": 0.0
-    },
-    "correlation_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 112,
-     "rank_points": 0.0
-    },
-    "leverage_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 112,
-     "rank_points": 0.0
-    },
-    "broken_base_cap": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 112,
-     "rank_points": 0.0
-    },
-    "technical_disagreement": {
-     "tournament_pct": 76.69,
-     "screen_pct": 8.83,
-     "rank_points": -67.86
-    },
-    "fundamental_disagreement": {
-     "tournament_pct": 80.64,
-     "screen_pct": 59.59,
-     "rank_points": -21.05
-    }
-   },
-   "cause": "technical_disagreement",
-   "cause_rank_points": -67.86,
-   "cause_share_of_divergence": 1.06,
-   "cause_flag": null
-  },
-  {
-   "ticker": "SNDK",
-   "name": "Sandisk Corporation",
-   "sector": "Technology",
-   "divergence_pct_points": 62.41,
-   "direction": "screen ranks it lower (further down the board) than the tournament",
-   "tournament": {
-    "rank": 2,
-    "n": 541,
-    "pct": 0.37,
-    "composite": 38.41,
-    "tech_score": 16.26,
-    "fund_score": 22.15
-   },
-   "screen": {
-    "rank": 334,
-    "n": 532,
-    "pct": 62.78,
-    "rank_method_min": 331,
-    "composite": 39.5,
-    "fundamental": 19.5,
-    "technical": 12.0,
-    "technical_precap": 18.1,
-    "visibility": 10.0,
-    "visibility_fallback": 10.0,
-    "sector_prior": 13.0,
-    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
-    "visibility_legacy": 15.0,
-    "registry_override": false,
-    "override_rationale": null,
-    "corr_penalty": -2.0,
-    "leverage_penalty": 0.0,
-    "broken_base": true
-   },
-   "components": {
-    "visibility_override_excess": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 331,
-     "rank_points": 0.0
-    },
-    "correlation_penalty": {
-     "contribution_pts": -2.0,
-     "counterfactual_rank": 244,
-     "rank_points": 16.35
-    },
-    "leverage_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 331,
-     "rank_points": 0.0
-    },
-    "broken_base_cap": {
-     "contribution_pts": -6.1,
-     "counterfactual_rank": 70,
-     "rank_points": 49.06
-    },
-    "technical_disagreement": {
-     "tournament_pct": 10.9,
-     "screen_pct": 10.9,
-     "rank_points": 0.0
-    },
-    "fundamental_disagreement": {
-     "tournament_pct": 0.75,
-     "screen_pct": 16.35,
-     "rank_points": 15.6
-    }
-   },
-   "cause": "broken_base_cap",
-   "cause_rank_points": 49.06,
-   "cause_share_of_divergence": 0.79,
+   "cause_rank_points": 87.41,
+   "cause_share_of_divergence": 1.3,
    "cause_flag": null
   },
   {
    "ticker": "HLT",
    "name": "Hilton Worldwide Holdings Inc.",
    "sector": "Consumer Cyclical",
-   "divergence_pct_points": 62.02,
+   "divergence_pct_points": 64.08,
    "direction": "screen ranks it lower (further down the board) than the tournament",
    "tournament": {
-    "rank": 177,
+    "rank": 174,
     "n": 541,
-    "pct": 32.72,
-    "composite": 27.01,
-    "tech_score": 12.95,
+    "pct": 32.16,
+    "composite": 26.87,
+    "tech_score": 12.81,
     "fund_score": 14.06
    },
    "screen": {
-    "rank": 504,
+    "rank": 512,
     "n": 532,
-    "pct": 94.74,
-    "rank_method_min": 504,
-    "composite": 30.7,
+    "pct": 96.24,
+    "rank_method_min": 512,
+    "composite": 30.1,
     "fundamental": 14.0,
-    "technical": 10.2,
-    "technical_precap": 10.2,
+    "technical": 9.6,
+    "technical_precap": 9.6,
     "visibility": 10.0,
     "visibility_fallback": 10.0,
     "sector_prior": 11.0,
@@ -595,52 +524,194 @@
    "components": {
     "visibility_override_excess": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 504,
+     "counterfactual_rank": 512,
      "rank_points": 0.0
     },
     "correlation_penalty": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 504,
+     "counterfactual_rank": 512,
      "rank_points": 0.0
     },
     "leverage_penalty": {
      "contribution_pts": -3.5,
-     "counterfactual_rank": 473,
-     "rank_points": 5.83
+     "counterfactual_rank": 471,
+     "rank_points": 7.71
     },
     "broken_base_cap": {
      "contribution_pts": 0.0,
-     "counterfactual_rank": 504,
+     "counterfactual_rank": 512,
      "rank_points": 0.0
     },
     "technical_disagreement": {
-     "tournament_pct": 44.17,
-     "screen_pct": 99.25,
-     "rank_points": 55.08
+     "tournament_pct": 43.23,
+     "screen_pct": 100.0,
+     "rank_points": 56.77
     },
     "fundamental_disagreement": {
      "tournament_pct": 30.45,
-     "screen_pct": 81.39,
-     "rank_points": 50.94
+     "screen_pct": 81.58,
+     "rank_points": 51.13
     }
    },
    "cause": "technical_disagreement",
-   "cause_rank_points": 55.08,
+   "cause_rank_points": 56.77,
    "cause_share_of_divergence": 0.89,
+   "cause_flag": null
+  },
+  {
+   "ticker": "AMAT",
+   "name": "Applied Materials, Inc.",
+   "sector": "Technology",
+   "divergence_pct_points": 63.97,
+   "direction": "screen ranks it lower (further down the board) than the tournament",
+   "tournament": {
+    "rank": 20,
+    "n": 541,
+    "pct": 3.7,
+    "composite": 33.9,
+    "tech_score": 17.62,
+    "fund_score": 16.28
+   },
+   "screen": {
+    "rank": 360,
+    "n": 532,
+    "pct": 67.67,
+    "rank_method_min": 356,
+    "composite": 39.0,
+    "fundamental": 19.0,
+    "technical": 12.0,
+    "technical_precap": 19.1,
+    "visibility": 10.0,
+    "visibility_fallback": 10.0,
+    "sector_prior": 13.0,
+    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
+    "visibility_legacy": 14.0,
+    "registry_override": false,
+    "override_rationale": null,
+    "corr_penalty": -2.0,
+    "leverage_penalty": 0.0,
+    "broken_base": true
+   },
+   "components": {
+    "visibility_override_excess": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 356,
+     "rank_points": 0.0
+    },
+    "correlation_penalty": {
+     "contribution_pts": -2.0,
+     "counterfactual_rank": 250,
+     "rank_points": 19.92
+    },
+    "leverage_penalty": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 356,
+     "rank_points": 0.0
+    },
+    "broken_base_cap": {
+     "contribution_pts": -7.1,
+     "counterfactual_rank": 50,
+     "rank_points": 57.52
+    },
+    "technical_disagreement": {
+     "tournament_pct": 4.89,
+     "screen_pct": 3.38,
+     "rank_points": -1.5
+    },
+    "fundamental_disagreement": {
+     "tournament_pct": 18.23,
+     "screen_pct": 20.68,
+     "rank_points": 2.44
+    }
+   },
+   "cause": "broken_base_cap",
+   "cause_rank_points": 57.52,
+   "cause_share_of_divergence": 0.9,
+   "cause_flag": null
+  },
+  {
+   "ticker": "INTC",
+   "name": "Intel Corporation",
+   "sector": "Technology",
+   "divergence_pct_points": 63.28,
+   "direction": "screen ranks it lower (further down the board) than the tournament",
+   "tournament": {
+    "rank": 160,
+    "n": 541,
+    "pct": 29.57,
+    "composite": 27.17,
+    "tech_score": 20.15,
+    "fund_score": 7.02
+   },
+   "screen": {
+    "rank": 494,
+    "n": 532,
+    "pct": 92.86,
+    "rank_method_min": 493,
+    "composite": 32.5,
+    "fundamental": 13.0,
+    "technical": 12.0,
+    "technical_precap": 19.8,
+    "visibility": 10.0,
+    "visibility_fallback": 10.0,
+    "sector_prior": 13.0,
+    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
+    "visibility_legacy": 13.0,
+    "registry_override": false,
+    "override_rationale": null,
+    "corr_penalty": -2.0,
+    "leverage_penalty": -0.5,
+    "broken_base": true
+   },
+   "components": {
+    "visibility_override_excess": {
+     "contribution_pts": 0.0,
+     "counterfactual_rank": 493,
+     "rank_points": 0.0
+    },
+    "correlation_penalty": {
+     "contribution_pts": -2.0,
+     "counterfactual_rank": 461,
+     "rank_points": 6.02
+    },
+    "leverage_penalty": {
+     "contribution_pts": -0.5,
+     "counterfactual_rank": 481,
+     "rank_points": 2.26
+    },
+    "broken_base_cap": {
+     "contribution_pts": -7.8,
+     "counterfactual_rank": 281,
+     "rank_points": 39.85
+    },
+    "technical_disagreement": {
+     "tournament_pct": 0.38,
+     "screen_pct": 0.75,
+     "rank_points": 0.38
+    },
+    "fundamental_disagreement": {
+     "tournament_pct": 95.11,
+     "screen_pct": 86.09,
+     "rank_points": -9.02
+    }
+   },
+   "cause": "broken_base_cap",
+   "cause_rank_points": 39.85,
+   "cause_share_of_divergence": 0.63,
    "cause_flag": null
   },
   {
    "ticker": "GEV",
    "name": "GE Vernova Inc.",
    "sector": "Industrials",
-   "divergence_pct_points": -59.89,
+   "divergence_pct_points": -62.29,
    "direction": "screen ranks it higher (further up the board) than the tournament",
    "tournament": {
-    "rank": 325,
+    "rank": 338,
     "n": 541,
-    "pct": 60.07,
-    "composite": 23.73,
-    "tech_score": 11.21,
+    "pct": 62.48,
+    "composite": 23.42,
+    "tech_score": 10.9,
     "fund_score": 12.52
    },
    "screen": {
@@ -648,10 +719,10 @@
     "n": 532,
     "pct": 0.19,
     "rank_method_min": 1,
-    "composite": 59.3,
+    "composite": 59.1,
     "fundamental": 20.0,
-    "technical": 16.3,
-    "technical_precap": 16.3,
+    "technical": 16.1,
+    "technical_precap": 16.1,
     "visibility": 23.0,
     "visibility_fallback": 10.0,
     "sector_prior": 14.0,
@@ -666,8 +737,8 @@
    "components": {
     "visibility_override_excess": {
      "contribution_pts": 13.0,
-     "counterfactual_rank": 48,
-     "rank_points": -8.83
+     "counterfactual_rank": 49,
+     "rank_points": -9.02
     },
     "correlation_penalty": {
      "contribution_pts": 0.0,
@@ -685,90 +756,19 @@
      "rank_points": 0.0
     },
     "technical_disagreement": {
-     "tournament_pct": 65.6,
-     "screen_pct": 32.14,
-     "rank_points": -33.46
+     "tournament_pct": 69.92,
+     "screen_pct": 35.34,
+     "rank_points": -34.59
     },
     "fundamental_disagreement": {
      "tournament_pct": 45.49,
-     "screen_pct": 11.09,
-     "rank_points": -34.4
-    }
-   },
-   "cause": "fundamental_disagreement",
-   "cause_rank_points": -34.4,
-   "cause_share_of_divergence": 0.57,
-   "cause_flag": null
-  },
-  {
-   "ticker": "MRNA",
-   "name": "Moderna, Inc.",
-   "sector": "Healthcare",
-   "divergence_pct_points": 58.47,
-   "direction": "screen ranks it lower (further down the board) than the tournament",
-   "tournament": {
-    "rank": 183,
-    "n": 541,
-    "pct": 33.83,
-    "composite": 26.78,
-    "tech_score": 16.67,
-    "fund_score": 10.11
-   },
-   "screen": {
-    "rank": 491,
-    "n": 532,
-    "pct": 92.29,
-    "rank_method_min": 491,
-    "composite": 32.5,
-    "fundamental": 10.0,
-    "technical": 12.5,
-    "technical_precap": 12.5,
-    "visibility": 10.0,
-    "visibility_fallback": 10.0,
-    "sector_prior": 15.0,
-    "sector_prior_source": "SECTOR_VIS_PRIORS[sector]",
-    "visibility_legacy": 15.0,
-    "registry_override": false,
-    "override_rationale": null,
-    "corr_penalty": 0.0,
-    "leverage_penalty": 0.0,
-    "broken_base": false
-   },
-   "components": {
-    "visibility_override_excess": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 491,
-     "rank_points": 0.0
-    },
-    "correlation_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 491,
-     "rank_points": 0.0
-    },
-    "leverage_penalty": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 491,
-     "rank_points": 0.0
-    },
-    "broken_base_cap": {
-     "contribution_pts": 0.0,
-     "counterfactual_rank": 491,
-     "rank_points": 0.0
-    },
-    "technical_disagreement": {
-     "tournament_pct": 6.95,
-     "screen_pct": 86.84,
-     "rank_points": 79.89
-    },
-    "fundamental_disagreement": {
-     "tournament_pct": 75.19,
-     "screen_pct": 96.05,
-     "rank_points": 20.86
+     "screen_pct": 11.47,
+     "rank_points": -34.02
     }
    },
    "cause": "technical_disagreement",
-   "cause_rank_points": 79.89,
-   "cause_share_of_divergence": 1.37,
+   "cause_rank_points": -34.59,
+   "cause_share_of_divergence": 0.56,
    "cause_flag": null
   }
  ]
