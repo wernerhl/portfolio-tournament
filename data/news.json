@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-19",
- "fetched_at": "2026-10-20T14:21:47-04:00",
+ "as_of": "2026-10-20",
+ "fetched_at": "2026-10-20T18:56:17-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=65 (parsed 41 names)",
+  "edgar": "ok n=70 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=7 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
@@ -86,12 +86,92 @@
   "unparseable": 0
  },
  "counts": {
-  "items": 91,
-  "tier1": 91,
+  "items": 96,
+  "tier1": 96,
   "tier2": 0,
-  "last24h": 30
+  "last24h": 34
  },
  "items": [
+  {
+   "id": "7c37b89e071f0516991e5c4d409054dee0fee9cf",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by POWELL INDUSTRIES INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000133/xslF345X06/wk-form4_1792528510.xml",
+   "timestamp": "2026-10-20T16:35:13-04:00",
+   "tickers": [
+    "POWL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-20 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "97e7109ad1b94334d28d59a8a9866ab2ab09a253",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by RTX Corp",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/101829/000010182926000031/rtx-20260930.htm",
+   "timestamp": "2026-10-20T16:33:21-04:00",
+   "tickers": [
+    "RTX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-20 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "73f409bfeed140f6221015e901d5dd740214f787",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by VERTEX PHARMACEUTICALS INC / MA",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/875320/000087532026000278/vrtx-20261020.htm",
+   "timestamp": "2026-10-20T16:09:27-04:00",
+   "tickers": [
+    "VRTX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-20 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c0f87efb819685adc5ed27048352c9abc56a2486",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000290/nflx-20261020.htm",
+   "timestamp": "2026-10-20T16:01:55-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-20 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b335b19798ada9c07de72a57dbd7ee76a3235e69",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by NORTHROP GRUMMAN CORP /DE/",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1133421/000113342126000038/noc-20260930.htm",
+   "timestamp": "2026-10-20T16:01:50-04:00",
+   "tickers": [
+    "NOC"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-20 · 10-Q",
+   "disclosure_lag_label": null
+  },
   {
    "id": "472e0799c0c648aaa11cd8044edb8bb15695f96c",
    "tier": 1,
@@ -1566,6 +1646,11 @@
   ]
  },
  "last24h": [
+  "7c37b89e071f0516991e5c4d409054dee0fee9cf",
+  "97e7109ad1b94334d28d59a8a9866ab2ab09a253",
+  "73f409bfeed140f6221015e901d5dd740214f787",
+  "c0f87efb819685adc5ed27048352c9abc56a2486",
+  "b335b19798ada9c07de72a57dbd7ee76a3235e69",
   "472e0799c0c648aaa11cd8044edb8bb15695f96c",
   "d0faa778b2e3db1caa3f576e9c7c27bb2a876b0c",
   "ffe57f1250dbeaa80fe304435db531775f388bff",
@@ -1594,7 +1679,6 @@
   "bfe99fff85a71b5468ecbdfec7f913b3e1741003",
   "c46c56cb6a50ccc1fb066e4eb7b472718835f7f6",
   "ed48a494332992d023f68db6c825ae5e7934e7b7",
-  "7aa6d171b1e6005943cb49de9dd3df1038b20ac9",
-  "9057e34d3921fda520685c3caf4ee5fea48afb66"
+  "7aa6d171b1e6005943cb49de9dd3df1038b20ac9"
  ]
 }
