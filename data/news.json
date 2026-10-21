@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-20",
- "fetched_at": "2026-10-21T14:23:47-04:00",
+ "as_of": "2026-10-21",
+ "fetched_at": "2026-10-21T19:02:02-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,10 +64,10 @@
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=59 (parsed 41 names)",
+  "edgar": "ok n=62 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=13 (parsed 20)",
-  "ir_gev": "ok n=2 (parsed 20)",
+  "ir_gev": "ok n=1 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -81,17 +81,65 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 7,
-  "out_of_window": 25199,
+  "irrelevant": 9,
+  "out_of_window": 25198,
   "unparseable": 0
  },
  "counts": {
-  "items": 99,
-  "tier1": 99,
+  "items": 100,
+  "tier1": 100,
   "tier2": 0,
-  "last24h": 20
+  "last24h": 22
  },
  "items": [
+  {
+   "id": "254d626863222287003b55f4bab37ed1fcc83bf7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326015980/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-21T18:07:36-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-21 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "36c61d6a412cd87f91ab1335fdb204928277b361",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-20261019.htm",
+   "timestamp": "2026-10-21T16:03:35-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-21 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "de21095e0de04f703506bd3f92a5bf90a46e96e6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+   "timestamp": "2026-10-21T16:01:46-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-21 · 10-Q",
+   "disclosure_lag_label": null
+  },
   {
    "id": "37991df881f884cdb2d48570fafdab6d3b0e71f0",
    "tier": 1,
@@ -1639,44 +1687,11 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-14 · 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "6f4811a01da4b661a352f9e6b257663b0d23b8fd",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Airbnb, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1559720/000119312526421722/xslF345X06/ownership.xml",
-   "timestamp": "2026-10-14T16:28:34-04:00",
-   "tickers": [
-    "ABNB"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-14 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "968ce1989adc0642fd17e0394255f5949a4861e2",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Net Zero Without Compromising Reliability: GE Vernova Shows How Spain Can Design a Power System That Achieves Both",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/net-zero-without-compromising-reliability-ge-vernova-shows-how-spain-can-design",
-   "timestamp": "2026-10-14T16:13:02-04:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
-   "42b858d495fbb09e5e9dd9ebaaaa3273070bcb9f",
-   "968ce1989adc0642fd17e0394255f5949a4861e2"
+   "42b858d495fbb09e5e9dd9ebaaaa3273070bcb9f"
   ],
   "NVDA": [
    "37991df881f884cdb2d48570fafdab6d3b0e71f0",
@@ -1694,6 +1709,9 @@
   ]
  },
  "last24h": [
+  "254d626863222287003b55f4bab37ed1fcc83bf7",
+  "36c61d6a412cd87f91ab1335fdb204928277b361",
+  "de21095e0de04f703506bd3f92a5bf90a46e96e6",
   "37991df881f884cdb2d48570fafdab6d3b0e71f0",
   "b907d27ced0f33b211066a929a90174486c58aa9",
   "f23e80246a4bb23c7fa3f81e8827458d43dad40c",
@@ -1712,7 +1730,6 @@
   "7c37b89e071f0516991e5c4d409054dee0fee9cf",
   "97e7109ad1b94334d28d59a8a9866ab2ab09a253",
   "c0f87efb819685adc5ed27048352c9abc56a2486",
-  "b335b19798ada9c07de72a57dbd7ee76a3235e69",
-  "73f409bfeed140f6221015e901d5dd740214f787"
+  "b335b19798ada9c07de72a57dbd7ee76a3235e69"
  ]
 }
