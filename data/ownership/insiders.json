@@ -2617,6 +2617,52 @@
       "sales_shown_label": "sales are mostly compensation or diversification",
       "window_trades": 100
     },
+    "UAL": {
+      "card": false,
+      "cik": "0000100517",
+      "cluster": {
+        "flag": false,
+        "n_distinct_buyers_30d": 0,
+        "window_start": null,
+        "window_end": null,
+        "buyers": [],
+        "rule": "3 or more distinct opportunistic buyers with trade dates spanning at most 30 calendar days"
+      },
+      "counts": {
+        "purchases_90d": {
+          "opportunistic": 0,
+          "routine": 0,
+          "distinct_opportunistic_buyers": 0
+        },
+        "sales_90d": {
+          "opportunistic": 6,
+          "routine": 0,
+          "distinct_opportunistic_sellers": 4
+        }
+      },
+      "roles": [
+        "board"
+      ],
+      "routine_excluded": {
+        "purchases": 0,
+        "sales": 0
+      },
+      "sales_cluster": {
+        "flag": true,
+        "n_distinct_sellers_30d": 4,
+        "window_start": "2026-07-24",
+        "window_end": "2026-08-04",
+        "sellers": [
+          "Enqvist Torbjorn J",
+          "Hart Brett J",
+          "Leskinen Michael D.",
+          "Nocella Andrew P"
+        ],
+        "rule": "3 or more distinct opportunistic sellers with trade dates spanning at most 30 calendar days"
+      },
+      "sales_shown_label": "sales are mostly compensation or diversification",
+      "window_trades": 6
+    },
     "UBER": {
       "card": false,
       "cik": "0001543151",
@@ -3671,6 +3717,32 @@
           "opportunistic": 0,
           "routine": 0,
           "distinct_opportunistic_sellers": 0
+        }
+      },
+      "routine_excluded": {
+        "purchases": 0,
+        "sales": 0
+      },
+      "held": false
+    },
+    "UAL": {
+      "cluster_flag": false,
+      "n_distinct_buyers_30d": 0,
+      "cluster_window": [
+        null,
+        null
+      ],
+      "sales_cluster_flag": true,
+      "counts": {
+        "purchases_90d": {
+          "opportunistic": 0,
+          "routine": 0,
+          "distinct_opportunistic_buyers": 0
+        },
+        "sales_90d": {
+          "opportunistic": 6,
+          "routine": 0,
+          "distinct_opportunistic_sellers": 4
         }
       },
       "routine_excluded": {

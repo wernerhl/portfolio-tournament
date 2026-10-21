@@ -11710,7 +11710,7 @@
           "field": "revenueGrowth",
           "check": "revenue_spike",
           "reason": "quarterly revenue growth 1111.0% against an average of 47.5% over the prior four quarters (EDGAR, quarters to 2026-03-31): check for one-time items",
-          "status": "check fails",
+          "status": "check passes; held until the next filing",
           "flagged_at": "2026-10-06T04:28:45-06:00",
           "filing_at_flag": "0000927628-26-000089"
         }
@@ -11724,7 +11724,7 @@
         "operatingCashflow": 31452000256,
         "marketCap": 123654004736,
         "grossMargins": 0.0,
-        "operatingMargins": 0.33629
+        "operatingMargins": 0.37831002
       }
     },
     "COHR": {
@@ -11816,7 +11816,7 @@
         {
           "field": "forwardPE",
           "check": "pe_mismatch",
-          "reason": "forward P/E 16.5 and trailing P/E 56.3 differ by more than a factor of three",
+          "reason": "forward P/E 16.6 and trailing P/E 56.3 differ by more than a factor of three",
           "status": "check fails",
           "flagged_at": "2026-10-06T04:28:45-06:00",
           "filing_at_flag": "0000820318-26-000020"
@@ -27924,7 +27924,7 @@
         "operatingCashflow": 1311000064,
         "marketCap": 22206945280,
         "grossMargins": 0.0,
-        "operatingMargins": 0.3471
+        "operatingMargins": 0.37216
       }
     },
     "KEYS": {
@@ -36386,8 +36386,8 @@
         {
           "field": "forwardPE",
           "check": "pe_mismatch",
-          "reason": "forward P/E 16.2 and trailing P/E 49.8 differ by more than a factor of three",
-          "status": "check passes; held until the next filing",
+          "reason": "forward P/E 16.7 and trailing P/E 51.1 differ by more than a factor of three",
+          "status": "check fails",
           "flagged_at": "2026-10-16T08:42:18+00:00",
           "filing_at_flag": "0001097864-26-000017"
         }
@@ -47275,7 +47275,16 @@
           ]
         }
       },
-      "flags": [],
+      "flags": [
+        {
+          "field": "freeCashflow",
+          "check": "fcf_sign",
+          "reason": "provider free cash flow \u2212$568.6M has the opposite sign of the 10-Q for 2026-01-01 to 2026-06-30: operating cash flow +$6.41B less capital expenditure +$3.02B = +$3.39B",
+          "status": "check fails",
+          "flagged_at": "2026-10-21T10:30:49+00:00",
+          "filing_at_flag": "0000100517-26-000139"
+        }
+      ],
       "fields": {
         "shortName": "United Airlines Holdings, Inc.",
         "forwardPE": 7.8417187,
