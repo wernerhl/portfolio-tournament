@@ -1,13 +1,13 @@
 {
- "last_attempt": "2026-10-20T04:49:43-04:00",
+ "last_attempt": "2026-10-20T20:26:36-04:00",
  "last_success": "2026-10-20T04:49:43-04:00",
- "failure_reason": null,
- "session_date": "2026-10-19",
+ "failure_reason": "FRESHNESS tournament.json: max date 2026-10-19 < last session 2026-10-20; FRESHNESS thesis_daily.json: max date 2026-10-19 < last session 2026-10-20",
+ "session_date": "2026-10-20",
  "forced_publish_reason": null,
  "audit": {
-  "ran_at": "2026-10-20T10:40:28+00:00",
+  "ran_at": "2026-10-21T02:20:04+00:00",
   "scope": "all",
-  "n_findings": 39,
+  "n_findings": 41,
   "critical": [],
   "critical_other_repo": [],
   "xfile": [
@@ -15,14 +15,16 @@
   ],
   "high": [
    "book:holdings_age",
+   "brief:missing",
    "calendar:treasury_source",
    "governance:coverage",
    "governance:review_overdue",
    "nullguard",
    "options:captured_share",
+   "options:lens_spot_stale",
    "rates:stale",
+   "rates:vintage",
    "tournament:dead_columns",
-   "tournament:freshness",
    "universe:stale_ticker",
    "xfile:vol_single_source"
   ],
