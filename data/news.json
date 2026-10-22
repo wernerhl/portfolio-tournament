@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-21",
- "fetched_at": "2026-10-22T06:42:48-04:00",
+ "fetched_at": "2026-10-22T14:18:48-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -61,13 +61,13 @@
   "fed_speeches": "ok n=0 (parsed 15)",
   "bea": "ok n=0 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
-  "bls_release_day": "ok n=1 (constructed 1)",
-  "census": "ok n=1 (parsed 18)",
-  "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=63 (parsed 41 names)",
+  "bls_release_day": "ok n=0 (constructed 0)",
+  "census": "ok n=0 (parsed 18)",
+  "dol": "ok n=0 (parsed 10)",
+  "edgar": "ok n=64 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=13 (parsed 20)",
-  "ir_gev": "ok n=1 (parsed 20)",
+  "ir_nvda": "ok n=11 (parsed 20)",
+  "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -81,17 +81,49 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 9,
-  "out_of_window": 27272,
+  "irrelevant": 8,
+  "out_of_window": 27276,
   "unparseable": 0
  },
  "counts": {
-  "items": 95,
-  "tier1": 95,
+  "items": 91,
+  "tier1": 91,
   "tier2": 0,
-  "last24h": 12
+  "last24h": 14
  },
  "items": [
+  {
+   "id": "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova Foundation Marks Milestone as First Staffordshire Students Begin ‘Engineers of Change’ Programme",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-foundation-marks-milestone-first-staffordshire-students-begin-engineers",
+   "timestamp": "2026-10-22T08:45:07-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Blackstone Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526428297/d160590d8k.htm",
+   "timestamp": "2026-10-22T06:55:08-04:00",
+   "tickers": [
+    "BX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
+   "disclosure_lag_label": null
+  },
   {
    "id": "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
    "tier": 1,
@@ -1513,106 +1545,11 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "982bbbceda046eae1b61ef6e87ea0750d9162dae",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Volvo Cars and NVIDIA Expand Partnership to Advance Safe Automated Driving",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/volvo-cars-and-nvidia-expand-partnership-to-advance-safe-automated-driving",
-   "timestamp": "2026-10-15T13:30:00-04:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b255c91153a5c710ec4ab5eb8d83e2878b4e8162",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Adobe and NVIDIA Expand Collaboration to Speed Agentic Creation",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/adobe-and-nvidia-expand-collaboration-to-speed-agentic-creation",
-   "timestamp": "2026-10-15T13:00:00-04:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "83145ecc4ca8d132e6d56b26aba3dfcca503425e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Advance Monthly Sales for Retail and Food Services",
-   "source": "Census Bureau economic indicator",
-   "source_id": "census",
-   "url": "https://www.census.gov/retail/index.html",
-   "timestamp": "2026-10-15T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "RETAIL"
-   ],
-   "summary": "Tier 1 · Census Bureau economic indicator · topics: RETAIL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3f13a6923eb5f7139b0eda11569f3646554b31eb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "BLS release: Producer Price Index (September 2026)",
-   "source": "BLS (release page)",
-   "source_id": "bls_release_day",
-   "url": "https://www.bls.gov/news.release/ppi.nr0.htm#2026-10-15",
-   "timestamp": "2026-10-15T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "PPI"
-   ],
-   "summary": "scheduled release at 08:30 ET; print not fetched",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "58dac369e976cb8b3801fb278baa7e9a24e2f396",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Unemployment Insurance Weekly Claims Report",
-   "source": "Department of Labor release",
-   "source_id": "dol",
-   "url": "http://www.dol.gov/node/186182",
-   "timestamp": "2026-10-15T08:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "CLAIMS"
-   ],
-   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c2c32aeb286e2db4239700d9f71273af24ed58a0",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000150/all-20261015.htm",
-   "timestamp": "2026-10-15T07:41:31-04:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
    "42b858d495fbb09e5e9dd9ebaaaa3273070bcb9f"
   ],
   "NVDA": [
@@ -1631,6 +1568,8 @@
   ]
  },
  "last24h": [
+  "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
+  "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
   "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
   "bcfe22d89b63f118cd1e3c6aed5c888885e9051f",
   "ffd03110fdcce2c2e64729b57b341b56cf0e9c8f",
