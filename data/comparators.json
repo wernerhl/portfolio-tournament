@@ -1,24 +1,24 @@
 {
   "cadence": "daily",
-  "session_date": "2026-10-20",
-  "as_of": "2026-10-20",
-  "computed_at": "2026-10-21T05:03:37-04:00",
+  "session_date": "2026-10-21",
+  "as_of": "2026-10-21",
+  "computed_at": "2026-10-22T05:06:39-04:00",
   "index": "SPY (data/source/sector_etfs.parquet, dividend-adjusted)",
-  "index_through": "2026-10-20",
-  "index_last_close": 769.05,
+  "index_through": "2026-10-21",
+  "index_last_close": 773.09,
   "registration": "reports/c3_registration.md \u00a7B6 (constants verbatim; no re-tuning)",
   "note": "descriptive second opinion; no rule drives sizing",
   "regime": {
     "rule": "24-indicator regime index R_full (data/regime_v2_daily.csv), tier-4 mapping: cash = clamp(floor + R_full x slope, floor, max), exposure = 1 - cash",
     "state": "ELEVATED",
-    "R_full": 0.3837,
-    "cash": 0.3837,
-    "exposure": 0.6163,
+    "R_full": 0.3739,
+    "cash": 0.3739,
+    "exposure": 0.6261,
     "computed_from": {
-      "R_full": 0.3837,
-      "R_full_date": "2026-10-20",
+      "R_full": 0.3739,
+      "R_full_date": "2026-10-21",
       "label": "ELEVATED",
-      "label_date": "2026-10-20",
+      "label_date": "2026-10-21",
       "tier": "4_tactical",
       "tier4_mapping": {
         "cash_floor": 0.0,
@@ -26,11 +26,11 @@
         "cash_max": 1.0
       }
     },
-    "as_of": "2026-10-20",
+    "as_of": "2026-10-21",
     "evaluation": {
       "frequency": "daily"
     },
-    "session_date": "2026-10-20"
+    "session_date": "2026-10-21"
   },
   "rules": {
     "sma10": {
@@ -54,7 +54,7 @@
           ],
           [
             "2026-02-27",
-            680.6734
+            680.6735
           ],
           [
             "2026-03-31",
@@ -94,15 +94,15 @@
         "note": "state set at the last completed month-end close; the registered rebalance applies a new reading at the first session of the following month (B4/B5)"
       },
       "provisional_if_evaluated_today": {
-        "label": "PROVISIONAL - latest close 2026-10-20 treated as the October 2026 month-end; not the rule's state until the month completes",
-        "P": 769.05,
-        "sma10": 726.8977,
+        "label": "PROVISIONAL - latest close 2026-10-21 treated as the October 2026 month-end; not the rule's state until the month completes",
+        "P": 773.09,
+        "sma10": 727.3017,
         "state": "invested",
         "exposure": 1.0,
-        "through": "2026-10-20",
+        "through": "2026-10-21",
         "same_as_current": false
       },
-      "session_date": "2026-10-20"
+      "session_date": "2026-10-21"
     },
     "tsmom_12_1": {
       "rule": "Time-series momentum: sign of trailing twelve-month return excluding the last month (P_{m-1} / P_{m-12} - 1 on month-end closes); monthly; invested if positive, cash otherwise",
@@ -125,7 +125,7 @@
         "note": "state set at the last completed month-end close; the registered rebalance applies a new reading at the first session of the following month (B4/B5)"
       },
       "provisional_if_evaluated_today": {
-        "label": "PROVISIONAL - latest close 2026-10-20 treated as the October 2026 month-end; not the rule's state until the month completes",
+        "label": "PROVISIONAL - latest close 2026-10-21 treated as the October 2026 month-end; not the rule's state until the month completes",
         "note": "the 12-1 rule skips the latest month, so the next evaluation's reading is already fixed by known month-end closes",
         "P_m_1": 762.63,
         "P_m_1_date": "2026-09-30",
@@ -136,20 +136,20 @@
         "exposure": 1.0,
         "same_as_current": false
       },
-      "session_date": "2026-10-20"
+      "session_date": "2026-10-21"
     },
     "vol_target_10": {
       "rule": "Volatility targeting at 10% annualized with 60-day realized volatility (sample std of daily log returns x sqrt(252)); exposure = min(1.0, 0.10 / sigma), capped at 100%",
       "state": "scaled",
-      "exposure": 0.9133,
+      "exposure": 0.9105,
       "computed_from": {
-        "sigma_ann": 0.1095,
+        "sigma_ann": 0.1098,
         "target": 0.1,
         "cap": 1.0,
         "window_days": 60,
         "n_returns": 60,
-        "window_start": "2026-07-28",
-        "through": "2026-10-20"
+        "window_start": "2026-07-29",
+        "through": "2026-10-21"
       },
       "evaluation": {
         "frequency": "daily",
@@ -161,112 +161,112 @@
         "sigma_ann": 0.1113,
         "exposure": 0.8985
       },
-      "session_date": "2026-10-20"
+      "session_date": "2026-10-21"
     }
   },
   "book_posture": {
-    "beta_equity_sleeve": 2.007,
-    "beta_with_cash": 0.7148,
+    "beta_equity_sleeve": 1.9631,
+    "beta_with_cash": 0.7077,
     "beta_definition": "\u03a3 w \u03b2 over position betas; with cash: w over NAV (cash at beta 0); equity sleeve: w over equity; the constant-weight sleeve regression is the cross-check",
-    "sigma_book_60": 0.2532,
-    "sigma_book_126": 0.302,
-    "actual_equity_share": 0.3561,
-    "actual_cash_share": 0.6439,
-    "book_as_of": "2026-10-20",
-    "book_session": "2026-10-20",
+    "sigma_book_60": 0.2562,
+    "sigma_book_126": 0.2926,
+    "actual_equity_share": 0.3605,
+    "actual_cash_share": 0.6395,
+    "book_as_of": "2026-10-21",
+    "book_session": "2026-10-21",
     "translation": "index equity share \u00f7 equity-sleeve beta, capped at 100 percent",
     "rows": [
       {
         "rule": "regime schedule \u00b7 CAP PRES",
         "kind": "regime_schedule",
         "tier": "1_cap_pres",
-        "index_share": 0.4622,
-        "book_share": 0.2303,
+        "index_share": 0.4696,
+        "book_share": 0.2392,
         "full_deployment_index_share": 0.75,
-        "full_deployment_book_share": 0.3737,
+        "full_deployment_book_share": 0.382,
         "computed_from": {
-          "R_full": 0.3837,
+          "R_full": 0.3739,
           "cash_floor": 0.25,
           "cash_slope": 0.75,
           "cash_max": 1.0,
-          "cash": 0.5378
+          "cash": 0.5304
         },
-        "label": "cash = clamp(0.25 + R \u00d7 0.75, 0.25, 1.0) at R_full 0.384"
+        "label": "cash = clamp(0.25 + R \u00d7 0.75, 0.25, 1.0) at R_full 0.374"
       },
       {
         "rule": "regime schedule \u00b7 BALANCED",
         "kind": "regime_schedule",
         "tier": "2_balanced",
-        "index_share": 0.5814,
-        "book_share": 0.2897,
+        "index_share": 0.5883,
+        "book_share": 0.2997,
         "full_deployment_index_share": 0.85,
-        "full_deployment_book_share": 0.4235,
+        "full_deployment_book_share": 0.433,
         "computed_from": {
-          "R_full": 0.3837,
+          "R_full": 0.3739,
           "cash_floor": 0.15,
           "cash_slope": 0.7,
           "cash_max": 0.85,
-          "cash": 0.4186
+          "cash": 0.4117
         },
-        "label": "cash = clamp(0.15 + R \u00d7 0.7, 0.15, 0.85) at R_full 0.384"
+        "label": "cash = clamp(0.15 + R \u00d7 0.7, 0.15, 0.85) at R_full 0.374"
       },
       {
         "rule": "regime schedule \u00b7 AGGRESSIVE",
         "kind": "regime_schedule",
         "tier": "3_aggressive",
-        "index_share": 0.7465,
-        "book_share": 0.372,
+        "index_share": 0.7504,
+        "book_share": 0.3823,
         "full_deployment_index_share": 0.9,
-        "full_deployment_book_share": 0.4484,
+        "full_deployment_book_share": 0.4585,
         "computed_from": {
-          "R_full": 0.3837,
+          "R_full": 0.3739,
           "cash_floor": 0.1,
           "cash_slope": 0.4,
           "cash_max": 0.5,
-          "cash": 0.2535
+          "cash": 0.2496
         },
-        "label": "cash = clamp(0.1 + R \u00d7 0.4, 0.1, 0.5) at R_full 0.384"
+        "label": "cash = clamp(0.1 + R \u00d7 0.4, 0.1, 0.5) at R_full 0.374"
       },
       {
         "rule": "regime schedule \u00b7 TACTICAL",
         "kind": "regime_schedule",
         "tier": "4_tactical",
-        "index_share": 0.6163,
-        "book_share": 0.3071,
+        "index_share": 0.6261,
+        "book_share": 0.3189,
         "full_deployment_index_share": 1.0,
-        "full_deployment_book_share": 0.4983,
+        "full_deployment_book_share": 0.5094,
         "computed_from": {
-          "R_full": 0.3837,
+          "R_full": 0.3739,
           "cash_floor": 0.0,
           "cash_slope": 1.0,
           "cash_max": 1.0,
-          "cash": 0.3837
+          "cash": 0.3739
         },
-        "label": "cash = clamp(0.0 + R \u00d7 1.0, 0.0, 1.0) at R_full 0.384"
+        "label": "cash = clamp(0.0 + R \u00d7 1.0, 0.0, 1.0) at R_full 0.374"
       },
       {
         "rule": "regime schedule \u00b7 WERNER",
         "kind": "regime_schedule",
         "tier": "5_werner",
-        "index_share": 0.5814,
-        "book_share": 0.2897,
+        "index_share": 0.5883,
+        "book_share": 0.2997,
         "full_deployment_index_share": 0.85,
-        "full_deployment_book_share": 0.4235,
+        "full_deployment_book_share": 0.433,
         "computed_from": {
-          "R_full": 0.3837,
+          "R_full": 0.3739,
           "cash_floor": 0.15,
           "cash_slope": 0.7,
           "cash_max": 0.85,
-          "cash": 0.4186
+          "cash": 0.4117
         },
-        "label": "cash = clamp(0.15 + R \u00d7 0.7, 0.15, 0.85) at R_full 0.384"
+        "label": "cash = clamp(0.15 + R \u00d7 0.7, 0.15, 0.85) at R_full 0.374"
       },
       {
         "rule": "Ten-month simple moving average on SPY month-end closes",
         "kind": "c3_rule",
         "id": "sma10",
         "index_share": 1.0,
-        "book_share": 0.4983,
+        "book_share": 0.5094,
         "state": "invested"
       },
       {
@@ -274,46 +274,46 @@
         "kind": "c3_rule",
         "id": "tsmom_12_1",
         "index_share": 1.0,
-        "book_share": 0.4983,
+        "book_share": 0.5094,
         "state": "invested"
       },
       {
         "rule": "Volatility targeting at 10% annualized with 60-day realized volatility (sample std of daily log returns x sqrt(252))",
         "kind": "c3_rule",
         "id": "vol_target_10",
-        "index_share": 0.9133,
-        "book_share": 0.4551,
+        "index_share": 0.9105,
+        "book_share": 0.4638,
         "state": "scaled"
       },
       {
         "rule": "volatility targeting at 10%",
         "kind": "vol_target",
         "target": 0.1,
-        "index_share": 0.9133,
-        "book_share": 0.4551,
-        "book_share_on_book_vol": 0.3949,
-        "book_share_on_book_vol_126": 0.3311,
+        "index_share": 0.9105,
+        "book_share": 0.4638,
+        "book_share_on_book_vol": 0.3903,
+        "book_share_on_book_vol_126": 0.3418,
         "computed_from": {
-          "sigma_index_60": 0.1095,
-          "sigma_book_60": 0.2532,
-          "sigma_book_126": 0.302
+          "sigma_index_60": 0.1098,
+          "sigma_book_60": 0.2562,
+          "sigma_book_126": 0.2926
         },
-        "label": "index: min(1, 0.10/\u03c360 index 10.9%) translated by \u03b2; book: min(1, 0.10/\u03c360 book 25.3%) \u2014 the book's own realised volatility, not the index's (registered rule at 10%; 15% is a comparator, not registered)"
+        "label": "index: min(1, 0.10/\u03c360 index 11.0%) translated by \u03b2; book: min(1, 0.10/\u03c360 book 25.6%) \u2014 the book's own realised volatility, not the index's (registered rule at 10%; 15% is a comparator, not registered)"
       },
       {
         "rule": "volatility targeting at 15%",
         "kind": "vol_target",
         "target": 0.15,
         "index_share": 1.0,
-        "book_share": 0.4983,
-        "book_share_on_book_vol": 0.5924,
-        "book_share_on_book_vol_126": 0.4967,
+        "book_share": 0.5094,
+        "book_share_on_book_vol": 0.5855,
+        "book_share_on_book_vol_126": 0.5126,
         "computed_from": {
-          "sigma_index_60": 0.1095,
-          "sigma_book_60": 0.2532,
-          "sigma_book_126": 0.302
+          "sigma_index_60": 0.1098,
+          "sigma_book_60": 0.2562,
+          "sigma_book_126": 0.2926
         },
-        "label": "index: min(1, 0.15/\u03c360 index 10.9%) translated by \u03b2; book: min(1, 0.15/\u03c360 book 25.3%) \u2014 the book's own realised volatility, not the index's (not a registered rule; comparator)"
+        "label": "index: min(1, 0.15/\u03c360 index 11.0%) translated by \u03b2; book: min(1, 0.15/\u03c360 book 25.6%) \u2014 the book's own realised volatility, not the index's (not a registered rule; comparator)"
       }
     ],
     "note": "descriptive; no rule drives this book"

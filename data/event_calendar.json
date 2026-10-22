@@ -1,8 +1,8 @@
 {
   "version": "3.0",
-  "rebuilt_at": "2026-10-21",
+  "rebuilt_at": "2026-10-22",
   "cadence": "weekly",
-  "as_of": "2026-10-21",
+  "as_of": "2026-10-22",
   "note": "Scheduled macro events 2024-2027 from OFFICIAL release schedules (2027 BLS/BEA/Census = pattern estimate or rule; ISM by its published release rule; Treasury auctions from TreasuryDirect TA_WS and Treasury's tentative auction schedule, never a weekday pattern). CONDITIONING markers only \u2014 these encode ZERO directional information. Pre-FOMC drift is published, crowded, and decayed; do not add tilts.",
   "sources": {
     "CPI": "https://www.bls.gov/schedule/news_release/cpi.htm",
@@ -25,7 +25,7 @@
     "ta_ws_upcoming": {
       "source": "live",
       "url": "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json",
-      "retrieved_at": "2026-10-21",
+      "retrieved_at": "2026-10-22",
       "items": []
     },
     "ta_ws_auctioned": {
@@ -39,7 +39,7 @@
       "source": "live",
       "url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
       "pdf": "https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf",
-      "retrieved_at": "2026-10-21",
+      "retrieved_at": "2026-10-22",
       "parse": "XML (xml.etree), fetched at build time",
       "name": "Aug2026 Refunding Auction Calendar Official Ver 2",
       "start": "2026-08-05",
@@ -48,7 +48,7 @@
     "refunding": {
       "source": "live",
       "url": "https://home.treasury.gov/policy-issues/financing-the-government/quarterly-refunding/most-recent-quarterly-refunding-documents",
-      "retrieved_at": "2026-10-21",
+      "retrieved_at": "2026-10-22",
       "latest": "2026-08-05",
       "next": "2026-11-04"
     },
@@ -7278,6 +7278,17 @@
     {
       "date": "2026-10-20",
       "type": "EARNINGS",
+      "ticker": "NOC",
+      "name": "Earnings \u00b7 NOC",
+      "label": "NOC",
+      "source_url": "https://finance.yahoo.com/quote/NOC/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-20",
+      "type": "EARNINGS",
       "ticker": "RTX",
       "name": "Earnings \u00b7 RTX",
       "label": "RTX",
@@ -7294,6 +7305,28 @@
       "label": "RTX",
       "source_url": "https://finance.yahoo.com/quote/RTX/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-10-21T06:37:22-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-20",
+      "type": "EARNINGS",
+      "ticker": "RTX",
+      "name": "Earnings \u00b7 RTX",
+      "label": "RTX",
+      "source_url": "https://finance.yahoo.com/quote/RTX/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-20",
+      "type": "EARNINGS",
+      "ticker": "UAL",
+      "name": "Earnings \u00b7 UAL",
+      "label": "UAL",
+      "source_url": "https://finance.yahoo.com/quote/UAL/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -7339,24 +7372,14 @@
     },
     {
       "date": "2026-10-21",
-      "type": "TREASURY",
-      "name": "20-Year Bond auction (reopening)",
-      "label": "20Y reopening",
-      "impact": "low",
-      "source_url": "https://home.treasury.gov/system/files/221/TentativeAuctionScheduleQ32026.xml",
-      "retrieved_at": "2026-10-20",
-      "provenance": "tentative (Treasury tentative auction schedule \"Aug2026 Refunding Auction Calendar Official Ver 2\", 2026-08-05 to 2027-01-30; PDF https://home.treasury.gov/system/files/221/Tentative-Auction-Schedule.pdf; announcement scheduled 2026-10-15; replaced by the TA_WS announced date once announced)",
-      "time_et": "13:00",
-      "tenor": "20Y",
-      "reopening": true,
-      "tips": false,
-      "security_type": "Bond",
-      "security_term": "20-Year",
-      "original_term": "20-Year",
-      "cusip": null,
-      "announcement_date": "2026-10-15",
-      "tentative": true,
-      "status": "tentative"
+      "type": "EARNINGS",
+      "ticker": "META",
+      "name": "Earnings \u00b7 META",
+      "label": "META",
+      "source_url": "https://finance.yahoo.com/quote/META/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
     },
     {
       "date": "2026-10-22",
@@ -7377,6 +7400,17 @@
       "label": "BX",
       "source_url": "https://finance.yahoo.com/quote/BX/  (yfinance Ticker.calendar, 'Earnings Date')",
       "retrieved_at": "2026-10-21T06:37:22-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-10-22",
+      "type": "EARNINGS",
+      "ticker": "DECK",
+      "name": "Earnings \u00b7 DECK",
+      "label": "DECK",
+      "source_url": "https://finance.yahoo.com/quote/DECK/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -8172,7 +8206,7 @@
       "name": "Earnings \u00b7 CF",
       "label": "CF",
       "source_url": "https://finance.yahoo.com/quote/CF/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-10-14T06:46:06-04:00",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "impact": "medium"
     },
@@ -8205,7 +8239,7 @@
       "name": "Earnings \u00b7 EXPE",
       "label": "EXPE",
       "source_url": "https://finance.yahoo.com/quote/EXPE/  (yfinance Ticker.calendar, 'Earnings Date')",
-      "retrieved_at": "2026-10-08T23:36:41-04:00",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
       "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
       "history": [
         {
@@ -9407,6 +9441,28 @@
       "retrieved_at": "2026-09-30",
       "provenance": "release rule: Thursdays 08:30 ET; Wednesday in Thanksgiving week and when Thursday is a federal holiday (the weekly release states each week's embargo time)",
       "time_et": "08:30"
+    },
+    {
+      "date": "2027-01-21",
+      "type": "EARNINGS",
+      "ticker": "GE",
+      "name": "Earnings \u00b7 GE",
+      "label": "GE",
+      "source_url": "https://finance.yahoo.com/quote/GE/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
+    },
+    {
+      "date": "2027-01-21",
+      "type": "EARNINGS",
+      "ticker": "SCHW",
+      "name": "Earnings \u00b7 SCHW",
+      "label": "SCHW",
+      "source_url": "https://finance.yahoo.com/quote/SCHW/  (yfinance Ticker.calendar, 'Earnings Date')",
+      "retrieved_at": "2026-10-22T06:40:31-04:00",
+      "provenance": "provider earnings calendar (yfinance Ticker.calendar); the date is the provider's, estimated until the company confirms it",
+      "impact": "medium"
     },
     {
       "date": "2027-01-21",
