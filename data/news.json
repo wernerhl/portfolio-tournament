@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-22",
- "fetched_at": "2026-10-23T14:06:30-04:00",
+ "as_of": "2026-10-23",
+ "fetched_at": "2026-10-23T18:54:36-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=68 (parsed 41 names)",
+  "edgar": "ok n=71 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=9 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
@@ -81,17 +81,65 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 8,
-  "out_of_window": 26792,
+  "irrelevant": 9,
+  "out_of_window": 26791,
   "unparseable": 0
  },
  "counts": {
-  "items": 94,
-  "tier1": 94,
+  "items": 97,
+  "tier1": 97,
   "tier2": 0,
-  "last24h": 4
+  "last24h": 7
  },
  "items": [
+  {
+   "id": "ac80b7a53141d650ed15a9b48d4d05a0a5488a51",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000157/xslF345X06/wk-form4_1792788591.xml",
+   "timestamp": "2026-10-23T16:49:54-04:00",
+   "tickers": [
+    "HOOD"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-23 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e7e4d4d0188693c6ec1943f0ab4f9f4cceb9246b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000187091426000029/xslF345X06/wk-form4_1792787586.xml",
+   "timestamp": "2026-10-23T16:33:08-04:00",
+   "tickers": [
+    "HOOD"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-23 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "99e463e6d9dc14a80b5d48e21772a235ff8512cd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Blackstone Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000121390026112119/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-23T16:15:15-04:00",
+   "tickers": [
+    "BX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-23 · 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "dded74dbbc541680ad418149d2effb7221a7f0c4",
    "tier": 1,
@@ -1616,6 +1664,9 @@
   ]
  },
  "last24h": [
+  "ac80b7a53141d650ed15a9b48d4d05a0a5488a51",
+  "e7e4d4d0188693c6ec1943f0ab4f9f4cceb9246b",
+  "99e463e6d9dc14a80b5d48e21772a235ff8512cd",
   "dded74dbbc541680ad418149d2effb7221a7f0c4",
   "ccb91616aeba3e73c1b17436b45d90d7c100f56d",
   "3f0027c1ea09504e920df32f69eb1556156d391e",
