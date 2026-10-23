@@ -1,6 +1,6 @@
 last trading session: 2026-10-22
 [HIGH    ] tournament:dead_columns      regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_7_20_random_forest', 'p_15_40_gradient_boost']
-[HIGH    ] xfile:vol_single_source      intraday vix 19.04 vs canonical 16.68
+[HIGH    ] xfile:vol_single_source      intraday vix 19.56 vs canonical 19.03
 [HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
 [HIGH    ] governance:coverage          2_balanced: unclassified share 15% > 15%
 [HIGH    ] governance:coverage          3_aggressive: unclassified share 20% > 15%
@@ -8,10 +8,7 @@ last trading session: 2026-10-22
 [HIGH    ] governance:coverage          5_werner: unclassified share 17% > 15%
 [HIGH    ] book:holdings_age            holdings.json as_of 2026-09-30 is 16 sessions old (>5): confirm or re-export the account
 [HIGH    ] options:captured_share       13 of the last 20 trading days captured (65% < 90%); missing: ['2026-09-28 no_run_in_window', '2026-09-29 no_run_in_window', '2026-10-05 no_run_in_window', '2026-10-06 push_failed', '2026-10-07 push_failed', '2026-10-08 push_failed', '2026-10-12 no_run_in_window']
-[HIGH    ] options:lens_spot_stale      held names whose lens spot is not the last session 2026-10-22: ['AVGO: provider 1-minute tape', 'BMNR: provider 1-minute tape', 'GEV: provider 1-minute tape', 'GOOG: provider 1-minute tape', 'NVDA: provider 1-minute tape']
 [HIGH    ] rates:stale                  global-rates series older than their expected lag: ['us2: 2026-10-02 (14 business days behind 2026-10-22, allowed 2)', 'us10: 2026-10-02 (14 business days behind 2026-10-22, allowed 2)', 'us30: 2026-10-02 (14 business days behind 2026-10-22, allowed 2)', 'us_real10: 2026-10-02 (14 business days behind 2026-10-22, allowed 2)', 'us_be10: 2026-10-05 (13 business days behind 2026-10-22, allowed 2)', 'us_tp_kw: 2026-09-25 (19 business days behind 2026-10-22, allowed 8)', 'effr: 2026-10-02 (14 business days behind 2026-10-22, allowed 2)', 'us3m: 2026-10-02 (14 business days behind 2026-10-22, allowed 2)']
-[HIGH    ] rates:vintage                no rates vintage for the session 2026-10-22 (latest 2026-10-21)
-[HIGH    ] brief:missing                no brief entry for the last session 2026-10-22 (last: 2026-10-21)
 [HIGH    ] governance:review_overdue    visibility override AMZN review_by 2026-08-13 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override ANET review_by 2026-08-18 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override AVGO review_by 2026-09-17 passed (decay should be active)
@@ -21,8 +18,8 @@ last trading session: 2026-10-22
 [HIGH    ] governance:review_overdue    visibility override NVDA review_by 2026-09-09 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override ORCL review_by 2026-09-23 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override VRT review_by 2026-08-12 passed (decay should be active)
-[HIGH    ] calendar:treasury_source     4 tentative auction(s) past their announcement date and not announced in TA_WS: 2026-10-22 TIPS 5Y (scheduled announcement 2026-10-15); 2026-10-26 2Y (scheduled announcement 2026-10-22); 2026-10-27 5Y (scheduled announcement 2026-10-22); 2026-10-29 7Y (scheduled announcement 2026-10-22)
-[HIGH    ] universe:stale_ticker        universe names with no price bar in the last five sessions (2026-10-15..2026-10-21): ['AVB', 'CFLT', 'EA', 'PSTG', 'WBD']
+[HIGH    ] calendar:treasury_source     3 tentative auction(s) past their announcement date and not announced in TA_WS: 2026-10-26 2Y (scheduled announcement 2026-10-22); 2026-10-27 5Y (scheduled announcement 2026-10-22); 2026-10-29 7Y (scheduled announcement 2026-10-22)
+[HIGH    ] universe:stale_ticker        universe names with no price bar in the last five sessions (2026-10-16..2026-10-22): ['AVB', 'CFLT', 'EA', 'PSTG', 'WBD']
 [MEDIUM  ] v4:calibration_evaluation    v4_calibration.json lacks evaluation: out_of_fold with a fold definition (in-sample reliability is not calibration evidence)
 [INFO    ] tournament:freshness         loco_cv_results.csv: no date axis found (static config?)
 [INFO    ] tournament:freshness         ml_indicator_weights.csv: no date axis found (static config?)
@@ -39,7 +36,7 @@ last trading session: 2026-10-22
 [INFO    ] analyst:snapshot_index       1 missed day(s) on record: ['2026-10-16']
 [INFO    ] rates:vintage_session        rates vintage 2026-10-06 holds the 2026-10-05 session (erratum erratum-2026-10-06-rates-vintage-1; the file stays as written)
 [INFO    ] universe:index_gap           9 current index members (as of 2026-09-30) not in the universe; listed for the owner, never added by the pipeline: ['BE', 'FDXF', 'FERG', 'FLEX', 'HONA', 'ILMN', 'P', 'Q', 'RDDT']
-[INFO    ] site:session                 live site session 2026-10-21, 17.5 h since its last publish (last session 2026-10-22)
+[INFO    ] site:session                 live site session 2026-10-22, 25.8 h since its last publish (last session 2026-10-22)
 
-41 findings; 0 CRITICAL
-REFEREE COMPLETE: 41 findings; 0 CRITICAL
+38 findings; 0 CRITICAL
+REFEREE COMPLETE: 38 findings; 0 CRITICAL

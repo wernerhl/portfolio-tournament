@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-22",
- "fetched_at": "2026-10-22T18:58:25-04:00",
+ "fetched_at": "2026-10-23T06:38:07-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -14,46 +14,46 @@
    "BMNR"
   ],
   "top40": [
-   "GEV",
-   "GOOG",
    "TSM",
-   "AVGO",
+   "GOOG",
+   "GEV",
    "LMT",
+   "AVGO",
    "RTX",
-   "NVDA",
-   "BX",
-   "GE",
-   "INCY",
-   "SCHW",
    "META",
-   "AMP",
+   "SCHW",
    "NOC",
-   "PATH",
    "QCOM",
+   "AMP",
+   "INCY",
+   "NVDA",
+   "PATH",
    "DXCM",
-   "NFLX",
    "HOOD",
    "APP",
+   "CEG",
+   "NEM",
+   "BX",
    "UBER",
+   "UAL",
+   "CSCO",
+   "NFLX",
    "TROW",
    "NXPI",
-   "ADBE",
    "RJF",
-   "POWL",
-   "UAL",
-   "GEN",
-   "BMY",
-   "CEG",
-   "CF",
+   "NTAP",
+   "STX",
    "ORCL",
-   "BKNG",
    "EXPE",
+   "TEL",
+   "BKNG",
    "DECK",
-   "CSCO",
-   "NEM",
-   "TPR",
    "DASH",
-   "ARES"
+   "ADBE",
+   "TLN",
+   "GEN",
+   "TPR",
+   "CDNS"
   ]
  },
  "sources_status": {
@@ -66,7 +66,7 @@
   "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=68 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=11 (parsed 20)",
+  "ir_nvda": "ok n=10 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -82,14 +82,14 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 9,
-  "out_of_window": 27274,
+  "out_of_window": 26789,
   "unparseable": 0
  },
  "counts": {
-  "items": 94,
-  "tier1": 94,
+  "items": 96,
+  "tier1": 96,
   "tier2": 0,
-  "last24h": 19
+  "last24h": 8
  },
  "items": [
   {
@@ -100,7 +100,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/936468/000162828026066928/lmt-20260927.htm",
-   "timestamp": "2026-10-22T17:13:59-04:00",
+   "timestamp": "2026-10-22T21:13:59-04:00",
    "tickers": [
     "LMT"
    ],
@@ -116,7 +116,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1164727/000116472726000043/nem-20260930.htm",
-   "timestamp": "2026-10-22T16:46:01-04:00",
+   "timestamp": "2026-10-22T20:46:01-04:00",
    "tickers": [
     "NEM"
    ],
@@ -132,7 +132,7 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/910521/000091052126000028/deck-20261020.htm",
-   "timestamp": "2026-10-22T16:09:31-04:00",
+   "timestamp": "2026-10-22T20:09:31-04:00",
    "tickers": [
     "DECK"
    ],
@@ -148,9 +148,41 @@
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
    "url": "https://www.sec.gov/Archives/edgar/data/1164727/000116472726000041/nem-20261022.htm",
-   "timestamp": "2026-10-22T16:05:51-04:00",
+   "timestamp": "2026-10-22T20:05:51-04:00",
    "tickers": [
     "NEM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Blackstone Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526428297/d160590d8k.htm",
+   "timestamp": "2026-10-22T10:55:08-04:00",
+   "tickers": [
+    "BX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by LOCKHEED MARTIN CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/936468/000162828026066780/lmt-20261022.htm",
+   "timestamp": "2026-10-22T10:26:08-04:00",
+   "tickers": [
+    "LMT"
    ],
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
@@ -189,35 +221,19 @@
    "disclosure_lag_label": null
   },
   {
-   "id": "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
+   "id": "4530a17168495ddfb7574e55d378a632f0b6af53",
    "tier": 1,
    "tier_label": "primary",
-   "headline": "8-K filed by Blackstone Inc.",
+   "headline": "10-Q filed by Meta Platforms, Inc.",
    "source": "SEC EDGAR filing",
    "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526428297/d160590d8k.htm",
-   "timestamp": "2026-10-22T06:55:08-04:00",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+   "timestamp": "2026-10-22T00:00:08-04:00",
    "tickers": [
-    "BX"
+    "META"
    ],
    "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by LOCKHEED MARTIN CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/936468/000162828026066780/lmt-20261022.htm",
-   "timestamp": "2026-10-22T06:26:08-04:00",
-   "tickers": [
-    "LMT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
+   "summary": "EDGAR 10-Q · filed 2026-10-22 · 10-Q",
    "disclosure_lag_label": null
   },
   {
@@ -378,22 +394,6 @@
    ],
    "topics": [],
    "summary": "EDGAR 10-Q · filed 2026-10-21 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4530a17168495ddfb7574e55d378a632f0b6af53",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by Meta Platforms, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
-   "timestamp": "2026-10-21T20:00:08-04:00",
-   "tickers": [
-    "META"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-22 · 10-Q",
    "disclosure_lag_label": null
   },
   {
@@ -1165,6 +1165,102 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "dc531623cb7ebeba4a5f9ef355de2453f2d4aa96",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NetApp, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526425298/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-19T20:30:12-04:00",
+   "tickers": [
+    "NTAP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-19 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b0a5fd5c8b71d0907fac98b72bcbc1603fbb268b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NetApp, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526425296/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-19T20:30:11-04:00",
+   "tickers": [
+    "NTAP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-19 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b9a3c57415e0c5cbbdeb47467b205b25c9c8425e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NetApp, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526425294/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-19T20:30:06-04:00",
+   "tickers": [
+    "NTAP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-19 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3cb25c6142d6e93df7751235fdb7ea5073455e54",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NetApp, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526425291/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-19T20:30:04-04:00",
+   "tickers": [
+    "NTAP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-19 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c7d80f311ceaf2592d39d202e8166e5286900d87",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NetApp, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526425290/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-19T20:30:03-04:00",
+   "tickers": [
+    "NTAP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-19 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5903aaad8c2dbca4c91796bccc7b38e4fd749d46",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NetApp, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526425292/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-19T20:30:03-04:00",
+   "tickers": [
+    "NTAP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-19 · 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "c46c56cb6a50ccc1fb066e4eb7b472718835f7f6",
    "tier": 1,
    "tier_label": "primary",
@@ -1274,6 +1370,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-16 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "886baabae75c7d717eefd78844fef8f569edbf7e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by CADENCE DESIGN SYSTEMS INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000112/xslF345X06/wk-form4_1792184712.xml",
+   "timestamp": "2026-10-16T21:05:15-04:00",
+   "tickers": [
+    "CDNS"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-16 · FORM 4",
    "disclosure_lag_label": null
   },
   {
@@ -1513,86 +1625,6 @@
    "topics": [],
    "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "6c5cfb4285a4d1ad78360bb36bcaf8dfebff89ce",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Mercedes-Benz and NVIDIA Expand Strategic Partnership to Advance Safe Highly Automated Driving in the Next Decade",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/mercedes-benz-and-nvidia-expand-strategic-partnership-to-advance-safe-highly-automated-driving-in-the-next-decade",
-   "timestamp": "2026-10-16T04:00:00-04:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a4c64f0554321c67e591d387fdf5e25499387dc9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Alphabet Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526423187/xslF345X06/ownership.xml",
-   "timestamp": "2026-10-16T00:26:15-04:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-15 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a13cbf43ad6af337c60d1cd528348615f72d332e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Robinhood Markets, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000153/xslF345X06/wk-form4_1792096397.xml",
-   "timestamp": "2026-10-15T20:33:21-04:00",
-   "tickers": [
-    "HOOD"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-15 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5679f30c696ad690f9615638c1b2f631b2932ac7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by SCHWAB CHARLES CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/316709/000031670926000035/schw-20261015.htm",
-   "timestamp": "2026-10-15T20:18:01-04:00",
-   "tickers": [
-    "SCHW"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "58d043263e46643b91c88047dbb00a6bc81cff42",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Blackstone Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526422888/d59966d8k.htm",
-   "timestamp": "2026-10-15T20:12:04-04:00",
-   "tickers": [
-    "BX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-15 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1608,9 +1640,7 @@
    "4c8a7f998de4b1399ccb838659973aa74cfe2576"
   ],
   "AVGO": [],
-  "GOOG": [
-   "a4c64f0554321c67e591d387fdf5e25499387dc9"
-  ],
+  "GOOG": [],
   "BMNR": [
    "c096138f80c5fcba22e53ff2b0692175d5a0ae47"
   ]
@@ -1620,20 +1650,9 @@
   "ccb91616aeba3e73c1b17436b45d90d7c100f56d",
   "3f0027c1ea09504e920df32f69eb1556156d391e",
   "b7d31ce27bcc993f4aebbb573f91b6014fa35534",
-  "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
-  "40034857245082011529b53245205cb187ea8bab",
   "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
   "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
-  "bcfe22d89b63f118cd1e3c6aed5c888885e9051f",
-  "ffd03110fdcce2c2e64729b57b341b56cf0e9c8f",
-  "12e4f50cd57dc226b82522ab6a9abdda22a69104",
-  "65e94600fdd0e3515eae094e7fcc1a0de057d597",
-  "2859ca5cde5123f058938eedad1f99422e2106b7",
-  "600b10390814a88332c71d6ec9e60b897ba41396",
-  "254d626863222287003b55f4bab37ed1fcc83bf7",
-  "b25248a24f328b6150812a38bf17a1e56c399be0",
-  "36c61d6a412cd87f91ab1335fdb204928277b361",
-  "de21095e0de04f703506bd3f92a5bf90a46e96e6",
-  "4530a17168495ddfb7574e55d378a632f0b6af53"
+  "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
+  "40034857245082011529b53245205cb187ea8bab"
  ]
 }
