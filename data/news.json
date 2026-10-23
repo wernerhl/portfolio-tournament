@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-22",
- "fetched_at": "2026-10-23T06:38:07-04:00",
+ "fetched_at": "2026-10-23T14:06:30-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,16 +57,16 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=1 (parsed 20)",
+  "fed_press": "ok n=0 (parsed 20)",
   "fed_speeches": "ok n=0 (parsed 15)",
   "bea": "ok n=0 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=69 (parsed 41 names)",
+  "edgar": "ok n=68 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=10 (parsed 20)",
+  "ir_nvda": "ok n=9 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -81,15 +81,15 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 9,
-  "out_of_window": 26789,
+  "irrelevant": 8,
+  "out_of_window": 26792,
   "unparseable": 0
  },
  "counts": {
-  "items": 96,
-  "tier1": 96,
+  "items": 94,
+  "tier1": 94,
   "tier2": 0,
-  "last24h": 8
+  "last24h": 4
  },
  "items": [
   {
@@ -1595,36 +1595,6 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-16 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "70363c9b200b07abea3c7ffb070f9ef38a3b7051",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve Board announces termination of enforcement actions with Gardner Bancshares, Inc. and Small Business Bank",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261016a.htm",
-   "timestamp": "2026-10-16T11:00:00-04:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7fcb7288fa569c2e59edd3f09a5a8e2342680c25",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "NVIDIA RTX Spark PCs Available Today — A New Beginning for Windows PCs",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/nvidia-rtx-spark-pcs-available-today-a-new-beginning-for-windows-pcs",
-   "timestamp": "2026-10-16T08:00:00-04:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1649,10 +1619,6 @@
   "dded74dbbc541680ad418149d2effb7221a7f0c4",
   "ccb91616aeba3e73c1b17436b45d90d7c100f56d",
   "3f0027c1ea09504e920df32f69eb1556156d391e",
-  "b7d31ce27bcc993f4aebbb573f91b6014fa35534",
-  "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
-  "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
-  "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
-  "40034857245082011529b53245205cb187ea8bab"
+  "b7d31ce27bcc993f4aebbb573f91b6014fa35534"
  ]
 }
