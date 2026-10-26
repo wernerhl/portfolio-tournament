@@ -1,14 +1,14 @@
 {
   "cadence": "daily",
-  "session_date": "2026-10-22",
-  "as_of": "2026-10-23",
-  "computed_at": "2026-10-23T15:52:36-04:00",
+  "session_date": "2026-10-23",
+  "as_of": "2026-10-26",
+  "computed_at": "2026-10-26T15:52:28-04:00",
   "history_years": 6,
   "reaction_rule": "before-open releases: prior close to the release-day close; after-close releases: release-day close to the next close. The timing comes from the company's 8-K (Item 2.02) acceptance time in EDGAR when one was filed on the release day, otherwise from the provider's stamp (hour 12 or later = after the close); each release records its source (order 6-Oct-2026, section 5)",
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
     "store_through": "2026-10-22",
-    "overlay": null
+    "overlay": "provider daily closes merged in memory through 2026-10-23 (store ended 2026-10-22; missing in store: none)"
   },
   "names": {
     "ADBE": {
@@ -2086,15 +2086,15 @@
     },
     "BX": {
       "next": {
-        "date": "2026-10-22",
+        "date": "2027-01-28",
         "time_of_day": "before_open",
-        "provider_stamp": "2026-10-22T06:00:00"
+        "provider_stamp": "2027-01-28T07:00:00"
       },
       "history": [
         {
           "date": "2020-10-28",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 10:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2020-10-27",
           "post_date": "2020-10-28",
           "reaction": -0.03046
@@ -2102,7 +2102,7 @@
         {
           "date": "2021-01-27",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 11:51 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:51 ET (before the open)",
           "pre_date": "2021-01-26",
           "post_date": "2021-01-27",
           "reaction": 0.00401
@@ -2110,7 +2110,7 @@
         {
           "date": "2021-04-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2021-04-21",
           "post_date": "2021-04-22",
           "reaction": 0.033
@@ -2118,7 +2118,7 @@
         {
           "date": "2021-07-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2021-07-21",
           "post_date": "2021-07-22",
           "reaction": 0.04102
@@ -2126,7 +2126,7 @@
         {
           "date": "2021-10-21",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2021-10-20",
           "post_date": "2021-10-21",
           "reaction": 0.02976
@@ -2134,7 +2134,7 @@
         {
           "date": "2022-01-27",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 11:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2022-01-26",
           "post_date": "2022-01-27",
           "reaction": 0.06791
@@ -2142,7 +2142,7 @@
         {
           "date": "2022-04-21",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2022-04-20",
           "post_date": "2022-04-21",
           "reaction": -0.06454
@@ -2150,7 +2150,7 @@
         {
           "date": "2022-07-21",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2022-07-20",
           "post_date": "2022-07-21",
           "reaction": -0.03185
@@ -2158,7 +2158,7 @@
         {
           "date": "2022-10-20",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2022-10-19",
           "post_date": "2022-10-20",
           "reaction": -0.04217
@@ -2166,7 +2166,7 @@
         {
           "date": "2023-01-26",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 11:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2023-01-25",
           "post_date": "2023-01-26",
           "reaction": 0.05571
@@ -2182,7 +2182,7 @@
         {
           "date": "2023-07-20",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2023-07-19",
           "post_date": "2023-07-20",
           "reaction": -0.0061
@@ -2190,7 +2190,7 @@
         {
           "date": "2023-10-19",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2023-10-18",
           "post_date": "2023-10-19",
           "reaction": -0.07898
@@ -2198,7 +2198,7 @@
         {
           "date": "2024-01-25",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 11:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2024-01-24",
           "post_date": "2024-01-25",
           "reaction": 0.02371
@@ -2214,7 +2214,7 @@
         {
           "date": "2024-07-18",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2024-07-17",
           "post_date": "2024-07-18",
           "reaction": 0.01157
@@ -2222,7 +2222,7 @@
         {
           "date": "2024-10-17",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2024-10-16",
           "post_date": "2024-10-17",
           "reaction": 0.06274
@@ -2230,7 +2230,7 @@
         {
           "date": "2025-01-30",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 11:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2025-01-29",
           "post_date": "2025-01-30",
           "reaction": -0.041
@@ -2238,7 +2238,7 @@
         {
           "date": "2025-04-17",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:56 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:56 ET (before the open)",
           "pre_date": "2025-04-16",
           "post_date": "2025-04-17",
           "reaction": 0.00781
@@ -2246,7 +2246,7 @@
         {
           "date": "2025-07-24",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2025-07-23",
           "post_date": "2025-07-24",
           "reaction": 0.03576
@@ -2254,7 +2254,7 @@
         {
           "date": "2025-10-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 21:15 ET",
+          "timing_source": "provider stamp 06:00; 8-K accepted 17:15 ET",
           "pre_date": "2025-10-22",
           "post_date": "2025-10-23",
           "reaction": -0.04168
@@ -2262,7 +2262,7 @@
         {
           "date": "2026-01-29",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 11:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2026-01-28",
           "post_date": "2026-01-29",
           "reaction": -0.02623
@@ -2270,7 +2270,7 @@
         {
           "date": "2026-04-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2026-04-22",
           "post_date": "2026-04-23",
           "reaction": -0.05704
@@ -2278,24 +2278,32 @@
         {
           "date": "2026-07-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:55 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
           "pre_date": "2026-07-22",
           "post_date": "2026-07-23",
           "reaction": 0.01368
+        },
+        {
+          "date": "2026-10-22",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:55 ET (before the open)",
+          "pre_date": "2026-10-21",
+          "post_date": "2026-10-22",
+          "reaction": 0.08378
         }
       ],
       "stats": {
-        "n": 24,
-        "mean_abs": 0.03486,
-        "median_abs": 0.03243,
-        "max_abs": 0.07898,
-        "max_date": "2023-10-19",
+        "n": 25,
+        "mean_abs": 0.03682,
+        "median_abs": 0.033,
+        "max_abs": 0.08378,
+        "max_date": "2026-10-22",
         "n_last8": 8,
         "median_abs_last8": 0.03838,
-        "mean_abs_last8": 0.03574
+        "mean_abs_last8": 0.03837
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-23T15:52:36-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "CDNS": {
@@ -4035,15 +4043,15 @@
     },
     "LMT": {
       "next": {
-        "date": "2026-10-22",
+        "date": "2027-01-26",
         "time_of_day": "before_open",
-        "provider_stamp": "2026-10-22T06:00:00"
+        "provider_stamp": "2027-01-26T07:00:00"
       },
       "history": [
         {
           "date": "2021-01-26",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:35 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:35 ET (before the open)",
           "pre_date": "2021-01-25",
           "post_date": "2021-01-26",
           "reaction": -0.03732
@@ -4051,7 +4059,7 @@
         {
           "date": "2021-04-20",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:32 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:32 ET (before the open)",
           "pre_date": "2021-04-19",
           "post_date": "2021-04-20",
           "reaction": -0.01123
@@ -4059,7 +4067,7 @@
         {
           "date": "2021-07-26",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:33 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:33 ET (before the open)",
           "pre_date": "2021-07-23",
           "post_date": "2021-07-26",
           "reaction": -0.03341
@@ -4067,7 +4075,7 @@
         {
           "date": "2021-10-26",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2021-10-25",
           "post_date": "2021-10-26",
           "reaction": -0.11803
@@ -4075,7 +4083,7 @@
         {
           "date": "2022-01-25",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:32 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:32 ET (before the open)",
           "pre_date": "2022-01-24",
           "post_date": "2022-01-25",
           "reaction": 0.03707
@@ -4083,7 +4091,7 @@
         {
           "date": "2022-04-19",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2022-04-18",
           "post_date": "2022-04-19",
           "reaction": -0.01613
@@ -4091,7 +4099,7 @@
         {
           "date": "2022-07-19",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2022-07-18",
           "post_date": "2022-07-19",
           "reaction": 0.008
@@ -4099,7 +4107,7 @@
         {
           "date": "2022-10-18",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2022-10-17",
           "post_date": "2022-10-18",
           "reaction": 0.08691
@@ -4107,7 +4115,7 @@
         {
           "date": "2023-01-24",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2023-01-23",
           "post_date": "2023-01-24",
           "reaction": 0.01802
@@ -4115,7 +4123,7 @@
         {
           "date": "2023-04-18",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:42 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:42 ET (before the open)",
           "pre_date": "2023-04-17",
           "post_date": "2023-04-18",
           "reaction": 0.02404
@@ -4123,7 +4131,7 @@
         {
           "date": "2023-07-18",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:38 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:38 ET (before the open)",
           "pre_date": "2023-07-17",
           "post_date": "2023-07-18",
           "reaction": -0.03036
@@ -4131,15 +4139,15 @@
         {
           "date": "2023-10-17",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2023-10-16",
           "post_date": "2023-10-17",
-          "reaction": 0.00163
+          "reaction": 0.00164
         },
         {
           "date": "2024-01-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:34 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:34 ET (before the open)",
           "pre_date": "2024-01-22",
           "post_date": "2024-01-23",
           "reaction": -0.04161
@@ -4147,7 +4155,7 @@
         {
           "date": "2024-04-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2024-04-22",
           "post_date": "2024-04-23",
           "reaction": -0.00271
@@ -4155,7 +4163,7 @@
         {
           "date": "2024-07-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2024-07-22",
           "post_date": "2024-07-23",
           "reaction": 0.05626
@@ -4163,7 +4171,7 @@
         {
           "date": "2024-10-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2024-10-21",
           "post_date": "2024-10-22",
           "reaction": -0.06123
@@ -4171,7 +4179,7 @@
         {
           "date": "2025-01-28",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:32 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:32 ET (before the open)",
           "pre_date": "2025-01-27",
           "post_date": "2025-01-28",
           "reaction": -0.0918
@@ -4179,7 +4187,7 @@
         {
           "date": "2025-04-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:31 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:31 ET (before the open)",
           "pre_date": "2025-04-21",
           "post_date": "2025-04-22",
           "reaction": 0.00818
@@ -4187,7 +4195,7 @@
         {
           "date": "2025-07-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:32 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:32 ET (before the open)",
           "pre_date": "2025-07-21",
           "post_date": "2025-07-22",
           "reaction": -0.10811
@@ -4195,7 +4203,7 @@
         {
           "date": "2025-10-21",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:34 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:34 ET (before the open)",
           "pre_date": "2025-10-20",
           "post_date": "2025-10-21",
           "reaction": -0.03242
@@ -4203,7 +4211,7 @@
         {
           "date": "2026-01-29",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:25 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:25 ET (before the open)",
           "pre_date": "2026-01-28",
           "post_date": "2026-01-29",
           "reaction": 0.04226
@@ -4211,7 +4219,7 @@
         {
           "date": "2026-04-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:36 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:36 ET (before the open)",
           "pre_date": "2026-04-22",
           "post_date": "2026-04-23",
           "reaction": -0.04616
@@ -4219,24 +4227,32 @@
         {
           "date": "2026-07-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00; 8-K accepted 10:30 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:30 ET (before the open)",
           "pre_date": "2026-07-22",
           "post_date": "2026-07-23",
           "reaction": 0.10543
+        },
+        {
+          "date": "2026-10-22",
+          "time_of_day": "before_open",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 06:26 ET (before the open)",
+          "pre_date": "2026-10-21",
+          "post_date": "2026-10-22",
+          "reaction": 0.06963
         }
       ],
       "stats": {
-        "n": 23,
-        "mean_abs": 0.04427,
-        "median_abs": 0.03707,
+        "n": 24,
+        "mean_abs": 0.04533,
+        "median_abs": 0.03719,
         "max_abs": 0.11803,
         "max_date": "2021-10-26",
         "n_last8": 8,
-        "median_abs_last8": 0.05369,
-        "mean_abs_last8": 0.06195
+        "median_abs_last8": 0.0579,
+        "mean_abs_last8": 0.063
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-23T15:52:36-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "MAS": {
@@ -9827,7 +9843,7 @@
         {
           "date": "2020-11-12",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2020-11-12",
           "post_date": "2020-11-13",
           "reaction": 0.0706
@@ -9835,7 +9851,7 @@
         {
           "date": "2021-02-09",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:11 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:11 ET",
           "pre_date": "2021-02-09",
           "post_date": "2021-02-10",
           "reaction": -0.02598
@@ -9843,7 +9859,7 @@
         {
           "date": "2021-05-19",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:14 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:14 ET",
           "pre_date": "2021-05-19",
           "post_date": "2021-05-20",
           "reaction": 0.00724
@@ -9851,7 +9867,7 @@
         {
           "date": "2021-08-18",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:10 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:10 ET",
           "pre_date": "2021-08-18",
           "post_date": "2021-08-19",
           "reaction": 0.03844
@@ -9859,7 +9875,7 @@
         {
           "date": "2021-11-17",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:08 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:08 ET",
           "pre_date": "2021-11-17",
           "post_date": "2021-11-18",
           "reaction": -0.05514
@@ -9867,7 +9883,7 @@
         {
           "date": "2022-02-16",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:16 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:16 ET",
           "pre_date": "2022-02-16",
           "post_date": "2022-02-17",
           "reaction": 0.02802
@@ -9875,7 +9891,7 @@
         {
           "date": "2022-05-18",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:10 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:10 ET",
           "pre_date": "2022-05-18",
           "post_date": "2022-05-19",
           "reaction": -0.1373
@@ -9883,7 +9899,7 @@
         {
           "date": "2022-08-17",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:12 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:12 ET",
           "pre_date": "2022-08-17",
           "post_date": "2022-08-18",
           "reaction": 0.05808
@@ -9891,7 +9907,7 @@
         {
           "date": "2022-11-16",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:19 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:19 ET",
           "pre_date": "2022-11-16",
           "post_date": "2022-11-17",
           "reaction": 0.04956
@@ -9899,7 +9915,7 @@
         {
           "date": "2023-02-15",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:13 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:13 ET",
           "pre_date": "2023-02-15",
           "post_date": "2023-02-16",
           "reaction": 0.05243
@@ -9907,7 +9923,7 @@
         {
           "date": "2023-05-17",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:20 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:20 ET",
           "pre_date": "2023-05-17",
           "post_date": "2023-05-18",
           "reaction": 0.01197
@@ -9915,7 +9931,7 @@
         {
           "date": "2023-08-16",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2023-08-16",
           "post_date": "2023-08-17",
           "reaction": 0.03342
@@ -9923,7 +9939,7 @@
         {
           "date": "2023-11-15",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2023-11-15",
           "post_date": "2023-11-16",
           "reaction": -0.09835
@@ -9931,7 +9947,7 @@
         {
           "date": "2024-02-14",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:11 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:11 ET",
           "pre_date": "2024-02-14",
           "post_date": "2024-02-15",
           "reaction": -0.02426
@@ -9939,7 +9955,7 @@
         {
           "date": "2024-05-15",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2024-05-15",
           "post_date": "2024-05-16",
           "reaction": -0.02678
@@ -9947,7 +9963,7 @@
         {
           "date": "2024-08-14",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:16 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:16 ET",
           "pre_date": "2024-08-14",
           "post_date": "2024-08-15",
           "reaction": 0.068
@@ -9955,7 +9971,7 @@
         {
           "date": "2024-11-13",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:14 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:14 ET",
           "pre_date": "2024-11-13",
           "post_date": "2024-11-14",
           "reaction": -0.02129
@@ -9963,7 +9979,7 @@
         {
           "date": "2025-02-12",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:19 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:19 ET",
           "pre_date": "2025-02-12",
           "post_date": "2025-02-13",
           "reaction": 0.02095
@@ -9971,7 +9987,7 @@
         {
           "date": "2025-05-14",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:17 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:17 ET",
           "pre_date": "2025-05-14",
           "post_date": "2025-05-15",
           "reaction": 0.04846
@@ -9979,15 +9995,15 @@
         {
           "date": "2025-08-13",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:11 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:11 ET",
           "pre_date": "2025-08-13",
           "post_date": "2025-08-14",
-          "reaction": -0.01563
+          "reaction": -0.01562
         },
         {
           "date": "2025-11-12",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:15 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:15 ET",
           "pre_date": "2025-11-12",
           "post_date": "2025-11-13",
           "reaction": 0.04624
@@ -9995,7 +10011,7 @@
         {
           "date": "2026-02-11",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2026-02-11",
           "post_date": "2026-02-12",
           "reaction": -0.12322
@@ -10003,7 +10019,7 @@
         {
           "date": "2026-05-13",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2026-05-13",
           "post_date": "2026-05-14",
           "reaction": 0.13409
@@ -10011,7 +10027,7 @@
         {
           "date": "2026-08-12",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2026-08-12",
           "post_date": "2026-08-13",
           "reaction": -0.08403
@@ -10028,7 +10044,7 @@
         "mean_abs_last8": 0.06174
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-16T06:15:44-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "DASH": {
@@ -11478,7 +11494,7 @@
         "mean_abs_last8": 0.17573
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-16T06:15:44-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "GE": {
@@ -13591,23 +13607,23 @@
     },
     "NEM": {
       "next": {
-        "date": "2026-10-22",
+        "date": "2027-02-18",
         "time_of_day": "after_close",
-        "provider_stamp": "2026-10-22T16:00:00"
+        "provider_stamp": "2027-02-18T15:00:00"
       },
       "history": [
         {
           "date": "2020-10-29",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:36 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:36 ET (before the open)",
           "pre_date": "2020-10-28",
           "post_date": "2020-10-29",
-          "reaction": 0.02882
+          "reaction": 0.02881
         },
         {
           "date": "2021-02-18",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2021-02-17",
           "post_date": "2021-02-18",
           "reaction": 0.00649
@@ -13615,7 +13631,7 @@
         {
           "date": "2021-04-29",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2021-04-28",
           "post_date": "2021-04-29",
           "reaction": -0.02944
@@ -13623,7 +13639,7 @@
         {
           "date": "2021-07-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2021-07-21",
           "post_date": "2021-07-22",
           "reaction": -0.00249
@@ -13631,7 +13647,7 @@
         {
           "date": "2021-10-28",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:01 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:01 ET (before the open)",
           "pre_date": "2021-10-27",
           "post_date": "2021-10-28",
           "reaction": -0.04553
@@ -13639,7 +13655,7 @@
         {
           "date": "2022-02-24",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2022-02-23",
           "post_date": "2022-02-24",
           "reaction": -0.02242
@@ -13647,7 +13663,7 @@
         {
           "date": "2022-04-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2022-04-21",
           "post_date": "2022-04-22",
           "reaction": -0.03296
@@ -13655,7 +13671,7 @@
         {
           "date": "2022-07-25",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2022-07-22",
           "post_date": "2022-07-25",
           "reaction": -0.13232
@@ -13663,7 +13679,7 @@
         {
           "date": "2022-11-01",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:03 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:03 ET (before the open)",
           "pre_date": "2022-10-31",
           "post_date": "2022-11-01",
           "reaction": -0.01441
@@ -13671,7 +13687,7 @@
         {
           "date": "2023-02-23",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:01 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:01 ET (before the open)",
           "pre_date": "2023-02-22",
           "post_date": "2023-02-23",
           "reaction": 0.00068
@@ -13679,7 +13695,7 @@
         {
           "date": "2023-04-27",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2023-04-26",
           "post_date": "2023-04-27",
           "reaction": 0.02375
@@ -13687,15 +13703,15 @@
         {
           "date": "2023-07-20",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2023-07-19",
           "post_date": "2023-07-20",
-          "reaction": -0.06042
+          "reaction": -0.06043
         },
         {
           "date": "2023-10-26",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2023-10-25",
           "post_date": "2023-10-26",
           "reaction": 0.01959
@@ -13703,7 +13719,7 @@
         {
           "date": "2024-02-22",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 12:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2024-02-21",
           "post_date": "2024-02-22",
           "reaction": -0.07598
@@ -13711,7 +13727,7 @@
         {
           "date": "2024-04-25",
           "time_of_day": "before_open",
-          "timing_source": "provider stamp 07:00; 8-K accepted 11:00 ET",
+          "timing_source": "EDGAR 8-K item 2.02 accepted 07:00 ET (before the open)",
           "pre_date": "2024-04-24",
           "post_date": "2024-04-25",
           "reaction": 0.12461
@@ -13719,7 +13735,7 @@
         {
           "date": "2024-07-24",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:05 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:05 ET",
           "pre_date": "2024-07-24",
           "post_date": "2024-07-25",
           "reaction": -0.04193
@@ -13727,7 +13743,7 @@
         {
           "date": "2024-10-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:05 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:05 ET",
           "pre_date": "2024-10-23",
           "post_date": "2024-10-24",
           "reaction": -0.14704
@@ -13735,7 +13751,7 @@
         {
           "date": "2025-02-20",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:01 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:01 ET",
           "pre_date": "2025-02-20",
           "post_date": "2025-02-21",
           "reaction": -0.05739
@@ -13743,7 +13759,7 @@
         {
           "date": "2025-04-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2025-04-23",
           "post_date": "2025-04-24",
           "reaction": 0.04798
@@ -13751,7 +13767,7 @@
         {
           "date": "2025-07-24",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:03 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:03 ET",
           "pre_date": "2025-07-24",
           "post_date": "2025-07-25",
           "reaction": 0.06893
@@ -13759,7 +13775,7 @@
         {
           "date": "2025-10-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:05 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:05 ET",
           "pre_date": "2025-10-23",
           "post_date": "2025-10-24",
           "reaction": -0.06231
@@ -13767,7 +13783,7 @@
         {
           "date": "2026-02-19",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2026-02-19",
           "post_date": "2026-02-20",
           "reaction": -0.02608
@@ -13775,7 +13791,7 @@
         {
           "date": "2026-04-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2026-04-23",
           "post_date": "2026-04-24",
           "reaction": 0.0868
@@ -13783,24 +13799,32 @@
         {
           "date": "2026-07-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:05 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:05 ET",
           "pre_date": "2026-07-23",
           "post_date": "2026-07-24",
           "reaction": -0.01615
+        },
+        {
+          "date": "2026-10-22",
+          "time_of_day": "after_close",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:05 ET",
+          "pre_date": "2026-10-22",
+          "post_date": "2026-10-23",
+          "reaction": -0.04592
         }
       ],
       "stats": {
-        "n": 24,
-        "mean_abs": 0.04894,
-        "median_abs": 0.03745,
+        "n": 25,
+        "mean_abs": 0.04882,
+        "median_abs": 0.04193,
         "max_abs": 0.14704,
         "max_date": "2024-10-23",
         "n_last8": 8,
-        "median_abs_last8": 0.05985,
-        "mean_abs_last8": 0.06409
+        "median_abs_last8": 0.05268,
+        "mean_abs_last8": 0.05144
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-23T15:52:36-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "RJF": {
@@ -14014,7 +14038,7 @@
         "mean_abs_last8": 0.02008
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-16T06:15:44-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "ADP": {
@@ -17805,15 +17829,15 @@
     },
     "DECK": {
       "next": {
-        "date": "2026-10-22",
+        "date": "2027-01-28",
         "time_of_day": "after_close",
-        "provider_stamp": "2026-10-22T16:00:00"
+        "provider_stamp": "2027-01-28T15:00:00"
       },
       "history": [
         {
           "date": "2020-10-29",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2020-10-29",
           "post_date": "2020-10-30",
           "reaction": -0.01707
@@ -17821,7 +17845,7 @@
         {
           "date": "2021-02-04",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2021-02-04",
           "post_date": "2021-02-05",
           "reaction": -0.00047
@@ -17829,7 +17853,7 @@
         {
           "date": "2021-05-20",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2021-05-20",
           "post_date": "2021-05-21",
           "reaction": 0.07885
@@ -17837,7 +17861,7 @@
         {
           "date": "2021-07-29",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:13 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:13 ET",
           "pre_date": "2021-07-29",
           "post_date": "2021-07-30",
           "reaction": 0.01023
@@ -17845,7 +17869,7 @@
         {
           "date": "2021-10-28",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:08 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:08 ET",
           "pre_date": "2021-10-28",
           "post_date": "2021-10-29",
           "reaction": 0.03933
@@ -17853,7 +17877,7 @@
         {
           "date": "2022-02-03",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:12 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:12 ET",
           "pre_date": "2022-02-03",
           "post_date": "2022-02-04",
           "reaction": -0.05705
@@ -17861,7 +17885,7 @@
         {
           "date": "2022-05-19",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2022-05-19",
           "post_date": "2022-05-20",
           "reaction": 0.12562
@@ -17869,7 +17893,7 @@
         {
           "date": "2022-07-28",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:12 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:12 ET",
           "pre_date": "2022-07-28",
           "post_date": "2022-07-29",
           "reaction": 0.08981
@@ -17877,7 +17901,7 @@
         {
           "date": "2022-10-27",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:08 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:08 ET",
           "pre_date": "2022-10-27",
           "post_date": "2022-10-28",
           "reaction": -0.04051
@@ -17885,7 +17909,7 @@
         {
           "date": "2023-02-02",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2023-02-02",
           "post_date": "2023-02-03",
           "reaction": -0.01654
@@ -17893,7 +17917,7 @@
         {
           "date": "2023-05-25",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2023-05-25",
           "post_date": "2023-05-26",
           "reaction": 0.03371
@@ -17901,7 +17925,7 @@
         {
           "date": "2023-07-27",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2023-07-27",
           "post_date": "2023-07-28",
           "reaction": -0.00551
@@ -17909,7 +17933,7 @@
         {
           "date": "2023-10-26",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:08 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:08 ET",
           "pre_date": "2023-10-26",
           "post_date": "2023-10-27",
           "reaction": 0.18942
@@ -17917,7 +17941,7 @@
         {
           "date": "2024-02-01",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2024-02-01",
           "post_date": "2024-02-02",
           "reaction": 0.14131
@@ -17925,7 +17949,7 @@
         {
           "date": "2024-05-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2024-05-23",
           "post_date": "2024-05-24",
           "reaction": 0.14177
@@ -17933,7 +17957,7 @@
         {
           "date": "2024-07-25",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:10 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:10 ET",
           "pre_date": "2024-07-25",
           "post_date": "2024-07-26",
           "reaction": 0.06322
@@ -17941,7 +17965,7 @@
         {
           "date": "2024-10-24",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2024-10-24",
           "post_date": "2024-10-25",
           "reaction": 0.1057
@@ -17949,7 +17973,7 @@
         {
           "date": "2025-01-30",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:09 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
           "pre_date": "2025-01-30",
           "post_date": "2025-01-31",
           "reaction": -0.20506
@@ -17957,7 +17981,7 @@
         {
           "date": "2025-05-22",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2025-05-22",
           "post_date": "2025-05-23",
           "reaction": -0.19859
@@ -17965,7 +17989,7 @@
         {
           "date": "2025-07-24",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:11 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:11 ET",
           "pre_date": "2025-07-24",
           "post_date": "2025-07-25",
           "reaction": 0.11349
@@ -17973,7 +17997,7 @@
         {
           "date": "2025-10-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:10 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:10 ET",
           "pre_date": "2025-10-23",
           "post_date": "2025-10-24",
           "reaction": -0.15214
@@ -17981,7 +18005,7 @@
         {
           "date": "2026-01-29",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 21:08 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:08 ET",
           "pre_date": "2026-01-29",
           "post_date": "2026-01-30",
           "reaction": 0.19459
@@ -17989,7 +18013,7 @@
         {
           "date": "2026-05-21",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:06 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:06 ET",
           "pre_date": "2026-05-21",
           "post_date": "2026-05-22",
           "reaction": 0.03947
@@ -17997,24 +18021,32 @@
         {
           "date": "2026-07-23",
           "time_of_day": "after_close",
-          "timing_source": "provider stamp 16:00; 8-K accepted 20:07 ET",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:07 ET",
           "pre_date": "2026-07-23",
           "post_date": "2026-07-24",
           "reaction": -0.00197
+        },
+        {
+          "date": "2026-10-22",
+          "time_of_day": "after_close",
+          "timing_source": "provider stamp 16:00; 8-K accepted 16:09 ET",
+          "pre_date": "2026-10-22",
+          "post_date": "2026-10-23",
+          "reaction": -0.04913
         }
       ],
       "stats": {
-        "n": 24,
-        "mean_abs": 0.08589,
-        "median_abs": 0.07104,
+        "n": 25,
+        "mean_abs": 0.08442,
+        "median_abs": 0.06322,
         "max_abs": 0.20506,
         "max_date": "2025-01-30",
         "n_last8": 8,
         "median_abs_last8": 0.13281,
-        "mean_abs_last8": 0.12638
+        "mean_abs_last8": 0.1193
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-10-23T15:52:36-04:00",
+      "retrieved_at": "2026-10-26T15:52:28-04:00",
       "history_years": 6
     },
     "UAL": {
