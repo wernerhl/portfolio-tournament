@@ -1,9 +1,9 @@
 {
-  "updated": "2026-10-23T08:58:15.940485",
-  "as_of": "2026-10-22",
-  "session_date": "2026-10-22",
+  "updated": "2026-10-27T09:27:39.964312",
+  "as_of": "2026-10-26",
+  "session_date": "2026-10-26",
   "cadence": "daily",
-  "tradable_at": "2026-10-23",
+  "tradable_at": "2026-10-27",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -412,6 +412,18 @@
       "state": "contango",
       "spread": -1.09,
       "source": "cboe"
+    },
+    {
+      "d": "2026-10-23",
+      "state": "contango",
+      "spread": -1.03,
+      "source": "cboe"
+    },
+    {
+      "d": "2026-10-26",
+      "state": "contango",
+      "spread": -1.55,
+      "source": "cboe"
     }
   ],
   "backfill_note": "2026-07-20 onward recomputed from the repaired canonical closes (Cboe official history overlaid on vol_indicators); source recorded per day",
@@ -432,11 +444,11 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 4,
-  "spread": -1.09,
-  "delta_spread": 0.95,
-  "sigma_threshold": 0.556,
-  "trigger_fired": true,
+  "state_age": 6,
+  "spread": -1.55,
+  "delta_spread": -0.52,
+  "sigma_threshold": 0.532,
+  "trigger_fired": false,
   "entry": {
     "current_entry_dspread": -0.65,
     "state_mean_entry": -0.09,
@@ -503,23 +515,24 @@
     }
   },
   "curve": {
-    "spot_vix": 19.03,
-    "vix1d": 15.18,
-    "vix3m": 20.12,
-    "spread_spot_3m": -1.09,
+    "spot_vix": 18.39,
+    "vix1d": 10.49,
+    "vix3m": 19.94,
+    "spread_spot_3m": -1.55,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-10-23",
+    "date": "2026-10-27",
     "types": [
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
       "EARNINGS"
     ],
     "sessions_away": 1
   },
   "event_today": [
-    "CLAIMS",
-    "EARNINGS",
-    "EARNINGS",
     "EARNINGS",
     "EARNINGS",
     "EARNINGS",
@@ -528,43 +541,40 @@
   "conditioning": {
     "event_flag": true,
     "event_types": [
-      "CLAIMS",
-      "EARNINGS",
-      "EARNINGS",
       "EARNINGS",
       "EARNINGS",
       "EARNINGS",
       "EARNINGS"
     ],
-    "delta_2y_bps": -12.3,
+    "delta_2y_bps": 5.2,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
-    "front_end_repriced": true,
-    "held_close_proxy": 0.81,
-    "held_close": true
+    "front_end_repriced": false,
+    "held_close_proxy": 0.69,
+    "held_close": false
   },
   "attribution": {
-    "primary_driver": "regime_repricing",
-    "primary_reversion": "low",
-    "equity_drag": true,
+    "primary_driver": "no_trigger",
+    "primary_reversion": "n/a",
+    "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.06,
+      "smh_1d_return": 0.027,
       "breadth_delta_pp": 0.0,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.879,
+      "breadth_delta_sigma_1y_pp": 4.87,
       "breadth_z": 0.0,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
   "overlay_scalar": {
-    "value": 0.0,
+    "value": 0.7,
     "label": "DIAGNOSTIC",
     "caption": "Regime-sized overlay scalar. Gated as DIAGNOSTIC until backtest shows regime-conditional sizing beats static sizing on risk-adjusted return. Do not execute on this value."
   },
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-10-22",
+      "today_excluded_from_metrics": "2026-10-26",
       "all_triggers_reversion": {
         "n": 799,
         "n_reverted": 685,
@@ -598,16 +608,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-10-22",
-      "state": "contango",
-      "spread": -1.71
-    },
-    {
-      "d": "2025-10-23",
-      "state": "contango",
-      "spread": -2.35
-    },
     {
       "d": "2025-10-24",
       "state": "contango",
@@ -1857,6 +1857,16 @@
       "d": "2026-10-22",
       "state": "contango",
       "spread": -1.09
+    },
+    {
+      "d": "2026-10-23",
+      "state": "contango",
+      "spread": -1.03
+    },
+    {
+      "d": "2026-10-26",
+      "state": "contango",
+      "spread": -1.55
     }
   ],
   "past_spikes": [
