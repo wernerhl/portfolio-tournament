@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-26",
- "fetched_at": "2026-10-27T07:06:22-04:00",
+ "fetched_at": "2026-10-27T15:14:57-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -66,8 +66,8 @@
   "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=55 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=9 (parsed 20)",
-  "ir_gev": "ok n=1 (parsed 20)",
+  "ir_nvda": "ok n=10 (parsed 20)",
+  "ir_gev": "ok n=2 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -81,17 +81,33 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 7,
-  "out_of_window": 27374,
+  "irrelevant": 8,
+  "out_of_window": 27371,
   "unparseable": 0
  },
  "counts": {
-  "items": 74,
-  "tier1": 74,
+  "items": 73,
+  "tier1": 73,
   "tier2": 0,
-  "last24h": 15
+  "last24h": 16
  },
  "items": [
+  {
+   "id": "6cf6ca19286ea176a25e4567f96ee0f711392d2e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA and Oracle Expand NVIDIA Vera Rubin to Multi-Gigawatt Scale and Bring NVIDIA Vera CPU to Oracle Cloud Infrastructure",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-and-oracle-expand-nvidia-vera-rubin-to-multi-gigawatt-scale-and-bring-nvidia-vera-cpu-to-oracle-cloud-infrastructure",
+   "timestamp": "2026-10-27T12:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "b459574059fadb9100f1c28a6f40d54f20f3b8b8",
    "tier": 1,
@@ -282,6 +298,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-26 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d6204aa4b3cac4ba15d827e30b51abde551d0825",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova and the Boston Celtics Announce Three-Year Partnership to Recognize Members of the United States Armed Forces",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-boston-celtics-announce-three-year-partnership-recognize-members-united",
+   "timestamp": "2026-10-26T18:20:19-04:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
    "disclosure_lag_label": null
   },
   {
@@ -1227,66 +1259,19 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-20 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "472e0799c0c648aaa11cd8044edb8bb15695f96c",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by 3M CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/66740/000006674026000311/mmm-20260930.htm",
-   "timestamp": "2026-10-20T12:30:31-04:00",
-   "tickers": [
-    "MMM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-20 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d6aa917b2ea5798c41fda8b9aba9e36617b7638a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by GENERAL ELECTRIC CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/40545/000004054526000064/ge-20260930.htm",
-   "timestamp": "2026-10-20T10:33:36-04:00",
-   "tickers": [
-    "GE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-20 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2eab95697d6e8dff0d8e1eb5e0f950574896369e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by GENERAL ELECTRIC CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/40545/000004054526000063/ge-20261020.htm",
-   "timestamp": "2026-10-20T10:30:57-04:00",
-   "tickers": [
-    "GE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-20 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "d6204aa4b3cac4ba15d827e30b51abde551d0825",
    "4bf4895bebd967304e15b06fe2095b4ad2141bcd"
   ],
   "NVDA": [
+   "6cf6ca19286ea176a25e4567f96ee0f711392d2e",
    "b459574059fadb9100f1c28a6f40d54f20f3b8b8",
    "37991df881f884cdb2d48570fafdab6d3b0e71f0",
    "b907d27ced0f33b211066a929a90174486c58aa9",
-   "f23e80246a4bb23c7fa3f81e8827458d43dad40c",
-   "5e2a27f6f1a30f225470f18893f4273647e03503"
+   "f23e80246a4bb23c7fa3f81e8827458d43dad40c"
   ],
   "AVGO": [],
   "GOOG": [],
@@ -1299,6 +1284,7 @@
   ]
  },
  "last24h": [
+  "6cf6ca19286ea176a25e4567f96ee0f711392d2e",
   "b459574059fadb9100f1c28a6f40d54f20f3b8b8",
   "fffc2659ac8ff354f93533a26b775ec847e614a0",
   "89188dd0debc08c80d37f7af5e1e60f89d717f49",
@@ -1311,8 +1297,8 @@
   "386fc26c6aaaa43a496ad76d948d4f2628f6350a",
   "449101f9de9d1acc57193fb1619c14200bf8e172",
   "63ae4c61c11ccf03e33a1021ffeb44a0255affe4",
+  "d6204aa4b3cac4ba15d827e30b51abde551d0825",
   "bdef8184d427f182671760be1f3318940219fd8d",
-  "4b8a6756c0104bad821486e0faef267f6d4e4218",
-  "753e8f9c2c5578f7c719a428ea2938ed9396d94d"
+  "4b8a6756c0104bad821486e0faef267f6d4e4218"
  ]
 }
