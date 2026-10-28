@@ -181,6 +181,12 @@
         "parsed": 4,
         "amendments_skipped": 0
       },
+      "NTAP": {
+        "cik": "0001002047",
+        "filings": 35,
+        "parsed": 35,
+        "amendments_skipped": 0
+      },
       "NVDA": {
         "cik": "0001045810",
         "filings": 16,
@@ -1630,6 +1636,53 @@
       },
       "sales_shown_label": "sales are mostly compensation or diversification",
       "window_trades": 10
+    },
+    "NTAP": {
+      "card": false,
+      "cik": "0001002047",
+      "cluster": {
+        "flag": false,
+        "n_distinct_buyers_30d": 0,
+        "window_start": null,
+        "window_end": null,
+        "buyers": [],
+        "rule": "3 or more distinct opportunistic buyers with trade dates spanning at most 30 calendar days"
+      },
+      "counts": {
+        "purchases_90d": {
+          "opportunistic": 0,
+          "routine": 0,
+          "distinct_opportunistic_buyers": 0
+        },
+        "sales_90d": {
+          "opportunistic": 13,
+          "routine": 11,
+          "distinct_opportunistic_sellers": 6
+        }
+      },
+      "roles": [
+        "board"
+      ],
+      "routine_excluded": {
+        "purchases": 0,
+        "sales": 11
+      },
+      "sales_cluster": {
+        "flag": true,
+        "n_distinct_sellers_30d": 5,
+        "window_start": "2026-09-11",
+        "window_end": "2026-10-02",
+        "sellers": [
+          "Ahuja Deepak",
+          "HELD GERALD",
+          "Kurian George",
+          "NEVENS THOMAS MICHAEL",
+          "Palin Carrie"
+        ],
+        "rule": "3 or more distinct opportunistic sellers with trade dates spanning at most 30 calendar days"
+      },
+      "sales_shown_label": "sales are mostly compensation or diversification",
+      "window_trades": 24
     },
     "NVDA": {
       "card": true,
@@ -3345,6 +3398,32 @@
       "routine_excluded": {
         "purchases": 0,
         "sales": 0
+      },
+      "held": false
+    },
+    "NTAP": {
+      "cluster_flag": false,
+      "n_distinct_buyers_30d": 0,
+      "cluster_window": [
+        null,
+        null
+      ],
+      "sales_cluster_flag": true,
+      "counts": {
+        "purchases_90d": {
+          "opportunistic": 0,
+          "routine": 0,
+          "distinct_opportunistic_buyers": 0
+        },
+        "sales_90d": {
+          "opportunistic": 13,
+          "routine": 11,
+          "distinct_opportunistic_sellers": 6
+        }
+      },
+      "routine_excluded": {
+        "purchases": 0,
+        "sales": 11
       },
       "held": false
     },
