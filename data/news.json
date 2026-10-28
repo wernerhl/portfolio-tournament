@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-27",
- "fetched_at": "2026-10-28T07:49:27-04:00",
+ "fetched_at": "2026-10-28T15:20:45-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,14 +57,14 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=0 (parsed 20)",
+  "fed_press": "ok n=1 (parsed 20)",
   "fed_speeches": "ok n=0 (parsed 15)",
   "bea": "ok n=0 (parsed 48)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=60 (parsed 41 names)",
+  "edgar": "ok n=61 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=2 (parsed 20)",
   "ir_gev": "ok n=4 (parsed 20)",
@@ -81,17 +81,66 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 9,
-  "out_of_window": 26942,
+  "irrelevant": 10,
+  "out_of_window": 26938,
   "unparseable": 0
  },
  "counts": {
-  "items": 83,
-  "tier1": 83,
+  "items": 86,
+  "tier1": 86,
   "tier2": 0,
-  "last24h": 26
+  "last24h": 28
  },
  "items": [
+  {
+   "id": "847a7abc2726921ccf5db1d6252e81b05257b6f9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve issues FOMC statement",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
+   "timestamp": "2026-10-28T14:00:00-04:00",
+   "tickers": [],
+   "topics": [
+    "FOMC"
+   ],
+   "summary": "Tier 1 · Federal Reserve Board press release · Monetary Policy · topics: FOMC",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e02efc3b594497bb7433dc13d9f391e5e736c928",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000149893526000007/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-10-28T11:20:32-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5b834063e909716a40c5e7be83baa81be47507e8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Advance U.S. International Trade in Goods",
+   "source": "Census Bureau economic indicator",
+   "source_id": "census",
+   "url": "https://www.census.gov/econ/indicators/index.html",
+   "timestamp": "2026-10-28T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "TRADE",
+    "RETAIL"
+   ],
+   "summary": "Tier 1 · Census Bureau economic indicator · topics: TRADE",
+   "disclosure_lag_label": null
+  },
   {
    "id": "3458d5cae36a6d11fbb12f928f84a5f872c5e3f8",
    "tier": 1,
@@ -1452,6 +1501,9 @@
   ]
  },
  "last24h": [
+  "847a7abc2726921ccf5db1d6252e81b05257b6f9",
+  "e02efc3b594497bb7433dc13d9f391e5e736c928",
+  "5b834063e909716a40c5e7be83baa81be47507e8",
   "3458d5cae36a6d11fbb12f928f84a5f872c5e3f8",
   "b803b0811a2697fd44c53900830372782f401b80",
   "581e1918227e1b8916866017e1533f9bca078d1a",
@@ -1476,7 +1528,6 @@
   "2635c559c2cf7b7acf1bba377a568817a151abe6",
   "0c996e864f673b7995b263ab4a15f65ada69994b",
   "060a2c516b99b50af67b8ce417f14fe7a978c894",
-  "eb8c106a7cd412c3aa828c7b6fe7ad440652f1a0",
-  "6cf6ca19286ea176a25e4567f96ee0f711392d2e"
+  "eb8c106a7cd412c3aa828c7b6fe7ad440652f1a0"
  ]
 }
