@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-27",
- "fetched_at": "2026-10-28T15:20:45-04:00",
+ "as_of": "2026-10-28",
+ "fetched_at": "2026-10-28T19:53:41-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,9 +64,9 @@
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=61 (parsed 41 names)",
+  "edgar": "ok n=63 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=2 (parsed 20)",
+  "ir_nvda": "ok n=3 (parsed 20)",
   "ir_gev": "ok n=4 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
@@ -81,17 +81,145 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 10,
-  "out_of_window": 26938,
+  "irrelevant": 11,
+  "out_of_window": 26941,
   "unparseable": 0
  },
  "counts": {
-  "items": 86,
-  "tier1": 86,
+  "items": 83,
+  "tier1": 83,
   "tier2": 0,
-  "last24h": 28
+  "last24h": 22
  },
  "items": [
+  {
+   "id": "cb38c66354c6c68fa1e3a0aff68b33940f5a2a03",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000187/xslF345X06/wk-form4_1793228913.xml",
+   "timestamp": "2026-10-28T19:08:35-04:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "23571ac6e02077ae103bfa8b7c0995dce6741d47",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326016314/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-28T18:25:43-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f614f2ed9e0bb397a6544486736ca252fc5ffe35",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326016313/xslF345X06/ownership.xml",
+   "timestamp": "2026-10-28T18:22:23-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "efb7fea1c4e3ff5fdcc4df645e9113b706445981",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "NVIDIA Sets Conference Call for Third-Quarter Financial Results",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-sets-conference-call-for-third-quarter-financial-results-6928873",
+   "timestamp": "2026-10-28T17:00:00-04:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cf749e2c71017c6f24486e9ff20f20aa360fb81e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NEWMONT Corp /DE/",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1164727/000212803826000006/xslF345X06/form4.xml",
+   "timestamp": "2026-10-28T16:33:46-04:00",
+   "tickers": [
+    "NEM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · STATEMENT OF CHANGES IN BENEFICIAL OWNERSHIP OF SECURITIES",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f68d62c170fef5d17f3b79481bede36393786683",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by RAYMOND JAMES FINANCIAL INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/720005/000072000526000080/rjf-20261028.htm",
+   "timestamp": "2026-10-28T16:17:12-04:00",
+   "tickers": [
+    "RJF"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "57f39357f06bf303a8b698d267bd27a46b2763cf",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Gen Digital Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/849399/000084939926000081/gen-20261028.htm",
+   "timestamp": "2026-10-28T16:06:05-04:00",
+   "tickers": [
+    "GEN"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4fbac50bf51418638d96bbe3d6c2ba55e9741460",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/goog-20261028.htm",
+   "timestamp": "2026-10-28T16:01:33-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
+   "disclosure_lag_label": null
+  },
   {
    "id": "847a7abc2726921ccf5db1d6252e81b05257b6f9",
    "tier": 1,
@@ -1292,182 +1420,6 @@
    "topics": [],
    "summary": "EDGAR 10-Q · filed 2026-10-22 · 10-Q",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "bcfe22d89b63f118cd1e3c6aed5c888885e9051f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000112/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-21T19:16:27-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ffd03110fdcce2c2e64729b57b341b56cf0e9c8f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000111/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-21T19:16:05-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "12e4f50cd57dc226b82522ab6a9abdda22a69104",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000110/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-21T19:15:44-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "65e94600fdd0e3515eae094e7fcc1a0de057d597",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000109/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-21T19:15:22-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2859ca5cde5123f058938eedad1f99422e2106b7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000108/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-21T19:15:00-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "600b10390814a88332c71d6ec9e60b897ba41396",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by QUALCOMM INC/DE",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000107/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-21T19:14:46-04:00",
-   "tickers": [
-    "QCOM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "254d626863222287003b55f4bab37ed1fcc83bf7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Meta Platforms, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326015980/xslF345X06/ownership.xml",
-   "timestamp": "2026-10-21T18:07:36-04:00",
-   "tickers": [
-    "META"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b25248a24f328b6150812a38bf17a1e56c399be0",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by United Airlines Holdings, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/100517/000010051726000186/ual-20260930.htm",
-   "timestamp": "2026-10-21T16:20:56-04:00",
-   "tickers": [
-    "UAL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-21 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "36c61d6a412cd87f91ab1335fdb204928277b361",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Meta Platforms, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-20261019.htm",
-   "timestamp": "2026-10-21T16:03:35-04:00",
-   "tickers": [
-    "META"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-21 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "de21095e0de04f703506bd3f92a5bf90a46e96e6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
-   "timestamp": "2026-10-21T16:01:46-04:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-21 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a23487579d67f8782c8d6aaa1d813530bed96dba",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by PAYCHEX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/723531/000119312526427799/xslF345X06/ownership.xml",
-   "timestamp": "2026-10-21T16:00:04-04:00",
-   "tickers": [
-    "PAYX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-21 · 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1479,6 +1431,7 @@
    "d6204aa4b3cac4ba15d827e30b51abde551d0825"
   ],
   "NVDA": [
+   "efb7fea1c4e3ff5fdcc4df645e9113b706445981",
    "6cf6ca19286ea176a25e4567f96ee0f711392d2e",
    "b459574059fadb9100f1c28a6f40d54f20f3b8b8"
   ],
@@ -1486,11 +1439,11 @@
    "2635c559c2cf7b7acf1bba377a568817a151abe6"
   ],
   "GOOG": [
+   "4fbac50bf51418638d96bbe3d6c2ba55e9741460",
    "975cfd3f4ae91e91cdef2022bb9b1264ea18d85c",
    "ba7b9a73d451246b5020a7856a4a7b772c9175c0",
    "2a0efec135fa553f04da963db39763225450e4ce",
-   "fddb523c4e28691290567e7f6cbf7475df2c7c1f",
-   "93d963e6605d215f0e2f9d33fc21fe754095a3b1"
+   "fddb523c4e28691290567e7f6cbf7475df2c7c1f"
   ],
   "BMNR": [
    "fffc2659ac8ff354f93533a26b775ec847e614a0",
@@ -1501,6 +1454,14 @@
   ]
  },
  "last24h": [
+  "cb38c66354c6c68fa1e3a0aff68b33940f5a2a03",
+  "23571ac6e02077ae103bfa8b7c0995dce6741d47",
+  "f614f2ed9e0bb397a6544486736ca252fc5ffe35",
+  "efb7fea1c4e3ff5fdcc4df645e9113b706445981",
+  "cf749e2c71017c6f24486e9ff20f20aa360fb81e",
+  "f68d62c170fef5d17f3b79481bede36393786683",
+  "57f39357f06bf303a8b698d267bd27a46b2763cf",
+  "4fbac50bf51418638d96bbe3d6c2ba55e9741460",
   "847a7abc2726921ccf5db1d6252e81b05257b6f9",
   "e02efc3b594497bb7433dc13d9f391e5e736c928",
   "5b834063e909716a40c5e7be83baa81be47507e8",
@@ -1514,20 +1475,6 @@
   "fddb523c4e28691290567e7f6cbf7475df2c7c1f",
   "93d963e6605d215f0e2f9d33fc21fe754095a3b1",
   "f8f270bf4848e9f43c596a808b4b1ad0211dd778",
-  "c0a81f354d8a8d14001050c65404561aa6cd1dbc",
-  "3f242dedc67e2460cda9f379baad504cfe823b57",
-  "912fd8e71e9ab2974878f46e1b018b2c133e757a",
-  "11ca587a51246fa2284fa04d67f9d134c88333ea",
-  "864fde7a1f55ce565be1d719bb70c7c2b026173e",
-  "7f3d20de2cd075c37f8721f53e9de723b376134a",
-  "37068b1c51757e31b6060fb5f7c2f3e925e88e93",
-  "aab4b18db1763ab5a78de030feb57673c5f32a88",
-  "5c0d7c1065d8c99479f13484c9f35357ab97b2e5",
-  "f68a3e328f8a13f22dd31a3d284a1d2bd7be37a1",
-  "8e980038ae6945031cc1d75ecab6efd9505c6abb",
-  "2635c559c2cf7b7acf1bba377a568817a151abe6",
-  "0c996e864f673b7995b263ab4a15f65ada69994b",
-  "060a2c516b99b50af67b8ce417f14fe7a978c894",
-  "eb8c106a7cd412c3aa828c7b6fe7ad440652f1a0"
+  "c0a81f354d8a8d14001050c65404561aa6cd1dbc"
  ]
 }
