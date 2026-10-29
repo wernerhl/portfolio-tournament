@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-28",
- "fetched_at": "2026-10-28T23:30:21-04:00",
+ "fetched_at": "2026-10-29T15:25:33-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,17 +57,17 @@
   ]
  },
  "sources_status": {
-  "fed_press": "failed: HTTPError: HTTP Error 404: Not Found",
+  "fed_press": "ok n=1 (parsed 20)",
   "fed_speeches": "ok n=0 (parsed 15)",
-  "bea": "ok n=0 (parsed 48)",
+  "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=2 (parsed 18)",
-  "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=48 (parsed 41 names)",
+  "dol": "ok n=0 (parsed 10)",
+  "edgar": "ok n=59 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=3 (parsed 20)",
-  "ir_gev": "ok n=4 (parsed 20)",
+  "ir_gev": "ok n=3 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
@@ -81,17 +81,241 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 11,
-  "out_of_window": 26246,
+  "irrelevant": 10,
+  "out_of_window": 26250,
   "unparseable": 0
  },
  "counts": {
-  "items": 87,
-  "tier1": 87,
+  "items": 95,
+  "tier1": 95,
   "tier2": 0,
-  "last24h": 17
+  "last24h": 24
  },
  "items": [
+  {
+   "id": "41105a5a4ff7f08f6cdb4cf1e77a7efb39cc0bdb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000111316926000005/trow-20260930.htm",
+   "timestamp": "2026-10-29T13:57:49-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7bcf350416a8764356b22a9fe6f4c08934c6ff85",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by HERSHEY CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/47111/000162828026068136/hsy-20260927.htm",
+   "timestamp": "2026-10-29T13:45:58-04:00",
+   "tickers": [
+    "HSY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · THE HERSHEY COMPANY FORM 10-Q FOR THE QUARTERLY PERIOD ENDED SEPTEMBER 27, 2026",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6c1dae7831290f2c90b42bd1d82e148d8299dc89",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by DECKERS OUTDOOR CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/910521/000162828026068116/deck-20260930.htm",
+   "timestamp": "2026-10-29T12:59:26-04:00",
+   "tickers": [
+    "DECK"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a38675996c1b36643fa51b53313b1fc10d61fa01",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by BRISTOL MYERS SQUIBB CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/14272/000001427226000024/bmy-20260930.htm",
+   "timestamp": "2026-10-29T11:16:34-04:00",
+   "tickers": [
+    "BMY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fbbb88c247ad18c036c42e76c2a3f6754ecf2f4b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Personal Income and Outlays, September 2026",
+   "source": "BEA release",
+   "source_id": "bea",
+   "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-september-2026",
+   "timestamp": "2026-10-29T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "PCE"
+   ],
+   "summary": "Tier 1 · BEA release · topics: PCE · next release November 25, 2026",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "48c980494664a72e082437799009814ce91a8dbd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GDP (Advance Estimate), 3rd Quarter 2026",
+   "source": "BEA release",
+   "source_id": "bea",
+   "url": "https://www.bea.gov/news/2026/gdp-advance-estimate-3rd-quarter-2026",
+   "timestamp": "2026-10-29T08:30:00-04:00",
+   "tickers": [],
+   "topics": [
+    "GDP"
+   ],
+   "summary": "Tier 1 · BEA release · topics: GDP · next release November 25, 2026",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ac678512bd90c3abd3e7ca55cabe9fb9644fd5d9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by HERSHEY CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/47111/000162828026068046/hsy-20261029.htm",
+   "timestamp": "2026-10-29T08:27:18-04:00",
+   "tickers": [
+    "HSY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · FORM 8-K DATED OCTOBER 29, 2026",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3b7c0a9d6dfa8b3273ef91d8a799191b82c0f46c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000114036126041111/ef20084547_8k.htm",
+   "timestamp": "2026-10-29T08:25:29-04:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "08c67c9b6abead4106286050178ee6c8c375770e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by AMERIPRISE FINANCIAL INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/820027/000082002726000050/amp-20261029.htm",
+   "timestamp": "2026-10-29T08:17:21-04:00",
+   "tickers": [
+    "AMP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0f48d638efdbb210f8e5b6def5d32ceae9428af3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000179278926000062/dash-20261029.htm",
+   "timestamp": "2026-10-29T07:21:00-04:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "469415d13d79380bcd5bf4c678c8ae157be5b26a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by PRICE T ROWE GROUP INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000111316926000003/trow-20261029.htm",
+   "timestamp": "2026-10-29T07:05:59-04:00",
+   "tickers": [
+    "TROW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dd0ff5ac81b80fa94368d5eed50be32b1a8cac62",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by BRISTOL MYERS SQUIBB CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/14272/000001427226000022/bmy-20261029.htm",
+   "timestamp": "2026-10-29T07:05:52-04:00",
+   "tickers": [
+    "BMY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "130e99207c4c62a49eb6dfca82bee677a383f2f7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by INCYTE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/879169/000087916926000063/incy-20261029.htm",
+   "timestamp": "2026-10-29T07:03:57-04:00",
+   "tickers": [
+    "INCY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+   "timestamp": "2026-10-28T20:29:06-04:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
   {
    "id": "cb38c66354c6c68fa1e3a0aff68b33940f5a2a03",
    "tier": 1,
@@ -1388,102 +1612,6 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "b87079fe4178d1d88060144231a1dc89c74f77b9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by HONEYWELL INTERNATIONAL INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000143/hon-20260930.htm",
-   "timestamp": "2026-10-22T09:50:45-04:00",
-   "tickers": [
-    "HON"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-22 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4bf4895bebd967304e15b06fe2095b4ad2141bcd",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova Foundation Marks Milestone as First Staffordshire Students Begin ‘Engineers of Change’ Programme",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-foundation-marks-milestone-first-staffordshire-students-begin-engineers",
-   "timestamp": "2026-10-22T08:45:07-04:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "40034857245082011529b53245205cb187ea8bab",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Unemployment Insurance Weekly Claims Report",
-   "source": "Department of Labor release",
-   "source_id": "dol",
-   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261022",
-   "timestamp": "2026-10-22T08:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "CLAIMS"
-   ],
-   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fdb67464a0ce84c987418e362d3dd39a9e5ba1c8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Blackstone Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1393818/000119312526428297/d160590d8k.htm",
-   "timestamp": "2026-10-22T06:55:08-04:00",
-   "tickers": [
-    "BX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1157c2a4455b20a9174a6627eb2bfc7f51bed7e6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by LOCKHEED MARTIN CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/936468/000162828026066780/lmt-20261022.htm",
-   "timestamp": "2026-10-22T06:26:08-04:00",
-   "tickers": [
-    "LMT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0d546fa2f5c6902efd88922304796ce3eb4c84eb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by HONEYWELL INTERNATIONAL INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000141/hon-20261022.htm",
-   "timestamp": "2026-10-22T06:02:13-04:00",
-   "tickers": [
-    "HON"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1503,11 +1631,11 @@
    "2635c559c2cf7b7acf1bba377a568817a151abe6"
   ],
   "GOOG": [
+   "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff",
    "4fbac50bf51418638d96bbe3d6c2ba55e9741460",
    "975cfd3f4ae91e91cdef2022bb9b1264ea18d85c",
    "ba7b9a73d451246b5020a7856a4a7b772c9175c0",
-   "2a0efec135fa553f04da963db39763225450e4ce",
-   "fddb523c4e28691290567e7f6cbf7475df2c7c1f"
+   "2a0efec135fa553f04da963db39763225450e4ce"
   ],
   "BMNR": [
    "fffc2659ac8ff354f93533a26b775ec847e614a0",
@@ -1518,6 +1646,20 @@
   ]
  },
  "last24h": [
+  "41105a5a4ff7f08f6cdb4cf1e77a7efb39cc0bdb",
+  "7bcf350416a8764356b22a9fe6f4c08934c6ff85",
+  "6c1dae7831290f2c90b42bd1d82e148d8299dc89",
+  "a38675996c1b36643fa51b53313b1fc10d61fa01",
+  "fbbb88c247ad18c036c42e76c2a3f6754ecf2f4b",
+  "48c980494664a72e082437799009814ce91a8dbd",
+  "ac678512bd90c3abd3e7ca55cabe9fb9644fd5d9",
+  "3b7c0a9d6dfa8b3273ef91d8a799191b82c0f46c",
+  "08c67c9b6abead4106286050178ee6c8c375770e",
+  "0f48d638efdbb210f8e5b6def5d32ceae9428af3",
+  "469415d13d79380bcd5bf4c678c8ae157be5b26a",
+  "dd0ff5ac81b80fa94368d5eed50be32b1a8cac62",
+  "130e99207c4c62a49eb6dfca82bee677a383f2f7",
+  "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff",
   "cb38c66354c6c68fa1e3a0aff68b33940f5a2a03",
   "23571ac6e02077ae103bfa8b7c0995dce6741d47",
   "f614f2ed9e0bb397a6544486736ca252fc5ffe35",
@@ -1527,13 +1669,6 @@
   "afb7d16ee55a8a1be13df7620348101c7a70222e",
   "f68d62c170fef5d17f3b79481bede36393786683",
   "57f39357f06bf303a8b698d267bd27a46b2763cf",
-  "4fbac50bf51418638d96bbe3d6c2ba55e9741460",
-  "847a7abc2726921ccf5db1d6252e81b05257b6f9",
-  "e02efc3b594497bb7433dc13d9f391e5e736c928",
-  "5b834063e909716a40c5e7be83baa81be47507e8",
-  "3458d5cae36a6d11fbb12f928f84a5f872c5e3f8",
-  "b803b0811a2697fd44c53900830372782f401b80",
-  "581e1918227e1b8916866017e1533f9bca078d1a",
-  "a055f26afaa8b86b39500ac8ec84bdc14632dae3"
+  "4fbac50bf51418638d96bbe3d6c2ba55e9741460"
  ]
 }
