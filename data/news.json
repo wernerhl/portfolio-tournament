@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-10-28",
- "fetched_at": "2026-10-29T15:25:33-04:00",
+ "as_of": "2026-10-29",
+ "fetched_at": "2026-10-29T19:48:31-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,14 +57,14 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=1 (parsed 20)",
+  "fed_press": "ok n=2 (parsed 20)",
   "fed_speeches": "ok n=0 (parsed 15)",
   "bea": "ok n=2 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=2 (parsed 18)",
-  "dol": "ok n=0 (parsed 10)",
-  "edgar": "ok n=59 (parsed 41 names)",
+  "dol": "ok n=1 (parsed 10)",
+  "edgar": "ok n=62 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=3 (parsed 20)",
   "ir_gev": "ok n=3 (parsed 20)",
@@ -81,17 +81,175 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 10,
-  "out_of_window": 26250,
+  "irrelevant": 11,
+  "out_of_window": 26253,
   "unparseable": 0
  },
  "counts": {
-  "items": 95,
-  "tier1": 95,
+  "items": 96,
+  "tier1": 96,
   "tier2": 0,
-  "last24h": 24
+  "last24h": 25
  },
  "items": [
+  {
+   "id": "228622a68599e06a97a91f4df06aa1dee263b46d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000195/dxcm-20260930.htm",
+   "timestamp": "2026-10-29T17:22:41-04:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bcecbf53a99659dc7d60e842e532a1c88f9b637d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Meta Platforms, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+   "timestamp": "2026-10-29T17:08:00-04:00",
+   "tickers": [
+    "META"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a8adc5665da33dcba1185499af868a16699b2c68",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Robinhood Markets, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000178387926000173/xslF345X06/wk-form4_1793305809.xml",
+   "timestamp": "2026-10-29T16:30:12-04:00",
+   "tickers": [
+    "HOOD"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-29 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d5f01f9dd738c00b2fddf948d495c097f3f878da",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces approval of application by The Bank of Nova Scotia",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20261029a.htm",
+   "timestamp": "2026-10-29T16:30:00-04:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Orders on Banking Applications · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cc145201942b1a707904137d0947a9b8f51b5812",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Sandisk Corp",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/2023554/000162828026068243/sndk-20261029.htm",
+   "timestamp": "2026-10-29T16:13:53-04:00",
+   "tickers": [
+    "SNDK"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b81dd12cb14abcbd0998f4a6ca805f0ee4025a31",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by GoDaddy Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1609711/000160971126000117/gddy-20261029.htm",
+   "timestamp": "2026-10-29T16:11:41-04:00",
+   "tickers": [
+    "GDDY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9555617616e2d1f1464cd2967811c45b1343f229",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by Gen Digital Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/849399/000084939926000083/gen-20261002.htm",
+   "timestamp": "2026-10-29T16:04:42-04:00",
+   "tickers": [
+    "GEN"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4de511fe134348c69a2946e67f40ccf1badb0177",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000193/dxcm-20261029.htm",
+   "timestamp": "2026-10-29T16:03:50-04:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ebab06bccb549c33e77c8af94ffcf9b0a2930c65",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by INCYTE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/879169/000087916926000066/incy-20260930.htm",
+   "timestamp": "2026-10-29T16:03:07-04:00",
+   "tickers": [
+    "INCY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "55c5ff3ba5f452995fac73ccbb7b51ebb24379dd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026068203/xslF345X06/wk-form4_1793304074.xml",
+   "timestamp": "2026-10-29T16:01:18-04:00",
+   "tickers": [
+    "CRDO"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-29 · FORM 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "41105a5a4ff7f08f6cdb4cf1e77a7efb39cc0bdb",
    "tier": 1,
@@ -234,6 +392,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "64b130ffa0ad1443f861535745f1ccd524d99c4f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Unemployment Insurance Weekly Claims Report",
+   "source": "Department of Labor release",
+   "source_id": "dol",
+   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261029",
+   "timestamp": "2026-10-29T08:00:00-04:00",
+   "tickers": [],
+   "topics": [
+    "CLAIMS"
+   ],
+   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
   },
   {
@@ -1452,166 +1626,6 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-23 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "571b944f9d006e258ae27dc1262f07b53ae44a8c",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Sandisk Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/2023554/000124264826000047/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-22T18:07:38-04:00",
-   "tickers": [
-    "SNDK"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-22 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "869b59b10e41b64ac9ccc9f90318df12fee5ed94",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by WESTERN DIGITAL CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/106040/000126682426000217/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-10-22T17:57:13-04:00",
-   "tickers": [
-    "WDC"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-22 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "18c6ce30d98bcb4b620ae400690e1755bdee5c0f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by WESTERN DIGITAL CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/106040/000162828026066933/wdc-20261002.htm",
-   "timestamp": "2026-10-22T17:36:23-04:00",
-   "tickers": [
-    "WDC"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-23 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "dded74dbbc541680ad418149d2effb7221a7f0c4",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by LOCKHEED MARTIN CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/936468/000162828026066928/lmt-20260927.htm",
-   "timestamp": "2026-10-22T17:13:59-04:00",
-   "tickers": [
-    "LMT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-22 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1d01a8e50e7fa339c221c9590ed26f61ae59d27d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by BROWN & BROWN, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/79282/000119312526429079/bro-20261021.htm",
-   "timestamp": "2026-10-22T17:00:13-04:00",
-   "tickers": [
-    "BRO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ccb91616aeba3e73c1b17436b45d90d7c100f56d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by NEWMONT Corp /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1164727/000116472726000043/nem-20260930.htm",
-   "timestamp": "2026-10-22T16:46:01-04:00",
-   "tickers": [
-    "NEM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-22 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3f0027c1ea09504e920df32f69eb1556156d391e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by DECKERS OUTDOOR CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/910521/000091052126000028/deck-20261020.htm",
-   "timestamp": "2026-10-22T16:09:31-04:00",
-   "tickers": [
-    "DECK"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5af58fdf3698f80710c8f5e419495be5da9fff06",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Credo Technology Group Holding Ltd",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026066888/xslF345X06/wk-form4_1792699719.xml",
-   "timestamp": "2026-10-22T16:08:42-04:00",
-   "tickers": [
-    "CRDO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-22 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b7d31ce27bcc993f4aebbb573f91b6014fa35534",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by NEWMONT Corp /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1164727/000116472726000041/nem-20261022.htm",
-   "timestamp": "2026-10-22T16:05:51-04:00",
-   "tickers": [
-    "NEM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "06ac1b66f431f1f98bf124b87e753544a8e4fa89",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by WESTERN DIGITAL CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/106040/000162828026066882/wdc-20261022.htm",
-   "timestamp": "2026-10-22T16:04:29-04:00",
-   "tickers": [
-    "WDC"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-22 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1646,6 +1660,16 @@
   ]
  },
  "last24h": [
+  "228622a68599e06a97a91f4df06aa1dee263b46d",
+  "bcecbf53a99659dc7d60e842e532a1c88f9b637d",
+  "a8adc5665da33dcba1185499af868a16699b2c68",
+  "d5f01f9dd738c00b2fddf948d495c097f3f878da",
+  "cc145201942b1a707904137d0947a9b8f51b5812",
+  "b81dd12cb14abcbd0998f4a6ca805f0ee4025a31",
+  "9555617616e2d1f1464cd2967811c45b1343f229",
+  "4de511fe134348c69a2946e67f40ccf1badb0177",
+  "ebab06bccb549c33e77c8af94ffcf9b0a2930c65",
+  "55c5ff3ba5f452995fac73ccbb7b51ebb24379dd",
   "41105a5a4ff7f08f6cdb4cf1e77a7efb39cc0bdb",
   "7bcf350416a8764356b22a9fe6f4c08934c6ff85",
   "6c1dae7831290f2c90b42bd1d82e148d8299dc89",
@@ -1655,20 +1679,11 @@
   "ac678512bd90c3abd3e7ca55cabe9fb9644fd5d9",
   "3b7c0a9d6dfa8b3273ef91d8a799191b82c0f46c",
   "08c67c9b6abead4106286050178ee6c8c375770e",
+  "64b130ffa0ad1443f861535745f1ccd524d99c4f",
   "0f48d638efdbb210f8e5b6def5d32ceae9428af3",
   "469415d13d79380bcd5bf4c678c8ae157be5b26a",
   "dd0ff5ac81b80fa94368d5eed50be32b1a8cac62",
   "130e99207c4c62a49eb6dfca82bee677a383f2f7",
-  "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff",
-  "cb38c66354c6c68fa1e3a0aff68b33940f5a2a03",
-  "23571ac6e02077ae103bfa8b7c0995dce6741d47",
-  "f614f2ed9e0bb397a6544486736ca252fc5ffe35",
-  "efb7fea1c4e3ff5fdcc4df645e9113b706445981",
-  "cb1dfe684cf9add3be9fa7ae15670a33d1ee8755",
-  "cf749e2c71017c6f24486e9ff20f20aa360fb81e",
-  "afb7d16ee55a8a1be13df7620348101c7a70222e",
-  "f68d62c170fef5d17f3b79481bede36393786683",
-  "57f39357f06bf303a8b698d267bd27a46b2763cf",
-  "4fbac50bf51418638d96bbe3d6c2ba55e9741460"
+  "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff"
  ]
 }
