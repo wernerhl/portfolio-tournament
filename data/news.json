@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-29",
- "fetched_at": "2026-10-29T19:48:31-04:00",
+ "fetched_at": "2026-10-29T23:31:34-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -15,45 +15,45 @@
   ],
   "top40": [
    "GEV",
-   "GOOG",
    "TSM",
    "RTX",
    "META",
-   "NOC",
+   "PATH",
    "LMT",
-   "AMP",
+   "NOW",
    "AVGO",
    "HOOD",
-   "DXCM",
-   "PATH",
-   "UBER",
-   "CEG",
+   "SCHW",
+   "GOOG",
    "ADBE",
-   "EXPE",
-   "CPAY",
-   "GEN",
-   "ADSK",
-   "NEM",
-   "APP",
-   "INCY",
-   "DASH",
-   "UAL",
-   "CSCO",
+   "AMP",
    "NVDA",
-   "BMY",
+   "NOC",
+   "DXCM",
+   "EXPE",
+   "NEM",
+   "CEG",
+   "INCY",
+   "UBER",
+   "CPAY",
+   "ADSK",
+   "SNDK",
+   "APP",
+   "DASH",
+   "NFLX",
+   "GDDY",
+   "ORCL",
    "INTU",
+   "HSY",
+   "ABNB",
    "AXP",
    "TROW",
-   "ABNB",
-   "SNDK",
-   "HSY",
-   "DECK",
-   "RJF",
-   "GDDY",
-   "GE",
-   "SOLV",
-   "CRDO",
-   "TPR"
+   "CSCO",
+   "UAL",
+   "TPR",
+   "NTAP",
+   "TLN",
+   "PLTR"
   ]
  },
  "sources_status": {
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=62 (parsed 41 names)",
+  "edgar": "ok n=72 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=3 (parsed 20)",
   "ir_gev": "ok n=3 (parsed 20)",
@@ -82,16 +82,48 @@
   "vocabulary_rule": 0,
   "directive_rule": 0,
   "irrelevant": 11,
-  "out_of_window": 26253,
+  "out_of_window": 26062,
   "unparseable": 0
  },
  "counts": {
-  "items": 96,
-  "tier1": 96,
+  "items": 112,
+  "tier1": 112,
   "tier2": 0,
-  "last24h": 25
+  "last24h": 26
  },
  "items": [
+  {
+   "id": "9d538054e4094c250f644e855d5ab7f5a29aae6b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by SCHWAB CHARLES CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/316709/000092373826000048/xslF345X06/wk-form4_1793316208.xml",
+   "timestamp": "2026-10-29T19:23:31-04:00",
+   "tickers": [
+    "SCHW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-29 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2d88133d7e681ccd8bc395aa899aab86b276b321",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000158310926000004/xslF345X06/wk-form4_1793310384.xml",
+   "timestamp": "2026-10-29T17:46:27-04:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-29 · FORM 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "228622a68599e06a97a91f4df06aa1dee263b46d",
    "tier": 1,
@@ -475,6 +507,102 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "e7f5db2bc7c7d7cdf0b4f89538a9b883855b97e7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000164960926000037/xslF345X06/wk-form4_1793235984.xml",
+   "timestamp": "2026-10-28T21:06:27-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "431413cc83dde7d4a1c5dedab0625ec014abe41a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000133494426000036/xslF345X06/wk-form4_1793235977.xml",
+   "timestamp": "2026-10-28T21:06:20-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "89f4f8854bb400702c9457f8e64113a0f42185c8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000166742226000038/xslF345X06/wk-form4_1793235971.xml",
+   "timestamp": "2026-10-28T21:06:14-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cdaf9f22eb2a154c87935ed9b239527a11c877c6",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000210346926000014/xslF345X06/wk-form4_1793235965.xml",
+   "timestamp": "2026-10-28T21:06:07-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "43cbc72253f0515ccdc8d3f1aeb8977661948459",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000178106426000020/xslF345X06/wk-form4_1793235957.xml",
+   "timestamp": "2026-10-28T21:06:01-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6279ba1fa1157dd198d1079ffd9bf0744668abd4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000146539126000032/xslF345X06/wk-form4_1793235951.xml",
+   "timestamp": "2026-10-28T21:05:54-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff",
    "tier": 1,
    "tier_label": "primary",
@@ -536,6 +664,38 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-28 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c8d230a4851bf8316b074c2dd9d6a9e86e4c1ecd",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000096/now-20260930.htm",
+   "timestamp": "2026-10-28T17:12:31-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-28 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a8e49d0191c29f82cf8949d067f2dad6b85607d5",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K/A filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000095/now-20261028.htm",
+   "timestamp": "2026-10-28T17:10:49-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K/A · filed 2026-10-28 · 8-K/A",
    "disclosure_lag_label": null
   },
   {
@@ -619,6 +779,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "cd32fd9f249db78a41d1ff99141a7e46336b3046",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by ServiceNow, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000092/erq3fy26-8xk.htm",
+   "timestamp": "2026-10-28T16:14:14-04:00",
+   "tickers": [
+    "NOW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "57f39357f06bf303a8b698d267bd27a46b2763cf",
    "tier": 1,
    "tier_label": "primary",
@@ -645,6 +821,22 @@
    "timestamp": "2026-10-28T16:01:33-04:00",
    "tickers": [
     "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "eb849b3b438951844054f94be6d25a0e90164cb9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by ORACLE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/d75538d8k.htm",
+   "timestamp": "2026-10-28T14:24:44-04:00",
+   "tickers": [
+    "ORCL"
    ],
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
@@ -921,6 +1113,70 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-27 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ad0df1fca2916f09b5a0efeec5909822a8390399",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ORACLE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000134143926000125/xslF345X06/form4.xml",
+   "timestamp": "2026-10-27T18:09:40-04:00",
+   "tickers": [
+    "ORCL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-27 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bfb2b109e018c854e0165c8479a4ca7a6001436a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ORACLE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000134143926000123/xslF345X06/form4.xml",
+   "timestamp": "2026-10-27T18:06:06-04:00",
+   "tickers": [
+    "ORCL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-27 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8a664e07c206c01f638855ee0ed405b5cebf7277",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ORACLE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000134143926000121/xslF345X06/form4.xml",
+   "timestamp": "2026-10-27T18:03:34-04:00",
+   "tickers": [
+    "ORCL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-27 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "da8d1576377137fac7008575d142b5a4867f9f46",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ORACLE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000134143926000119/xslF345X06/form4.xml",
+   "timestamp": "2026-10-27T18:00:50-04:00",
+   "tickers": [
+    "ORCL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-10-27 · PRIMARY DOCUMENT",
    "disclosure_lag_label": null
   },
   {
@@ -1660,6 +1916,8 @@
   ]
  },
  "last24h": [
+  "9d538054e4094c250f644e855d5ab7f5a29aae6b",
+  "2d88133d7e681ccd8bc395aa899aab86b276b321",
   "228622a68599e06a97a91f4df06aa1dee263b46d",
   "bcecbf53a99659dc7d60e842e532a1c88f9b637d",
   "a8adc5665da33dcba1185499af868a16699b2c68",
@@ -1683,7 +1941,6 @@
   "0f48d638efdbb210f8e5b6def5d32ceae9428af3",
   "469415d13d79380bcd5bf4c678c8ae157be5b26a",
   "dd0ff5ac81b80fa94368d5eed50be32b1a8cac62",
-  "130e99207c4c62a49eb6dfca82bee677a383f2f7",
-  "b85dd4fa2c80bfc8c022182f55fb0cfcf4ba47ff"
+  "130e99207c4c62a49eb6dfca82bee677a383f2f7"
  ]
 }

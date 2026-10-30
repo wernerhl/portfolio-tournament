@@ -1,9 +1,9 @@
 {
-  "updated": "2026-10-29T01:49:51.206704",
-  "as_of": "2026-10-28",
-  "session_date": "2026-10-28",
+  "updated": "2026-10-30T01:52:56.443246",
+  "as_of": "2026-10-29",
+  "session_date": "2026-10-29",
   "cadence": "daily",
-  "tradable_at": "2026-10-29",
+  "tradable_at": "2026-10-30",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -436,6 +436,12 @@
       "state": "contango",
       "spread": -2.31,
       "source": "cboe"
+    },
+    {
+      "d": "2026-10-29",
+      "state": "contango",
+      "spread": -2.17,
+      "source": "cboe"
     }
   ],
   "backfill_note": "2026-07-20 onward recomputed from the repaired canonical closes (Cboe official history overlaid on vol_indicators); source recorded per day",
@@ -456,9 +462,9 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "contango",
-  "state_age": 8,
-  "spread": -2.31,
-  "delta_spread": -0.26,
+  "state_age": 9,
+  "spread": -2.17,
+  "delta_spread": 0.14,
   "sigma_threshold": 0.548,
   "trigger_fired": false,
   "entry": {
@@ -527,16 +533,44 @@
     }
   },
   "curve": {
-    "spot_vix": 16.91,
-    "vix1d": 13.15,
-    "vix3m": 19.22,
-    "spread_spot_3m": -2.31,
+    "spot_vix": 17.2,
+    "vix1d": 13.62,
+    "vix3m": 19.37,
+    "spread_spot_3m": -2.17,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-10-29",
+    "date": "2026-10-30",
     "types": [
+      "EARNINGS",
+      "EARNINGS"
+    ],
+    "sessions_away": 1
+  },
+  "event_today": [
+    "CLAIMS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "GDP",
+    "PCE"
+  ],
+  "conditioning": {
+    "event_flag": true,
+    "event_types": [
       "CLAIMS",
+      "EARNINGS",
       "EARNINGS",
       "EARNINGS",
       "EARNINGS",
@@ -553,41 +587,11 @@
       "GDP",
       "PCE"
     ],
-    "sessions_away": 1
-  },
-  "event_today": [
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "FOMC"
-  ],
-  "conditioning": {
-    "event_flag": true,
-    "event_types": [
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "FOMC"
-    ],
-    "delta_2y_bps": -5.0,
+    "delta_2y_bps": -10.3,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
-    "front_end_repriced": false,
-    "held_close_proxy": 0.4,
+    "front_end_repriced": true,
+    "held_close_proxy": 0.46,
     "held_close": false
   },
   "attribution": {
@@ -595,11 +599,11 @@
     "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": 0.017,
-      "breadth_delta_pp": 0.19,
+      "smh_1d_return": -0.011,
+      "breadth_delta_pp": 0.0,
       "breadth_holds": true,
-      "breadth_delta_sigma_1y_pp": 4.863,
-      "breadth_z": 0.04,
+      "breadth_delta_sigma_1y_pp": 4.835,
+      "breadth_z": 0.0,
       "rule": "breadth holds when \u0394breadth \u2265 \u2212k\u03c3 of 1y daily \u0394 distribution (k = 1.0)"
     }
   },
@@ -611,7 +615,7 @@
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-10-28",
+      "today_excluded_from_metrics": "2026-10-29",
       "all_triggers_reversion": {
         "n": 800,
         "n_reverted": 686,
@@ -645,11 +649,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-10-28",
-      "state": "deep_contango",
-      "spread": -3.13
-    },
     {
       "d": "2025-10-29",
       "state": "contango",
@@ -1904,6 +1903,11 @@
       "d": "2026-10-28",
       "state": "contango",
       "spread": -2.31
+    },
+    {
+      "d": "2026-10-29",
+      "state": "contango",
+      "spread": -2.17
     }
   ],
   "past_spikes": [
