@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-10-29",
- "fetched_at": "2026-10-29T23:31:34-04:00",
+ "fetched_at": "2026-10-30T15:00:09-04:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=0 (constructed 0)",
   "census": "ok n=2 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=72 (parsed 41 names)",
+  "edgar": "ok n=73 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=3 (parsed 20)",
   "ir_gev": "ok n=3 (parsed 20)",
@@ -81,17 +81,49 @@
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 11,
-  "out_of_window": 26062,
+  "irrelevant": 10,
+  "out_of_window": 26043,
   "unparseable": 0
  },
  "counts": {
-  "items": 112,
-  "tier1": 112,
+  "items": 113,
+  "tier1": 113,
   "tier2": 0,
-  "last24h": 26
+  "last24h": 15
  },
  "items": [
+  {
+   "id": "c7fc8526bbff6e23102e00f2c688830030abede1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by AMERIPRISE FINANCIAL INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/820027/000082002726000054/amp-20260930.htm",
+   "timestamp": "2026-10-30T14:04:11-04:00",
+   "tickers": [
+    "AMP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-30 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9b8e8cb24823916ee605db713eeff6b7d66035cc",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by AMERICAN EXPRESS CO",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000411/axp-20261030.htm",
+   "timestamp": "2026-10-30T14:00:24-04:00",
+   "tickers": [
+    "AXP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-10-30 · 8-K",
+   "disclosure_lag_label": null
+  },
   {
    "id": "9d538054e4094c250f644e855d5ab7f5a29aae6b",
    "tier": 1,
@@ -106,6 +138,22 @@
    ],
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-29 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2b4f3d545015d45ebc14aa707c0f1ad11559d787",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by GoDaddy Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1609711/000160971126000120/gddy-20260930.htm",
+   "timestamp": "2026-10-29T17:50:11-04:00",
+   "tickers": [
+    "GDDY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-10-30 · 10-Q",
    "disclosure_lag_label": null
   },
   {
@@ -1850,38 +1898,6 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-23 · 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "1af2afe58c4964ca53f24cc83914f28d2db9b64b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000409/axp-20260930.htm",
-   "timestamp": "2026-10-23T12:26:51-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-23 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b0257f31aad59430b0dc22682c0d2d7c0279d111",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000405/axp-20261023.htm",
-   "timestamp": "2026-10-23T07:00:36-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-23 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
@@ -1916,7 +1932,10 @@
   ]
  },
  "last24h": [
+  "c7fc8526bbff6e23102e00f2c688830030abede1",
+  "9b8e8cb24823916ee605db713eeff6b7d66035cc",
   "9d538054e4094c250f644e855d5ab7f5a29aae6b",
+  "2b4f3d545015d45ebc14aa707c0f1ad11559d787",
   "2d88133d7e681ccd8bc395aa899aab86b276b321",
   "228622a68599e06a97a91f4df06aa1dee263b46d",
   "bcecbf53a99659dc7d60e842e532a1c88f9b637d",
@@ -1927,20 +1946,6 @@
   "9555617616e2d1f1464cd2967811c45b1343f229",
   "4de511fe134348c69a2946e67f40ccf1badb0177",
   "ebab06bccb549c33e77c8af94ffcf9b0a2930c65",
-  "55c5ff3ba5f452995fac73ccbb7b51ebb24379dd",
-  "41105a5a4ff7f08f6cdb4cf1e77a7efb39cc0bdb",
-  "7bcf350416a8764356b22a9fe6f4c08934c6ff85",
-  "6c1dae7831290f2c90b42bd1d82e148d8299dc89",
-  "a38675996c1b36643fa51b53313b1fc10d61fa01",
-  "fbbb88c247ad18c036c42e76c2a3f6754ecf2f4b",
-  "48c980494664a72e082437799009814ce91a8dbd",
-  "ac678512bd90c3abd3e7ca55cabe9fb9644fd5d9",
-  "3b7c0a9d6dfa8b3273ef91d8a799191b82c0f46c",
-  "08c67c9b6abead4106286050178ee6c8c375770e",
-  "64b130ffa0ad1443f861535745f1ccd524d99c4f",
-  "0f48d638efdbb210f8e5b6def5d32ceae9428af3",
-  "469415d13d79380bcd5bf4c678c8ae157be5b26a",
-  "dd0ff5ac81b80fa94368d5eed50be32b1a8cac62",
-  "130e99207c4c62a49eb6dfca82bee677a383f2f7"
+  "55c5ff3ba5f452995fac73ccbb7b51ebb24379dd"
  ]
 }
