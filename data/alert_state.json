@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-10-29",
   "as_of": "2026-10-29",
-  "updated": "2026-10-30T03:34:27+00:00",
+  "updated": "2026-10-31T03:19:47+00:00",
   "schema": 1,
   "regime": {
     "label": "ELEVATED",
@@ -11,8 +11,10 @@
     "session": "2026-10-29"
   },
   "shock": {
-    "active": false,
-    "reasons": [],
+    "active": true,
+    "reasons": [
+      "SPX -1.8%"
+    ],
     "session": "2026-10-29"
   },
   "complacency": {
@@ -21,8 +23,8 @@
     "session": "2026-10-29"
   },
   "intraday": {
-    "session_date": "2026-10-29",
-    "timestamp": "2026-10-30T03:29:17"
+    "session_date": "2026-10-30",
+    "timestamp": "2026-10-30T22:32:06"
   },
   "issues": {
     "regime": {
@@ -35,19 +37,28 @@
       "R_full": 0.3727,
       "session": "2026-10-07"
     },
-    "shock": null,
+    "shock": {
+      "number": 15,
+      "url": "https://github.com/wernerhl/portfolio-tournament/issues/15",
+      "dry_run": false,
+      "opened_session": "2026-10-29",
+      "reasons": [
+        "SPX -1.8%"
+      ],
+      "session": "2026-10-29"
+    },
     "complacency": null
   },
   "last_opened": {
     "regime": "2026-10-07",
-    "shock": "2026-10-15",
+    "shock": "2026-10-29",
     "complacency": "2026-10-28"
   },
   "last_run": {
     "session_date": "2026-10-29",
     "mode": "live",
     "actions": [
-      "[complacency] closed (reverted)"
+      "[shock] opened"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
