@@ -1,11 +1,11 @@
 {
- "last_attempt": "2026-11-02T22:22:30-05:00",
+ "last_attempt": "2026-11-03T21:00:13-05:00",
  "last_success": "2026-11-02T22:22:30-05:00",
- "failure_reason": null,
- "session_date": "2026-11-02",
+ "failure_reason": "FRESHNESS tournament.json: max date 2026-11-02 < last session 2026-11-03; PRICE_STORE_SESSION prices_daily.parquet ends 2026-11-02 < publish session 2026-11-03; FRESHNESS thesis_daily.json: max date 2026-11-02 < last session 2026-11-03",
+ "session_date": "2026-11-03",
  "forced_publish_reason": null,
  "audit": {
-  "ran_at": "2026-11-03T05:17:08+00:00",
+  "ran_at": "2026-11-04T03:52:53+00:00",
   "scope": "all",
   "n_findings": 41,
   "critical": [],
@@ -15,15 +15,15 @@
   ],
   "high": [
    "book:holdings_age",
+   "brief:missing",
    "governance:coverage",
    "governance:review_overdue",
    "nullguard",
    "options:captured_share",
    "options:lens_spot_stale",
-   "options:vintage_missing",
    "rates:stale",
+   "rates:vintage",
    "tournament:dead_columns",
-   "tournament:freshness",
    "universe:stale_ticker",
    "xfile:vol_single_source"
   ],
