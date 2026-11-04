@@ -1,6 +1,6 @@
 {
  "cadence": "on_change",
- "as_of": "2026-10-07",
+ "as_of": "2026-11-04",
  "built_by": "scripts/build_universe.py (order 6.2, 2026-09-16)",
  "rule": "union of the tournament's canonical universe, the screen view's universe (historical file + config midcap_additions) and every held name in data/holdings.json; sorted, one ticker per line; consumed by both scoring views",
  "inputs": {
@@ -27,10 +27,14 @@
     "GOOG",
     "BMNR"
    ]
+  },
+  "retired": {
+   "path": "data/universe_retired.json",
+   "n_removed": 6
   }
  },
  "screen_universe_size": 537,
- "union_size": 534,
+ "union_size": 528,
  "only_tournament": [],
  "only_screener_or_midcap": [],
  "held_added": [],
@@ -74,6 +78,38 @@
   ],
   "source": "data/share_classes.json"
  },
+ "retired": [
+  {
+   "ticker": "AVB",
+   "last_bar": "2026-08-14",
+   "verified": false
+  },
+  {
+   "ticker": "CFLT",
+   "last_bar": "2026-03-17",
+   "verified": false
+  },
+  {
+   "ticker": "EA",
+   "last_bar": "2026-08-04",
+   "verified": false
+  },
+  {
+   "ticker": "PSKY",
+   "last_bar": "2026-10-16",
+   "verified": false
+  },
+  {
+   "ticker": "PSTG",
+   "last_bar": "2026-06-11",
+   "verified": false
+  },
+  {
+   "ticker": "WBD",
+   "last_bar": "2026-10-06",
+   "verified": false
+  }
+ ],
  "former_tickers": {
   "APTV": [
    "DLPH"
@@ -187,9 +223,6 @@
   "VMRK": [
    "EQR"
   ],
-  "WBD": [
-   "DISCA"
-  ],
   "WELL": [
    "HCN"
   ],
@@ -201,6 +234,6 @@
   ]
  },
  "ticker_changes": "data/analyst/ticker_changes.csv",
- "sha256": "80881ef1a3cc642aaeaf8a13ffe8d7e2cf3d789ef142992505911447b2ca58a5",
+ "sha256": "7c788b2f3002365821796cf997a76da38830c5f28768d88805b80c3023999796",
  "output": "data/universe.txt"
 }

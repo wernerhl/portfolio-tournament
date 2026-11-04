@@ -1,0 +1,81 @@
+{
+ "schema": 1,
+ "cadence": "daily",
+ "session_date": "2026-11-03",
+ "session": "2026-11-03",
+ "seeded_from": "the 56 committed versions of reports/audit_last.txt (2026-09-09..2026-11-03): first_seen is the first session of the unbroken run of reports carrying the check",
+ "checks": {
+  "book:holdings_age": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-08",
+   "last_seen": "2026-11-03",
+   "age_sessions": 19,
+   "n_lines": 1,
+   "detail": "holdings.json as_of 2026-09-30 is 24 sessions old (>5): confirm or re-export the account"
+  },
+  "governance:coverage": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-07",
+   "last_seen": "2026-11-03",
+   "age_sessions": 20,
+   "n_lines": 4,
+   "detail": "2_balanced: unclassified share 15% > 15%"
+  },
+  "governance:review_overdue": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-07",
+   "last_seen": "2026-11-03",
+   "age_sessions": 20,
+   "n_lines": 10,
+   "detail": "visibility override AMZN review_by 2026-08-13 passed (decay should be active)"
+  },
+  "nullguard": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-30",
+   "last_seen": "2026-11-03",
+   "age_sessions": 3,
+   "n_lines": 1,
+   "detail": "intraday.vvix is null; dependent safety checks must read IMPAIRED not false"
+  },
+  "options:captured_share": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-07",
+   "last_seen": "2026-11-03",
+   "age_sessions": 20,
+   "n_lines": 1,
+   "detail": "16 of the last 20 trading days captured (80% < 90%); missing: ['2026-10-07 push_failed', '2026-10-08 push_failed', '2026-10-12 no_run_in_window', '2026-11-02 no_run_in_window']"
+  },
+  "rates:stale": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-07",
+   "last_seen": "2026-11-03",
+   "age_sessions": 20,
+   "n_lines": 1,
+   "detail": "global-rates series older than their expected lag: ['us2: 2026-10-02 (22 business days behind 2026-11-03, allowed 2)', 'us10: 2026-10-02 (22 business days behind 2026-11-03, allowed 2)', 'us30: 2026-10-02 (22 business days behind 2026-11-03, allowed 2)', 'us_real10: 2026-10-02 (22 business days behi"
+  },
+  "tournament:dead_columns": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-07",
+   "last_seen": "2026-11-03",
+   "age_sessions": 20,
+   "n_lines": 1,
+   "detail": "regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_7_20_random_forest', 'p_15_40_gradient_boost']"
+  },
+  "universe:stale_ticker": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-08",
+   "last_seen": "2026-11-03",
+   "age_sessions": 19,
+   "n_lines": 1,
+   "detail": "universe names with no price bar in the last five sessions (2026-10-28..2026-11-03): ['AVB', 'CFLT', 'EA', 'PSKY', 'PSTG', 'WBD']"
+  },
+  "xfile:vol_single_source": {
+   "severity": "HIGH",
+   "first_seen": "2026-10-30",
+   "last_seen": "2026-11-03",
+   "age_sessions": 3,
+   "n_lines": 1,
+   "detail": "intraday vix 18.57 vs canonical 20.83"
+  }
+ }
+}

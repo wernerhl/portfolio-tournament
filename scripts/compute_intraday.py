@@ -172,6 +172,9 @@ def assess_intraday(px: dict) -> dict:
         "vix_prior":        round(vix_pri, 2) if vix_pri is not None else None,
         "vix_change_pct":   round(vix_chg, 1) if vix_chg is not None else None,
         "vix3m":            round(vix3m, 2) if vix3m is not None else None,
+        # the referee's nullguard reads intraday.vvix; until Nov 2026 VVIX was only under prices, so the check read
+        # null every day although the feed was live
+        "vvix":             round(px["vvix"]["last"], 2) if (px.get("vvix") or {}).get("last") is not None else None,
         "backwardation":    backwardation,
         "skew":             round(skew, 1) if skew is not None else None,
         "skew_source":      skew_source if skew is not None else None,
@@ -197,6 +200,19 @@ def main():
     print("Fetching intraday snapshot...")
     px = fetch_intraday()
     print(f"  got {len(px)}/{len(TICKERS)} channels")
+    # The prior close of the vol complex is the canonical close (Cboe official, one fetcher) whenever the canonical
+    # file holds the previous session; the provider's last 1-minute tick of the prior day differs from it by a few
+    # cents (20.81 vs 20.83 on 3-Nov-2026). vix_change_pct, the +15% shock leg, then measures from the official close,
+    # and the referee's xfile:vol_single_source can compare vix_prior with the canonical close to the cent.
+    from trading_calendar import prev_trading_day
+    canon0 = _load_canonical()
+    canon_sess = str(canon0.get("session_date") or canon0.get("date") or "")[:10]
+    if canon_sess and canon_sess == prev_trading_day(session_et):
+        for key in ("vix", "vix3m", "vvix", "skew"):
+            if key in px and canon0.get(key) is not None:
+                px[key]["prior_close_provider"] = px[key]["prior_close"]
+                px[key]["prior_close"] = float(canon0[key])
+                px[key]["prior_source"] = f"canonical close ({canon_sess})"
     state = assess_intraday(px)
     state["session_date"] = session_et          # SEPT AUDIT [5]: declared date
     state["cadence"] = "intraday"
@@ -206,7 +222,8 @@ def main():
     # bar both claim to be "the close" and disagree by a few cents. The
     # canonical file (one fetcher, pinned provider) wins: overwrite the
     # close-like fields so both artifacts agree to the cent.
-    et = dt.datetime.utcnow() - dt.timedelta(hours=4)
+    from trading_calendar import now_et
+    et = now_et()                       # was utcnow() - 4h: an hour early from November to March (EST is UTC-5)
     after_close = et.hour > 16 or (et.hour == 16 and et.minute >= 20)
     canon = _load_canonical()
     if after_close and canon.get("date") == et.strftime("%Y-%m-%d"):
