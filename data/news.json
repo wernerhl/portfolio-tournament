@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-11-03",
- "fetched_at": "2026-11-04T08:16:04-05:00",
+ "fetched_at": "2026-11-04T15:40:31-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,12 +57,12 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=2 (parsed 20)",
+  "fed_press": "ok n=1 (parsed 20)",
   "fed_speeches": "ok n=0 (parsed 15)",
   "bea": "ok n=3 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
-  "census": "ok n=2 (parsed 18)",
+  "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=82 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
@@ -72,26 +72,250 @@
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=2 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=4 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=6 (parsed 10)",
-  "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
+  "yahoo_headlines:GEV": "ok n=6 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=0 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
+  "yahoo_headlines:BMNR": "ok n=6 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
-  "directive_rule": 0,
-  "irrelevant": 34,
-  "out_of_window": 26194,
+  "directive_rule": 2,
+  "irrelevant": 33,
+  "out_of_window": 26198,
   "unparseable": 0
  },
  "counts": {
-  "items": 137,
-  "tier1": 116,
-  "tier2": 21,
-  "last24h": 47
+  "items": 146,
+  "tier1": 113,
+  "tier2": 33,
+  "last24h": 53
  },
  "items": [
+  {
+   "id": "7d9c5b4fc59a33190ad78d6ccbc9d0fc4884495c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Top VC: The Best AI Models Take “80% Plus” of Spend. And Alphabet’s Gemini Just Ranked No. 1",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.tikr.com/blog/top-vc-the-best-ai-models-take-80-plus-of-spend-and-alphabets-gemini-just-ranked-no-1?ref=yahoofinance&tlnk=yf-261104-c9f4874w",
+   "timestamp": "2026-11-04T15:15:16-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6a13499b3d757fb751d8c1ddefd81a4b11b3bd5a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bill Ackman: Netflix “an Incredibly Cheap Stock” After a 55% Drop. But Is He Right?",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.tikr.com/blog/bill-ackman-netflix-an-incredibly-cheap-stock-after-a-55-drop-but-is-he-right?ref=yahoofinance&tlnk=yf-261104-45q98v96",
+   "timestamp": "2026-11-04T15:10:27-05:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about NFLX",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "69df4fa1b78fbb8df2b11d98bd156bf22cfc84ac",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet Stocks Rise 1.4% as Euro Borrowing Meets a $200 Billion Spending Plan",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/alphabet-stocks-rise-1-4-193607695.html",
+   "timestamp": "2026-11-04T14:36:07-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2a8862c402bad5f3758fb49756c69b59670babab",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google Is Telling Schools to Take Its AI or Lose Its Search Engine",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/11/04/google-is-telling-schools-to-take-its-ai-or-lose-its-search-engine/",
+   "timestamp": "2026-11-04T14:32:16-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a3d4467c62bce69811f50bfc9e4e30e9187c2620",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why a Democratic Sweep Is Crushing GE Vernova and More Industrial Stocks",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.barrons.com/articles/ge-vernova-vertiv-eaton-ai-industrials-stocks-bf41f4bc?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-11-04T13:40:00-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "10c7bbf1ac2e031ae6499fa8eb469da3382ba865",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Stocks Decline 1.49% as $63 Billion AI Financing Carries Residual-Value Risk",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-decline-1-49-181830621.html",
+   "timestamp": "2026-11-04T13:18:30-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1149eefe239a0b9ce38c5dcc4a61c256b23bf60d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia is Far From The Only Threat to AMD",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://247wallst.com/investing/2026/11/04/nvidia-is-far-from-the-only-threat-to-amd/",
+   "timestamp": "2026-11-04T12:45:28-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0ab0cac52cdf0d10a736b0413eda051d2689d259",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Markets Discount Broadcom (AVGO) on MediaTek TPU Rumors, But Management’s Targets Tell Another Story",
+   "source": "Insider Monkey",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/markets-discount-broadcom-avgo-mediatek-154439522.html",
+   "timestamp": "2026-11-04T10:44:39-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Insider Monkey · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fcf46d21e8578ac4c557621ae52ce66480cfd446",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Constellation Energy Sinks 8%, Vistra Down 14% as Democrats’ Midterm Sweep Hits AI Power Stocks",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.tikr.com/blog/constellation-energy-sinks-8-vistra-down-14-as-democrats-midterm-sweep-hits-ai-power-stocks?ref=yahoofinance&tlnk=yf-261104-p4rhmf6x",
+   "timestamp": "2026-11-04T10:31:57-05:00",
+   "tickers": [
+    "CEG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about CEG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c0a366c70e739e026e971f6c84652e07b93755ba",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Sinks 10%, Vistra Down 12% as Democrats Win Congress: “Incrementally More Negative Sentiment”",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.tikr.com/blog/ge-vernova-sinks-10-vistra-down-12-as-democrats-win-congress-incrementally-more-negative-sentiment?ref=yahoofinance&tlnk=yf-261104-rgc2g3jg",
+   "timestamp": "2026-11-04T10:17:43-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "53338c446d9aa2543df2fae9d4885b7c24e8296f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Vertiv Sinks 9%, GE Vernova Down 8% as Democrats Win Congress, Reviving Data Center Fears",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.tikr.com/blog/vertiv-sinks-9-ge-vernova-down-8-as-democrats-win-congress-reviving-data-center-fears?ref=yahoofinance&tlnk=yf-261104-2jm9w7m7",
+   "timestamp": "2026-11-04T10:09:52-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3ccc0b5287b71bb560434b2f5d3abe3fc6c32adc",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Soars 6%, Eaton Up 7% on Record Orders and Bernstein’s Data Center Call",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.tikr.com/blog/ge-vernova-soars-6-eaton-up-7-on-record-orders-and-bernsteins-data-center-call?ref=yahoofinance&tlnk=yf-261104-cjwg7rhp",
+   "timestamp": "2026-11-04T08:54:45-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "40b5e58c982f2244ccf2a432d3a710e19e5ce0e9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "U.S. International Trade in Goods and Services",
+   "source": "Census Bureau economic indicator",
+   "source_id": "census",
+   "url": "https://www.census.gov/foreign-trade/index.html",
+   "timestamp": "2026-11-04T08:30:00-05:00",
+   "tickers": [],
+   "topics": [
+    "TRADE"
+   ],
+   "summary": "Tier 1 · Census Bureau economic indicator · topics: TRADE",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "17aae0a1f79e00adc68ac32e0b2ea678fd3c5b99",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "U.S. International Trade in Goods and Services, September 2026",
+   "source": "BEA release",
+   "source_id": "bea",
+   "url": "https://www.bea.gov/news/2026/us-international-trade-goods-and-services-september-2026",
+   "timestamp": "2026-11-04T08:30:00-05:00",
+   "tickers": [],
+   "topics": [
+    "TRADE"
+   ],
+   "summary": "Tier 1 · BEA release · topics: TRADE · next release December 8, 2026",
+   "disclosure_lag_label": null
+  },
   {
    "id": "99c2f96d46222537560ed45f1fc5f4baaf8f8602",
    "tier": 2,
@@ -2203,112 +2427,33 @@
    "topics": [],
    "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "eb849b3b438951844054f94be6d25a0e90164cb9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by ORACLE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/d75538d8k.htm",
-   "timestamp": "2026-10-28T14:24:44-04:00",
-   "tickers": [
-    "ORCL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "847a7abc2726921ccf5db1d6252e81b05257b6f9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Federal Reserve issues FOMC statement",
-   "source": "Federal Reserve Board press release",
-   "source_id": "fed_press",
-   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
-   "timestamp": "2026-10-28T14:00:00-04:00",
-   "tickers": [],
-   "topics": [
-    "FOMC"
-   ],
-   "summary": "Tier 1 · Federal Reserve Board press release · Monetary Policy · topics: FOMC",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e02efc3b594497bb7433dc13d9f391e5e736c928",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by PRICE T ROWE GROUP INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000149893526000007/xslF345X06/primarydocument.xml",
-   "timestamp": "2026-10-28T11:20:32-04:00",
-   "tickers": [
-    "TROW"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-10-28 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7d80e1d001b07977ec16ec03b53db98fc7b67076",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by AMPHENOL CORP /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926119421/aph-20261028x8k.htm",
-   "timestamp": "2026-10-28T09:42:41-04:00",
-   "tickers": [
-    "APH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-28 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5b834063e909716a40c5e7be83baa81be47507e8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Advance U.S. International Trade in Goods",
-   "source": "Census Bureau economic indicator",
-   "source_id": "census",
-   "url": "https://www.census.gov/econ/indicators/index.html",
-   "timestamp": "2026-10-28T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "TRADE",
-    "RETAIL"
-   ],
-   "summary": "Tier 1 · Census Bureau economic indicator · topics: TRADE",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
-   "11134b0ad30a7d254ea588501364924b01d7d8f0",
-   "c2fdc58b3632d211c6502c8383093718555d9592",
-   "07b5fcc1dd0f2b7cedb91f130b6c70af167c92c1",
-   "84820041b519dec0985b2af4e9041bbc3aa0c47b",
-   "7974bc70f44a91bc63db81b7dbcab2111852ee3c"
+   "a3d4467c62bce69811f50bfc9e4e30e9187c2620",
+   "c0a366c70e739e026e971f6c84652e07b93755ba",
+   "53338c446d9aa2543df2fae9d4885b7c24e8296f",
+   "3ccc0b5287b71bb560434b2f5d3abe3fc6c32adc",
+   "11134b0ad30a7d254ea588501364924b01d7d8f0"
   ],
   "NVDA": [
+   "1149eefe239a0b9ce38c5dcc4a61c256b23bf60d",
    "8b785f2bb040df31cefeba08d1d45305773444ee",
    "ab761f735315a9e1dea28f5a0f6a5187efa78748",
    "efb7fea1c4e3ff5fdcc4df645e9113b706445981"
   ],
   "AVGO": [
+   "10c7bbf1ac2e031ae6499fa8eb469da3382ba865",
+   "0ab0cac52cdf0d10a736b0413eda051d2689d259",
    "919aa0680656c33b2334b77eb5536cd7cd88320b"
   ],
-  "AVGO": [],
   "GOOG": [
+   "7d9c5b4fc59a33190ad78d6ccbc9d0fc4884495c",
+   "69df4fa1b78fbb8df2b11d98bd156bf22cfc84ac",
+   "2a8862c402bad5f3758fb49756c69b59670babab",
    "99c2f96d46222537560ed45f1fc5f4baaf8f8602",
-   "d3d8a77823608a9a54b98691aba8728694148f81",
-   "2460da9dc5db9e50e0bdf4f85c564e6fdb821435",
-   "394cf4028f4808f8718f950801f6dcf9c7202dea",
-   "515abac7d57732e2090f30701cfee1ec36535c66"
+   "d3d8a77823608a9a54b98691aba8728694148f81"
   ],
   "BMNR": [
    "cfaa24d171efc318683f5c2996c228adefee43bd",
@@ -2319,6 +2464,8 @@
   ]
  },
  "last24h": [
+  "40b5e58c982f2244ccf2a432d3a710e19e5ce0e9",
+  "17aae0a1f79e00adc68ac32e0b2ea678fd3c5b99",
   "181b69acbb4f6bfe5edb6be5eccece08a99fd996",
   "6bb46ff9c8be7b5218d41b6a834b252b51dc6ce3",
   "fa6230e03d89fd2cbf6c72249d01a5d2c31f218a",
@@ -2346,8 +2493,18 @@
   "2eb00605842222f6d26ae6ad250dfd044415fbb3",
   "81936b48e0f68a314bb32a841fbab8b4f5fb1f99",
   "dde2ca85af72244838585fcd63061d54bd38035e",
-  "938f81e5b1bf49f14a76be72d66716c3777984eb",
-  "d040c297a0f3c126badee4347c6abc7c93e9bf5f",
+  "7d9c5b4fc59a33190ad78d6ccbc9d0fc4884495c",
+  "6a13499b3d757fb751d8c1ddefd81a4b11b3bd5a",
+  "69df4fa1b78fbb8df2b11d98bd156bf22cfc84ac",
+  "2a8862c402bad5f3758fb49756c69b59670babab",
+  "a3d4467c62bce69811f50bfc9e4e30e9187c2620",
+  "10c7bbf1ac2e031ae6499fa8eb469da3382ba865",
+  "1149eefe239a0b9ce38c5dcc4a61c256b23bf60d",
+  "0ab0cac52cdf0d10a736b0413eda051d2689d259",
+  "fcf46d21e8578ac4c557621ae52ce66480cfd446",
+  "c0a366c70e739e026e971f6c84652e07b93755ba",
+  "53338c446d9aa2543df2fae9d4885b7c24e8296f",
+  "3ccc0b5287b71bb560434b2f5d3abe3fc6c32adc",
   "99c2f96d46222537560ed45f1fc5f4baaf8f8602",
   "d3d8a77823608a9a54b98691aba8728694148f81",
   "8b785f2bb040df31cefeba08d1d45305773444ee",
@@ -2359,12 +2516,6 @@
   "7d77db639d8c45286571cb103d2d8dd3fc699eaf",
   "919aa0680656c33b2334b77eb5536cd7cd88320b",
   "11134b0ad30a7d254ea588501364924b01d7d8f0",
-  "cfaa24d171efc318683f5c2996c228adefee43bd",
-  "ceeeea0ddbd466a37fc4fe3655843700d74bd216",
-  "c2fdc58b3632d211c6502c8383093718555d9592",
-  "07b5fcc1dd0f2b7cedb91f130b6c70af167c92c1",
-  "eaf2b93c95f6f39defabe9402ce7ceec371ce89f",
-  "84820041b519dec0985b2af4e9041bbc3aa0c47b",
-  "78715c5a9e4c1d57ecbcfcfee6cd9aa97929dae3"
+  "cfaa24d171efc318683f5c2996c228adefee43bd"
  ]
 }
