@@ -1,9 +1,9 @@
 {
-  "updated": "2026-11-03T03:32:40.484807",
-  "as_of": "2026-11-02",
-  "session_date": "2026-11-02",
+  "updated": "2026-11-04T11:37:04.424204",
+  "as_of": "2026-11-03",
+  "session_date": "2026-11-03",
   "cadence": "daily",
-  "tradable_at": "2026-11-03",
+  "tradable_at": "2026-11-04",
   "history_backfill": [
     {
       "d": "2026-07-20",
@@ -454,6 +454,12 @@
       "state": "flattening",
       "spread": -0.45,
       "source": "cboe"
+    },
+    {
+      "d": "2026-11-03",
+      "state": "flattening",
+      "spread": -0.44,
+      "source": "cboe"
     }
   ],
   "backfill_note": "2026-07-20 onward recomputed from the repaired canonical closes (Cboe official history overlaid on vol_indicators); source recorded per day",
@@ -474,11 +480,11 @@
     "futures_spread_status": "not_run (CBOE VX1/VX2 EOD settlements not sourced)"
   },
   "state": "flattening",
-  "state_age": 1,
-  "spread": -0.45,
-  "delta_spread": 0.91,
-  "sigma_threshold": 0.592,
-  "trigger_fired": true,
+  "state_age": 2,
+  "spread": -0.44,
+  "delta_spread": 0.01,
+  "sigma_threshold": 0.59,
+  "trigger_fired": false,
   "entry": {
     "current_entry_dspread": 0.91,
     "state_mean_entry": 0.268,
@@ -545,15 +551,43 @@
     }
   },
   "curve": {
-    "spot_vix": 21.15,
-    "vix1d": 17.9,
-    "vix3m": 21.6,
-    "spread_spot_3m": -0.45,
+    "spot_vix": 20.83,
+    "vix1d": 23.22,
+    "vix3m": 21.27,
+    "spread_spot_3m": -0.44,
     "headline_spread": "spot \u2212 3M (VIX \u2212 VIX3M); 1-day VIX1D is event-vol context, plotted but NOT in the spread definition."
   },
   "next_event": {
-    "date": "2026-11-03",
+    "date": "2026-11-04",
     "types": [
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "EARNINGS",
+      "ISM_SVC"
+    ],
+    "sessions_away": 1
+  },
+  "event_today": [
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "EARNINGS",
+    "ELECTION",
+    "JOLTS"
+  ],
+  "conditioning": {
+    "event_flag": true,
+    "event_types": [
       "EARNINGS",
       "EARNINGS",
       "EARNINGS",
@@ -566,35 +600,19 @@
       "ELECTION",
       "JOLTS"
     ],
-    "sessions_away": 1
-  },
-  "event_today": [
-    "EARNINGS",
-    "EARNINGS",
-    "EARNINGS",
-    "ISM_MFG"
-  ],
-  "conditioning": {
-    "event_flag": true,
-    "event_types": [
-      "EARNINGS",
-      "EARNINGS",
-      "EARNINGS",
-      "ISM_MFG"
-    ],
-    "delta_2y_bps": -0.6,
+    "delta_2y_bps": 2.4,
     "delta_2y_source": "ZT 2Y futures, prior settle \u2192 current (spans 08:30 ET release)",
     "delta_2y_fred_t1": null,
     "front_end_repriced": false,
-    "held_close_proxy": 1.0,
+    "held_close_proxy": 0.95,
     "held_close": true
   },
   "attribution": {
-    "primary_driver": "event_bump_sticky",
-    "primary_reversion": "med",
+    "primary_driver": "no_trigger",
+    "primary_reversion": "n/a",
     "equity_drag": false,
     "equity_drag_inputs": {
-      "smh_1d_return": -0.027,
+      "smh_1d_return": 0.02,
       "breadth_delta_pp": 0.0,
       "breadth_holds": true,
       "breadth_delta_sigma_1y_pp": 4.823,
@@ -610,7 +628,7 @@
   "validation": {
     "today_excluded": true,
     "walk_forward": {
-      "today_excluded_from_metrics": "2026-11-02",
+      "today_excluded_from_metrics": "2026-11-03",
       "all_triggers_reversion": {
         "n": 801,
         "n_reverted": 687,
@@ -644,11 +662,6 @@
     "canonical_close_check": "PASS"
   },
   "history_recent": [
-    {
-      "d": "2025-10-31",
-      "state": "deep_contango",
-      "spread": -3.05
-    },
     {
       "d": "2025-11-03",
       "state": "deep_contango",
@@ -1903,6 +1916,11 @@
       "d": "2026-11-02",
       "state": "flattening",
       "spread": -0.45
+    },
+    {
+      "d": "2026-11-03",
+      "state": "flattening",
+      "spread": -0.44
     }
   ],
   "past_spikes": [
