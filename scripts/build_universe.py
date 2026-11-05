@@ -41,6 +41,7 @@ TOURNAMENT_UNIVERSE = DATA / "canonical" / "universe.txt"
 SCREENER_UNIVERSE = DATA / "screen" / "universe_535.txt"
 SCREEN_CONFIG = ROOT / "scripts" / "screen" / "config.json"
 HOLDINGS = DATA / "holdings.json"
+RETIRED = DATA / "universe_retired.json"     # Nov-2026: names with no provider bar, out of the live universe (held names excepted)
 
 OUT_UNIVERSE = DATA / "universe.txt"
 OUT_META = DATA / "universe_meta.json"
@@ -162,6 +163,15 @@ def main() -> None:
                         union.remove(c); collapse["dropped"].append({"issuer": issuer, "class": c, "kept": keep, "basis": basis})
                 collapse["kept"].append({"issuer": issuer, "class": keep, "basis": basis})
     union = sorted(union)
+    # Nov-2026: retired names (data/universe_retired.json) leave the live universe; a held name never does. The store
+    # keeps their columns and history (refresh_data.py fetches every store column), so nothing historical changes.
+    retired_out = []
+    if RETIRED.exists():
+        for tk, spec in sorted((json.loads(RETIRED.read_text()).get("names") or {}).items()):
+            tk = norm(tk)
+            if tk in union and tk not in held:
+                union.remove(tk)
+                retired_out.append({"ticker": tk, "last_bar": spec.get("last_bar"), "verified": bool(spec.get("verified"))})
 
     only_tournament = sorted(set_t - set_s)
     only_screener_or_midcap = sorted(set_s - set_t)
@@ -194,6 +204,7 @@ def main() -> None:
             "midcap_additions": {"path": "scripts/screen/config.json#midcap_additions", "n": len(midcap)},
             "holdings": {"path": "data/holdings.json", "n": len(held),
                          "as_of": hb.get("as_of"), "tickers": held},
+            "retired": {"path": "data/universe_retired.json", "n_removed": len(retired_out)},
         },
         "screen_universe_size": len(set_s),
         "union_size": len(union),
@@ -201,6 +212,7 @@ def main() -> None:
         "only_screener_or_midcap": only_screener_or_midcap,
         "held_added": held_added,
         "share_class_collapse": collapse,
+        "retired": retired_out,
         "former_tickers": former_tickers(union),                       # G3 (second follow-up, 7-Oct-2026): current symbol -> its former symbols (the change table)
         "ticker_changes": "data/analyst/ticker_changes.csv",
         "sha256": sha,

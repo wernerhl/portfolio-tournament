@@ -463,6 +463,12 @@ def main(troot, sroot, today=None):
             can=T('vol_close_canonical.json'); vr=T('vol_regime.json'); it=T('intraday.json')
             for src,val,key in (('vol_regime',vr.get('curve',{}).get('spot_vix'),'vix'),('intraday',it.get('vix_now'),'vix')):
                 c=can.get(key)
+                # Nov-2026: intraday.vix_now is the LIVE print of the intraday file's session; the canonical value is the close
+                # of ITS session. When the intraday session is later (every morning after the nightly), the live print is not
+                # comparable (18.57 pre-market vs the 20.83 close of 3-Nov fired this daily): compare the intraday file's prior
+                # close instead, which compute_intraday.py takes from the canonical close of the previous session.
+                if src=='intraday' and str(it.get('session_date') or '')[:10]>str(can.get('session_date') or can.get('date') or '')[:10]:
+                    val=it.get('vix_prior'); src='intraday prior-close'
                 if c is not None and val is not None and abs(float(val)-float(c))>0.011: add('HIGH','xfile:vol_single_source',f'{src} vix {val} vs canonical {c}')
         else: add('HIGH','arch:canonical_close','vol_close_canonical.json absent (single-source fix not landed)')
     except Exception as _e:
@@ -542,7 +548,7 @@ def main(troot, sroot, today=None):
         td=T('thesis_daily.json'); dd=(td.get('days') or [td])[-1]
         for k,v in dd.get('tiers',{}).items():
             u=v.get('unclassified_share',0)
-            if u and u>0.15: add('HIGH','governance:coverage',f'{k}: unclassified share {u:.0%} > 15%')
+            if u and u>0.15: add('HIGH','governance:coverage',f'{k}: unclassified share {u:.1%} > 15%')
             ne=v.get('n_eff'); ex_=v.get('exposure_invested') or v.get('exposure')
             if ne and ex_ and isinstance(ex_,dict):
                 s=sum(ex_.values()); w=[x/s for x in ex_.values() if s]
@@ -1300,6 +1306,15 @@ def main(troot, sroot, today=None):
             _px=_pd3.read_parquet(_pp); _px.index=_pd3.to_datetime(_px.index); _last5=_px.index[-5:]
             _stale=[t for t in _uni if t not in _px.columns or _px.loc[_last5,t].isna().all()]
             if _stale: add('HIGH','universe:stale_ticker',f'universe names with no price bar in the last five sessions ({_last5[0].date()}..{_last5[-1].date()}): {_stale[:12]}')
+            # Nov-2026: names retired from the live universe (data/universe_retired.json, build_universe.py). A retired name
+            # that prints a bar again was a provider gap, not a delisting: HIGH, put it back. Unconfirmed causes: MEDIUM.
+            _rp=os.path.join(troot,'universe_retired.json')
+            if os.path.exists(_rp):
+                _ret=(json.load(open(_rp)).get('names') or {})
+                _back=[t for t in _ret if t in _px.columns and _px.loc[_last5,t].notna().any()]
+                if _back: add('HIGH','universe:retired_trading',f'retired names with a price bar in the last five sessions (provider gap, not a delisting? remove them from data/universe_retired.json): {_back[:12]}')
+                _unv=sorted(t for t,v in _ret.items() if not v.get('verified'))
+                if _unv: add('MEDIUM','universe:retired_unverified',f'retired names whose cause (delisting, acquisition, symbol change) is unconfirmed: {_unv[:12]}')
         _mp=os.path.join(troot,'analyst','sp500_membership_history.parquet'); _tc=os.path.join(troot,'analyst','ticker_changes.csv')
         if _uni and os.path.exists(_mp):
             _mem=_pd3.read_parquet(_mp); _lastm=_mem['month_end'].max(); _cur=set(_mem[_mem['month_end']==_lastm]['ticker_current' if 'ticker_current' in _mem.columns else 'ticker'])
@@ -1309,7 +1324,8 @@ def main(troot, sroot, today=None):
             if 'ticker_current' not in _mem.columns: _cur={_tmap.get(t,t) for t in _cur}      # H1: ticker_current is bounded by date and company; the CSV map is not
             _um=json.load(open(os.path.join(troot,'universe_meta.json'))) if os.path.exists(os.path.join(troot,'universe_meta.json')) else {}
             _dropped={str(d.get('class','')).upper() for d in ((_um.get('share_class_collapse') or {}).get('dropped') or [])}
-            _miss=sorted(t for t in _cur if t not in set(_uni) and t not in _dropped)
+            _retired=set((json.load(open(os.path.join(troot,'universe_retired.json'))).get('names') or {})) if os.path.exists(os.path.join(troot,'universe_retired.json')) else set()
+            _miss=sorted(t for t in _cur if t not in set(_uni) and t not in _dropped and t not in _retired)   # retired names: universe:retired_*
             if _miss: add('INFO','universe:index_gap',f'{len(_miss)} current index members (as of {str(_lastm)[:10]}) not in the universe; listed for the owner, never added by the pipeline: {_miss}')
     except Exception as _e: add('MEDIUM','universe:check',f'universe checks could not run ({type(_e).__name__}: {str(_e)[:80]})')
     # ---------- H1 (third follow-up, 7-Oct-2026): a current symbol listed twice in one month-end of the membership file

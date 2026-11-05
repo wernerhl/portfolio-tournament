@@ -1,0 +1,49 @@
+{
+ "cadence": "on_change",
+ "as_of": "2026-11-04",
+ "note": "Names taken out of the live universe (data/universe.txt) by scripts/build_universe.py because the price provider has served no bar for them. Their price history stays in data/source/prices_daily.parquet (the store keeps every column, so the backtest is unchanged) and the store keeps requesting them: the referee raises HIGH universe:retired_trading if a retired name prints a bar again. A held name is never retired. 'verified': false means the cause (delisting, acquisition, or a symbol change) has not been confirmed; for a symbol change, add the old -> new row to data/analyst/ticker_changes.csv (SEC CIK confirmed) and delete the entry here. The referee lists unverified entries as MEDIUM universe:retired_unverified.",
+ "names": {
+  "AVB": {
+   "last_bar": "2026-08-14",
+   "last_close": 184.06,
+   "retired_on": "2026-11-04",
+   "verified": false,
+   "reason": "no provider bar since 2026-08-14 (56 sessions); cause unconfirmed; an S&P 500 member through the 2026-07-31 month-end and not at 2026-08-31 (sp500_membership_history.parquet)"
+  },
+  "CFLT": {
+   "last_bar": "2026-03-17",
+   "last_close": 30.99,
+   "retired_on": "2026-11-04",
+   "verified": false,
+   "reason": "no provider bar since 2026-03-17 (160 sessions); last close pinned near 31, consistent with a cash acquisition (IBM); unconfirmed; not an S&P 500 member (a midcap addition, scripts/screen/config.json)"
+  },
+  "EA": {
+   "last_bar": "2026-08-04",
+   "last_close": 209.7,
+   "retired_on": "2026-11-04",
+   "verified": false,
+   "reason": "no provider bar since 2026-08-04 (64 sessions); last close pinned near 210, consistent with the take-private; unconfirmed; an S&P 500 member through the 2026-07-31 month-end and not at 2026-08-31 (sp500_membership_history.parquet)"
+  },
+  "PSKY": {
+   "last_bar": "2026-10-16",
+   "last_close": 6.91,
+   "retired_on": "2026-11-04",
+   "verified": false,
+   "reason": "no provider bar since 2026-10-16 (12 sessions); cause unconfirmed (a symbol change would need a ticker_changes.csv row); still an S&P 500 member at the 2026-09-30 month-end, the latest in the membership file (it predates the last bar)"
+  },
+  "PSTG": {
+   "last_bar": "2026-06-11",
+   "last_close": 69.34,
+   "retired_on": "2026-11-04",
+   "verified": false,
+   "reason": "no provider bar since 2026-06-11 (100 sessions); cause unconfirmed (a symbol change would need a ticker_changes.csv row); not an S&P 500 member (a midcap addition, scripts/screen/config.json)"
+  },
+  "WBD": {
+   "last_bar": "2026-10-06",
+   "last_close": 30.95,
+   "retired_on": "2026-11-04",
+   "verified": false,
+   "reason": "no provider bar since 2026-10-06 (20 sessions); last close pinned near 31, consistent with a cash acquisition; unconfirmed; still an S&P 500 member at the 2026-09-30 month-end, the latest in the membership file (it predates the last bar)"
+  }
+ }
+}
