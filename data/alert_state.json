@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-11-04",
   "as_of": "2026-11-04",
-  "updated": "2026-11-05T13:21:21+00:00",
+  "updated": "2026-11-05T15:16:44+00:00",
   "schema": 1,
   "regime": {
     "label": "ELEVATED",
@@ -11,8 +11,11 @@
     "session": "2026-11-04"
   },
   "shock": {
-    "active": false,
-    "reasons": [],
+    "active": true,
+    "reasons": [
+      "VIX +22%",
+      "SPX -1.9%"
+    ],
     "session": "2026-11-04"
   },
   "complacency": {
@@ -35,7 +38,17 @@
       "R_full": 0.3727,
       "session": "2026-10-07"
     },
-    "shock": null,
+    "shock": {
+      "number": 20,
+      "url": "https://github.com/wernerhl/portfolio-tournament/issues/20",
+      "dry_run": false,
+      "opened_session": "2026-11-04",
+      "reasons": [
+        "VIX +22%",
+        "SPX -1.9%"
+      ],
+      "session": "2026-11-04"
+    },
     "complacency": {
       "number": 19,
       "url": "https://github.com/wernerhl/portfolio-tournament/issues/19",
@@ -47,14 +60,14 @@
   },
   "last_opened": {
     "regime": "2026-10-07",
-    "shock": "2026-10-29",
+    "shock": "2026-11-04",
     "complacency": "2026-11-03"
   },
   "last_run": {
     "session_date": "2026-11-04",
     "mode": "live",
     "actions": [
-      "no state change"
+      "[shock] opened"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
