@@ -1,0 +1,735 @@
+"""Phase 5: venue panel, book risk, trade structures, screens (daily), factor model and IC
+(weekly). Reads the example book from config/book.yaml."""
+
+from __future__ import annotations
+
+import json
+import logging
+from datetime import date, datetime, timedelta
+from pathlib import Path
+
+import numpy as np
+import polars as pl
+import yaml
+
+from monitor import archive
+from monitor.compute import crosssection as xs
+from monitor.compute import sectors as sec
+from monitor.compute import trades as tr
+from monitor.compute import venue as ven
+from monitor.meta import dump_json, git_sha, utc_now
+from monitor.paths import CONFIG, SITE_DATA
+from monitor.stress import covariance as cov
+from monitor.stress import es as es_mod
+from monitor.stress import scenarios as sc
+
+log = logging.getLogger("monitor.risk")
+
+
+def _cfg(name: str) -> dict:
+    return yaml.safe_load((CONFIG / name).read_text())
+
+
+def _latest(table: str, key: str) -> pl.DataFrame | None:
+    df = archive.read(table)
+    if df is None or not df.height:
+        return None
+    return df.filter(pl.col(key) == df[key].max())
+
+
+def _universe() -> pl.DataFrame:
+    u = archive.read("universe")
+    return u.filter(pl.col("as_of") == u["as_of"].max())
+
+
+def latest_marks(window_hours: int = 2) -> pl.DataFrame | None:
+    """Latest mark per (venue, symbol) within two hours of the newest row: the venues are
+    fetched seconds apart, so filtering on one exact timestamp keeps a single venue."""
+    m = archive.read("futures_marks")
+    if m is None or not m.height:
+        return None
+    cutoff = m["ts"].max() - timedelta(hours=window_hours)
+    return (
+        m.filter(pl.col("ts") >= cutoff).sort("ts").unique(subset=["venue", "symbol"], keep="last")
+    )
+
+
+def _index_spot(marks: pl.DataFrame) -> dict[str, float]:
+    """Median index price per base from the latest futures marks (the venues publish the
+    index alongside the mark, so basis = mark − index is measured at one instant)."""
+    if "index_price" not in marks.columns:
+        return {}
+    ix = (
+        marks.filter(pl.col("index_price") > 0).group_by("base").agg(pl.col("index_price").median())
+    )
+    return {r["base"]: float(r["index_price"]) for r in ix.to_dicts()}
+
+
+def _daily_close_by_base() -> pl.DataFrame:
+    from monitor.jobs_hourly import _daily_prices_by_base
+
+    return _daily_prices_by_base()
+
+
+def _book(uni: pl.DataFrame) -> tuple[dict, list[dict]]:
+    book = _cfg("book.yaml")
+    sym = dict(zip(uni["id"], uni["symbol"], strict=True))
+    positions = [
+        {**p, "asset_symbol": sym.get(p["asset"], p["asset"].upper())} for p in book["positions"]
+    ]
+    return book, positions
+
+
+# --------------------------------------------------------------------------- venue panel
+def compute_venue_panel(now: datetime, sha: str) -> dict:
+    vcfg = _cfg("venues.yaml")
+    wash = archive.read("wash_filters")
+    wash_by_venue = {}
+    if wash is not None and wash.height:
+        w = (
+            wash.filter(pl.col("date") == wash["date"].max())
+            .group_by("venue")
+            .agg((1 - pl.col("pass").cast(pl.Float64).mean()).alias("fail_share"))
+        )
+        wash_by_venue = dict(zip(w["venue"], w["fail_share"], strict=True))
+    venues = ven.venue_table(vcfg, wash_by_venue)
+    uni = _universe()
+    book, positions = _book(uni)
+    exposure = ven.exposure_table(book, venues)
+    low = ven.low_score_aggregate(exposure, vcfg, book["nav_usd"])
+    stables = _latest("stablecoins", "as_of")
+    st_exp = ven.stablecoin_exposure(book, stables)
+    disc = (
+        {r["symbol"]: r["discount_to_par"] for r in stables.to_dicts()}
+        if stables is not None
+        else {}
+    )
+    systemic = [
+        {
+            **s,
+            "discount_to_par": disc.get(s["name"]) if s.get("kind") == "stablecoin" else None,
+            "direct_exposure_usd": sum(
+                p["weight"] for p in positions if p["asset_symbol"] == s["name"]
+            )
+            * book["nav_usd"],
+            "collateral_usd": sum(
+                float(c["usd"])
+                for c in book.get("collateral", [])
+                if c.get("stablecoin") == s["name"]
+            ),
+        }
+        for s in vcfg["systemic_exposures"]
+    ]
+    archive.upsert(
+        "venue_scores",
+        venues.with_columns(
+            pl.lit(now.date()).alias("as_of"),
+            pl.lit("config/venues.yaml").alias("source"),
+            pl.lit(now).alias("fetched_at"),
+            pl.lit(sha).alias("git_sha"),
+        ),
+    )
+    # exchange-token-as-solvency-sensor (work order 7, §5): the token's own price/funding read
+    # for each venue whose token is in the universe, with a divergence flag (the FTX input)
+    from monitor.compute import exchange as ex
+
+    th = _cfg("thresholds.yaml").get("exchange_token", {})
+    token_solvency = ex.solvency_signals(
+        now.date(),
+        uni,
+        archive.read("prices_daily"),
+        archive.read("funding_daily"),
+        float(th.get("solvency_divergence_5d", 0.15)),
+    )
+    return {
+        "venues": venues.to_dicts(),
+        "exposure": exposure.to_dicts(),
+        "low_score": low,
+        "stablecoins": st_exp.to_dicts(),
+        "systemic": systemic,
+        "token_solvency": token_solvency,
+        "reviewed_on": str(vcfg["reviewed_on"]),
+        "nav_usd": book["nav_usd"],
+    }
+
+
+# --------------------------------------------------------------------------- book risk
+def compute_book_risk(now: datetime, sha: str, persist: bool = True) -> dict:
+    th = _cfg("thresholds.yaml")["sizing"]
+    uni = _universe()
+    book, positions = _book(uni)
+    nav = book["nav_usd"]
+    prices = _daily_close_by_base()
+    bases = sorted({p["asset_symbol"] for p in positions})
+    w = np.array([sum(p["weight"] for p in positions if p["asset_symbol"] == b) for b in bases])
+    px = (
+        prices.filter(pl.col("base").is_in(bases))
+        .pivot(index="date", on="base", values="close")
+        .sort("date")
+        .tail(th["covariance_window_days"] + 1)
+    )
+    note = []
+    sigma = None
+    n_obs = 0
+    if px.height > 30 and all(b in px.columns for b in bases):
+        rets = np.diff(np.log(px.select(bases).to_numpy()), axis=0)
+        ok = np.isfinite(rets).all(axis=1)
+        rets = rets[ok]
+        n_obs = int(rets.shape[0])
+        vs = archive.read("vol_state")
+        p_high_path = None
+        if vs is not None and vs.height:
+            # the path is not stored; use the latest filtered probability as a flat weight
+            p_high = (
+                float(vs.sort("date")["p_high"][-1])
+                if vs.sort("date")["p_high"][-1] is not None
+                else None
+            )
+            p_high_path = np.full(n_obs, p_high) if p_high is not None else None
+        if p_high_path is None:
+            p_high_path = np.full(n_obs, 0.5)
+            note.append("vol-state probabilities unavailable: equal state weights")
+        s_high = cov.weighted_ledoit_wolf(rets, p_high_path)
+        s_low = cov.weighted_ledoit_wolf(rets, 1 - p_high_path)
+        frag = _latest("fragility", "ts")
+        phi = float(frag["phi"][0]) if frag is not None and frag["phi"][0] is not None else None
+        sigma, cnote = cov.stress_covariance(
+            s_high, s_low, float(p_high_path[-1]), phi, th["eta_fragility_tilt"]
+        )
+        if cnote != "ok":
+            note.append(cnote)
+    else:
+        note.append("insufficient price history for the covariance")
+    out = {
+        "nav_usd": nav,
+        "gross": float(sum(abs(p["weight"]) for p in positions)),
+        "net": float(w.sum()),
+        "assets": bases,
+        "weights": w.tolist(),
+        "n_obs": n_obs,
+        "notes": note,
+    }
+    if sigma is not None:
+        out["vol_ann_stress"] = cov.portfolio_vol(w, sigma)
+        out["n_eff_stress"] = cov.effective_bets(w, sigma)
+        lw_plain = cov.weighted_ledoit_wolf(rets, np.ones(n_obs))
+        out["n_eff_current"] = cov.effective_bets(w, lw_plain) if lw_plain is not None else None
+        out["vol_ann_current"] = cov.portfolio_vol(w, lw_plain) if lw_plain is not None else None
+        e = es_mod.simulate_es(w, sigma, th["student_t_df"], alpha=th["es_alpha"])
+        out["es_1d"] = e["es"]
+        out["var_1d"] = e["var"]
+        out["es_params"] = {k: e[k] for k in ("alpha", "df", "n", "horizon_days")}
+        out["gross_scalar_for_vol_target"] = (
+            th["vol_target_ann"] / out["vol_ann_stress"] if out["vol_ann_stress"] else None
+        )
+    # factor exposure vector w'B
+    betas = archive.read("factor_betas")
+    if betas is not None and betas.height:
+        b = betas.filter(pl.col("week") == betas["week"].max())
+        sym_to_id = dict(zip(uni["symbol"], uni["id"], strict=True))
+        cols = [c for c in b.columns if c.startswith("beta_")]
+        expo = {}
+        for c in cols:
+            tot = 0.0
+            for base, wt in zip(bases, w, strict=True):
+                r = b.filter(pl.col("id") == sym_to_id.get(base))
+                if r.height:
+                    tot += wt * float(r[c][0])
+            expo[c.removeprefix("beta_")] = tot
+        out["factor_exposure"] = expo
+        out["factor_week"] = str(b["week"][0])
+    else:
+        out["factor_exposure"] = None
+        note.append("factor betas not yet estimated (weekly job)")
+    # scenarios
+    pos = _latest("positioning", "ts")
+    lam = {r["base"]: r["lambda_minus_2"] for r in pos.to_dicts()} if pos is not None else {}
+    dep = {r["base"]: r["depth_2pct_usd"] for r in pos.to_dicts()} if pos is not None else {}
+    sig = {r["base"]: r["sigma_daily"] for r in pos.to_dicts()} if pos is not None else {}
+    out["cascade"] = sc.cascade_pnl(positions, lam, dep, sig, nav)
+    vcfg = _cfg("venues.yaml")
+    out["systemic"] = sc.systemic_pnl(
+        positions, vcfg["systemic_exposures"], book.get("collateral", []), nav
+    )
+    exp_v: dict[str, float] = {}
+    for p in positions:
+        exp_v[p["venue"]] = exp_v.get(p["venue"], 0.0) + abs(p["weight"]) * nav
+    for c in book.get("collateral", []):
+        exp_v[c["venue"]] = exp_v.get(c["venue"], 0.0) + float(c["usd"])
+    out["venue_halt"] = sc.venue_halt_pnl(exp_v, book.get("recovery_assumption_on_halt", 0.4), nav)
+    if persist:
+        archive.upsert(
+            "book_risk",
+            pl.DataFrame(
+                [
+                    {
+                        "as_of": now.date(),
+                        "gross": out["gross"],
+                        "net": out["net"],
+                        "vol_ann_stress": out.get("vol_ann_stress"),
+                        "n_eff_stress": out.get("n_eff_stress"),
+                        "n_eff_current": out.get("n_eff_current"),
+                        "es_1d": out.get("es_1d"),
+                        "cascade_share_nav": out["cascade"]["total_share_nav"],
+                        "n_obs": n_obs,
+                        "notes": "; ".join(note),
+                        "source": "prices_daily+positioning+book.yaml",
+                        "fetched_at": now,
+                        "git_sha": sha,
+                    }
+                ]
+            ),
+        )
+    return out
+
+
+# --------------------------------------------------------------------------- trade structures
+def borrow_rate(now: datetime, th: dict) -> tuple[float, str]:
+    """The stablecoin financing rate for the spot leg (F1): the mean of the observed Aave v3
+    USDC/USDT variable borrow APYs when fresh, else the configured 6 % flagged as fallback."""
+    br = archive.read("borrow_rates")
+    max_age = float(th["carry"].get("borrow_rate_max_age_hours", 30))
+    if br is not None and br.height:
+        last = br["as_of"].max()
+        age_h = (now.date() - last).days * 24.0
+        if age_h <= max_age:
+            rows = br.filter(pl.col("as_of") == last)
+            rate = float(rows["apy_borrow"].min())  # the desk borrows the cheaper stablecoin
+            legs = ", ".join(
+                f"{r['asset']} {100 * r['apy_borrow']:.2f}%" for r in rows.sort("asset").to_dicts()
+            )
+            return (
+                rate,
+                f"observed: cheaper of Aave v3 Ethereum variable borrow ({legs}) via DefiLlama yields, {last}",
+            )
+    return float(
+        th["carry"]["stablecoin_borrow_ann"]
+    ), "FALLBACK: config stablecoin_borrow_ann 6% (no observed borrow rate within 30 h)"
+
+
+def _trade_prelude(now: datetime):
+    th = _cfg("thresholds.yaml")
+    rate, src = borrow_rate(now, th)
+    th = {**th, "carry": {**th["carry"], "stablecoin_borrow_ann": rate, "borrow_source": src}}
+    vcfg = _cfg("venues.yaml")
+    fees = vcfg.get("fees", {})
+    vs = archive.read("venue_scores")
+    scores = (
+        dict(zip(vs["venue"], vs["grade"], strict=True)) if vs is not None and vs.height else {}
+    )
+    return th, fees, scores
+
+
+def _stamp(frames: list[pl.DataFrame], now: datetime, sha: str) -> pl.DataFrame:
+    frames = [f for f in frames if f is not None and f.height]
+    if not frames:
+        return pl.DataFrame()
+    return pl.concat(frames, how="diagonal_relaxed").with_columns(
+        pl.lit(now.date()).alias("as_of"),
+        pl.lit(now).alias("fetched_at"),
+        pl.lit(sha).alias("git_sha"),
+    )
+
+
+def compute_trades_carry(now: datetime, sha: str) -> pl.DataFrame:
+    """Hourly (write set): the basis and funding-carry rows of the trade table → `trades_carry`."""
+    th, fees, scores = _trade_prelude(now)
+    uni = _universe()
+    prices = _daily_close_by_base()
+    spot = {
+        r["base"]: r["close"]
+        for r in prices.sort("date").group_by("base").agg(pl.col("close").last()).to_dicts()
+    }
+    marks = latest_marks()
+    frames = []
+    if marks is not None:
+        spot = {**spot, **_index_spot(marks)}  # A6: same-timestamp index price beats a stale close
+        tiered = uni.filter(pl.col("tier").is_not_null())[
+            "symbol"
+        ].to_list()  # A1: no excluded names
+        m = marks.filter(
+            (pl.col("expiry") > now + timedelta(days=7)) & pl.col("base").is_in(tiered)
+        )
+        fund30 = {}
+        fd0 = archive.read("funding_daily")
+        if fd0 is not None and fd0.height:
+            f30 = (
+                fd0.filter(pl.col("date") > now.date() - timedelta(days=30))
+                .group_by("base")
+                .agg(pl.col("funding_ann").mean().alias("f"))
+            )
+            fund30 = dict(zip(f30["base"], f30["f"], strict=True))
+        frames.append(
+            tr.basis_table(m, spot, now, fees, scores, th["carry"]["stablecoin_borrow_ann"], fund30)
+        )
+    fd = archive.read("funding_daily")
+    pos = _latest("positioning", "ts")
+    z = {r["base"]: r["z_fr"] for r in pos.to_dicts()} if pos is not None else {}
+    perps = _latest("perp_snapshot", "ts")
+    best = {}
+    if perps is not None:
+        bv = perps.sort("oi_usd", descending=True).group_by("base").agg(pl.col("venue").first())
+        best = dict(zip(bv["base"], bv["venue"], strict=True))
+    if fd is not None:
+        t1 = set(uni.filter(pl.col("tier") == 1)["symbol"])
+        frames.append(
+            tr.funding_carry(
+                fd.filter(pl.col("base").is_in(t1)),
+                now.date(),
+                th["carry"]["funding_mean_window_days"],
+                th["carry"]["shrink_factor"],
+                fees,
+                scores,
+                best,
+                th["carry"]["stablecoin_borrow_ann"],
+                z,
+            )
+        )
+
+    df = _stamp(frames, now, sha)
+    if df.height:
+        df = df.with_columns(
+            pl.lit(th["carry"]["borrow_source"]).alias("cost_source"),
+            pl.lit(th["carry"]["stablecoin_borrow_ann"]).alias("borrow_rate_ann"),
+        )
+        archive.replace_slice("trades_carry", "as_of", now.date(), df)
+    return df
+
+
+def compute_trades_vol(now: datetime, sha: str) -> pl.DataFrame:
+    """Hourly (write set, since work order 6 C2): the volatility-selling rows → `trades_vol`,
+    on the same hourly options snapshot as the 4.3 driver they quote. No FORBIDDEN gate since
+    review decision 2; the dominant-risk text carries the driver."""
+    _th, _fees, scores = _trade_prelude(now)
+    frames: list[pl.DataFrame] = []
+    om = _latest("options_metrics", "ts")
+    frag = _latest("fragility", "ts")
+    rf = _latest("rule_fires", "ts")
+    drivers: dict[str, dict | None] = {}
+    if rf is not None:
+        for r in rf.filter(pl.col("rule_id") == "4.3").to_dicts():
+            try:
+                inp = json.loads(r.get("inputs") or "{}")
+            except ValueError:
+                inp = {}
+            drivers[r["asset"]] = {"driver": inp.get("driver"), "text": inp.get("driver_text")}
+    if om is not None:
+        frames.append(
+            tr.vol_premium(
+                om.to_dicts(),
+                float(frag["phi"][0]) if frag is not None and frag["phi"][0] is not None else None,
+                drivers,
+                scores,
+            )
+        )
+
+    df = _stamp(frames, now, sha)
+    if df.height:
+        archive.replace_slice("trades_vol", "as_of", now.date(), df)
+    return df
+
+
+def compute_trades(now: datetime, sha: str) -> pl.DataFrame:
+    """Both halves (used by tests and the manual job)."""
+    a, b = compute_trades_carry(now, sha), compute_trades_vol(now, sha)
+    return (
+        pl.concat([x for x in (a, b) if x.height], how="diagonal_relaxed")
+        if (a.height or b.height)
+        else pl.DataFrame()
+    )
+
+
+# --------------------------------------------------------------------------- screens (weekly + daily view)
+def seed_sectors(write: bool = True) -> dict[str, str]:
+    """Seed `sector_map.assignments` from CoinGecko categories; the review is manual."""
+    meta = archive.read("coin_meta")
+    if meta is None:
+        return {}
+    uni = _universe()
+    cats = {r["id"]: r["categories"] for r in meta.to_dicts()}
+    out = {i: sec.assign(cats.get(i, [])) for i in uni["id"].to_list()}
+    if write:
+        p = CONFIG / "universe.yaml"
+        cfg = yaml.safe_load(p.read_text())
+        cfg["sector_map"]["assignments"] = out
+        cfg["sector_map"]["seeded_on"] = str(date.today())
+        p.write_text(yaml.safe_dump(cfg, sort_keys=False, allow_unicode=True, width=120))
+    return out
+
+
+def compute_screens(now: datetime, sha: str, as_of: date | None = None) -> pl.DataFrame:
+    uni = _universe()
+    as_of = as_of or uni["as_of"][0]
+    cfg = _cfg("universe.yaml")
+    sectors = (cfg.get("sector_map") or {}).get("assignments") or {}
+    prices = _daily_close_by_base()
+    sym = dict(zip(uni["id"], uni["symbol"], strict=True))
+    base_to_id = {v: k for k, v in sym.items()}
+    pr = prices.with_columns(
+        pl.col("base").replace_strict(base_to_id, default=None).alias("id")
+    ).drop_nulls("id")
+    mom = xs.momentum_4w_skip1(pr, as_of)
+    markets = _latest("markets", "as_of")
+    mk = (
+        markets.filter(pl.col("source") == markets["source"][0])
+        .unique(subset=["id"])
+        .select("id", "market_cap_usd", "fdv_usd", "circulating_supply", "total_supply")
+    )
+    esp = archive.read("esp")
+    e13 = (
+        esp.filter((pl.col("as_of") == esp["as_of"].max()) & (pl.col("horizon_days") == 13)).select(
+            "id", "esp_days_of_volume", "adv_is_reported"
+        )
+        if esp is not None
+        else None
+    )
+    dil = _latest("dilution", "as_of")
+    liq = _latest("liquidity", "date")
+    df = (
+        uni.filter(pl.col("tier").is_in([2, 3]))
+        .select("id", "symbol", "tier")
+        .join(mk, on="id", how="left")
+        .join(mom, on="id", how="left")
+    )
+    df = df.with_columns(
+        pl.col("id").replace_strict(sectors, default="other").alias("sector"),
+        # E2 (work order 6): a float ratio of exactly 1 with no total supply on record is the
+        # aggregator's placeholder (FDV set equal to market cap), not a fully-floated token
+        pl.when(
+            pl.col("fdv_usd").is_null()
+            | (pl.col("fdv_usd") <= 0)
+            | (
+                pl.col("total_supply").is_null()
+                & ((pl.col("market_cap_usd") / pl.col("fdv_usd") - 1.0).abs() < 1e-6)
+            )
+        )
+        .then(None)
+        .otherwise(pl.col("market_cap_usd") / pl.col("fdv_usd"))
+        .alias("float_ratio"),
+        pl.when(
+            pl.col("fdv_usd").is_null()
+            | (pl.col("fdv_usd") <= 0)
+            | (
+                pl.col("total_supply").is_null()
+                & ((pl.col("market_cap_usd") / pl.col("fdv_usd") - 1.0).abs() < 1e-6)
+            )
+        )
+        .then(pl.lit("no supply data"))
+        .otherwise(pl.lit(None, dtype=pl.Utf8))
+        .alias("float_ratio_note"),
+    )
+    if e13 is not None:
+        df = df.join(e13, on="id", how="left")
+    # E4 (work order 6): distinguish "no vesting schedule on record" from "not computed"
+    ev = archive.read("unlock_events")
+    with_schedule = set(ev["id"].unique().to_list()) if ev is not None and ev.height else set()
+    df = df.with_columns(
+        pl.when(
+            pl.col("esp_days_of_volume").is_not_null()
+            if "esp_days_of_volume" in df.columns
+            else pl.lit(False)
+        )
+        .then(pl.lit(None, dtype=pl.Utf8))
+        .when(pl.col("id").is_in(list(with_schedule)))
+        .then(pl.lit("not computed (schedule on record; float, price or volume missing)"))
+        .otherwise(pl.lit("no vesting schedule on record"))
+        .alias("esp_note")
+    )
+    if dil is not None:
+        df = df.join(dil.select("id", "dilution"), on="id", how="left")
+    if liq is not None:
+        df = df.join(liq.select("id", "gate_pass", "adv_real_usd"), on="id", how="left")
+    else:
+        df = df.with_columns(
+            pl.lit(None, dtype=pl.Boolean).alias("gate_pass"),
+            pl.lit(None, dtype=pl.Float64).alias("adv_real_usd"),
+        )
+    for col in ("mom_4w_skip1", "float_ratio"):
+        df = xs.sector_standardise(df, col)
+    ic = _latest("screen_ic", "as_of")
+    icd = {r["screen"]: r for r in ic.to_dicts()} if ic is not None else {}
+    df = df.with_columns(
+        pl.lit(as_of).alias("as_of"),
+        pl.lit(
+            json.dumps(
+                {
+                    k: {"ic": v["ic"], "ic_se": v["ic_se"], "n_weeks": v["n_weeks"]}
+                    for k, v in icd.items()
+                }
+            )
+        ).alias("ic_json"),
+        pl.lit("universe+markets+prices_daily+esp+dilution+liquidity").alias("source"),
+        pl.lit(now).alias("fetched_at"),
+        pl.lit(sha).alias("git_sha"),
+    )
+    archive.upsert("screens", df)
+    return df
+
+
+def compute_factor_model(now: datetime, sha: str) -> dict[str, int]:
+    """Weekly: factor returns, rolling betas, screen ICs (walk-forward on the archive)."""
+    uni = _universe()
+    cfg = _cfg("universe.yaml")
+    sectors = (cfg.get("sector_map") or {}).get("assignments") or {}
+    prices = _daily_close_by_base()
+    sym = dict(zip(uni["id"], uni["symbol"], strict=True))
+    base_to_id = {v: k for k, v in sym.items()}
+    pr = prices.with_columns(
+        pl.col("base").replace_strict(base_to_id, default=None).alias("id")
+    ).drop_nulls("id")
+    wk = xs.weekly_returns(pr.select("date", "id", "close"))
+    if wk.height < 100:
+        return {"factor_model": 0}
+    # characteristics per week: market cap (from markets history when available; else current), momentum, amihud
+    markets = archive.read("markets")
+    mc = (
+        markets.select("as_of", "id", "market_cap_usd")
+        .with_columns(pl.col("as_of").dt.truncate("1w").alias("week"))
+        .group_by("id", "week")
+        .agg(pl.col("market_cap_usd").last().alias("mcap"))
+    )
+    cur = markets.filter(pl.col("as_of") == markets["as_of"].max()).select(
+        "id", pl.col("market_cap_usd").alias("mcap_now")
+    )
+    weeks = wk.select("week").unique()
+    chars = (
+        wk.select("id", "week")
+        .join(mc, on=["id", "week"], how="left")
+        .join(cur, on="id", how="left")
+        .with_columns(pl.coalesce(pl.col("mcap"), pl.col("mcap_now")).alias("mcap"))
+        .drop("mcap_now")
+    )
+    # momentum (4w skip 1) and amihud per week from daily data
+    mom_rows, ami_rows = [], []
+    from monitor.compute.liquidity import amihud
+
+    for w_ in weeks["week"].to_list():
+        m = xs.momentum_4w_skip1(pr, w_)
+        mom_rows.append(m.with_columns(pl.lit(w_).alias("week")))
+        a = amihud(
+            pr.filter(pl.col("date") <= w_)
+            .rename({"id": "base_id"})
+            .with_columns(pl.col("base_id").alias("base"))
+            .select("base", "date", "close", "volume_quote"),
+            30,
+        ).rename({"base": "id"})
+        ami_rows.append(a.select("id", "amihud").with_columns(pl.lit(w_).alias("week")))
+    chars = (
+        chars.join(pl.concat(mom_rows), on=["id", "week"], how="left")
+        .join(pl.concat(ami_rows), on=["id", "week"], how="left")
+        .with_columns(pl.col("id").replace_strict(sectors, default="other").alias("sector"))
+    )
+    weekly = wk.join(chars.select("id", "week", "mcap"), on=["id", "week"], how="left")
+    F = xs.factor_returns(weekly, chars)
+    betas = xs.rolling_betas(wk.select("id", "week", "ret"), F)
+    counts = {}
+    if F.height:
+        archive.upsert(
+            "factor_returns",
+            F.with_columns(
+                pl.lit(now).alias("fetched_at"),
+                pl.lit(sha).alias("git_sha"),
+                pl.lit("prices_daily+markets").alias("source"),
+            ),
+        )
+        counts["factor_returns"] = F.height
+    if betas.height:
+        archive.upsert(
+            "factor_betas",
+            betas.with_columns(
+                pl.lit(now).alias("fetched_at"),
+                pl.lit(sha).alias("git_sha"),
+                pl.lit("factor_returns").alias("source"),
+            ),
+        )
+        counts["factor_betas"] = betas.height
+    # screen ICs: next-week return vs screen value
+    ret_next = wk.select("id", "week", pl.col("ret").alias("ret_next")).with_columns(
+        (pl.col("week") - pl.duration(weeks=1)).alias("week")
+    )
+    ic_rows = []
+    for col in ("mom_4w_skip1", "amihud", "mcap"):
+        r = xs.spearman_ic(chars, ret_next, col)
+        ic_rows.append(
+            {
+                "as_of": now.date(),
+                "screen": col,
+                **r,
+                "source": "prices_daily+markets",
+                "fetched_at": now,
+                "git_sha": sha,
+            }
+        )
+    archive.upsert("screen_ic", pl.DataFrame(ic_rows))
+    counts["screen_ic"] = len(ic_rows)
+    return counts
+
+
+# --------------------------------------------------------------------------- JSON
+def book_factor_exposure(now: datetime) -> dict | None:
+    """The book's factor exposure w′B without persisting the book-risk row (weekly job)."""
+    b = compute_book_risk(now, git_sha(), persist=False)
+    if not b or not b.get("factor_exposure"):
+        return None
+    return {"factor_exposure": b["factor_exposure"], "factor_week": b.get("factor_week")}
+
+
+def latest_vol_rows() -> list[dict]:
+    t = archive.read("trades_vol")
+    if t is None or not t.height:
+        return []
+    return t.filter(pl.col("as_of") == t["as_of"].max()).to_dicts()
+
+
+def latest_carry_rows() -> list[dict]:
+    t = archive.read("trades_carry")
+    if t is None or not t.height:
+        return []
+    return t.filter(pl.col("as_of") == t["as_of"].max()).to_dicts()
+
+
+def compute_risk_daily(now: datetime | None = None) -> dict:
+    """Daily (write set): venue panel, book risk, vol-selling rows → risk.json (venue, book,
+    trades). The carry rows are read from the hourly table. Factor exposures and screens
+    live in screens.json (weekly)."""
+    now = now or utc_now()
+    sha = git_sha()
+    book = compute_book_risk(now, sha)
+    book.pop("factor_exposure", None)
+    out = {"venue": compute_venue_panel(now, sha), "book": book}
+    # C2 (work order 6): the vol rows are hourly (their driver is hourly); risk.json only
+    # relays the latest hourly rows of both halves
+    out["trades"] = latest_vol_rows() + latest_carry_rows()
+    write_risk_json(out)
+    return out
+
+
+def compute_screens_weekly(now: datetime | None = None) -> dict:
+    """Weekly (write set): factor model, screens, book factor exposure → screens.json."""
+    now = now or utc_now()
+    sha = git_sha()
+    counts = compute_factor_model(now, sha)
+    s = compute_screens(now, sha)
+    out = {"screens": s.to_dicts() if s.height else [], "factor_model": counts}
+    fe = book_factor_exposure(now)
+    out["factor_exposure"] = fe.get("factor_exposure") if fe else None
+    out["factor_week"] = fe.get("factor_week") if fe else None
+    SITE_DATA.mkdir(parents=True, exist_ok=True)
+    (SITE_DATA / "screens.json").write_text(
+        dump_json({"generated_at": utc_now().isoformat(), "git_sha": sha, **out})
+    )
+    return out
+
+
+def compute_all_risk(now: datetime | None = None) -> dict:
+    """Everything (manual runs and tests): daily risk plus the weekly screens."""
+    out = compute_risk_daily(now)
+    out.update(compute_screens_weekly(now))
+    return out
+
+
+def write_risk_json(out: dict, path: Path = SITE_DATA) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+    (path / "risk.json").write_text(
+        dump_json({"generated_at": utc_now().isoformat(), "git_sha": git_sha(), **out})
+    )
