@@ -5,8 +5,10 @@ Bonds Page, 6 October 2026, section 1).
 
 Sources (data/rates/global_rates_config.json names each series):
   FRED            U.S. yields, real yield, breakeven, Kim-Wright term premium, fed funds, 3-month bill, the OECD
-                  monthly 10-year series for the G7, Brent (EIA spot), yen per dollar — the public CSV download
-                  (fredgraph.csv), no key
+                  monthly 10-year series for the G7, Brent (EIA spot), yen per dollar — the FRED API
+                  (api.stlouisfed.org, FRED_API_KEY) when the key is set, else the public CSV download (fredgraph.csv).
+                  From early October 2026 every fredgraph.csv request from the runners timed out (series_meta.json
+                  `error`), while the API calls of the same nightly (fred_indicators.parquet) kept succeeding.
   NYFED_ACM       New York Fed ACM term premium file (ACM Daily, ACMTP10)
   BUNDESBANK      Bundesbank statistics API, 10-year yield on listed federal securities (Svensson), daily
   BOE_IADB        Bank of England database, 10-year nominal zero-coupon (IUDMNZC), daily
@@ -58,6 +60,8 @@ AUCTIONS = RATES / "auctions.json"
 VINT = RATES / "vintages"
 UA = {"User-Agent": "Mozilla/5.0 (portfolio-tournament rates monitor)"}
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={id}"
+FRED_API = "https://api.stlouisfed.org/fred/series/observations?series_id={id}&file_type=json"   # + &api_key=…, never stored
+_FRED_CSV_DOWN = False   # set once the CSV endpoint times out in this run: the remaining series do not wait on it again
 BBK = "https://api.statistiken.bundesbank.de/rest/data/{id}?format=csv&lang=en"
 BOE_IADB = ("https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=01/Jan/2005"
             "&Dateto=now&SeriesCodes={id}&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N")
@@ -92,8 +96,32 @@ def num(s) -> pd.Series:
 
 # ── one function per source: returns {series_key: pd.Series(date -> value)} and the URL used ───────
 def fred(sid: str) -> tuple[pd.Series, str]:
+    """The FRED API first (when FRED_API_KEY is set), then the keyless CSV download. The URL returned (and stored in
+    series_meta.json and the vintages) never carries the key."""
+    global _FRED_CSV_DOWN
+    key = os.environ.get("FRED_API_KEY", "").strip()
+    redact = (lambda m: m.replace(key, "***")) if key else (lambda m: m)
+    errs = []
+    if key:
+        url = FRED_API.format(id=sid)
+        try:
+            obs = json.loads(get(url + "&api_key=" + key, timeout=60))["observations"]
+            df = pd.DataFrame(obs, columns=["date", "value"])
+            s = pd.Series(num(df["value"].astype(str)).values, index=pd.to_datetime(df["date"])).dropna()
+            if len(s):
+                return s, url
+            errs.append("api: no observations")
+        except Exception as e:  # noqa: BLE001
+            errs.append(f"api: {type(e).__name__}: {redact(str(e))[:120]}")
+    if _FRED_CSV_DOWN:
+        raise RuntimeError("; ".join(errs + ["csv: skipped (timed out earlier in this run)"]))
     url = FRED_CSV.format(id=sid)
-    df = pd.read_csv(io.BytesIO(get(url)))
+    try:
+        df = pd.read_csv(io.BytesIO(get(url)))
+    except Exception as e:  # noqa: BLE001
+        if isinstance(e, TimeoutError) or "timed out" in str(e):
+            _FRED_CSV_DOWN = True
+        raise RuntimeError("; ".join(errs + [f"csv: {type(e).__name__}: {redact(str(e))[:120]}"])) from None
     df.columns = ["date", "v"]
     s = pd.Series(num(df["v"].astype(str)).values, index=pd.to_datetime(df["date"])).dropna()
     return s, url
@@ -216,7 +244,9 @@ def main() -> int:
         src, sid = s["source"], s["id"]
         try:
             if src == "FRED":
-                ser, url = cache.setdefault(("FRED", sid), fred(sid))
+                if ("FRED", sid) not in cache:      # setdefault(k, fred(sid)) fetched every time: the call ran first
+                    cache[("FRED", sid)] = fred(sid)
+                ser, url = cache[("FRED", sid)]
             elif src == "BUNDESBANK":
                 ser, url = bundesbank(sid)
             elif src == "BOE_IADB":

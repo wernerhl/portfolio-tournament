@@ -168,8 +168,10 @@ jobs:
           python scripts/options/snapshot_alerts.py sync || true   # 5-Oct order 2.4: the missed-snapshot issue, re-synced nightly
           python scripts/analyst/snapshot_alerts.py sync || true   # 7-Oct order C: the missed analyst-snapshot issue
           python scripts/site_alerts.py sync || true               # 7-Oct follow-up F3: the site-stale issue
+          python scripts/audit_alerts.py sync || true              # 4-Nov-2026: one issue per persistent referee finding; ages in data/audit_findings_state.json
           git config user.name "Tournament Bot"
           git config user.email "bot@tournament"
+          git add data/audit_findings_state.json 2>/dev/null || true
           if git add data/alert_state.json 2>/dev/null && ! git diff --cached --quiet; then
             git commit -m "🔔 alert state $(date -u +%Y-%m-%d)" \
               && git pull --rebase --strategy-option=ours origin main \
