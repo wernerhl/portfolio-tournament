@@ -1,0 +1,96 @@
+name: crypto-hourly
+# The crypto monitor's hourly job (from crypto-monitor/hourly.yml, MarketMonitoring 2026-11-05).
+# Generated files are restored from and saved to the orphan branch crypto-state (crypto/scripts/state.sh);
+# nothing is committed to main. Minute 35: clear of the portfolio's deploying minutes (:10 analytics,
+# :20/:50 intraday, the Worker's 0,5,10,20,40,46,50,52), all of which share the pages-deploy queue.
+on:
+  schedule:
+    - cron: "35 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  pages: write
+  id-token: write
+concurrency:
+  group: crypto-data-write
+  cancel-in-progress: false
+env:
+  COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
+defaults:
+  run:
+    working-directory: crypto
+jobs:
+  hourly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: fetch hourly datasets (Tier 1 derivatives, Tier 1+2 books)
+        run: timeout 600 uv run monitor fetch hourly || { echo "::error::hourly fetch exceeded 10 minutes — reduce scope (crypto/docs/runbook.md)"; exit 1; }
+      - name: compute positioning, liquidity, fragility, rules
+        run: uv run monitor compute hourly
+      - name: alerts (one issue per condition, auto-closed; site/alerts.xml)
+        run: uv run monitor alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: render site (templates; the page reads the refreshed JSON)
+        run: uv run monitor site render --no-meta
+        env:
+          GIT_SHA: ${{ github.sha }}
+      - name: save the generated data (crypto-state; write set checked)
+        run: bash scripts/state.sh save hourly
+  deploy:
+    needs: hourly
+    # the portfolio's shared Pages queue: one deploy at a time, the newest pending wins; every
+    # deployer publishes the same assembled site (scripts/ops/assemble_site.sh)
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Assemble the one site (portfolio at /, crypto monitor at /crypto/)
+        run: bash scripts/ops/assemble_site.sh _site
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
+  freshness-gate:
+    needs: [hourly, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data just saved (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: freshness gate (reddens the run if a hourly-owned table is stale; does NOT block deploy, which already ran)
+        run: uv run monitor freshness-gate hourly

@@ -2,7 +2,7 @@
 {% block title %}Data status — crypto monitor{% endblock %}
 {% block content %}
 <h2>Data-source status</h2>
-<div class="panel"><p>Every processed table against the freshness contract (<code>config/freshness.yaml</code>): cadence, budget, owning job, source or derived (parent named), age measured on the data's own time column. Each job writes its own view (<code>status_hourly.json</code>, <code>status_daily.json</code>, <code>status_weekly.json</code>); the row shown is the most recent view of that table. A job fails when a table it owns breaches its budget. Endpoint verification dates: <a href="https://github.com/wernerhl/crypto-monitor/blob/main/docs/data_sources.md">docs/data_sources.md</a>.</p>
+<div class="panel"><p>Every processed table against the freshness contract (<code>config/freshness.yaml</code>): cadence, budget, owning job, source or derived (parent named), age measured on the data's own time column. Each job writes its own view (<code>status_hourly.json</code>, <code>status_daily.json</code>, <code>status_weekly.json</code>); the row shown is the most recent view of that table. A job fails when a table it owns breaches its budget. Endpoint verification dates: <a href="https://github.com/wernerhl/MarketMonitoring/blob/main/crypto/docs/data_sources.md">docs/data_sources.md</a>.</p>
 <p class="meta" id="st-meta">loading status files …</p></div>
 <div id="st-table"></div>
 <h2>Fetch records (latest per dataset, all jobs)</h2>

@@ -35,6 +35,7 @@ header.top .sub{font-style:italic;color:var(--muted);font-size:14px}
 nav.pills{margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px}
 nav.pills a{font:12px var(--mono);letter-spacing:1px;text-transform:uppercase;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
 nav.pills a.active,nav.pills a:hover{color:var(--fg);border-color:var(--muted)}
+nav.market-nav{margin:0 0 2px;opacity:.85}nav.market-nav a{border-style:dashed}nav.market-nav .here{font:12px var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--amber);padding:4px 11px}
 .mono{font-family:var(--mono)}
 .lab{font:11px var(--mono);letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
 .banner{border:1px solid;border-radius:8px;padding:12px 16px;margin:14px 0}
@@ -82,8 +83,11 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;font-s
 <header class="top">
 <h1><span class="dot"></span>Crypto risk monitor <span class="lab" style="font-size:10px">v{{ version }}</span></h1>
 <div class="sub">Built {{ built_at }} · commit {{ git_sha[:10] }} · a risk-and-context instrument for a tiered crypto universe, not a forecasting engine</div>
+<nav class="pills market-nav" aria-label="Market monitoring">
+<a href="../index.html">← Market monitoring</a><a href="../book.html">Book</a><a href="../screen.html">Screen</a><a href="../tournament.html">Tournament</a><span class="here">Crypto</span>
+</nav>
 <nav class="pills">
-<a href="index.html" id="nav-index">Front page</a><a href="universe.html" id="nav-universe">Universe</a><a href="onchain.html" id="nav-onchain">On-chain</a><a href="methods.html" id="nav-methods">Methods</a><a href="status.html" id="nav-status">Data status</a><a href="https://github.com/wernerhl/crypto-monitor">Code</a>
+<a href="index.html" id="nav-index">Front page</a><a href="universe.html" id="nav-universe">Universe</a><a href="onchain.html" id="nav-onchain">On-chain</a><a href="methods.html" id="nav-methods">Methods</a><a href="status.html" id="nav-status">Data status</a><a href="https://github.com/wernerhl/MarketMonitoring/tree/main/crypto">Code</a>
 </nav>
 </header>
 <main>

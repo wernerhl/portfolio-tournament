@@ -60,7 +60,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from trading_calendar import last_completed_session, now_et  # noqa: E402
 
 ET_ZONE = ZoneInfo("America/New_York")
-USER_AGENT = "portfolio-tournament/1.0 (+https://github.com/wernerhl/portfolio-tournament)"
+USER_AGENT = "portfolio-tournament/1.0 (+https://github.com/wernerhl/MarketMonitoring)"
 HEADLINE_MAX = 200
 DEFAULT_WINDOW_HOURS = 24
 DEFAULT_STORED_DAYS = 7

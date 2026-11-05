@@ -20,7 +20,7 @@ import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
-UA = "crypto-monitor-verify/0.1 (+https://github.com/wernerhl/crypto-monitor)"
+UA = "crypto-monitor-verify/0.1 (+https://github.com/wernerhl/MarketMonitoring)"
 NOW_MS = int(time.time() * 1000)
 FRED_KEY = os.environ.get("FRED_API_KEY", "")
 

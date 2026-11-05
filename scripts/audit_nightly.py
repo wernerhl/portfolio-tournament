@@ -1356,7 +1356,7 @@ def main(troot, sroot, today=None):
     # trading session behind the last session is HIGH (scripts/site_alerts.py opens the site-stale issue).
     try:
         import urllib.request as _ur, datetime as _dt2
-        _req=_ur.Request('https://wernerhl.github.io/portfolio-tournament/data/status.json?t='+str(int(_dt2.datetime.now().timestamp())),headers={'User-Agent':'portfolio-tournament referee'})
+        _req=_ur.Request('https://wernerhl.github.io/MarketMonitoring/data/status.json?t='+str(int(_dt2.datetime.now().timestamp())),headers={'User-Agent':'portfolio-tournament referee'})
         with _ur.urlopen(_req,timeout=20) as _r: _live=json.load(_r)
         _lsess=str(_live.get('session_date') or '')[:10]; _ok=_live.get('last_success')
         _age=round((_dt2.datetime.now(_dt2.timezone.utc)-_dt2.datetime.fromisoformat(str(_ok)).astimezone(_dt2.timezone.utc)).total_seconds()/3600,1) if _ok else None

@@ -22,7 +22,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-SLUG = os.environ.get("GITHUB_REPOSITORY", "wernerhl/portfolio-tournament")
+SLUG = os.environ.get("GITHUB_REPOSITORY", "wernerhl/MarketMonitoring")
 STUCK = ("waiting", "queued", "in_progress", "pending", "requested")
 
 

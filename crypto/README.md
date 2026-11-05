@@ -1,5 +1,7 @@
 # crypto-monitor
 
+> **Moved (2026-11-05).** This project lives in `crypto/` of [wernerhl/MarketMonitoring](https://github.com/wernerhl/MarketMonitoring). Run every command below from `crypto/`. Generated data is on the `crypto-state` branch (`scripts/state.sh restore` before working locally); the raw archive is in the `crypto-raw-*` releases.
+
 A risk-and-context monitor for a tiered crypto asset universe, built to the design in
 *Monitoring a Crypto Asset Universe: A Risk-and-Context System for Portfolio Managers*
 (lecture notes, September 2026; source and PDF in `docs/notes/`, with an implementation appendix
@@ -10,7 +12,7 @@ context (venue risk, market state, scheduled supply, cross-sectional screens). I
 alpha engine**: there is no composite score, no ranking by expected return and no buy/sell
 language, for the reasons given in Section 1 of the notes.
 
-**Live page:** https://wernerhl.github.io/crypto-monitor/ (all seven panels populated; secondary pages: Universe, On-chain, Methods, Data status)
+**Live page:** https://wernerhl.github.io/MarketMonitoring/crypto/ (all seven panels populated; secondary pages: Universe, On-chain, Methods, Data status)
 
 **NOTICE.** This system is a monitoring tool and not investment advice.
 
@@ -29,7 +31,7 @@ Requirements: Python 3.12 and [`uv`](https://docs.astral.sh/uv/). No paid subscr
 every indicator has a free-source fallback and the page shows which source produced each number.
 
 ```bash
-git clone https://github.com/wernerhl/crypto-monitor && cd crypto-monitor
+git clone https://github.com/wernerhl/MarketMonitoring && cd MarketMonitoring/crypto
 cp .env.example .env          # optional keys; the system runs with none
 make all                      # sync deps, rebuild every processed table from raw files, render ./site
 make test                     # unit + integration tests (live tests need LIVE=1)

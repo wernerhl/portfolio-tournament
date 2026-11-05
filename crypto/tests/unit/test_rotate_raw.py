@@ -15,7 +15,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "rotate_raw.sh"
-pytestmark = pytest.mark.skipif(not (shutil.which("bash") and shutil.which("tar")), reason="needs bash, tar")
+pytestmark = pytest.mark.skipif(
+    not (shutil.which("bash") and shutil.which("tar")), reason="needs bash, tar"
+)
 
 FAKE_GH = """#!/usr/bin/env bash
 # fake gh: release view/create/upload against $FAKE_GH_DIR/<tag>/
@@ -39,7 +41,12 @@ def _env(tmp: Path, **extra: str) -> dict:
     gh.chmod(0o755)
     store = tmp / "releases"
     store.mkdir(exist_ok=True)
-    return {**os.environ, "PATH": f"{bin_}:{os.environ['PATH']}", "FAKE_GH_DIR": str(store), **extra}
+    return {
+        **os.environ,
+        "PATH": f"{bin_}:{os.environ['PATH']}",
+        "FAKE_GH_DIR": str(store),
+        **extra,
+    }
 
 
 def _raw(work: Path, day: datetime, name: str, size: int) -> Path:
@@ -57,8 +64,13 @@ def _run(work: Path, env: dict) -> subprocess.CompletedProcess:
 def test_parts_are_capped_uploaded_and_hold_every_file(tmp_path):
     work = tmp_path / "crypto"
     old = datetime.now(UTC) - timedelta(days=40)  # hourly files older than 10 days rotate
-    files = [_raw(work, old + timedelta(days=i % 3), f"src_x_{i + 1:04d}.json.gz", 300_000) for i in range(12)]
-    keep = _raw(work, datetime.now(UTC) - timedelta(days=1), "src_x_0101.json.gz", 1000)  # too recent
+    files = [
+        _raw(work, old + timedelta(days=i % 3), f"src_x_{i + 1:04d}.json.gz", 300_000)
+        for i in range(12)
+    ]
+    keep = _raw(
+        work, datetime.now(UTC) - timedelta(days=1), "src_x_0101.json.gz", 1000
+    )  # too recent
     daily = _raw(work, old, "src_x_0000.json.gz", 1000)  # a daily file inside its 90-day window
     env = _env(tmp_path, MAX_PART_MB="1")
     r = _run(work, env)

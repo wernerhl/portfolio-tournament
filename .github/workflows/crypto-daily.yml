@@ -1,0 +1,122 @@
+name: crypto-daily
+# The crypto monitor's daily job (from crypto-monitor/daily.yml, MarketMonitoring 2026-11-05).
+# Generated files live on crypto-state (crypto/scripts/state.sh); nothing is committed to main.
+on:
+  schedule:
+    - cron: "25 1 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "refetch even if today's raw files exist"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+  issues: write
+  pages: write
+  id-token: write
+concurrency:
+  group: crypto-data-write
+  cancel-in-progress: false
+env:
+  FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+  COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
+  COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
+  GLASSNODE_API_KEY: ${{ secrets.GLASSNODE_API_KEY }}
+  BEACONCHAIN_API_KEY: ${{ secrets.BEACONCHAIN_API_KEY }}
+  TALLY_API_KEY: ${{ secrets.TALLY_API_KEY }}
+defaults:
+  run:
+    working-directory: crypto
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: fetch daily datasets (idempotent per day)
+        run: uv run monitor fetch daily ${{ inputs.force && '--force' || '' }}
+      - name: compute processed tables from raw files (daily + hourly derived + risk)
+        run: uv run monitor compute daily
+      - name: render site (build.json is in the daily write set, so it is rendered before the save)
+        run: uv run monitor site render
+        env:
+          GIT_SHA: ${{ github.sha }}
+      - name: save the generated data (crypto-state; write set checked)
+        run: bash scripts/state.sh save daily
+  deploy:
+    needs: daily
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Assemble the one site (portfolio at /, crypto monitor at /crypto/)
+        run: bash scripts/ops/assemble_site.sh _site
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
+  verify-pages:
+    needs: [daily, deploy]
+    runs-on: ubuntu-latest
+    env:
+      CRYPTO_URL: ${{ needs.deploy.outputs.page_url || 'https://wernerhl.github.io/MarketMonitoring/' }}crypto/
+    steps:
+      - uses: actions/checkout@v4
+      - name: check the live crypto page carries this build's sha
+        # rendered before the save (build.json is in the daily write set), so the sha it carries is
+        # the code commit the run checked out
+        run: bash scripts/verify_pages.sh "$CRYPTO_URL" "${{ github.sha }}"
+      - name: rendered-page check (Playwright, headless Chromium; work order 6 H1)
+        run: |
+          python3 -m pip install --quiet "playwright==1.62.0"
+          python3 -m playwright install --with-deps chromium
+          python3 scripts/check_rendered_page.py "$CRYPTO_URL" rendered-page.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rendered-page
+          path: crypto/rendered-page.png
+          if-no-files-found: ignore
+  freshness-gate:
+    needs: [daily, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data just saved (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: freshness gate (reddens the run if a daily-owned table is stale; does NOT block deploy, which already ran)
+        run: uv run monitor freshness-gate daily

@@ -109,7 +109,7 @@ LABELS = {
 }
 FOOTER = ("_Opened automatically by `scripts/signal_alerts.py` (order item 4.3). "
           "It closes automatically, with a comment, when the state reverts._")
-FALLBACK_DASHBOARD = "https://wernerhl.github.io/portfolio-tournament/"
+FALLBACK_DASHBOARD = "https://wernerhl.github.io/MarketMonitoring/"
 
 
 # ─────────────────────────────────────────────────────────────────────

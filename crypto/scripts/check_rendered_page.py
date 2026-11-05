@@ -2,7 +2,7 @@
 that the nine panels each carry more than 500 characters of text, that no console error or
 page error fired, and save a screenshot. Exit 1 on any failure.
 
-    python scripts/check_rendered_page.py https://wernerhl.github.io/crypto-monitor/ shot.png
+    python scripts/check_rendered_page.py https://wernerhl.github.io/MarketMonitoring/crypto/ shot.png
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ import sys
 
 
 def main(argv: list[str]) -> int:
-    url = argv[0] if argv else "https://wernerhl.github.io/crypto-monitor/"
+    url = argv[0] if argv else "https://wernerhl.github.io/MarketMonitoring/crypto/"
     shot = argv[1] if len(argv) > 1 else "rendered-page.png"
     from playwright.sync_api import sync_playwright
 

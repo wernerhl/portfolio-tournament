@@ -51,7 +51,7 @@ def main() -> int:
     else:
         h, m = map(int, a.since_et.split(":"))
         since = now.astimezone(ET).replace(hour=h, minute=m, second=0, microsecond=0).astimezone(timezone.utc)
-    slug = os.environ.get("GITHUB_REPOSITORY", "wernerhl/portfolio-tournament")
+    slug = os.environ.get("GITHUB_REPOSITORY", "wernerhl/MarketMonitoring")
     own = os.environ.get("GITHUB_RUN_ID")
     q = f"repos/{slug}/actions/workflows/{a.workflow}/runs?status=success&per_page=20&created=>={since:%Y-%m-%dT%H:%M:%SZ}"
     try:

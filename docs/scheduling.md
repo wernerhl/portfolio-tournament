@@ -46,7 +46,7 @@ The agent wrote the Worker and these instructions. The operator creates the toke
 
 ### 3. Check that it works
 
-- After 15:52 ET on the next trading day: `gh run list --repo wernerhl/portfolio-tournament --workflow options_snapshot.yml --event workflow_dispatch --limit 5`. Expect three runs titled `Options snapshot · external 15:40 ET`, `… 15:46 ET` and `… 15:52 ET`. The first writes the vintage; the other two end with the notice "already written".
+- After 15:52 ET on the next trading day: `gh run list --repo wernerhl/MarketMonitoring --workflow options_snapshot.yml --event workflow_dispatch --limit 5`. Expect three runs titled `Options snapshot · external 15:40 ET`, `… 15:46 ET` and `… 15:52 ET`. The first writes the vintage; the other two end with the notice "already written".
 - Live log: `cd scheduler/worker && wrangler tail` while a route is due. Each dispatch prints one JSON line with `"ok": true, "status": 204`.
 - A `"status": 401` or `403` means the token is wrong, expired, or lacks Actions write. A `404` means the token cannot see the repository. A `422` means the workflow does not declare the `trigger` input on `main`.
 
@@ -79,7 +79,7 @@ If the token expires unnoticed, the Worker's dispatches fail with 401. The GitHu
 
 1. Create an account at cron-job.org. Create one job per route time: 15:40, 15:46 and 15:52.
 2. For each job:
-   - URL: `https://api.github.com/repos/wernerhl/portfolio-tournament/actions/workflows/options_snapshot.yml/dispatches`
+   - URL: `https://api.github.com/repos/wernerhl/MarketMonitoring/actions/workflows/options_snapshot.yml/dispatches`
    - Method: POST.
    - Headers: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`, `Content-Type: application/json`.
    - Body: `{"ref":"main","inputs":{"trigger":"cron-job.org 15:40 ET"}}`, with the time adjusted per job.

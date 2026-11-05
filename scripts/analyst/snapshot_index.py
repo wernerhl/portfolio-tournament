@@ -42,7 +42,7 @@ SNAPS = REPO / "data" / "analyst" / "snapshots"
 INDEX = SNAPS / "_index.json"
 FIRST_DAY = "2026-10-06"
 WORKFLOW = "nightly.yml"
-REPO_SLUG = "wernerhl/portfolio-tournament"
+REPO_SLUG = "wernerhl/MarketMonitoring"
 REASONS = ("no_nightly_run", "runner_failure", "snapshot_error", "unknown")
 
 

@@ -47,7 +47,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 DEFAULT_CAL = REPO / "data" / "event_calendar.json"
 CHECK = "calendar:treasury_source"
-USER_AGENT = "portfolio-tournament/1.0 (+https://github.com/wernerhl/portfolio-tournament)"
+USER_AGENT = "portfolio-tournament/1.0 (+https://github.com/wernerhl/MarketMonitoring)"
 TA_WS_UPCOMING = "https://www.treasurydirect.gov/TA_WS/securities/upcoming?format=json"
 NOMINAL_TENORS = (2, 3, 5, 7, 10, 20, 30)
 TIPS_TENORS = (5, 10, 30)

@@ -2,7 +2,7 @@
 # Opens (or updates) the weekly review issue with the governance checklist (notes §10).
 set -euo pipefail
 week=$(date -u +%G-W%V)
-title="Weekly review $week"
+title="Crypto weekly review $week"   # MarketMonitoring: shared issue tracker
 body=$(cat <<MD
 Weekly review checklist (notes Section 10: documented review, not automatic demotion).
 

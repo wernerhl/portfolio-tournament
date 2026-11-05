@@ -57,7 +57,7 @@ test("dispatch posts to the workflow's dispatches endpoint and retries only on 5
   const env = { GH_TOKEN: "test-token-not-real" };
   let r = await dispatch(env, "options_snapshot.yml", { trigger: "t" }, mk([204]), async () => {});
   assert.equal(r.ok, true);
-  assert.equal(calls[0].url, "https://api.github.com/repos/wernerhl/portfolio-tournament/actions/workflows/options_snapshot.yml/dispatches");
+  assert.equal(calls[0].url, "https://api.github.com/repos/wernerhl/MarketMonitoring/actions/workflows/options_snapshot.yml/dispatches");
   assert.deepEqual(JSON.parse(calls[0].init.body), { ref: "main", inputs: { trigger: "t" } });
   calls.length = 0;
   r = await dispatch(env, "options_snapshot.yml", { trigger: "t" }, mk([502, 503, 204]), async () => {});

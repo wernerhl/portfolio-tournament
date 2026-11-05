@@ -33,7 +33,7 @@ from tenacity import (
 from monitor.meta import git_sha, utc_now
 from monitor.paths import CONFIG, RAW
 
-UA = "crypto-monitor/0.1 (+https://github.com/wernerhl/crypto-monitor)"
+UA = "crypto-monitor/0.1 (+https://github.com/wernerhl/MarketMonitoring)"
 
 
 class SourceStaleError(RuntimeError):

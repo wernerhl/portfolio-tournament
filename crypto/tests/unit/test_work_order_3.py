@@ -182,16 +182,20 @@ def test_job_write_sets_are_disjoint_and_checker_rejects_foreign_files():
 
 
 def test_no_workflow_or_script_auto_resolves_merges():
+    """MarketMonitoring (2026-11-05): the crypto workflows are crypto-*.yml at the repository root;
+    the portfolio's own workflows are outside this rule (its nightly resolves its bot JSON by design).
+    Every crypto data job is serialized (crypto-data-write) and saves through state.sh, which runs
+    the write-set check before it pushes crypto-state."""
     pat = re.compile(r"-X (theirs|ours)|--strategy-option[= ](theirs|ours)|-X(theirs|ours)")
-    for p in list((ROOT / ".github" / "workflows").glob("*.yml")) + list(
-        (ROOT / "scripts").glob("*.sh")
-    ):
-        if p.name == "ci.yml":  # holds the grep pattern that enforces this rule
+    wfdir = ROOT.parent / ".github" / "workflows"
+    for p in list(wfdir.glob("crypto-*.yml")) + list((ROOT / "scripts").glob("*.sh")):
+        if p.name == "crypto-ci.yml":  # holds the grep pattern that enforces this rule
             continue
         assert not pat.search(p.read_text()), f"{p} auto-resolves merges"
+    assert "check_write_set.py" in (ROOT / "scripts" / "state.sh").read_text()
     for wf in ("hourly", "daily", "weekly", "manual"):
-        text = (ROOT / ".github" / "workflows" / f"{wf}.yml").read_text()
-        assert "group: data-write" in text and "check_write_set.py" in text
+        text = (wfdir / f"crypto-{wf}.yml").read_text()
+        assert "group: crypto-data-write" in text and "scripts/state.sh save" in text
 
 
 def test_term_slope_tile_equals_the_chart_at_the_same_tenors():

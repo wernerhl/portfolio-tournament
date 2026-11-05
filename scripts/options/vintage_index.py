@@ -45,7 +45,7 @@ from trading_calendar import is_trading_day, now_et, prev_trading_day   # noqa: 
 ET = ZoneInfo("America/New_York")
 FIRST_DAY = "2026-09-25"
 WORKFLOW = "options_snapshot.yml"
-REPO_SLUG = "wernerhl/portfolio-tournament"
+REPO_SLUG = "wernerhl/MarketMonitoring"
 INDEX = oc.VINTAGES / "_index.json"
 REASONS = ("no_run_in_window", "runner_failure", "provider_error", "push_conflict", "push_failed")
 

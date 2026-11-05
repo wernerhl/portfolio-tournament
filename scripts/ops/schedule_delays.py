@@ -32,7 +32,7 @@ from pathlib import Path
 import yaml
 
 REPO = Path(__file__).resolve().parents[2]
-SLUG = "wernerhl/portfolio-tournament"
+SLUG = "wernerhl/MarketMonitoring"
 WF_DIR = REPO / ".github" / "workflows"
 
 

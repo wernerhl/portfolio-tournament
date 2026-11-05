@@ -1,0 +1,51 @@
+name: crypto-manual
+# Run one crypto job by hand, or a backfill (from crypto-monitor/manual.yml, MarketMonitoring 2026-11-05).
+# Generated files go to crypto-state (crypto/scripts/state.sh); nothing is committed to main.
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "which job to run"
+        type: choice
+        options: [daily, hourly, weekly, backfill]
+        default: daily
+      start_date:
+        description: "backfill start (YYYY-MM-DD)"
+        type: string
+        default: ""
+permissions:
+  contents: write
+concurrency:
+  group: crypto-data-write
+  cancel-in-progress: false
+defaults:
+  run:
+    working-directory: crypto
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
+      JOB: ${{ inputs.job }}
+      START_DATE: ${{ inputs.start_date }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: run job
+        run: |
+          case "$JOB" in
+            backfill) uv run monitor backfill --start "$START_DATE" ;;
+            *) uv run monitor fetch "$JOB" && uv run monitor compute "$JOB" ;;
+          esac
+      - name: save the generated data (crypto-state; write set checked)
+        run: bash scripts/state.sh save "$JOB"

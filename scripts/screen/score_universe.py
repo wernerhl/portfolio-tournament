@@ -284,7 +284,7 @@ FETCH_FAILED = set()   # [3] tickers with no usable prices after batch + individ
 # our runner). Direct fetch remains as a LOUD fallback, never a silent one.
 CANONICAL_BASES = [
     str(ROOT),                                                          # this repository (order 6.1): local artifact first
-    "https://raw.githubusercontent.com/wernerhl/portfolio-tournament/main",   # recorded fallback only
+    "https://raw.githubusercontent.com/wernerhl/MarketMonitoring/main",   # recorded fallback only
 ]
 DATA_SOURCE = {"mode": "direct"}      # overwritten when canonical is consumed
 FUNDAMENTALS_USED = {}                # for build_json's sample equality assert
@@ -296,7 +296,7 @@ FUNDAMENTALS_USED = {}                # for build_json's sample equality assert
 # e.g. to test an edited file). The screener's own config["portfolio"] list
 # is gone.
 HOLDINGS_LOCAL   = str(ROOT / "data" / "holdings.json")   # same repository — read first
-HOLDINGS_URL     = "https://raw.githubusercontent.com/wernerhl/portfolio-tournament/main/data/holdings.json"   # recorded fallback only
+HOLDINGS_URL     = "https://raw.githubusercontent.com/wernerhl/MarketMonitoring/main/data/holdings.json"   # recorded fallback only
 HOLDINGS_SOURCE  = {"mode": "none"}   # provenance of the book actually used
 
 

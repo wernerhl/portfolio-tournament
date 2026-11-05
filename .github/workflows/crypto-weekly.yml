@@ -1,0 +1,123 @@
+name: crypto-weekly
+# The crypto monitor's weekly job (from crypto-monitor/weekly.yml, MarketMonitoring 2026-11-05).
+# Rotation and the size check are non-fatal in the weekly job: in crypto-monitor a failed archive push
+# skipped the commit and discarded five weeks of weekly outputs, and a failed last step skipped deploy.
+# The `checks` job reddens the run after deploy instead.
+on:
+  schedule:
+    - cron: "40 2 * * 0"
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  pages: write
+  id-token: write
+concurrency:
+  group: crypto-data-write
+  cancel-in-progress: false
+env:
+  COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
+defaults:
+  run:
+    working-directory: crypto
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      rotate: ${{ steps.rotate.outcome }}
+      size: ${{ steps.size.outcome }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: universe, tier freeze, factor model, screens, risk panels, studies
+        run: uv run monitor compute weekly
+      - name: rotate raw files older than the retention windows to release assets (crypto-raw-YYYY-MM)
+        id: rotate
+        continue-on-error: true   # the script puts every raw file back on failure; reddened by `checks`
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/rotate_raw.sh
+      - name: render site
+        run: uv run monitor site render --no-meta
+        env:
+          GIT_SHA: ${{ github.sha }}
+      - name: save the generated data (crypto-state; write set checked)
+        run: bash scripts/state.sh save weekly
+      - name: open the weekly review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/weekly_issue.sh
+      - name: repo-size check (GitHub's figure; non-fatal here, the checks job reddens the run after deploy)
+        id: size
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/check_repo_size.sh
+  deploy:
+    needs: weekly
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Assemble the one site (portfolio at /, crypto monitor at /crypto/)
+        run: bash scripts/ops/assemble_site.sh _site
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
+  freshness-gate:
+    needs: [weekly, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: restore the generated data just saved (crypto-state)
+        run: bash scripts/state.sh restore
+      - name: freshness gate (reddens the run if a weekly-owned table is stale; does NOT block deploy, which already ran)
+        run: uv run monitor freshness-gate weekly
+  checks:
+    # after deploy, so a rotation or size failure reddens the run without blocking publication
+    needs: [weekly, deploy]
+    if: ${{ always() && needs.weekly.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: raw rotation and repo size (reported by the weekly job)
+        env:
+          ROTATE: ${{ needs.weekly.outputs.rotate }}
+          SIZE: ${{ needs.weekly.outputs.size }}
+        working-directory: .
+        run: |
+          rc=0
+          if [ "$ROTATE" = failure ]; then echo "::error::raw rotation to release assets failed; raw files were kept on crypto-state (weekly job, rotate step)"; rc=1; fi
+          if [ "$SIZE" = failure ]; then echo "::error::repository size over the limit (weekly job, repo-size step)"; rc=1; fi
+          exit $rc

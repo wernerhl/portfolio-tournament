@@ -12,7 +12,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-pytestmark = pytest.mark.skipif(not (shutil.which("bash") and shutil.which("git")), reason="needs bash, git")
+pytestmark = pytest.mark.skipif(
+    not (shutil.which("bash") and shutil.which("git")), reason="needs bash, git"
+)
 ENV = {
     **os.environ,
     "GIT_AUTHOR_NAME": "t",
@@ -24,7 +26,9 @@ ENV = {
 
 
 def _git(cwd: Path, *a: str) -> str:
-    return subprocess.run(["git", *a], cwd=cwd, env=ENV, check=True, capture_output=True, text=True).stdout
+    return subprocess.run(
+        ["git", *a], cwd=cwd, env=ENV, check=True, capture_output=True, text=True
+    ).stdout
 
 
 def _clone(tmp: Path, origin: Path, name: str) -> Path:
@@ -41,7 +45,9 @@ def _setup(tmp: Path) -> tuple[Path, Path]:
     (repo / "crypto" / "scripts").mkdir(parents=True)
     (repo / "crypto" / "config").mkdir()
     shutil.copy(ROOT / "scripts" / "state.sh", repo / "crypto" / "scripts" / "state.sh")
-    shutil.copy(ROOT / "scripts" / "check_write_set.py", repo / "crypto" / "scripts" / "check_write_set.py")
+    shutil.copy(
+        ROOT / "scripts" / "check_write_set.py", repo / "crypto" / "scripts" / "check_write_set.py"
+    )
     shutil.copy(ROOT / "config" / "job_writes.yaml", repo / "crypto" / "config" / "job_writes.yaml")
     shutil.copy(ROOT / ".gitignore", repo / "crypto" / ".gitignore")
     _git(repo, "add", "-A")
@@ -52,7 +58,11 @@ def _setup(tmp: Path) -> tuple[Path, Path]:
 
 def _state(repo: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(
-        ["bash", "crypto/scripts/state.sh", *args], cwd=repo, env=ENV, capture_output=True, text=True
+        ["bash", "crypto/scripts/state.sh", *args],
+        cwd=repo,
+        env=ENV,
+        capture_output=True,
+        text=True,
     )
 
 
@@ -129,7 +139,10 @@ def test_collector_raw_is_merged_without_overwriting(tmp_path):
     col = _clone(tmp_path, origin, "collector")
     _git(col, "checkout", "-q", "--orphan", "crypto-collector")
     _git(col, "rm", "-rqf", "--cached", ".")
-    for rel, text in (("2026/11/05/bybit_ws_0100.json.gz", "collector copy"), ("2026/11/05/binance_ws_0200.json.gz", "new")):
+    for rel, text in (
+        ("2026/11/05/bybit_ws_0100.json.gz", "collector copy"),
+        ("2026/11/05/binance_ws_0200.json.gz", "new"),
+    ):
         p = col / "crypto/data/raw" / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(text)

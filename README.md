@@ -1,3 +1,34 @@
+# MarketMonitoring
+
+One repository and one site for three projects (consolidated 2026-11-05):
+
+| Project | Code | Page | Was |
+|---|---|---|---|
+| Portfolio tournament (five strategies, the book, bonds, evidence) | repository root (`scripts/`, `data/`, `*.html`) | https://wernerhl.github.io/MarketMonitoring/ | `wernerhl/portfolio-tournament` (history imported in full) |
+| Portfolio screener | `scripts/screen/`, `data/screen/` | https://wernerhl.github.io/MarketMonitoring/screen.html | `wernerhl/portfolio-screener` (moved into the tournament on 2026-09-16) |
+| Crypto risk-and-context monitor | `crypto/` (self-contained Python project, `uv`) | https://wernerhl.github.io/MarketMonitoring/crypto/ | `wernerhl/crypto-monitor` (code imported without history; the archived repository keeps it) |
+
+**One site.** Every workflow that deploys Pages builds the same tree with `scripts/ops/assemble_site.sh`
+(the portfolio at `/`, the crypto monitor at `/crypto/`) and deploys through the shared `pages-deploy`
+queue, so the last deploy always publishes the latest of both projects.
+
+**Where the crypto monitor's data lives.** Nothing the crypto jobs generate is committed to `main`:
+- `crypto-state`: one parentless snapshot of `crypto/data/` and `crypto/site/`, replaced by every job
+  (`crypto/scripts/state.sh restore | save <job>`, force-push with a lease). In `crypto-monitor` the same
+  data on `main` grew the repository to 6.8 GB; here it takes the space of one snapshot.
+- releases `crypto-raw-YYYY-MM`: monthly raw archive, tar parts of at most 90 MB (`crypto/scripts/rotate_raw.sh`).
+- `crypto-collector`: raw envelopes from the Mac collector (`crypto/scripts/collector.sh`), merged into each job.
+
+**Workflows.** The portfolio's keep their names (`nightly`, `intraday`, `market_open`, `intraday_analytics`,
+`options_snapshot*`, `watchdog`, ...); the crypto monitor's are `crypto-hourly`, `crypto-daily`,
+`crypto-weekly`, `crypto-manual`, `crypto-probe` and `crypto-ci`.
+
+Secrets the repository needs: `FRED_API_KEY`, `SEC_USER_AGENT`, `ANTHROPIC_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`
+(portfolio); `COINGECKO_DEMO_KEY`, `BEACONCHAIN_API_KEY`, `COINGLASS_API_KEY`, `GLASSNODE_API_KEY`,
+`TALLY_API_KEY` (crypto; FRED is shared).
+
+---
+
 # Portfolio Tournament v2
 
 Five competing strategies tracked daily, all sharing the same EWS regime signal $R_t$:

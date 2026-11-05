@@ -40,7 +40,7 @@ OUT = REPO / "data" / "analyst" / "sp500_membership_history.parquet"
 META = REPO / "data" / "analyst" / "sp500_membership_meta.json"
 TITLE = "List_of_S%26P_500_companies"
 API = "https://en.wikipedia.org/w/api.php"
-UA = "portfolio-tournament/1.0 (https://github.com/wernerhl/portfolio-tournament; research script, one request per second)"
+UA = "portfolio-tournament/1.0 (https://github.com/wernerhl/MarketMonitoring; research script, one request per second)"
 MIN_INTERVAL_S = 1.0
 
 

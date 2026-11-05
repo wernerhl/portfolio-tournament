@@ -33,8 +33,10 @@ from monitor.meta import git_sha, utc_now
 from monitor.paths import SITE
 
 log = logging.getLogger("monitor.alerts")
-LABEL = "alert"
-SITE_URL = "https://wernerhl.github.io/crypto-monitor/"
+LABEL = (
+    "crypto-alert"  # MarketMonitoring: shares the issue tracker with the portfolio's alert:* labels
+)
+SITE_URL = "https://wernerhl.github.io/MarketMonitoring/crypto/"
 PANEL = {
     "rule": "#p-triggers",
     "cliffs": "#p-events",
@@ -286,7 +288,7 @@ def sync(site_out: Path = SITE, dry_run: bool | None = None) -> dict:
                             "edit",
                             str(s["issue_number"]),
                             "--title",
-                            f"[alert] {c['title']}",
+                            f"[crypto alert] {c['title']}",
                             "--body",
                             _issue_body(c),
                         )
@@ -309,7 +311,7 @@ def sync(site_out: Path = SITE, dry_run: bool | None = None) -> dict:
                     "issue",
                     "create",
                     "--title",
-                    f"[alert] {c['title']}",
+                    f"[crypto alert] {c['title']}",
                     "--body",
                     body,
                     "--label",

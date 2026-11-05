@@ -1,0 +1,51 @@
+name: crypto-ci
+# Lint and tests of the crypto monitor (from crypto-monitor/ci.yml, MarketMonitoring 2026-11-05).
+# The study tests read the generated data, so the crypto-state snapshot is restored first.
+on:
+  push:
+    branches: [main]
+    paths: ["crypto/**", ".github/workflows/crypto-*.yml", "scripts/ops/assemble_site.sh"]
+  pull_request:
+    paths: ["crypto/**", ".github/workflows/crypto-*.yml", "scripts/ops/assemble_site.sh"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: crypto-ci-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    working-directory: crypto
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LIVE: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.x"
+          enable-cache: true
+          cache-dependency-glob: crypto/uv.lock
+      - run: uv python install 3.12
+      - run: uv sync --all-extras --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run python scripts/check_secrets.py $(git ls-files)
+      - name: restore the generated data (crypto-state; read-only here)
+        run: bash scripts/state.sh restore
+      - run: uv run pytest
+      - name: rendered site scripts parse (node --check)
+        run: uv run monitor site render --no-meta && uv run python scripts/check_site_js.py site
+      - name: no automatic merge resolution in the crypto workflows or scripts
+        # scoped to the crypto monitor: the portfolio's nightly resolves its own JSON commits by
+        # design (--strategy-option=ours on files only its bot writes), under its own rules
+        working-directory: .
+        run: |
+          if grep -rnE -- '-X (theirs|ours)|--strategy-option[= ](theirs|ours)|-Xtheirs|-Xours' .github/workflows/crypto-*.yml crypto/scripts | grep -v '^.github/workflows/crypto-ci.yml:'; then
+            echo "::error::a crypto workflow or script auto-resolves merge conflicts; binary data must never be auto-resolved"; exit 1; fi
+      - name: the assembled site builds (portfolio at /, crypto monitor at /crypto/)
+        working-directory: .
+        run: bash scripts/ops/assemble_site.sh _site && test -f _site/index.html && test -f _site/crypto/index.html

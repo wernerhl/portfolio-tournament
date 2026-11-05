@@ -7,14 +7,14 @@
 // that matter; the routing below converts the scheduled time to America/New_York, so the table is
 // written in Eastern time and survives the daylight-saving changes without edits.
 //
-// Secret: GH_TOKEN, a fine-grained personal access token for wernerhl/portfolio-tournament only,
+// Secret: GH_TOKEN, a fine-grained personal access token for wernerhl/MarketMonitoring only,
 // with Actions read-and-write and nothing else (docs/scheduling.md). Never committed.
 // Optional var: DOUBLE_DISPATCH_ON = "YYYY-MM-DD" dispatches the 15:40 options run twice on that
 // date (acceptance test 2: one vintage, one push, one "already written" exit).
 // Optional var: FORCE_MISS_ON = "YYYY-MM-DD" passes force_miss_date to that day's 16:05 check (acceptance
 // test 5: a [TEST] missed-snapshot issue opens at 16:05 ET; the next day's capture closes it).
 
-export const REPO = "wernerhl/portfolio-tournament";
+export const REPO = "wernerhl/MarketMonitoring";
 
 // Eastern time → workflow file. Weekdays only; the workflows themselves exit on market holidays.
 export const ROUTES = [

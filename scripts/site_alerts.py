@@ -28,7 +28,7 @@ from trading_calendar import last_completed_session, now_et, prev_trading_day   
 EVENT = "site_stale"
 LABEL = "site-stale"
 sa.LABELS[EVENT] = (LABEL, "d29922", "the live site serves a session more than one trading session behind (7-Oct-2026 order, F3)")
-LIVE = "https://wernerhl.github.io/portfolio-tournament/data/status.json"
+LIVE = "https://wernerhl.github.io/MarketMonitoring/data/status.json"
 TITLE = "Live site stale"
 
 

@@ -93,7 +93,7 @@ def screen_universe() -> tuple[pd.DataFrame | None, str | None]:
                 return pd.read_csv(p), f"{label}:{p}"
             except Exception:
                 continue
-    url = "https://raw.githubusercontent.com/wernerhl/portfolio-screener/main/data/scored_universe.csv"
+    url = "https://raw.githubusercontent.com/wernerhl/MarketMonitoring/main/data/screen/scored_universe.csv"
     try:
         return pd.read_csv(url), url
     except Exception as e:

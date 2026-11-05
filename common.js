@@ -207,8 +207,9 @@ function phoneTidy(){
   if (nav && on && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, on.offsetLeft - nav.offsetLeft - 24);
 }
 
-// The navigation strip: seven pages and the guide; the current page marked.
-const NAV = [["index.html","Home"],["book.html","Book"],["bonds.html","Bonds"],["screen.html","Screen"],["tournament.html","Tournament"],
+// The navigation strip: the pages, the crypto monitor (MarketMonitoring, 2026-11-05: one site, the crypto
+// monitor at crypto/) and the guide; the current page marked.
+const NAV = [["index.html","Home"],["book.html","Book"],["bonds.html","Bonds"],["screen.html","Screen"],["crypto/index.html","Crypto"],["tournament.html","Tournament"],
              ["evidence.html","Evidence"],["register.html","Register"],["mistakes.html","Mistakes"],["system.html","System"],["guide.html","Guide"]];
 function renderNav(page){
   return `<nav class="site-nav" aria-label="Pages">${NAV.map(([href, label]) => {
