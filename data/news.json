@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-11-04",
- "fetched_at": "2026-11-05T08:18:16-05:00",
+ "fetched_at": "2026-11-05T15:56:35-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,13 +57,13 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=1 (parsed 20)",
+  "fed_press": "ok n=2 (parsed 20)",
   "fed_speeches": "ok n=0 (parsed 15)",
   "bea": "ok n=1 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=1 (constructed 1)",
   "census": "ok n=1 (parsed 18)",
-  "dol": "ok n=0 (parsed 10)",
+  "dol": "ok n=1 (parsed 10)",
   "edgar": "ok n=84 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=0 (parsed 20)",
@@ -72,26 +72,248 @@
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=5 (parsed 10)",
+  "yahoo_headlines:GEV": "ok n=3 (parsed 10)",
   "yahoo_headlines:NVDA": "ok n=1 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=6 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=2 (parsed 10)",
-  "yahoo_headlines:BMNR": "ok n=5 (parsed 10)"
+  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=3 (parsed 10)",
+  "yahoo_headlines:BMNR": "ok n=6 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 0,
-  "irrelevant": 34,
-  "out_of_window": 26182,
+  "irrelevant": 37,
+  "out_of_window": 26184,
   "unparseable": 0
  },
  "counts": {
-  "items": 167,
-  "tier1": 124,
-  "tier2": 43,
-  "last24h": 45
+  "items": 174,
+  "tier1": 120,
+  "tier2": 54,
+  "last24h": 46
  },
  "items": [
+  {
+   "id": "8f3decd13c3a623097e65f6687ff39b8ac9293e6",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google plans $17 billion Wyoming data center amid rising threats of curbs",
+   "source": "Reuters",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/google-plans-17-billion-wyoming-204551123.html",
+   "timestamp": "2026-11-05T15:45:51-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Reuters · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3ccc3639ffe7570f0e1c79a931d17060d28c697c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova vs. NextEra Energy: Which Industrials Stock Is a Better Buy for 2027?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.fool.com/coverage/better-buy/2026/11/05/ge-vernova-vs-nextera-energy-which-industrials-stock-is-a-better-buy-for-2027/",
+   "timestamp": "2026-11-05T15:37:11-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "924044915eb2a15fd72615bbb6e16c87d674ff6d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google could take stake in TeraWulf’s $19B AI project",
+   "source": "CoinDesk",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "http://videos.coindesk.com/previews/o5vIHFts",
+   "timestamp": "2026-11-05T14:35:47-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CoinDesk · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2a8d72976dd44dd2bfbc93696dbbbd3b6bc0429f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by APA Corp",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1841666/000184166626000071/apa-20260930.htm",
+   "timestamp": "2026-11-05T14:34:43-05:00",
+   "tickers": [
+    "APA"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-11-05 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c677bc4430a69c2bd8b66552b683882d84e39e6d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Stocks Fall 9.1% as AI Power Expectations Reset",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-stocks-fall-9-193218521.html",
+   "timestamp": "2026-11-05T14:32:18-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d049e2f1501cdfa9419aee51af1ebdb201e8de81",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "What Anthropic's IPO could mean for Amazon and Google",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/article/what-anthropics-ipo-could-mean-for-amazon-and-google-192716198.html",
+   "timestamp": "2026-11-05T14:27:16-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0a0936b87cc5e8dfeb1f90bee158d039c73aaf53",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitcoin Breaks Below $76K, Wiping Out Over $1B Crypto Bets: MSTR, BMNR, CRCL, COIN Stocks Tumble Double Digits",
+   "source": "Stocktwits",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://stocktwits.com/news-articles/markets/cryptocurrency/mstr-bmnr-crcl-coin-stocks-tumble-bitcoin-breaks-76-k-wiping-out-1-b-crypto-bets/cNG1sepR94N",
+   "timestamp": "2026-11-05T14:23:22-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Stocktwits · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "338266c45c232925a0907307d996c60ff840934e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by CF Industries Holdings, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1324404/000132440426000025/cf-20260930.htm",
+   "timestamp": "2026-11-05T13:57:40-05:00",
+   "tickers": [
+    "CF"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-11-05 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b0b3100a295e7b508978e0b615f1fae3f8b84032",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Stocks Fall 6.42% With $21.7 Billion AI Forecast in Focus",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-fall-6-42-185039421.html",
+   "timestamp": "2026-11-05T13:50:39-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3111e135781af611856c1d2e13e7c769ea2f0101",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Sinks 9% as AI Regulation Fears Deepen Chip Rout",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.tikr.com/blog/broadcom-sinks-9-as-ai-regulation-fears-deepen-chip-rout?ref=yahoofinance&tlnk=yf-261105-vc2p4rjf",
+   "timestamp": "2026-11-05T13:25:08-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "37d5c71c9fdd0576a3d7414c300f12b71255e24c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia has lost nearly $1.4 trillion since its October record",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/nvidia-has-lost-nearly-14-trillion-since-its-october-record-165912910.html",
+   "timestamp": "2026-11-05T11:59:12-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "76706335d0668dcb4b3b021b9279e76139300c7c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Prediction: GE Vernova Will Make Investors a Lot Richer by 2030",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.fool.com/investing/2026/11/05/prediction-ge-vernova-will-make-investors-a-lot/",
+   "timestamp": "2026-11-05T11:35:00-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0224349908e0b1c1a5dccbb9dc896419e6e15491",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Federal Reserve Board announces termination of enforcement action with Allegiant United Holdings, LLC, Nano Financial Holdings, Inc., and Nano Banc",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261105a.htm",
+   "timestamp": "2026-11-05T11:00:00-05:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Enforcement Actions · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "38e81827358dadba7409688516f0fbfe0966fc21",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine Resumes Stock Buybacks As Ethereum Purchases Slow",
+   "source": "CryptoProwl",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.cryptoprowl.com/releases/bitmine-resumes-stock-buybacks-as-ethereum-purchases-slow-7686",
+   "timestamp": "2026-11-05T09:49:00-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CryptoProwl · about BMNR",
+   "disclosure_lag_label": null
+  },
   {
    "id": "b4b1c6cecb148a7d5011e401b9e33aae90f167e6",
    "tier": 2,
@@ -138,6 +360,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · Trefis · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "758a019c6c13bdc388d1abee4d123a27ee219a36",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Unemployment Insurance Weekly Claims Report",
+   "source": "Department of Labor release",
+   "source_id": "dol",
+   "url": "http://www.dol.gov/newsroom/releases/eta/eta20261105",
+   "timestamp": "2026-11-05T07:00:00-05:00",
+   "tickers": [],
+   "topics": [
+    "CLAIMS"
+   ],
+   "summary": "Tier 1 · Department of Labor release · topics: CLAIMS",
    "disclosure_lag_label": null
   },
   {
@@ -2635,174 +2873,50 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-10-29 · FORM 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "41105a5a4ff7f08f6cdb4cf1e77a7efb39cc0bdb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by PRICE T ROWE GROUP INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1113169/000111316926000005/trow-20260930.htm",
-   "timestamp": "2026-10-29T13:57:49-04:00",
-   "tickers": [
-    "TROW"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7bcf350416a8764356b22a9fe6f4c08934c6ff85",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by HERSHEY CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/47111/000162828026068136/hsy-20260927.htm",
-   "timestamp": "2026-10-29T13:45:58-04:00",
-   "tickers": [
-    "HSY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-29 · THE HERSHEY COMPANY FORM 10-Q FOR THE QUARTERLY PERIOD ENDED SEPTEMBER 27, 2026",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6c1dae7831290f2c90b42bd1d82e148d8299dc89",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by DECKERS OUTDOOR CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/910521/000162828026068116/deck-20260930.htm",
-   "timestamp": "2026-10-29T12:59:26-04:00",
-   "tickers": [
-    "DECK"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a38675996c1b36643fa51b53313b1fc10d61fa01",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by BRISTOL MYERS SQUIBB CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/14272/000001427226000024/bmy-20260930.htm",
-   "timestamp": "2026-10-29T11:16:34-04:00",
-   "tickers": [
-    "BMY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-29 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fbbb88c247ad18c036c42e76c2a3f6754ecf2f4b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Personal Income and Outlays, September 2026",
-   "source": "BEA release",
-   "source_id": "bea",
-   "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-september-2026",
-   "timestamp": "2026-10-29T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "PCE"
-   ],
-   "summary": "Tier 1 · BEA release · topics: PCE · next release November 25, 2026",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "48c980494664a72e082437799009814ce91a8dbd",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GDP (Advance Estimate), 3rd Quarter 2026",
-   "source": "BEA release",
-   "source_id": "bea",
-   "url": "https://www.bea.gov/news/2026/gdp-advance-estimate-3rd-quarter-2026",
-   "timestamp": "2026-10-29T08:30:00-04:00",
-   "tickers": [],
-   "topics": [
-    "GDP"
-   ],
-   "summary": "Tier 1 · BEA release · topics: GDP · next release November 25, 2026",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ac678512bd90c3abd3e7ca55cabe9fb9644fd5d9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by HERSHEY CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/47111/000162828026068046/hsy-20261029.htm",
-   "timestamp": "2026-10-29T08:27:18-04:00",
-   "tickers": [
-    "HSY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-29 · FORM 8-K DATED OCTOBER 29, 2026",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3b7c0a9d6dfa8b3273ef91d8a799191b82c0f46c",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by DoorDash, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000114036126041111/ef20084547_8k.htm",
-   "timestamp": "2026-10-29T08:25:29-04:00",
-   "tickers": [
-    "DASH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-29 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "3ccc3639ffe7570f0e1c79a931d17060d28c697c",
+   "c677bc4430a69c2bd8b66552b683882d84e39e6d",
+   "76706335d0668dcb4b3b021b9279e76139300c7c",
    "2bf304130b2b112a9d1e7e2e759f0aad762e0ff2",
-   "a3d4467c62bce69811f50bfc9e4e30e9187c2620",
-   "c0a366c70e739e026e971f6c84652e07b93755ba",
-   "53338c446d9aa2543df2fae9d4885b7c24e8296f",
-   "3ccc0b5287b71bb560434b2f5d3abe3fc6c32adc"
+   "a3d4467c62bce69811f50bfc9e4e30e9187c2620"
   ],
   "NVDA": [
+   "37d5c71c9fdd0576a3d7414c300f12b71255e24c",
    "07699aff916347938e4e6d36a802ea3176525209",
    "b1d81420d69364dff973ff9c71f7c3d5d60c74ab",
    "1149eefe239a0b9ce38c5dcc4a61c256b23bf60d",
-   "8b785f2bb040df31cefeba08d1d45305773444ee",
-   "ab761f735315a9e1dea28f5a0f6a5187efa78748"
+   "8b785f2bb040df31cefeba08d1d45305773444ee"
   ],
   "AVGO": [
+   "b0b3100a295e7b508978e0b615f1fae3f8b84032",
+   "3111e135781af611856c1d2e13e7c769ea2f0101",
    "644f7f8ad061bec6526886a04108dd8274a6219b",
    "f715d0b97efd40020354e526055357084aca5e2e",
-   "d52206d327135963c9586dfac8d3a70e20f56429",
-   "10c7bbf1ac2e031ae6499fa8eb469da3382ba865",
-   "0ab0cac52cdf0d10a736b0413eda051d2689d259"
+   "d52206d327135963c9586dfac8d3a70e20f56429"
   ],
   "GOOG": [
+   "8f3decd13c3a623097e65f6687ff39b8ac9293e6",
+   "924044915eb2a15fd72615bbb6e16c87d674ff6d",
+   "d049e2f1501cdfa9419aee51af1ebdb201e8de81",
    "b4b1c6cecb148a7d5011e401b9e33aae90f167e6",
-   "0101e0724889432d8dec9fd3895ea7336486e003",
-   "85e933c5c24491b824b2eb6fcd1f75b9f2991b75",
-   "7d9c5b4fc59a33190ad78d6ccbc9d0fc4884495c",
-   "69df4fa1b78fbb8df2b11d98bd156bf22cfc84ac"
+   "0101e0724889432d8dec9fd3895ea7336486e003"
   ],
   "BMNR": [
+   "0a0936b87cc5e8dfeb1f90bee158d039c73aaf53",
    "38e81827358dadba7409688516f0fbfe0966fc21",
    "cfaa24d171efc318683f5c2996c228adefee43bd",
    "ceeeea0ddbd466a37fc4fe3655843700d74bd216",
-   "eaf2b93c95f6f39defabe9402ce7ceec371ce89f",
-   "78715c5a9e4c1d57ecbcfcfee6cd9aa97929dae3"
+   "eaf2b93c95f6f39defabe9402ce7ceec371ce89f"
   ]
  },
  "last24h": [
+  "2a8d72976dd44dd2bfbc93696dbbbd3b6bc0429f",
+  "338266c45c232925a0907307d996c60ff840934e",
+  "0224349908e0b1c1a5dccbb9dc896419e6e15491",
+  "758a019c6c13bdc388d1abee4d123a27ee219a36",
   "ba86e65fa049a46709fd16588b726b9b3d499eb2",
   "74711389e67e9065d481ad2ea9060c2d0024b1b7",
   "3bf483d5c64f3f1fb5c6f59e11ed2197afc78224",
@@ -2823,9 +2937,17 @@
   "d4eff238d390330691b5e2c0267daa1357b704a1",
   "460d414075b4bcc48750c1f7c277090fc46b1320",
   "e552e5b8a306ea1142edfe74e87092f231444515",
-  "0e7a3780e6edfe4071947ecf3a061a7a43c8eece",
-  "40b5e58c982f2244ccf2a432d3a710e19e5ce0e9",
-  "17aae0a1f79e00adc68ac32e0b2ea678fd3c5b99",
+  "8f3decd13c3a623097e65f6687ff39b8ac9293e6",
+  "3ccc3639ffe7570f0e1c79a931d17060d28c697c",
+  "924044915eb2a15fd72615bbb6e16c87d674ff6d",
+  "c677bc4430a69c2bd8b66552b683882d84e39e6d",
+  "d049e2f1501cdfa9419aee51af1ebdb201e8de81",
+  "0a0936b87cc5e8dfeb1f90bee158d039c73aaf53",
+  "b0b3100a295e7b508978e0b615f1fae3f8b84032",
+  "3111e135781af611856c1d2e13e7c769ea2f0101",
+  "37d5c71c9fdd0576a3d7414c300f12b71255e24c",
+  "76706335d0668dcb4b3b021b9279e76139300c7c",
+  "38e81827358dadba7409688516f0fbfe0966fc21",
   "b4b1c6cecb148a7d5011e401b9e33aae90f167e6",
   "644f7f8ad061bec6526886a04108dd8274a6219b",
   "0101e0724889432d8dec9fd3895ea7336486e003",
@@ -2836,17 +2958,6 @@
   "0d9b2b59a7785a1e44c26b20239efc838177e3a3",
   "2bf304130b2b112a9d1e7e2e759f0aad762e0ff2",
   "d52206d327135963c9586dfac8d3a70e20f56429",
-  "a3d4467c62bce69811f50bfc9e4e30e9187c2620",
-  "7d9c5b4fc59a33190ad78d6ccbc9d0fc4884495c",
-  "6a13499b3d757fb751d8c1ddefd81a4b11b3bd5a",
-  "69df4fa1b78fbb8df2b11d98bd156bf22cfc84ac",
-  "2a8862c402bad5f3758fb49756c69b59670babab",
-  "10c7bbf1ac2e031ae6499fa8eb469da3382ba865",
-  "1149eefe239a0b9ce38c5dcc4a61c256b23bf60d",
-  "0ab0cac52cdf0d10a736b0413eda051d2689d259",
-  "fcf46d21e8578ac4c557621ae52ce66480cfd446",
-  "c0a366c70e739e026e971f6c84652e07b93755ba",
-  "53338c446d9aa2543df2fae9d4885b7c24e8296f",
-  "3ccc0b5287b71bb560434b2f5d3abe3fc6c32adc"
+  "a3d4467c62bce69811f50bfc9e4e30e9187c2620"
  ]
 }
