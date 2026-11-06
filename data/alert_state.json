@@ -1,43 +1,42 @@
 {
   "cadence": "daily",
-  "session_date": "2026-11-04",
-  "as_of": "2026-11-04",
-  "updated": "2026-11-06T03:58:28+00:00",
+  "session_date": "2026-11-05",
+  "as_of": "2026-11-05",
+  "updated": "2026-11-06T13:15:05+00:00",
   "schema": 1,
   "regime": {
-    "label": "ELEVATED",
-    "served_label": "ELEVATED",
-    "R_full": 0.41,
-    "session": "2026-11-04"
+    "label": "HIGH RISK",
+    "served_label": "HIGH RISK",
+    "R_full": 0.557,
+    "session": "2026-11-05"
   },
   "shock": {
     "active": true,
     "reasons": [
-      "VIX +70%",
       "SPX -4.3%",
-      "VIX term backwardated (VIX 28.1 > VIX3M 25.3)"
+      "VIX term backwardated (VIX 27.4 > VIX3M 25.3)"
     ],
-    "session": "2026-11-04"
+    "session": "2026-11-05"
   },
   "complacency": {
     "kind": null,
     "reason": null,
-    "session": "2026-11-04"
+    "session": "2026-11-05"
   },
   "intraday": {
-    "session_date": "2026-11-05",
-    "timestamp": "2026-11-06T01:00:41"
+    "session_date": "2026-11-06",
+    "timestamp": "2026-11-06T13:10:14"
   },
   "issues": {
     "regime": {
       "number": 6,
       "url": "https://github.com/wernerhl/portfolio-tournament/issues/6",
       "dry_run": false,
-      "opened_session": "2026-10-07",
-      "from": "LOW RISK",
-      "to": "ELEVATED",
-      "R_full": 0.3727,
-      "session": "2026-10-07"
+      "reused": true,
+      "from": "ELEVATED",
+      "to": "HIGH RISK",
+      "R_full": 0.557,
+      "session": "2026-11-05"
     },
     "shock": {
       "number": 20,
@@ -58,10 +57,11 @@
     "complacency": "2026-11-03"
   },
   "last_run": {
-    "session_date": "2026-11-04",
+    "session_date": "2026-11-05",
     "mode": "live",
     "actions": [
-      "[complacency] closed (reverted)"
+      "[regime] closed (superseded by HIGH RISK)",
+      "[regime] opened ELEVATED -> HIGH RISK"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
