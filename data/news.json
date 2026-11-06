@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-11-05",
- "fetched_at": "2026-11-06T08:12:39-05:00",
+ "fetched_at": "2026-11-06T15:15:05-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=85 (parsed 42 names)",
+  "edgar": "ok n=83 (parsed 42 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=0 (parsed 20)",
   "ir_gev": "ok n=2 (parsed 20)",
@@ -73,25 +73,283 @@
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=3 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=2 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=2 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=4 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=4 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=6 (parsed 10)",
   "yahoo_headlines:BMNR": "ok n=6 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
-  "directive_rule": 1,
-  "irrelevant": 35,
-  "out_of_window": 26909,
+  "directive_rule": 2,
+  "irrelevant": 29,
+  "out_of_window": 26908,
   "unparseable": 0
  },
  "counts": {
-  "items": 182,
+  "items": 196,
   "tier1": 119,
-  "tier2": 63,
-  "last24h": 36
+  "tier2": 77,
+  "last24h": 39
  },
  "items": [
+  {
+   "id": "ebc81d43e9ff3e5f4a0d01e0076952ecc8109d01",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Is Still Down 22% in the Past Month: Is AVGO Stock Really on a Road to Recovery?",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://247wallst.com/investing/2026/11/06/broadcom-is-still-down-22-in-the-past-month-is-avgo-stock-really-on-a-road-to-recovery/",
+   "timestamp": "2026-11-06T15:03:19-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4aa2976d41ae41face97c7d8cd1f755c5f64a431",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Dell vs. Nvidia: Chip Stocks Just Suffered Their Worst Sell-Off Since 2020. Which Is the Better Buy for 2027?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.fool.com/coverage/better-buy/2026/11/06/dell-vs-nvidia-chip-stocks-just-suffered-their-worst-sell-off-since-2020-which-is-the-better-buy-for-2027/",
+   "timestamp": "2026-11-06T14:50:02-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "443d2704140dcd50683b06d68fcbf28078e44c8f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Microsoft and Google Face a New Bill as Data Centers “Have to Pay Their Own Costs”",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.tikr.com/blog/microsoft-and-google-face-a-new-bill-as-data-centers-have-to-pay-their-own-costs?ref=yahoofinance&tlnk=yf-261106-5qc3f788",
+   "timestamp": "2026-11-06T14:35:17-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f289ad164b0122f991bfc147fb7b0c4005271d6a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google Is Spending $17 Billion on a Wyoming Data Center and Says It Will Pay for 100% of Its Power",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/11/06/google-is-spending-17-billion-on-a-wyoming-data-center-and-says-it-will-pay-for-100-of-its-power/",
+   "timestamp": "2026-11-06T14:26:29-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4f45a4f392a72a54e19235e862dd157d05751ac1",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Not Alphabet. Not Meta. This Is the Digital Advertising Stock I'd Buy Right Now.",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.fool.com/investing/2026/11/06/not-alphabet-not-meta-this-is-the-digital-ad-stock/",
+   "timestamp": "2026-11-06T14:20:00-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e520c2ec92321e8ee447c20f843ca7682cd8e9b8",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Cathie Wood Makes $437 Million In Trades. Adds Nvidia, SpaceX; Offloads Broadcom",
+   "source": "Investor's Business Daily",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.investors.com/news/cathie-wood-ark-invest-nvidia-spacex-broadcom-google-amd/?src=A00220&yptr=yahoo",
+   "timestamp": "2026-11-06T13:58:53-05:00",
+   "tickers": [
+    "AVGO",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investor's Business Daily · about AVGO, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a72438a853dfe391b4b7107bd0b0806b88438e98",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Constellation Energy Fell 9% on the Midterm Sweep. Monday’s Report Has to Defend Its Growth Estimates",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.tikr.com/blog/constellation-energy-fell-9-on-the-midterm-sweep-mondays-report-has-to-defend-its-growth-estimates?ref=yahoofinance&tlnk=yf-261106-348rq84g",
+   "timestamp": "2026-11-06T13:35:40-05:00",
+   "tickers": [
+    "CEG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about CEG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "08fe18bb6cb327082796a55868b911c910fd9443",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Stock Market Today: Dow Wobbles, Nasdaq Rises After AI Rout; Nvidia, Intel Lead Chip Rebound (Live Coverage)",
+   "source": "Investor's Business Daily",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-sp500-nasdaq-october-jobs-report-nvidia-stock-nvda/?src=A00220&yptr=yahoo",
+   "timestamp": "2026-11-06T13:21:24-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b7af454ae9dc3182a2ce73de5d180947160bd46c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Qualcomm Rises 5% on Alphabet’s $548 Million Stake as CEO Sees a “Disconnect” on AI",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.tikr.com/blog/qualcomm-rises-5-on-alphabets-548-million-stake-as-ceo-sees-a-disconnect-on-ai?ref=yahoofinance&tlnk=yf-261106-3hf3776h",
+   "timestamp": "2026-11-06T13:20:50-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "866ccd3d0b86bbc29a628d9acaa5546c0eca9c47",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia Stock, Other AI Names Rebound After Sell-Off",
+   "source": "Investor's Business Daily",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.investors.com/news/technology/nvidia-stock-other-ai-names-rebound-after-sell-off/?src=A00220&yptr=yahoo",
+   "timestamp": "2026-11-06T12:46:42-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b839a7d717d13277c4b5288a0bd837e6afc0dbd0",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Has Something Nvidia Needs Under a Democratic Congress",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://247wallst.com/investing/2026/11/06/ge-vernova-has-something-nvidia-needs-under-a-democratic-congress/",
+   "timestamp": "2026-11-06T12:45:26-05:00",
+   "tickers": [
+    "GEV",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GEV, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9ef992781e640cbf1f015a782d7f58356151f3e7",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Forget Nvidia. Here’s the Company Behind the Chips",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://247wallst.com/investing/2026/11/06/forget-nvidia-heres-the-company-behind-the-chips/",
+   "timestamp": "2026-11-06T12:03:01-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ab5c497fdf6940d103e91e55ebe495a2dbc515e6",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Rising GPU prices just might turn Nvidia into a buy",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/rising-gpu-prices-just-might-turn-nvidia-into-a-buy-160742850.html",
+   "timestamp": "2026-11-06T11:07:42-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "79fa5a520e6210d2bee0bfafaa0885b2e5c66291",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Stock: Analyst Estimates & Ratings",
+   "source": "Barchart",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.barchart.com/story/news/8700801/ge-vernova-stock-analyst-estimates-ratings",
+   "timestamp": "2026-11-06T09:07:23-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barchart · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "03b2988f518ad262debc699975d7865d70a8f81e",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia, AMD, and Micron stocks lead chip sector higher following worst sell-off since 2020",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/nvidia-amd-micron-sandsik-lead-chip-sector-higher-134336542.html",
+   "timestamp": "2026-11-06T08:43:36-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1f50d72e7b927f6cc76ea5c4ddf6fda5c045e405",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "BLS release: Employment Situation (October 2026)",
+   "source": "BLS (release page)",
+   "source_id": "bls_release_day",
+   "url": "https://www.bls.gov/news.release/empsit.nr0.htm#2026-11-06",
+   "timestamp": "2026-11-06T08:30:00-05:00",
+   "tickers": [],
+   "topics": [
+    "NFP"
+   ],
+   "summary": "scheduled release at 08:30 ET; print not fetched",
+   "disclosure_lag_label": null
+  },
   {
    "id": "64658b8d66aa937be60586523f86aca4f17182b5",
    "tier": 2,
@@ -107,22 +365,6 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · 24/7 Wall St. · about AVGO, NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "08fe18bb6cb327082796a55868b911c910fd9443",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Stock Market Today: Dow Slides 500 Points Ahead Of Jobs Report; Nvidia Stock Leads Tech Rebound (Live Coverage)",
-   "source": "Investor's Business Daily",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-sp500-nasdaq-october-jobs-report-nvidia-stock-nvda/?src=A00220&yptr=yahoo",
-   "timestamp": "2026-11-06T08:02:42-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
    "disclosure_lag_label": null
   },
   {
@@ -187,6 +429,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c0f4e564f9c31ce8541a43a8e4ff47bd09eeba8a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova to support India’s energy transition with 6 GW HVDC transmission project",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-support-india-energy-transition-6-gw-hvdc-transmission-project",
+   "timestamp": "2026-11-06T06:31:37-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
    "disclosure_lag_label": null
   },
   {
@@ -2972,68 +3230,36 @@
    "topics": [],
    "summary": "EDGAR 10-Q · filed 2026-10-30 · 10-Q",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "c7fc8526bbff6e23102e00f2c688830030abede1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by AMERIPRISE FINANCIAL INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/820027/000082002726000054/amp-20260930.htm",
-   "timestamp": "2026-10-30T14:04:11-04:00",
-   "tickers": [
-    "AMP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-10-30 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9b8e8cb24823916ee605db713eeff6b7d66035cc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000411/axp-20261030.htm",
-   "timestamp": "2026-10-30T14:00:24-04:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-10-30 · 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "b839a7d717d13277c4b5288a0bd837e6afc0dbd0",
+   "79fa5a520e6210d2bee0bfafaa0885b2e5c66291",
+   "c0f4e564f9c31ce8541a43a8e4ff47bd09eeba8a",
    "4eb10cde9f4dfec95be1404b8618818fabdc937c",
-   "239a39983649c5eff664f85ec1a979c5465ff4c3",
-   "3ccc3639ffe7570f0e1c79a931d17060d28c697c",
-   "c677bc4430a69c2bd8b66552b683882d84e39e6d",
-   "76706335d0668dcb4b3b021b9279e76139300c7c"
+   "239a39983649c5eff664f85ec1a979c5465ff4c3"
   ],
   "NVDA": [
-   "64658b8d66aa937be60586523f86aca4f17182b5",
+   "4aa2976d41ae41face97c7d8cd1f755c5f64a431",
+   "e520c2ec92321e8ee447c20f843ca7682cd8e9b8",
    "08fe18bb6cb327082796a55868b911c910fd9443",
-   "893ec13fe20b72df257ec18c3ff11e80efed0f25",
-   "2fb13f1e804278094b1e808ede28675fb038de18",
-   "2864cd198f9e2d715b9348675f2ec2c42b9be687"
+   "866ccd3d0b86bbc29a628d9acaa5546c0eca9c47",
+   "b839a7d717d13277c4b5288a0bd837e6afc0dbd0"
   ],
   "AVGO": [
+   "ebc81d43e9ff3e5f4a0d01e0076952ecc8109d01",
+   "e520c2ec92321e8ee447c20f843ca7682cd8e9b8",
    "64658b8d66aa937be60586523f86aca4f17182b5",
    "b0b3100a295e7b508978e0b615f1fae3f8b84032",
-   "3111e135781af611856c1d2e13e7c769ea2f0101",
-   "644f7f8ad061bec6526886a04108dd8274a6219b",
-   "f715d0b97efd40020354e526055357084aca5e2e"
+   "3111e135781af611856c1d2e13e7c769ea2f0101"
   ],
   "GOOG": [
-   "a23fef2e30299bbc9bdbeda03c8ec0bb7988d814",
-   "a0cd861d739a77acbdaa9468f3338f0020421f63",
-   "348618c6aa679a80589fb9b7fc41c073b1d35a76",
-   "8f3decd13c3a623097e65f6687ff39b8ac9293e6",
-   "924044915eb2a15fd72615bbb6e16c87d674ff6d"
+   "443d2704140dcd50683b06d68fcbf28078e44c8f",
+   "f289ad164b0122f991bfc147fb7b0c4005271d6a",
+   "4f45a4f392a72a54e19235e862dd157d05751ac1",
+   "b7af454ae9dc3182a2ce73de5d180947160bd46c",
+   "a23fef2e30299bbc9bdbeda03c8ec0bb7988d814"
   ],
   "BMNR": [
    "0a0936b87cc5e8dfeb1f90bee158d039c73aaf53",
@@ -3044,6 +3270,8 @@
   ]
  },
  "last24h": [
+  "1f50d72e7b927f6cc76ea5c4ddf6fda5c045e405",
+  "c0f4e564f9c31ce8541a43a8e4ff47bd09eeba8a",
   "d12c92f0c5f84eee144fca9b0d6293daf9d929e7",
   "e1ca29b25240186205081312ffa1068fe8951826",
   "7a4d82855a508c5b7ee3c64aeaee41da624b10af",
@@ -3056,12 +3284,22 @@
   "f45176457806fb6126fc11ff21d8464359e0fe4a",
   "61a25c497fadc9cf3c3484cfc877e3822f386a93",
   "348618c6aa679a80589fb9b7fc41c073b1d35a76",
-  "2a8d72976dd44dd2bfbc93696dbbbd3b6bc0429f",
-  "338266c45c232925a0907307d996c60ff840934e",
-  "0224349908e0b1c1a5dccbb9dc896419e6e15491",
-  "3b512386dd8ea95700d04044f93380aa8a6c159e",
-  "64658b8d66aa937be60586523f86aca4f17182b5",
+  "ebc81d43e9ff3e5f4a0d01e0076952ecc8109d01",
+  "4aa2976d41ae41face97c7d8cd1f755c5f64a431",
+  "443d2704140dcd50683b06d68fcbf28078e44c8f",
+  "f289ad164b0122f991bfc147fb7b0c4005271d6a",
+  "4f45a4f392a72a54e19235e862dd157d05751ac1",
+  "e520c2ec92321e8ee447c20f843ca7682cd8e9b8",
+  "a72438a853dfe391b4b7107bd0b0806b88438e98",
   "08fe18bb6cb327082796a55868b911c910fd9443",
+  "b7af454ae9dc3182a2ce73de5d180947160bd46c",
+  "866ccd3d0b86bbc29a628d9acaa5546c0eca9c47",
+  "b839a7d717d13277c4b5288a0bd837e6afc0dbd0",
+  "9ef992781e640cbf1f015a782d7f58356151f3e7",
+  "ab5c497fdf6940d103e91e55ebe495a2dbc515e6",
+  "79fa5a520e6210d2bee0bfafaa0885b2e5c66291",
+  "03b2988f518ad262debc699975d7865d70a8f81e",
+  "64658b8d66aa937be60586523f86aca4f17182b5",
   "893ec13fe20b72df257ec18c3ff11e80efed0f25",
   "a23fef2e30299bbc9bdbeda03c8ec0bb7988d814",
   "a0cd861d739a77acbdaa9468f3338f0020421f63",
@@ -3070,15 +3308,6 @@
   "4eb10cde9f4dfec95be1404b8618818fabdc937c",
   "239a39983649c5eff664f85ec1a979c5465ff4c3",
   "8f3decd13c3a623097e65f6687ff39b8ac9293e6",
-  "3ccc3639ffe7570f0e1c79a931d17060d28c697c",
-  "924044915eb2a15fd72615bbb6e16c87d674ff6d",
-  "c677bc4430a69c2bd8b66552b683882d84e39e6d",
-  "d049e2f1501cdfa9419aee51af1ebdb201e8de81",
-  "0a0936b87cc5e8dfeb1f90bee158d039c73aaf53",
-  "b0b3100a295e7b508978e0b615f1fae3f8b84032",
-  "3111e135781af611856c1d2e13e7c769ea2f0101",
-  "37d5c71c9fdd0576a3d7414c300f12b71255e24c",
-  "76706335d0668dcb4b3b021b9279e76139300c7c",
-  "38e81827358dadba7409688516f0fbfe0966fc21"
+  "3ccc3639ffe7570f0e1c79a931d17060d28c697c"
  ]
 }
