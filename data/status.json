@@ -1,13 +1,13 @@
 {
- "last_attempt": "2026-11-06T06:23:30-05:00",
+ "last_attempt": "2026-11-06T20:42:59-05:00",
  "last_success": "2026-11-06T06:23:30-05:00",
- "failure_reason": null,
- "session_date": "2026-11-05",
+ "failure_reason": "PRICE_MISSING 5_werner: positions without a price for 2026-11-06: ['GEV', 'GOOG', 'BMNR']; PRICE_MISSING 6_strat: positions without a price for 2026-11-06: ['COIN', 'ABNB', 'GDDY', 'HLT', 'META', 'CVNA', 'CRWD']",
+ "session_date": "2026-11-06",
  "forced_publish_reason": null,
  "audit": {
-  "ran_at": "2026-11-06T13:14:48+00:00",
+  "ran_at": "2026-11-07T03:37:54+00:00",
   "scope": "all",
-  "n_findings": 42,
+  "n_findings": 45,
   "critical": [],
   "critical_other_repo": [],
   "xfile": [
@@ -15,11 +15,14 @@
   ],
   "high": [
    "book:holdings_age",
+   "brief:missing",
    "calendar:treasury_source",
    "governance:coverage",
    "governance:review_overdue",
    "nullguard",
+   "options:lens_spot_stale",
    "rates:stale",
+   "rates:vintage",
    "tournament:dead_columns",
    "universe:stale_ticker",
    "xfile:vol_single_source"

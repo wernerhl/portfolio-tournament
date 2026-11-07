@@ -1,14 +1,17 @@
-last trading session: 2026-11-05
+last trading session: 2026-11-06
 [HIGH    ] tournament:dead_columns      regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_7_20_random_forest', 'p_15_40_gradient_boost']
-[HIGH    ] xfile:vol_single_source      intraday vix 27.37 vs canonical 28.18
+[HIGH    ] xfile:vol_single_source      intraday vix 25.63 vs canonical 28.18
 [HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
 [HIGH    ] governance:coverage          1_cap_pres: unclassified share 50% > 15%
 [HIGH    ] governance:coverage          2_balanced: unclassified share 35% > 15%
 [HIGH    ] governance:coverage          3_aggressive: unclassified share 40% > 15%
 [HIGH    ] governance:coverage          4_tactical: unclassified share 46% > 15%
 [HIGH    ] governance:coverage          5_werner: unclassified share 17% > 15%
-[HIGH    ] book:holdings_age            holdings.json as_of 2026-09-30 is 26 sessions old (>5): confirm or re-export the account
-[HIGH    ] rates:stale                  global-rates series older than their expected lag: ['us2: 2026-10-02 (24 business days behind 2026-11-05, allowed 2)', 'us10: 2026-10-02 (24 business days behind 2026-11-05, allowed 2)', 'us30: 2026-10-02 (24 business days behind 2026-11-05, allowed 2)', 'us_real10: 2026-10-02 (24 business days behind 2026-11-05, allowed 2)', 'us_be10: 2026-10-05 (23 business days behind 2026-11-05, allowed 2)', 'us_tp_kw: 2026-09-25 (29 business days behind 2026-11-05, allowed 8)', 'effr: 2026-10-02 (24 business days behind 2026-11-05, allowed 2)', 'us3m: 2026-10-02 (24 business days behind 2026-11-05, allowed 2)']
+[HIGH    ] book:holdings_age            holdings.json as_of 2026-09-30 is 27 sessions old (>5): confirm or re-export the account
+[HIGH    ] options:lens_spot_stale      held names whose lens spot is not the last session 2026-11-06: ['AVGO: provider 1-minute tape', 'BMNR: provider 1-minute tape', 'GEV: provider 1-minute tape', 'GOOG: provider 1-minute tape', 'NVDA: provider 1-minute tape']
+[HIGH    ] rates:stale                  global-rates series older than their expected lag: ['us2: 2026-10-02 (25 business days behind 2026-11-06, allowed 2)', 'us10: 2026-10-02 (25 business days behind 2026-11-06, allowed 2)', 'us30: 2026-10-02 (25 business days behind 2026-11-06, allowed 2)', 'us_real10: 2026-10-02 (25 business days behind 2026-11-06, allowed 2)', 'us_be10: 2026-10-05 (24 business days behind 2026-11-06, allowed 2)', 'us_tp_kw: 2026-09-25 (30 business days behind 2026-11-06, allowed 8)', 'effr: 2026-10-02 (25 business days behind 2026-11-06, allowed 2)', 'us3m: 2026-10-02 (25 business days behind 2026-11-06, allowed 2)']
+[HIGH    ] rates:vintage                no rates vintage for the session 2026-11-06 (latest 2026-11-05)
+[HIGH    ] brief:missing                no brief entry for the last session 2026-11-06 (last: 2026-11-05)
 [HIGH    ] governance:review_overdue    visibility override AMZN review_by 2026-08-13 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override ANET review_by 2026-08-18 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override AVGO review_by 2026-09-17 passed (decay should be active)
@@ -40,7 +43,7 @@ last trading session: 2026-11-05
 [INFO    ] analyst:snapshot_index       3 missed day(s) on record: ['2026-10-16', '2026-10-23', '2026-10-30']
 [INFO    ] rates:vintage_session        rates vintage 2026-10-06 holds the 2026-10-05 session (erratum erratum-2026-10-06-rates-vintage-1; the file stays as written)
 [INFO    ] universe:index_gap           9 current index members (as of 2026-09-30) not in the universe; listed for the owner, never added by the pipeline: ['BE', 'FDXF', 'FERG', 'FLEX', 'HONA', 'ILMN', 'P', 'Q', 'RDDT']
-[INFO    ] site:session                 live site session 2026-11-05, 25.8 h since its last publish (last session 2026-11-05)
+[INFO    ] site:session                 live site session 2026-11-05, 16.2 h since its last publish (last session 2026-11-06)
 
-42 findings; 0 CRITICAL
-REFEREE COMPLETE: 42 findings; 0 CRITICAL
+45 findings; 0 CRITICAL
+REFEREE COMPLETE: 45 findings; 0 CRITICAL
