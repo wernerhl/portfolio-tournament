@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-11-09",
- "fetched_at": "2026-11-10T00:48:56-05:00",
+ "fetched_at": "2026-11-10T15:43:03-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -58,40 +58,933 @@
  },
  "sources_status": {
   "fed_press": "ok n=2 (parsed 20)",
-  "fed_speeches": "ok n=0 (parsed 15)",
+  "fed_speeches": "ok n=2 (parsed 15)",
   "bea": "ok n=1 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=83 (parsed 41 names)",
+  "edgar": "ok n=109 (parsed 41 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
-  "ir_nvda": "ok n=3 (parsed 20)",
-  "ir_gev": "ok n=3 (parsed 20)",
+  "ir_nvda": "ok n=4 (parsed 20)",
+  "ir_gev": "ok n=5 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=5 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=7 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
+  "yahoo_headlines:GEV": "ok n=3 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=7 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=4 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=6 (parsed 10)",
   "yahoo_headlines:BMNR": "ok n=6 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 1,
-  "irrelevant": 26,
-  "out_of_window": 28038,
+  "irrelevant": 30,
+  "out_of_window": 28035,
   "unparseable": 0
  },
  "counts": {
-  "items": 230,
-  "tier1": 120,
-  "tier2": 110,
-  "last24h": 45
+  "items": 272,
+  "tier1": 148,
+  "tier2": 124,
+  "last24h": 75
  },
  "items": [
+  {
+   "id": "2b7b524d13f1a18034b9ecd8f521438242bdd966",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Bowman, The U.S. Economy and Considerations for Monetary Policy",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/bowman20261110a.htm",
+   "timestamp": "2026-11-10T15:30:00-05:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8e48487147325d23c757263f1efd004d41c6b8e9",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google's SpaceX investment takes an unexpected turn",
+   "source": "TheStreet",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.thestreet.com/investing/stocks/googles-spacex-investment-is-taking-an-unexpected-turn",
+   "timestamp": "2026-11-10T15:13:00-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TheStreet · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b3a87583deee36926adadd89f34a72a39a5a8fd2",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet (GOOGL) Launches Gemini For Healthcare",
+   "source": "Simply Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-googl-launches-gemini-healthcare-201113086.html",
+   "timestamp": "2026-11-10T15:11:13-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Simply Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1bc005929ed9f9a1352f8a03160ef28c6bc9af08",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Is Fervo Energy (FRVO) Undervalued Following Its Google Deal And Cape Station Launch?",
+   "source": "Simply Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/fervo-energy-frvo-undervalued-following-201055205.html",
+   "timestamp": "2026-11-10T15:10:55-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Simply Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cd16f056d7536ba98299c88ce5480ad6fac1b98d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia’s 70% to 80% Margins Are “Like Throwing Chum in the Water,” Says Its Biographer",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.tikr.com/blog/nvidias-70-to-80-margins-are-like-throwing-chum-in-the-water-says-its-biographer?ref=yahoofinance&tlnk=yf-261110-23ph5h8g",
+   "timestamp": "2026-11-10T14:55:26-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ba6d1af6517cf9530c0680b9f5a694acc789790c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "AMD Gains 25% Against NVDA in 2 Days: Chip Analyst Says Lisa Su Is ‘at Her Best’",
+   "source": "Benzinga Prediction Markets",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.benzinga.com/markets/prediction-markets/26/11/63115849/amd-lisa-su",
+   "timestamp": "2026-11-10T14:30:08-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Benzinga Prediction Markets · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2865cb2be73ec5c8c4ed76b5bcadcd831ab72594",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Chip stocks' slide nears $5 trillion as Nvidia hits most extreme selling level since 2019",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/chip-stocks-slide-nears-5-trillion-as-nvidia-hits-most-extreme-selling-level-since-2019-191532559.html",
+   "timestamp": "2026-11-10T14:15:32-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f36eb145f3b347550e1bd4e3f0a9152d4d6d3447",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Statement From the Independent Members of the NVIDIA Board",
+   "source": "NVIDIA investor relations",
+   "source_id": "ir_nvda",
+   "url": "https://nvidianews.nvidia.com/news/statement-from-the-independent-members-of-the-nvidia-board",
+   "timestamp": "2026-11-10T14:07:00-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8e42bd41a0c4f0de4d6fb85acce91ace1f83c5e7",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet makes $10 billion bet on Anthropic's massive IPO",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-makes-10-billion-bet-185448045.html",
+   "timestamp": "2026-11-10T13:54:48-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "63d919805b7c4678a1a9413091d99f29087efd20",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia in the hot seat, Anthropic to test the IPO market, hotter-than-expected US inflation",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/nvidia-in-the-hot-seat-anthropic-to-test-the-ipo-market-hotter-than-expected-us-inflation-184626512.html",
+   "timestamp": "2026-11-10T13:46:26-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a8df7f98a346f49de2b68056bc2351b9bf2b89f7",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google, Nvidia and Microsoft “Literally Feeding Themselves Money” with $26 Billion Anthropic IPO Buy",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.tikr.com/blog/google-nvidia-and-microsoft-literally-feeding-themselves-money-with-26-billion-anthropic-ipo-buy?ref=yahoofinance&tlnk=yf-261110-4fh7rrpp",
+   "timestamp": "2026-11-10T13:21:34-05:00",
+   "tickers": [
+    "GOOG",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GOOG, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f615e117a15007fe2d36ad418c6b0344b86ae947",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Top strategist: Nvidia CEO Jensen Huang's affair highlights key risk for tech companies",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/technology/article/top-strategist-nvidia-ceo-jensen-huangs-affair-highlights-key-risk-for-tech-companies-184212599.html",
+   "timestamp": "2026-11-10T13:17:05-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1541163b666b62fcc5eb315b76eaf43f1e8647e2",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet Stocks Rise 0.34% as Google Lines Up $10 Billion Anthropic Stake Purchase",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/alphabet-stocks-rise-0-34-180311251.html",
+   "timestamp": "2026-11-10T13:03:11-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "328aac789f92d07637046971322fd1044e575f96",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Anthropic, Nvidia, CoreWeave, Take-Two, D-Wave, Securitize, and More That Explain Today’s Market",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.barrons.com/articles/stock-movers-9ff7ace7?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-11-10T12:56:00-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4d55bf5e4fd008ddb7c12803b74924278da1419b",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Advances Hydrogen Capabilities for Aeroderivative Gas Turbines with New Milestones",
+   "source": "POWER Magazine",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.powermag.com/ge-vernova-advances-hydrogen-capabilities-for-aeroderivative-gas-turbines-with-new-milestones/",
+   "timestamp": "2026-11-10T12:49:57-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · POWER Magazine · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fc58a8b50e381395998fa1cdbe1f47cfbff6a523",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Stocks Rise 2.69% as It Joins $26 Billion Anthropic Placement",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-rise-2-69-173950413.html",
+   "timestamp": "2026-11-10T12:39:50-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova to spend $34.5M expanding Louisiana transformer manufacturing capacity",
+   "source": "Utility Dive",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.utilitydive.com/news/ge-vernova-to-spend-345m-expanding-transformer-manufacturing-capacity-in/874272/",
+   "timestamp": "2026-11-10T12:03:44-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Utility Dive · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b73b0e48c7c2bb2b6d9c98e9db009aeb8ccdfe04",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova, Vertiv, and Bloom Energy Just Lost 10% to 24% in a Week. Here's What Set Off the AI Power Sell-off.",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.fool.com/investing/2026/11/10/ge-vernova-vertiv-and-bloom-energy-just-lost-10-to/",
+   "timestamp": "2026-11-10T11:20:00-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a767d7c5e8ceea2cf762a6e3795b3e8362518731",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia stock drops 6%, extending decline on report alleged Chinese spy linked to Nvidia CEO aided $7.5 billion in China chip shipments",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/nvidia-stock-drops-3-extending-decline-on-report-alleged-chinese-spy-linked-to-nvidia-ceo-aided-75-billion-in-china-chip-shipments-152654028.html",
+   "timestamp": "2026-11-10T10:24:21-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "05e0af14056de283954224bb06c48f6d205e30ce",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why analysts aren't trying to ruffle Nvidia's feathers amid CEO scandal",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/why-analysts-arent-trying-to-ruffle-nvidias-feathers-amid-ceo-scandal-151507913.html",
+   "timestamp": "2026-11-10T10:15:07-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5db6b9298c6f5ad3fa00a9440be5fa96ced730ae",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "State of the tech market: Anthropic IPO and Nvidia CEO scandal are reshaping portfolios",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/state-of-the-tech-market-anthropic-ipo-and-nvidia-ceo-scandal-are-reshaping-portfolios-150759438.html",
+   "timestamp": "2026-11-10T10:07:59-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "13405fcc8ac540083cb00eb6481a0f855776a665",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "No chair and 30-year tenures: Will Nvidia's board go soft on Jensen?",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/no-chair-and-30-year-tenures-will-nvidias-board-go-soft-on-jensen-150036535.html",
+   "timestamp": "2026-11-10T10:00:36-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "38adf9bf94859583496d95bdc17bb9c7756e9839",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova to Invest $34.5 Million in Shreveport Facility Expansion to Meet Growing Grid Infrastructure Demand",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-invest-345-million-shreveport-facility-expansion-meet-growing-grid",
+   "timestamp": "2026-11-10T08:54:04-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "94af6dcb1f1f09395718f9092ec40bc877b84522",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "BLS release: Consumer Price Index (October 2026)",
+   "source": "BLS (release page)",
+   "source_id": "bls_release_day",
+   "url": "https://www.bls.gov/news.release/cpi.nr0.htm#2026-11-10",
+   "timestamp": "2026-11-10T08:30:00-05:00",
+   "tickers": [],
+   "topics": [
+    "CPI"
+   ],
+   "summary": "scheduled release at 08:30 ET; print not fetched",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "10cd1e67199986e002e204d8486aa3c82e53a1f2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000794/xslF345X06/wk-form4_1794310898.xml",
+   "timestamp": "2026-11-10T06:41:42-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d9efcf7a2ebf7869812e4d2dc78f657ac6552f08",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000793/xslF345X06/wk-form4_1794310890.xml",
+   "timestamp": "2026-11-10T06:41:34-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dd38c027bc9f07d1f43c44dec4c1244551e1398c",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000792/xslF345X06/wk-form4_1794310883.xml",
+   "timestamp": "2026-11-10T06:41:26-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dcdc32785067dc132a18807204606268a163c392",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000791/xslF345X06/wk-form4_1794310876.xml",
+   "timestamp": "2026-11-10T06:41:20-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3f876da85a1eb91edf75240b4c2174a721a51b53",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000790/xslF345X06/wk-form4_1794310870.xml",
+   "timestamp": "2026-11-10T06:41:13-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8a588cd69c5f9310a1ebafd8355ed9a395aaa98a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000789/xslF345X06/wk-form4_1794310863.xml",
+   "timestamp": "2026-11-10T06:41:06-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4c2549d8fc1d1921afc897b6b24e15043a4a2a6e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000782/xslF345X06/wk-form4_1794310702.xml",
+   "timestamp": "2026-11-10T06:38:25-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a3e4aabb2b515c03b8dc3e4b88fa3e9de95bced7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000781/xslF345X06/wk-form4_1794310695.xml",
+   "timestamp": "2026-11-10T06:38:18-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a492b2d06853746c78b12a9b8a5fd71480701d01",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000780/xslF345X06/wk-form4_1794310688.xml",
+   "timestamp": "2026-11-10T06:38:11-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "001c198d18eac63aee4de8d9595a6b56740ac4bb",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000779/xslF345X06/wk-form4_1794310680.xml",
+   "timestamp": "2026-11-10T06:38:04-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "235530d513b668b2b669674e8cc412c5d2a7b101",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000778/xslF345X06/wk-form4_1794310674.xml",
+   "timestamp": "2026-11-10T06:37:58-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8ebfc89a88fab9e73f939beb198a995b038af910",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000777/xslF345X06/wk-form4_1794310668.xml",
+   "timestamp": "2026-11-10T06:37:52-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2062fa76730ffad8f3ead3723799b82311509b67",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000776/xslF345X06/wk-form4_1794310662.xml",
+   "timestamp": "2026-11-10T06:37:46-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b100a74fe5422bc15e64143609cc7ee0da7b158f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000775/xslF345X06/wk-form4_1794310656.xml",
+   "timestamp": "2026-11-10T06:37:40-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4c0033cef65a17351bdbb9d2bc2b5cc055515554",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000774/xslF345X06/wk-form4_1794310650.xml",
+   "timestamp": "2026-11-10T06:37:33-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "fc8541d3e2b53c05e4f07c0fa0ce23167062ac3e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000773/xslF345X06/wk-form4_1794310644.xml",
+   "timestamp": "2026-11-10T06:37:28-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0f771f3c4293947334ac0b42c79af0a50872fef9",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000772/xslF345X06/wk-form4_1794310638.xml",
+   "timestamp": "2026-11-10T06:37:21-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "70e5308290828f8d2b3e3b35fcfd616b5d45d3d0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000771/xslF345X06/wk-form4_1794310631.xml",
+   "timestamp": "2026-11-10T06:37:15-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7045878efb3ab0c1db206810933dfde88665c736",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000758/xslF345X06/wk-form4_1794310320.xml",
+   "timestamp": "2026-11-10T06:32:03-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8bfcd105f9d9e1d5647e41bf1bd0d9fb4db1b916",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000757/xslF345X06/wk-form4_1794310312.xml",
+   "timestamp": "2026-11-10T06:31:56-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "94b5937836c03c0652ddfdc0c2ee6ebc7e99428d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000756/xslF345X06/wk-form4_1794310306.xml",
+   "timestamp": "2026-11-10T06:31:49-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9bd2da376780e1ed8aca8c6f02e4d34b5954fa46",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000755/xslF345X06/wk-form4_1794310298.xml",
+   "timestamp": "2026-11-10T06:31:42-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e79e1aeb1160156cbc5207fde06ffd91c3db79f3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000754/xslF345X06/wk-form4_1794310289.xml",
+   "timestamp": "2026-11-10T06:31:34-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f7a02db2749a769a81261e67d241c9fe7aa15e74",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000753/xslF345X06/wk-form4_1794310280.xml",
+   "timestamp": "2026-11-10T06:31:24-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "75bfdf551794f11172368bbc1822be4fb0e99705",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000746/xslF345X06/wk-form4_1794309328.xml",
+   "timestamp": "2026-11-10T06:15:31-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2da4bda92180b8b693bfced7da5c997e1d7a1bf0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000745/xslF345X06/wk-form4_1794309321.xml",
+   "timestamp": "2026-11-10T06:15:24-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "837830ea4ec9b51a5139b080eae78cbfc06aace7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000744/xslF345X06/wk-form4_1794309313.xml",
+   "timestamp": "2026-11-10T06:15:17-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "deec5b5febd40ec894c2edef852c0a5c0b499a5e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000743/xslF345X06/wk-form4_1794309306.xml",
+   "timestamp": "2026-11-10T06:15:10-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "78f3973b0fc8e999eb72cb0004652373c585d541",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000742/xslF345X06/wk-form4_1794309298.xml",
+   "timestamp": "2026-11-10T06:15:02-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f3b3ce67250eee655f78e2e38bd77afe3b6e1cb4",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000741/xslF345X06/wk-form4_1794309291.xml",
+   "timestamp": "2026-11-10T06:14:55-05:00",
+   "tickers": [
+    "TSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8cdfc14340a44d522802ff64bfc6f17cd29d8657",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Waller, The Economic Outlook and Some Thoughts on Labor Market Dynamism",
+   "source": "Federal Reserve speech",
+   "source_id": "fed_speeches",
+   "url": "https://www.federalreserve.gov/newsevents/speech/waller20261110a.htm",
+   "timestamp": "2026-11-10T04:00:00-05:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "796335a15013d3b0ac20d5fe7f590a5283ce8ead",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "GE Vernova Advances Hydrogen Capabilities for Aeroderivative Gas Turbines with New Milestones",
+   "source": "GE Vernova investor relations",
+   "source_id": "ir_gev",
+   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-advances-hydrogen-capabilities-aeroderivative-gas-turbines-new-milestones",
+   "timestamp": "2026-11-10T01:34:11-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
+   "disclosure_lag_label": null
+  },
   {
    "id": "51e94893c6dcd0e984e9ae75962574c77fb52e84",
    "tier": 2,
@@ -3550,260 +4443,36 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-11-03 · OWNERSHIP DOCUMENT",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "938f81e5b1bf49f14a76be72d66716c3777984eb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NORTHROP GRUMMAN CORP /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1133421/000162828026069214/xslF345X06/wk-form4_1793723117.xml",
-   "timestamp": "2026-11-03T11:25:20-05:00",
-   "tickers": [
-    "NOC"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ceeeea0ddbd466a37fc4fe3655843700d74bd216",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Is Bitmine Immersion Technologies (BMNR) Below Fair Value Near Book Value?",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:BMNR",
-   "url": "https://finance.yahoo.com/markets/crypto/articles/bitmine-immersion-technologies-bmnr-below-162051676.html",
-   "timestamp": "2026-11-03T11:20:51-05:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about BMNR",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c2fdc58b3632d211c6502c8383093718555d9592",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "If I Could Only Buy 1 AI Power Stock for the Next Decade, It Wouldn't Be Bloom Energy or GE Vernova",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.fool.com/investing/2026/11/03/if-i-could-only-buy-1-ai-power-stock-for-the-next/",
-   "timestamp": "2026-11-03T10:35:00-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d040c297a0f3c126badee4347c6abc7c93e9bf5f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "BLS release: Job Openings and Labor Turnover (September 2026)",
-   "source": "BLS (release page)",
-   "source_id": "bls_release_day",
-   "url": "https://www.bls.gov/news.release/jolts.nr0.htm#2026-11-03",
-   "timestamp": "2026-11-03T10:00:00-05:00",
-   "tickers": [],
-   "topics": [
-    "JOLTS"
-   ],
-   "summary": "scheduled release at 10:00 ET; print not fetched",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "07b5fcc1dd0f2b7cedb91f130b6c70af167c92c1",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Bloom Energy Rallies 11% on Barclays Upgrade and California Resources Tie-Up; FuelCell Energy Gains 5%, GE Vernova Climbs 3%",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://247wallst.com/investing/2026/11/03/bloom-energy-rallies-11-on-barclays-upgrade-and-california-resources-tie-up-fuelcell-energy-gains-5-ge-vernova-climbs-3/",
-   "timestamp": "2026-11-03T09:48:31-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "eaf2b93c95f6f39defabe9402ce7ceec371ce89f",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Tom Lee Celebrates 'Bull Market' Despite $6.3B Binance Hack as Bitmine Adds 8,573 ETH",
-   "source": "CCN",
-   "source_id": "yahoo_headlines:BMNR",
-   "url": "https://www.ccn.com/news/crypto/tom-lee-bull-market-binance-hack-bitmine-ethereum/",
-   "timestamp": "2026-11-03T09:37:15-05:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · CCN · about BMNR",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "84820041b519dec0985b2af4e9041bbc3aa0c47b",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "GE Vernova Is Paying $9 Billion for Trench Group. Here's Why the Grid Is Crucial to the Electricity Supercycle.",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.fool.com/investing/2026/11/03/ge-vernova-paying-9-billion-for-trench-group-grid/",
-   "timestamp": "2026-11-03T09:20:00-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "78715c5a9e4c1d57ecbcfcfee6cd9aa97929dae3",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Bitmine Immersion Technologies (BMNR) At 1x Book Following Its $14.5b Crypto Treasury Update",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:BMNR",
-   "url": "https://finance.yahoo.com/markets/crypto/articles/bitmine-immersion-technologies-bmnr-1x-141130887.html",
-   "timestamp": "2026-11-03T09:11:30-05:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about BMNR",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fb8853bebcb03ea645ca824baf6a94cffae1ea92",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by Talen Energy Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1622536/000162253626000086/tln-20260930.htm",
-   "timestamp": "2026-11-03T09:00:03-05:00",
-   "tickers": [
-    "TLN"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-03 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6af2432a5a52a362074daf215c560bf6a1e450fa",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by GARTNER INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/749251/000074925126000307/it-20260930.htm",
-   "timestamp": "2026-11-03T08:13:29-05:00",
-   "tickers": [
-    "IT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-03 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8fe6191e5b9481c486deddfaa0d09d6232ad443a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Talen Energy Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1622536/000162253626000084/tln-20261103.htm",
-   "timestamp": "2026-11-03T08:08:11-05:00",
-   "tickers": [
-    "TLN"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-03 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1fbb0f3bf29d6f40c483e935853edcef4fc4f9ff",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000732/xslF345X06/wk-form4_1793707033.xml",
-   "timestamp": "2026-11-03T08:07:46-05:00",
-   "tickers": [
-    "TSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "efc273786900158bffde23d8b176d94aeb239db8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by GARTNER INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/749251/000074925126000305/it-20261103.htm",
-   "timestamp": "2026-11-03T08:05:24-05:00",
-   "tickers": [
-    "IT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-03 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d0991f9f8337aacb0decdac6a940fe596a5c8dae",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-K filed by Apple Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
-   "timestamp": "2026-11-03T08:05:15-05:00",
-   "tickers": [
-    "AAPL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-K · filed 2026-11-03 · 10-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
-   "a6940882e09bb3bc7f900475d42f81bd3d75f484",
-   "67eee4cb21c25d221c7b1aee921cb26c762ebe4a",
-   "11f6eaea581703dfe7b37a266fa7dd5bc332293c",
-   "979794f2220986a69a0a96b80c67a069543b1b08",
-   "08b7a4bf28d06cc15223973ab204d11c535ed01c"
+   "4d55bf5e4fd008ddb7c12803b74924278da1419b",
+   "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121",
+   "b73b0e48c7c2bb2b6d9c98e9db009aeb8ccdfe04",
+   "38adf9bf94859583496d95bdc17bb9c7756e9839",
+   "796335a15013d3b0ac20d5fe7f590a5283ce8ead"
   ],
   "NVDA": [
-   "51e94893c6dcd0e984e9ae75962574c77fb52e84",
-   "cec54ae9e446e606fe9ea28eac4e24a92902710d",
-   "b8fb80af80cf79d5c3dcb3c52d048842ea75e08e",
-   "ee01b352eccb9e30e74c0e593b4f79eeaee3685b",
-   "acdf1c2d5d92ec5d72dfa823843936de20fe2564"
+   "cd16f056d7536ba98299c88ce5480ad6fac1b98d",
+   "ba6d1af6517cf9530c0680b9f5a694acc789790c",
+   "2865cb2be73ec5c8c4ed76b5bcadcd831ab72594",
+   "f36eb145f3b347550e1bd4e3f0a9152d4d6d3447",
+   "63d919805b7c4678a1a9413091d99f29087efd20"
   ],
   "AVGO": [
+   "fc58a8b50e381395998fa1cdbe1f47cfbff6a523",
    "7667a4a5f2b556d85defefe969b9e5db506de19a",
    "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff",
    "6a7a334b268a1892e502973fb1409117296e8525",
-   "dd7f373a4bea6fba84a328d1188a72772530739d",
-   "e849129920d5cec334ec3ef035a34578e0bda086"
+   "dd7f373a4bea6fba84a328d1188a72772530739d"
   ],
   "GOOG": [
-   "0f894bf853d85f2eafd262a9b47c47d63436c909",
-   "108012f40c14b8884a104872eea151013028a0aa",
-   "f61e3dce709b8d76d0cd2e7fbe56eb99182d0656",
-   "543e54e41a91bbfcce3108767a85d05664550608",
-   "587f7ff0fc219b098079d9ca8f8b7b5e810dad28"
+   "8e48487147325d23c757263f1efd004d41c6b8e9",
+   "b3a87583deee36926adadd89f34a72a39a5a8fd2",
+   "1bc005929ed9f9a1352f8a03160ef28c6bc9af08",
+   "8e42bd41a0c4f0de4d6fb85acce91ace1f83c5e7",
+   "a8df7f98a346f49de2b68056bc2351b9bf2b89f7"
   ],
   "BMNR": [
    "a68609b0bd784a7cc0a2731bcb35d33d501f22c0",
@@ -3814,15 +4483,65 @@
   ]
  },
  "last24h": [
+  "2b7b524d13f1a18034b9ecd8f521438242bdd966",
+  "f36eb145f3b347550e1bd4e3f0a9152d4d6d3447",
+  "38adf9bf94859583496d95bdc17bb9c7756e9839",
+  "94af6dcb1f1f09395718f9092ec40bc877b84522",
+  "10cd1e67199986e002e204d8486aa3c82e53a1f2",
+  "d9efcf7a2ebf7869812e4d2dc78f657ac6552f08",
+  "dd38c027bc9f07d1f43c44dec4c1244551e1398c",
+  "dcdc32785067dc132a18807204606268a163c392",
+  "3f876da85a1eb91edf75240b4c2174a721a51b53",
+  "8a588cd69c5f9310a1ebafd8355ed9a395aaa98a",
+  "4c2549d8fc1d1921afc897b6b24e15043a4a2a6e",
+  "a3e4aabb2b515c03b8dc3e4b88fa3e9de95bced7",
+  "a492b2d06853746c78b12a9b8a5fd71480701d01",
+  "001c198d18eac63aee4de8d9595a6b56740ac4bb",
+  "235530d513b668b2b669674e8cc412c5d2a7b101",
+  "8ebfc89a88fab9e73f939beb198a995b038af910",
+  "2062fa76730ffad8f3ead3723799b82311509b67",
+  "b100a74fe5422bc15e64143609cc7ee0da7b158f",
+  "4c0033cef65a17351bdbb9d2bc2b5cc055515554",
+  "fc8541d3e2b53c05e4f07c0fa0ce23167062ac3e",
+  "0f771f3c4293947334ac0b42c79af0a50872fef9",
+  "70e5308290828f8d2b3e3b35fcfd616b5d45d3d0",
+  "7045878efb3ab0c1db206810933dfde88665c736",
+  "8bfcd105f9d9e1d5647e41bf1bd0d9fb4db1b916",
+  "94b5937836c03c0652ddfdc0c2ee6ebc7e99428d",
+  "9bd2da376780e1ed8aca8c6f02e4d34b5954fa46",
+  "e79e1aeb1160156cbc5207fde06ffd91c3db79f3",
+  "f7a02db2749a769a81261e67d241c9fe7aa15e74",
+  "75bfdf551794f11172368bbc1822be4fb0e99705",
+  "2da4bda92180b8b693bfced7da5c997e1d7a1bf0",
+  "837830ea4ec9b51a5139b080eae78cbfc06aace7",
+  "deec5b5febd40ec894c2edef852c0a5c0b499a5e",
+  "78f3973b0fc8e999eb72cb0004652373c585d541",
+  "f3b3ce67250eee655f78e2e38bd77afe3b6e1cb4",
+  "8cdfc14340a44d522802ff64bfc6f17cd29d8657",
+  "796335a15013d3b0ac20d5fe7f590a5283ce8ead",
   "d096a8db680dbf69c3361583bd63aa59626f85e7",
   "6eac89af9c40f332365884db267f50ed04f2752a",
   "6e4cb5ab08bc01e51780b26f4d089344608cc784",
-  "2d08b72b65630a98bc2e7b7d5b7a6dbf017e518c",
-  "2193c443d3ddfe78f7178f0e201c8ecb84c46f43",
-  "818ad7d3cb67f42fd12061e72b799495a2e680f8",
-  "8065a9397cacc3464de0a08cd78b8b077c33c593",
-  "dff23f1e5c2fb8968645759929b3d030b11dc19f",
-  "dace9d08e58bafcb5d1b429e4dea73290a0f15a6",
+  "8e48487147325d23c757263f1efd004d41c6b8e9",
+  "b3a87583deee36926adadd89f34a72a39a5a8fd2",
+  "1bc005929ed9f9a1352f8a03160ef28c6bc9af08",
+  "cd16f056d7536ba98299c88ce5480ad6fac1b98d",
+  "ba6d1af6517cf9530c0680b9f5a694acc789790c",
+  "2865cb2be73ec5c8c4ed76b5bcadcd831ab72594",
+  "8e42bd41a0c4f0de4d6fb85acce91ace1f83c5e7",
+  "63d919805b7c4678a1a9413091d99f29087efd20",
+  "a8df7f98a346f49de2b68056bc2351b9bf2b89f7",
+  "f615e117a15007fe2d36ad418c6b0344b86ae947",
+  "1541163b666b62fcc5eb315b76eaf43f1e8647e2",
+  "328aac789f92d07637046971322fd1044e575f96",
+  "4d55bf5e4fd008ddb7c12803b74924278da1419b",
+  "fc58a8b50e381395998fa1cdbe1f47cfbff6a523",
+  "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121",
+  "b73b0e48c7c2bb2b6d9c98e9db009aeb8ccdfe04",
+  "a767d7c5e8ceea2cf762a6e3795b3e8362518731",
+  "05e0af14056de283954224bb06c48f6d205e30ce",
+  "5db6b9298c6f5ad3fa00a9440be5fa96ced730ae",
+  "13405fcc8ac540083cb00eb6481a0f855776a665",
   "51e94893c6dcd0e984e9ae75962574c77fb52e84",
   "cec54ae9e446e606fe9ea28eac4e24a92902710d",
   "7667a4a5f2b556d85defefe969b9e5db506de19a",
@@ -3838,26 +4557,6 @@
   "587f7ff0fc219b098079d9ca8f8b7b5e810dad28",
   "8eac043c4db90113271b131dc4f14ea50830b167",
   "36d9ad72dd3852212eda54c710d4c0da8e9814ff",
-  "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff",
-  "e2755e902fd3868117afc92ba5023daec4cccdb1",
-  "67eee4cb21c25d221c7b1aee921cb26c762ebe4a",
-  "6a7a334b268a1892e502973fb1409117296e8525",
-  "9e20e81ac1d242ab280e790b7c8df6833aab98f6",
-  "51e6dc5769c01a7b8517eebea37333b3e61d4a6b",
-  "11f6eaea581703dfe7b37a266fa7dd5bc332293c",
-  "6b1d6ac40aee163fa1b20b375695e050b5836c0a",
-  "44606bac4b6e173bf9e2a480db313cc41c33dbe1",
-  "03c328d22eff361813f3a51173590c33d0561065",
-  "dd7f373a4bea6fba84a328d1188a72772530739d",
-  "979794f2220986a69a0a96b80c67a069543b1b08",
-  "a68609b0bd784a7cc0a2731bcb35d33d501f22c0",
-  "e849129920d5cec334ec3ef035a34578e0bda086",
-  "5084090a37b73de9a881fab12208bfc44992a1dd",
-  "9c7c8e6afb0c9c052123c9d8699835a674ae5830",
-  "08b7a4bf28d06cc15223973ab204d11c535ed01c",
-  "f7beb8db729cae0be43f25ac6c9c68f2a0117abe",
-  "4badd66829991908d4d5dcace1bb0e2dd84db6d7",
-  "f03a1577e95d413546a48718551aefbf475bcbc8",
-  "c1a71a9f555432c42a51fb5d573745f6c26724a2"
+  "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff"
  ]
 }
