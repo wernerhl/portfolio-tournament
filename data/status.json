@@ -1,31 +1,28 @@
 {
- "last_attempt": "2026-11-07T11:37:43-05:00",
- "last_success": "2026-11-06T06:23:30-05:00",
- "failure_reason": "FRESHNESS tournament.json: max date 2026-11-05 < last session 2026-11-06; PRICE_STORE_SESSION prices_daily.parquet ends 2026-11-05 < publish session 2026-11-06; FRESHNESS regime_daily.csv: max date 2026-11-05 < last session 2026-11-06; FRESHNESS regime_v2_daily.csv: max date 2026-11-05 < last session 2026-11-06 (+5 more)",
- "session_date": "2026-11-06",
+ "last_attempt": "2026-11-09T22:59:34-05:00",
+ "last_success": "2026-11-09T22:59:34-05:00",
+ "failure_reason": null,
+ "session_date": "2026-11-09",
  "forced_publish_reason": null,
  "audit": {
-  "ran_at": "2026-11-07T18:25:55+00:00",
+  "ran_at": "2026-11-10T05:51:09+00:00",
   "scope": "all",
-  "n_findings": 45,
+  "n_findings": 44,
   "critical": [],
   "critical_other_repo": [],
-  "xfile": [
-   "HIGH:xfile:vol_single_source"
-  ],
+  "xfile": [],
   "high": [
    "book:holdings_age",
-   "brief:missing",
    "calendar:treasury_source",
    "governance:coverage",
    "governance:review_overdue",
    "nullguard",
    "options:lens_spot_stale",
+   "options:vintage_missing",
    "rates:stale",
-   "rates:vintage",
    "tournament:dead_columns",
-   "universe:stale_ticker",
-   "xfile:vol_single_source"
+   "tournament:freshness",
+   "universe:stale_ticker"
   ],
   "report": "reports/audit_last.txt"
  }
