@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
  "as_of": "2026-11-10",
- "fetched_at": "2026-11-11T08:14:12-05:00",
+ "fetched_at": "2026-11-11T16:04:12-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=85 (parsed 43 names)",
+  "edgar": "ok n=84 (parsed 43 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=4 (parsed 20)",
   "ir_gev": "ok n=5 (parsed 20)",
@@ -72,26 +72,283 @@
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=6 (parsed 10)",
+  "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
   "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
   "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
   "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 1,
-  "irrelevant": 31,
-  "out_of_window": 28646,
+  "irrelevant": 32,
+  "out_of_window": 28649,
   "unparseable": 0
  },
  "counts": {
-  "items": 253,
-  "tier1": 124,
-  "tier2": 129,
-  "last24h": 56
+  "items": 254,
+  "tier1": 120,
+  "tier2": 134,
+  "last24h": 48
  },
  "items": [
+  {
+   "id": "bb21077efeb953e9b9cf315a4c0d22deaafeb15a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Amazon and Google Are Sitting on a $411 Billion Anthropic Windfall",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/11/11/amazon-and-google-are-sitting-on-a-411-billion-anthropic-windfall/",
+   "timestamp": "2026-11-11T15:47:45-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0486a8a2ec3932079337421ffb556ed3e7bab9a7",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Democrats Could Target Data Center Tax Breaks in 2027. What It Means for Meta, Microsoft, Alphabet, and Amazon",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.tikr.com/blog/democrats-could-target-data-center-tax-breaks-in-2027-what-it-means-for-meta-microsoft-alphabet-and-amazon?ref=yahoofinance&tlnk=yf-261111-57r3xq32",
+   "timestamp": "2026-11-11T15:18:08-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "94feda1a117d25f2f3f2cc188276801c36e53bdb",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google rolls out Gemini AI voice assistant to Apple CarPlay dashboards",
+   "source": "Investing.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/google-rolls-gemini-ai-voice-201340171.html",
+   "timestamp": "2026-11-11T15:13:40-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investing.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "92971b6c348d923be17396ae5380de470f039fac",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia Just Had Its Worst 5 Days Since 2022, Worse Than the DeepSeek Crash",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://247wallst.com/investing/2026/11/11/nvidia-just-had-its-worst-5-days-since-2022-worse-than-the-deepseek-crash/",
+   "timestamp": "2026-11-11T14:27:37-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0c986adb718829507dd781337501b6169b2c2f7a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia stock is pricing in 2 major risks as CEO Jensen Huang's affair fallout plays out",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/stocks/article/nvidia-stock-is-pricing-in-2-major-risks-as-ceo-jensen-huangs-affair-fallout-plays-out-190743109.html",
+   "timestamp": "2026-11-11T14:07:43-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6c01b0a063d4db30b4348f599281a06309a553e0",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia, AMD and Broadcom Lead AI Stock Rally as CoreWeave Results Ease Spending Fears",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-amd-broadcom-lead-ai-183708900.html",
+   "timestamp": "2026-11-11T13:37:08-05:00",
+   "tickers": [
+    "AVGO",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dfee54a66f410e320a0c3f6e644baa8df9bacd8c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Stocks Rise Nearly 3% After SoftBank's $3.7 Billion Power-Equipment Charge",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-stocks-rise-nearly-183214486.html",
+   "timestamp": "2026-11-11T13:32:14-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8825b4fa18e4c9aa600255e98acddc48d7b06a7d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Constellation Energy’s Dividend Is Small. AI Power Demand Could Change That",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/11/11/constellation-energys-dividend-is-small-ai-power-demand-could-change-that/",
+   "timestamp": "2026-11-11T13:17:15-05:00",
+   "tickers": [
+    "CEG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about CEG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b8b69a213ead71c916b91547e3dd071d43517c25",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Jensen Huang espionage controversy will cast a long shadow over Nvidia, veteran tech strategist warns",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/jensen-huang-espionage-controversy-will-cast-a-long-shadow-over-nvidia-veteran-tech-strategist-warns-173844118.html",
+   "timestamp": "2026-11-11T12:38:44-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "373f3f03cb6fdf198ed5825e93fc9213d578dcfc",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Broadcom Stocks Climb 5.18% as Goldman Calls Chips Oversold and Anthropic Stake Lands",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/broadcom-stocks-climb-5-18-165920759.html",
+   "timestamp": "2026-11-11T11:59:20-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e34b86f0cea5bdc4ffd147fb14c0f5a9ff2e47b9",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "AI Spending Will Slow. GE Vernova Stock Can Rise Anyway.",
+   "source": "Barrons.com",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.barrons.com/articles/ge-vernova-stock-ai-spending-jpmorgan-db1eec99?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-11-11T11:14:00-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Barrons.com · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "01b72e1c2769a11338c4e7645ee5c468686514bd",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Wall Street is cooling on Jensen Huang's Nvidia — but history says don't give up on the stock just yet",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/technology/article/wall-street-is-cooling-on-jensen-huangs-nvidia--but-history-says-dont-give-up-on-the-stock-just-yet-155345795.html",
+   "timestamp": "2026-11-11T10:53:45-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "022ffa65a85d61f72db2789e627ae57e2bca2f0c",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia could face fines, lawsuits, and lost markets: Baird strategist",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/nvidia-could-face-fines-lawsuits-and-lost-markets-baird-strategist-153936762.html",
+   "timestamp": "2026-11-11T10:39:36-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "387cf6e5b3112357e8d1b81a27431c1769b587ab",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Wall Street is pricing in two big risks for Nvidia",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/wall-street-is-pricing-in-two-big-risks-for-nvidia-152451629.html",
+   "timestamp": "2026-11-11T10:24:51-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e12f0a6370b3e3eb8e95904b7f29133b0e017390",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine Reports $6 Billion Net Loss",
+   "source": "CryptoProwl",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.cryptoprowl.com/releases/bitmine-reports-6-billion-net-loss-7832",
+   "timestamp": "2026-11-11T09:40:00-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CryptoProwl · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "831764fd28a9d8345fe413e86b9b989f412df4b8",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia stock rebounds, chip stocks surge as CoreWeave earnings boost AI trade",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/nvidia-stock-rebounds-chip-stocks-surge-as-coreweave-earnings-boost-ai-trade-151001136.html",
+   "timestamp": "2026-11-11T08:54:39-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
   {
    "id": "3caaae9ac987ced13834864d4a3d2e83b0871fa5",
    "tier": 2,
@@ -3898,283 +4155,43 @@
    "topics": [],
    "summary": "EDGAR 4 · filed 2026-11-04 · 4",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "e552e5b8a306ea1142edfe74e87092f231444515",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000059/expe-20261104.htm",
-   "timestamp": "2026-11-04T16:00:23-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0e7a3780e6edfe4071947ecf3a061a7a43c8eece",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by POWELL INDUSTRIES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/80420/000008042026000136/powl-20261103.htm",
-   "timestamp": "2026-11-04T15:18:38-05:00",
-   "tickers": [
-    "POWL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7d9c5b4fc59a33190ad78d6ccbc9d0fc4884495c",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Top VC: The Best AI Models Take “80% Plus” of Spend. And Alphabet’s Gemini Just Ranked No. 1",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.tikr.com/blog/top-vc-the-best-ai-models-take-80-plus-of-spend-and-alphabets-gemini-just-ranked-no-1?ref=yahoofinance&tlnk=yf-261104-c9f4874w",
-   "timestamp": "2026-11-04T15:15:16-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6a13499b3d757fb751d8c1ddefd81a4b11b3bd5a",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Bill Ackman: Netflix “an Incredibly Cheap Stock” After a 55% Drop. But Is He Right?",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.tikr.com/blog/bill-ackman-netflix-an-incredibly-cheap-stock-after-a-55-drop-but-is-he-right?ref=yahoofinance&tlnk=yf-261104-45q98v96",
-   "timestamp": "2026-11-04T15:10:27-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about NFLX",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "69df4fa1b78fbb8df2b11d98bd156bf22cfc84ac",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Alphabet Stocks Rise 1.4% as Euro Borrowing Meets a $200 Billion Spending Plan",
-   "source": "GuruFocus.com",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/alphabet-stocks-rise-1-4-193607695.html",
-   "timestamp": "2026-11-04T14:36:07-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2a8862c402bad5f3758fb49756c69b59670babab",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Google Is Telling Schools to Take Its AI or Lose Its Search Engine",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://247wallst.com/investing/2026/11/04/google-is-telling-schools-to-take-its-ai-or-lose-its-search-engine/",
-   "timestamp": "2026-11-04T14:32:16-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "10c7bbf1ac2e031ae6499fa8eb469da3382ba865",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Broadcom Stocks Decline 1.49% as $63 Billion AI Financing Carries Residual-Value Risk",
-   "source": "GuruFocus.com",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/technology/ai/articles/broadcom-stocks-decline-1-49-181830621.html",
-   "timestamp": "2026-11-04T13:18:30-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1149eefe239a0b9ce38c5dcc4a61c256b23bf60d",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia is Far From The Only Threat to AMD",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://247wallst.com/investing/2026/11/04/nvidia-is-far-from-the-only-threat-to-amd/",
-   "timestamp": "2026-11-04T12:45:28-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0ab0cac52cdf0d10a736b0413eda051d2689d259",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Markets Discount Broadcom (AVGO) on MediaTek TPU Rumors, But Management’s Targets Tell Another Story",
-   "source": "Insider Monkey",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/markets-discount-broadcom-avgo-mediatek-154439522.html",
-   "timestamp": "2026-11-04T10:44:39-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Insider Monkey · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fcf46d21e8578ac4c557621ae52ce66480cfd446",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Constellation Energy Sinks 8%, Vistra Down 14% as Democrats’ Midterm Sweep Hits AI Power Stocks",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.tikr.com/blog/constellation-energy-sinks-8-vistra-down-14-as-democrats-midterm-sweep-hits-ai-power-stocks?ref=yahoofinance&tlnk=yf-261104-p4rhmf6x",
-   "timestamp": "2026-11-04T10:31:57-05:00",
-   "tickers": [
-    "CEG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about CEG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c0a366c70e739e026e971f6c84652e07b93755ba",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "GE Vernova Sinks 10%, Vistra Down 12% as Democrats Win Congress: “Incrementally More Negative Sentiment”",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.tikr.com/blog/ge-vernova-sinks-10-vistra-down-12-as-democrats-win-congress-incrementally-more-negative-sentiment?ref=yahoofinance&tlnk=yf-261104-rgc2g3jg",
-   "timestamp": "2026-11-04T10:17:43-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "53338c446d9aa2543df2fae9d4885b7c24e8296f",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Vertiv Sinks 9%, GE Vernova Down 8% as Democrats Win Congress, Reviving Data Center Fears",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.tikr.com/blog/vertiv-sinks-9-ge-vernova-down-8-as-democrats-win-congress-reviving-data-center-fears?ref=yahoofinance&tlnk=yf-261104-2jm9w7m7",
-   "timestamp": "2026-11-04T10:09:52-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3ccc0b5287b71bb560434b2f5d3abe3fc6c32adc",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "GE Vernova Soars 6%, Eaton Up 7% on Record Orders and Bernstein’s Data Center Call",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.tikr.com/blog/ge-vernova-soars-6-eaton-up-7-on-record-orders-and-bernsteins-data-center-call?ref=yahoofinance&tlnk=yf-261104-cjwg7rhp",
-   "timestamp": "2026-11-04T08:54:45-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "40b5e58c982f2244ccf2a432d3a710e19e5ce0e9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "U.S. International Trade in Goods and Services",
-   "source": "Census Bureau economic indicator",
-   "source_id": "census",
-   "url": "https://www.census.gov/foreign-trade/index.html",
-   "timestamp": "2026-11-04T08:30:00-05:00",
-   "tickers": [],
-   "topics": [
-    "TRADE"
-   ],
-   "summary": "Tier 1 · Census Bureau economic indicator · topics: TRADE",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "17aae0a1f79e00adc68ac32e0b2ea678fd3c5b99",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "U.S. International Trade in Goods and Services, September 2026",
-   "source": "BEA release",
-   "source_id": "bea",
-   "url": "https://www.bea.gov/news/2026/us-international-trade-goods-and-services-september-2026",
-   "timestamp": "2026-11-04T08:30:00-05:00",
-   "tickers": [],
-   "topics": [
-    "TRADE"
-   ],
-   "summary": "Tier 1 · BEA release · topics: TRADE · next release December 8, 2026",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "dfee54a66f410e320a0c3f6e644baa8df9bacd8c",
+   "e34b86f0cea5bdc4ffd147fb14c0f5a9ff2e47b9",
    "c2c356536b42832f8869e78acb64d02f4ffa5384",
    "2fd34b46770838783bbe4ff0525aca6a98071c1d",
-   "e8624a5c632b6186b0583d238559878ca6177dee",
-   "4d55bf5e4fd008ddb7c12803b74924278da1419b",
-   "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121"
+   "e8624a5c632b6186b0583d238559878ca6177dee"
   ],
   "NVDA": [
-   "3caaae9ac987ced13834864d4a3d2e83b0871fa5",
-   "5a003f3b85fb7f88c1ca4ddfee420976d2cbbb08",
-   "43662e9311e0ebe789fdfe9798f2506250964d5f",
-   "c942009c489077eb67b40331b6ca5abd870224cf",
-   "4dbfc3533d674828179164b3e898d3c51e8861ba"
+   "92971b6c348d923be17396ae5380de470f039fac",
+   "0c986adb718829507dd781337501b6169b2c2f7a",
+   "6c01b0a063d4db30b4348f599281a06309a553e0",
+   "b8b69a213ead71c916b91547e3dd071d43517c25",
+   "01b72e1c2769a11338c4e7645ee5c468686514bd"
   ],
   "AVGO": [
+   "6c01b0a063d4db30b4348f599281a06309a553e0",
+   "373f3f03cb6fdf198ed5825e93fc9213d578dcfc",
    "e53f945650d5b165de98d107561e91f522a99a0a",
    "ba4aabe173c188551b8ba6988612193aa8b4f0d5",
-   "fc58a8b50e381395998fa1cdbe1f47cfbff6a523",
-   "7667a4a5f2b556d85defefe969b9e5db506de19a",
-   "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff"
+   "fc58a8b50e381395998fa1cdbe1f47cfbff6a523"
   ],
   "GOOG": [
+   "bb21077efeb953e9b9cf315a4c0d22deaafeb15a",
+   "0486a8a2ec3932079337421ffb556ed3e7bab9a7",
+   "94feda1a117d25f2f3f2cc188276801c36e53bdb",
    "11fbf53eead3d2706023b586a5237ccb744f8018",
-   "bcef9f945872cc88d7d86b8ad8c188f90ce274a7",
-   "9746324f74c9ea8aad1a9c677e34b0108a1b1038",
-   "8e48487147325d23c757263f1efd004d41c6b8e9",
-   "b3a87583deee36926adadd89f34a72a39a5a8fd2"
+   "bcef9f945872cc88d7d86b8ad8c188f90ce274a7"
   ],
   "BMNR": [
+   "e12f0a6370b3e3eb8e95904b7f29133b0e017390",
    "8420857adfea5d1e0170fe8a198f08fd01dec855",
    "2531c2e263e972499d58f49bde5e8f0d696a59b2",
    "b409e236404fe843e33a6f11b7232557cc646a99",
-   "a68609b0bd784a7cc0a2731bcb35d33d501f22c0",
-   "9c7c8e6afb0c9c052123c9d8699835a674ae5830"
+   "a68609b0bd784a7cc0a2731bcb35d33d501f22c0"
   ]
  },
  "last24h": [
@@ -4193,10 +4210,22 @@
   "62719e547a18bdcb896d804f842604c5c8a173f7",
   "59598c2c27d8768faf54474c3243a9653768d721",
   "e04058179b82d7e8f5687696b112cf5dc8e88d13",
-  "2b7b524d13f1a18034b9ecd8f521438242bdd966",
-  "f36eb145f3b347550e1bd4e3f0a9152d4d6d3447",
-  "38adf9bf94859583496d95bdc17bb9c7756e9839",
-  "94af6dcb1f1f09395718f9092ec40bc877b84522",
+  "bb21077efeb953e9b9cf315a4c0d22deaafeb15a",
+  "0486a8a2ec3932079337421ffb556ed3e7bab9a7",
+  "94feda1a117d25f2f3f2cc188276801c36e53bdb",
+  "92971b6c348d923be17396ae5380de470f039fac",
+  "0c986adb718829507dd781337501b6169b2c2f7a",
+  "6c01b0a063d4db30b4348f599281a06309a553e0",
+  "dfee54a66f410e320a0c3f6e644baa8df9bacd8c",
+  "8825b4fa18e4c9aa600255e98acddc48d7b06a7d",
+  "b8b69a213ead71c916b91547e3dd071d43517c25",
+  "373f3f03cb6fdf198ed5825e93fc9213d578dcfc",
+  "e34b86f0cea5bdc4ffd147fb14c0f5a9ff2e47b9",
+  "01b72e1c2769a11338c4e7645ee5c468686514bd",
+  "022ffa65a85d61f72db2789e627ae57e2bca2f0c",
+  "387cf6e5b3112357e8d1b81a27431c1769b587ab",
+  "e12f0a6370b3e3eb8e95904b7f29133b0e017390",
+  "831764fd28a9d8345fe413e86b9b989f412df4b8",
   "3caaae9ac987ced13834864d4a3d2e83b0871fa5",
   "5a003f3b85fb7f88c1ca4ddfee420976d2cbbb08",
   "43662e9311e0ebe789fdfe9798f2506250964d5f",
@@ -4213,26 +4242,6 @@
   "2531c2e263e972499d58f49bde5e8f0d696a59b2",
   "2fd34b46770838783bbe4ff0525aca6a98071c1d",
   "2ea881bf1821d376b2ad56c814c9efcdd6e0222d",
-  "e8624a5c632b6186b0583d238559878ca6177dee",
-  "8e48487147325d23c757263f1efd004d41c6b8e9",
-  "b3a87583deee36926adadd89f34a72a39a5a8fd2",
-  "1bc005929ed9f9a1352f8a03160ef28c6bc9af08",
-  "cd16f056d7536ba98299c88ce5480ad6fac1b98d",
-  "ba6d1af6517cf9530c0680b9f5a694acc789790c",
-  "2865cb2be73ec5c8c4ed76b5bcadcd831ab72594",
-  "8e42bd41a0c4f0de4d6fb85acce91ace1f83c5e7",
-  "63d919805b7c4678a1a9413091d99f29087efd20",
-  "a8df7f98a346f49de2b68056bc2351b9bf2b89f7",
-  "f615e117a15007fe2d36ad418c6b0344b86ae947",
-  "1541163b666b62fcc5eb315b76eaf43f1e8647e2",
-  "328aac789f92d07637046971322fd1044e575f96",
-  "4d55bf5e4fd008ddb7c12803b74924278da1419b",
-  "fc58a8b50e381395998fa1cdbe1f47cfbff6a523",
-  "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121",
-  "b73b0e48c7c2bb2b6d9c98e9db009aeb8ccdfe04",
-  "a767d7c5e8ceea2cf762a6e3795b3e8362518731",
-  "05e0af14056de283954224bb06c48f6d205e30ce",
-  "5db6b9298c6f5ad3fa00a9440be5fa96ced730ae",
-  "13405fcc8ac540083cb00eb6481a0f855776a665"
+  "e8624a5c632b6186b0583d238559878ca6177dee"
  ]
 }
