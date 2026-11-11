@@ -8,7 +8,7 @@
   "hard_triggers": "guidance cut, backlog decline QoQ, cancelled PPA/contract \u2014 immediate review regardless of calendar",
   "fallback_cap": 10,
   "note": "Judgment artifact. The agent proposes; Werner approves by freeze (frozen_at). Never auto-merged.",
-  "retirement": "two consecutive earnings cycles without review \u2192 retire to the sector prior, archive with history under 'retired'; re-registration (fresh rationale + date) required to restore"
+  "retirement": "two consecutive earnings cycles without review \u2192 retire to the sector prior, archive with history; re-registration (fresh rationale + date) required to restore"
  },
  "entries": {
   "AMZN": {
@@ -91,22 +91,6 @@
     "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
    }
   },
-  "GD": {
-   "value": 21,
-   "rationale": "$91B defense backlog",
-   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
-   "as_of": "2026-07-29",
-   "sector": "Industrials",
-   "sector_prior": 14,
-   "delta_vs_prior": 7,
-   "cadence": "earnings+14d",
-   "next_earnings": "2026-07-29",
-   "review_by": "2026-08-12",
-   "falsification": {
-    "claim": "$91B defense backlog",
-    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
-   }
-  },
   "GEV": {
    "value": 23,
    "rationale": "$163B backlog, 25yr service contracts",
@@ -168,22 +152,6 @@
    "review_by": "2027-01-25",
    "falsification": {
     "claim": "Ad revenue recurring but not contracted",
-    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
-   }
-  },
-  "MSFT": {
-   "value": 18,
-   "rationale": "$627B commercial RPO",
-   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
-   "as_of": "2026-07-29",
-   "sector": "Technology",
-   "sector_prior": 13,
-   "delta_vs_prior": 5,
-   "cadence": "earnings+14d",
-   "next_earnings": "2026-07-29",
-   "review_by": "2026-08-12",
-   "falsification": {
-    "claim": "$627B commercial RPO",
     "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
    }
   },
@@ -298,8 +266,53 @@
     "claim": "Multi-year contracted wafer starts",
     "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
    }
+  }
+ },
+ "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched with thesis registry v1). Values migrated unchanged from code+config union; governance (earnings-anchored review, 90d decay, hard triggers, 10/25 fallback cap) active from tonight's run.",
+ "cadence": "on_change",
+ "as_of": "2026-07-29",
+ "retired": [
+  {
+   "value": 21,
+   "rationale": "$91B defense backlog",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Industrials",
+   "sector_prior": 14,
+   "delta_vs_prior": 7,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-29",
+   "review_by": "2026-08-12",
+   "falsification": {
+    "claim": "$91B defense backlog",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   },
+   "ticker": "GD",
+   "retired_at": "2026-11-11",
+   "retire_rule_date": "2026-11-11",
+   "reason": "two consecutive earnings cycles without review"
   },
-  "VRT": {
+  {
+   "value": 18,
+   "rationale": "$627B commercial RPO",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Technology",
+   "sector_prior": 13,
+   "delta_vs_prior": 5,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-29",
+   "review_by": "2026-08-12",
+   "falsification": {
+    "claim": "$627B commercial RPO",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   },
+   "ticker": "MSFT",
+   "retired_at": "2026-11-11",
+   "retire_rule_date": "2026-11-11",
+   "reason": "two consecutive earnings cycles without review"
+  },
+  {
    "value": 20,
    "rationale": "$15B backlog, 109% YoY growth",
    "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
@@ -313,10 +326,22 @@
    "falsification": {
     "claim": "$15B backlog, 109% YoY growth",
     "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
-   }
+   },
+   "ticker": "VRT",
+   "retired_at": "2026-11-11",
+   "retire_rule_date": "2026-11-11",
+   "reason": "two consecutive earnings cycles without review"
   }
- },
- "approval": "Frozen 2026-07-29 on Werner's explicit approval (in-session, batched with thesis registry v1). Values migrated unchanged from code+config union; governance (earnings-anchored review, 90d decay, hard triggers, 10/25 fallback cap) active from tonight's run.",
- "cadence": "on_change",
- "as_of": "2026-07-29"
+ ],
+ "policy_events": [
+  {
+   "date": "2026-11-11",
+   "event": "retired",
+   "tickers": [
+    "GD",
+    "MSFT",
+    "VRT"
+   ]
+  }
+ ]
 }

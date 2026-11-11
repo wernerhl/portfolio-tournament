@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-11-09",
- "fetched_at": "2026-11-10T15:43:03-05:00",
+ "as_of": "2026-11-10",
+ "fetched_at": "2026-11-11T08:14:12-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -16,44 +16,44 @@
   "top40": [
    "GEV",
    "NOC",
-   "LMT",
    "META",
    "TSM",
-   "EXPE",
-   "RTX",
    "PATH",
+   "LMT",
+   "EXPE",
    "ADBE",
+   "RTX",
+   "CEG",
    "APA",
+   "ZTS",
    "DASH",
    "IT",
-   "HOOD",
    "AXP",
-   "NTAP",
-   "AVGO",
-   "ZTS",
    "GOOG",
+   "NTAP",
+   "EXE",
+   "INTU",
    "PLTR",
-   "DXCM",
    "SCHW",
    "NFLX",
+   "RMD",
    "HON",
-   "NVDA",
-   "INTU",
-   "EXE",
-   "PAYX",
-   "ALL",
-   "WDAY",
-   "BMY",
+   "HOOD",
+   "DXCM",
+   "IBM",
+   "ESTC",
    "EOG",
    "CRM",
-   "DELL",
-   "CSCO",
+   "WDAY",
    "DECK",
-   "CF",
-   "RMD",
    "EQT",
+   "CSCO",
+   "DELL",
+   "ADSK",
    "BKNG",
-   "HSY"
+   "MKC",
+   "AMP",
+   "GL"
   ]
  },
  "sources_status": {
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=1 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=109 (parsed 41 names)",
+  "edgar": "ok n=85 (parsed 43 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=4 (parsed 20)",
   "ir_gev": "ok n=5 (parsed 20)",
@@ -72,26 +72,539 @@
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=3 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=7 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=4 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=6 (parsed 10)",
-  "yahoo_headlines:BMNR": "ok n=6 (parsed 10)"
+  "yahoo_headlines:GEV": "ok n=6 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=3 (parsed 10)",
+  "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 1,
-  "irrelevant": 30,
-  "out_of_window": 28035,
+  "irrelevant": 31,
+  "out_of_window": 28646,
   "unparseable": 0
  },
  "counts": {
-  "items": 272,
-  "tier1": 148,
-  "tier2": 124,
-  "last24h": 75
+  "items": 253,
+  "tier1": 124,
+  "tier2": 129,
+  "last24h": 56
  },
  "items": [
+  {
+   "id": "3caaae9ac987ced13834864d4a3d2e83b0871fa5",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "'Icarus' rise and fall': Analyst downgrades Nvidia stock amid Jensen Huang woes, highlights risks",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/icarus-rise-and-fall-analyst-downgrades-nvidia-stock-amid-jensen-huang-woes-highlights-risks-131204555.html",
+   "timestamp": "2026-11-11T08:12:04-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5a003f3b85fb7f88c1ca4ddfee420976d2cbbb08",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "US Equity Futures Rise Pre-Bell With Nvidia, CoreWeave Gaining Amid Tech Sector Rebound",
+   "source": "MT Newswires",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/us-equity-futures-rise-pre-130206631.html",
+   "timestamp": "2026-11-11T08:02:06-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · MT Newswires · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "43662e9311e0ebe789fdfe9798f2506250964d5f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia’s chips are powering China’s AI revolution",
+   "source": "The Telegraph",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://uk.finance.yahoo.com/news/nvidia-chips-powering-china-ai-130000071.html",
+   "timestamp": "2026-11-11T08:00:00-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · The Telegraph · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c942009c489077eb67b40331b6ca5abd870224cf",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Buy, Sell, or Hold? Wednesday’s Top Upgrades and Downgrades: Akamai Technologies, Apple, BILL Holdings, Corning, Form Factor, Guidewire Software, NVIDIA, Riot Platforms, Toast, and More",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://247wallst.com/investing/2026/11/11/buy-sell-or-hold-wednesdays-top-upgrades-and-downgrades-akamai-technologies-apple-bill-holdings-corning-form-factor-guidewire-software-nvidia-riot-platforms-toast-and-more/",
+   "timestamp": "2026-11-11T07:57:12-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "11fbf53eead3d2706023b586a5237ccb744f8018",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet or CoreWeave: Which AI Stock Is Better to Buy in a Market Crash?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.fool.com/investing/2026/11/11/alphabet-or-coreweave-which-ai-stock-is-better-to/",
+   "timestamp": "2026-11-11T07:35:00-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4dbfc3533d674828179164b3e898d3c51e8861ba",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Stock market today: Dow, S&P 500, Nasdaq futures rise as Nvidia stock recovers, 10-year yield nears 5%",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/live/stock-market-today-wednesday-november-11-dow-sp-500-nasdaq-nvidia-treasurys-123445799.html",
+   "timestamp": "2026-11-11T07:34:45-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bcef9f945872cc88d7d86b8ad8c188f90ce274a7",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why Alphabet and Amazon Will Always Need Nvidia",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/11/11/why-alphabet-and-amazon-will-always-need-nvidia/",
+   "timestamp": "2026-11-11T07:15:53-05:00",
+   "tickers": [
+    "GOOG",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9746324f74c9ea8aad1a9c677e34b0108a1b1038",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Google targets America's medical bills with major AI launch",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/google-targets-americas-medical-bills-120642841.html",
+   "timestamp": "2026-11-11T07:06:42-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "90beb91d931f9100e5a5c569a766a0991d150339",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia, chip stocks rebound premarket after CoreWeave lifts revenue outlook",
+   "source": "Investing.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/technology/articles/nvidia-chip-stocks-rebound-premarket-120006021.html",
+   "timestamp": "2026-11-11T07:00:06-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investing.com · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c2c356536b42832f8869e78acb64d02f4ffa5384",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova's Orders Jumped 96%. The Number Hiding Underneath Is Electrification's 9% Decline.",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.fool.com/investing/2026/11/11/ge-vernovas-orders-jumped-96-the-number-hiding-und/",
+   "timestamp": "2026-11-11T06:35:00-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8420857adfea5d1e0170fe8a198f08fd01dec855",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine Says Its Controls Are Still Not Effective as ETH Ended the Year $5.4 Billion Below Cost",
+   "source": "Unchained",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://unchainedcrypto.com/bitmine-says-its-controls-are-still-not-effective-as-eth-ended-the-year-5-4-billion-below-cost/",
+   "timestamp": "2026-11-11T06:15:33-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Unchained · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e53f945650d5b165de98d107561e91f522a99a0a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "US High Relative Profitability (DUHP) Adds Broadcom and Micron on Nov. 9",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/us-high-relative-profitability-duhp-110435180.html",
+   "timestamp": "2026-11-11T06:04:35-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ba4aabe173c188551b8ba6988612193aa8b4f0d5",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "53 ETFs Add to Broadcom (AVGO) Holdings on Monday",
+   "source": "GuruFocus.com",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/53-etfs-add-broadcom-avgo-110056345.html",
+   "timestamp": "2026-11-11T06:00:56-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2531c2e263e972499d58f49bde5e8f0d696a59b2",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Tom Lee’s Ethereum Bet Is Costing Bitmine Billions On Paper, And He’s Still Buying",
+   "source": "Stocktwits",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://stocktwits.com/news-articles/markets/equity/tom-lee-s-ethereum-bet-is-costing-bitmine-billions-on-paper-and-he-s-still-buying/cNGDkxfR9Be",
+   "timestamp": "2026-11-11T04:55:04-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Stocktwits · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7b6fa4f3efc45e3b112c20046063a2c37ce7aa0d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by SCHWAB CHARLES CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/316709/000092373826000052/xslF345X06/wk-form4_1794359342.xml",
+   "timestamp": "2026-11-10T20:09:05-05:00",
+   "tickers": [
+    "SCHW"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6c26af88f87b3aa13c8b4a23f8e6142f7edec46a",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by NETFLIX INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000158310926000006/xslF345X06/wk-form4_1794355937.xml",
+   "timestamp": "2026-11-10T19:12:19-05:00",
+   "tickers": [
+    "NFLX"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2fd34b46770838783bbe4ff0525aca6a98071c1d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova's Backlog Hit $197 Billion and the Stock Fell Anyway. Here's What a $10,000 Investment Could Be Worth by 2030.",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.fool.com/investing/2026/11/10/ge-vernovas-backlog-hit-197-billion-and-the-stock/",
+   "timestamp": "2026-11-10T18:50:00-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c8ab099b6528f76511318c0218b5e7dd4afee6fe",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072884/xslF345X06/wk-form4_1794351274.xml",
+   "timestamp": "2026-11-10T17:54:37-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "51a4248a8c97460849040a472e06aab57a900485",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072880/xslF345X06/wk-form4_1794351175.xml",
+   "timestamp": "2026-11-10T17:52:58-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "288c31f022959ec285d9ca7f70d3e6d9a381152e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072877/xslF345X06/wk-form4_1794351109.xml",
+   "timestamp": "2026-11-10T17:51:51-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cebf1e79e03a4c9cf5968877461c0beb5c3bc08e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072874/xslF345X06/wk-form4_1794350927.xml",
+   "timestamp": "2026-11-10T17:48:50-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "06b503f621b63515b1e0d5d28338b3bde5d29d96",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072871/xslF345X06/wk-form4_1794350746.xml",
+   "timestamp": "2026-11-10T17:45:48-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d99c6b0705ec8675caf0c7533bbe0cc64ed50d33",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072869/xslF345X06/wk-form4_1794350583.xml",
+   "timestamp": "2026-11-10T17:43:05-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "dc2d0b1d65328ab1d2100920150a8f82ccf91595",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by INTUIT INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026072863/xslF345X06/wk-form4_1794350375.xml",
+   "timestamp": "2026-11-10T17:39:38-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b409e236404fe843e33a6f11b7232557cc646a99",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-K filed by BITMINE IMMERSION TECHNOLOGIES, INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1829311/000162828026072846/bmnr-20260831.htm",
+   "timestamp": "2026-11-10T17:23:39-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-K · filed 2026-11-10 · 10-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2ea881bf1821d376b2ad56c814c9efcdd6e0222d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "OpenAI's Q3 results and Nvidia's scandal impact on the AI ecosystem",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/openais-q3-results-and-nvidias-scandal-impact-on-the-ai-ecosystem-222332740.html",
+   "timestamp": "2026-11-10T17:23:32-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4b7541778b9ca87fcde0b8b3d7d5545c50f50cb2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000206/xslF345X06/wk-form4_1794346529.xml",
+   "timestamp": "2026-11-10T16:35:31-05:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "52e9f8abcd1174c40b2bdb16044f33a15c9376a2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000205/xslF345X06/wk-form4_1794346521.xml",
+   "timestamp": "2026-11-10T16:35:23-05:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "62719e547a18bdcb896d804f842604c5c8a173f7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000204/xslF345X06/wk-form4_1794346515.xml",
+   "timestamp": "2026-11-10T16:35:18-05:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "59598c2c27d8768faf54474c3243a9653768d721",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DEXCOM INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000203/xslF345X06/wk-form4_1794346507.xml",
+   "timestamp": "2026-11-10T16:35:10-05:00",
+   "tickers": [
+    "DXCM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · FORM 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e8624a5c632b6186b0583d238559878ca6177dee",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova Falls 4% as SoftBank’s Ohio Data Center Undergoes “A Thorough Reassessment”",
+   "source": "TIKR",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.tikr.com/blog/ge-vernova-falls-4-as-softbanks-ohio-data-center-undergoes-a-thorough-reassessment?ref=yahoofinance&tlnk=yf-261110-r5rpx364",
+   "timestamp": "2026-11-10T16:17:30-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TIKR · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e04058179b82d7e8f5687696b112cf5dc8e88d13",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by UiPath, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1734722/000154340126000009/xslF345X06/primarydocument.xml",
+   "timestamp": "2026-11-10T16:05:17-05:00",
+   "tickers": [
+    "PATH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
   {
    "id": "2b7b524d13f1a18034b9ecd8f521438242bdd966",
    "tier": 1,
@@ -2397,6 +2910,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "0334275dd47d8f7ecb8f2083974f61df801ab53e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by GLOBE LIFE INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/320335/000032033526000233/gl-20261105.htm",
+   "timestamp": "2026-11-05T16:37:53-05:00",
+   "tickers": [
+    "GL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-11-05 · 8-K (AMENDED AND RESTATED BY-LAWS)",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "a0ba4e00163f223da489eaf08a945ba681d11898",
    "tier": 1,
    "tier_label": "primary",
@@ -2666,6 +3195,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8a68dcf970c7992e9346627a7a9fcbc747ad5817",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by MCCORMICK & CO INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/63754/000006375426000337/xslF345X06/form4.xml",
+   "timestamp": "2026-11-05T11:13:37-05:00",
+   "tickers": [
+    "MKC"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-05 · STATEMENT OF CHANGES IN BENEFICIAL OWNERSHIP OF SECURITIES",
    "disclosure_lag_label": null
   },
   {
@@ -3147,6 +3692,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "e9062f43f50e933f74670f48be3e7803af843f67",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by GLOBE LIFE INC.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/320335/000032033526000231/gl-20260930.htm",
+   "timestamp": "2026-11-04T16:36:48-05:00",
+   "tickers": [
+    "GL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-11-04 · 10-Q (Q3 2026)",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "04740b299e5ce28a83b59755ba475863adc3e310",
    "tier": 1,
    "tier_label": "primary",
@@ -3577,951 +4138,82 @@
    ],
    "summary": "Tier 1 · BEA release · topics: TRADE · next release December 8, 2026",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "99c2f96d46222537560ed45f1fc5f4baaf8f8602",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Google Cloud Revenue Could Overtake Search In 2028. Can It Be A Cash Machine?",
-   "source": "Investor's Business Daily",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.investors.com/news/technology/google-stock-cloud-revenue-overtake-search-2028-cash-engine/?src=A00220&yptr=yahoo",
-   "timestamp": "2026-11-04T08:00:40-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investor's Business Daily · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d3d8a77823608a9a54b98691aba8728694148f81",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "What Has Changed About Owning Alphabet Stock?",
-   "source": "Trefis",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.trefis.com/stock/googl/articles/622620/what-has-changed-about-owning-alphabet-stock/2026-11-04",
-   "timestamp": "2026-11-04T07:56:06-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Trefis · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8b785f2bb040df31cefeba08d1d45305773444ee",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia Took Back the World’s Biggest Company Title From Apple on Election Day",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://247wallst.com/investing/2026/11/04/nvidia-took-back-the-worlds-biggest-company-title-from-apple-on-election-day/",
-   "timestamp": "2026-11-04T07:37:23-05:00",
-   "tickers": [
-    "NVDA",
-    "AAPL"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA, AAPL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2460da9dc5db9e50e0bdf4f85c564e6fdb821435",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Is Google's New Cryptocurrency Service a Reason to Buy Ethereum or Solana?",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://www.fool.com/investing/2026/11/04/is-googles-new-cryptocurrency-service-a-reason-to/",
-   "timestamp": "2026-11-04T07:35:00-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e7d5f0037a8eceab025b9716046331867b8a3e99",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Apple’s ‘Free-Rider’ Status Isn’t Changing Anytime Soon",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://247wallst.com/investing/2026/11/04/apples-free-rider-status-isnt-changing-anytime-soon/",
-   "timestamp": "2026-11-04T07:15:11-05:00",
-   "tickers": [
-    "AAPL"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about AAPL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5e668f4ac3e8dd59ad22e7fda94cf9cf9d73d5a1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by INSULET CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1145197/000114519726000190/podd-20261104.htm",
-   "timestamp": "2026-11-04T07:01:33-05:00",
-   "tickers": [
-    "PODD"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "394cf4028f4808f8718f950801f6dcf9c7202dea",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Bernie Sanders Calls Google’s AI-in-Schools Move “Extortion”",
-   "source": "BeInCrypto",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://beincrypto.com/sanders-google-ai-in-schools-extortion/",
-   "timestamp": "2026-11-04T06:56:16-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · BeInCrypto · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "181b69acbb4f6bfe5edb6be5eccece08a99fd996",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Uber Technologies, Inc",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/uber-20261104.htm",
-   "timestamp": "2026-11-04T06:55:39-05:00",
-   "tickers": [
-    "UBER"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ab761f735315a9e1dea28f5a0f6a5187efa78748",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "What SPDR Portfolio S&P 500 Growth (SPYG) Bought: NVDA Leads on Nov. 2",
-   "source": "GuruFocus.com",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/spdr-portfolio-p-500-growth-110523312.html",
-   "timestamp": "2026-11-04T06:05:23-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "454b898239e7cffb77aeb9ea1519f4b727418c28",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "State Street Tech Select SPDR (XLK) Buys $74.3 Million More Apple on Monday",
-   "source": "GuruFocus.com",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/state-street-tech-select-spdr-110444150.html",
-   "timestamp": "2026-11-04T06:04:44-05:00",
-   "tickers": [
-    "AAPL"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about AAPL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7d77db639d8c45286571cb103d2d8dd3fc699eaf",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "What Direxion Daily Technology Bull 3X ETF (TECL) Sold: Apple Leads on Nov. 2",
-   "source": "GuruFocus.com",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/direxion-daily-technology-bull-3x-110438294.html",
-   "timestamp": "2026-11-04T06:04:38-05:00",
-   "tickers": [
-    "AAPL"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about AAPL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "919aa0680656c33b2334b77eb5536cd7cd88320b",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "53 ETFs Add to Broadcom (AVGO) Holdings on Nov. 2",
-   "source": "GuruFocus.com",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/53-etfs-add-broadcom-avgo-110105667.html",
-   "timestamp": "2026-11-04T06:01:05-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · GuruFocus.com · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "11134b0ad30a7d254ea588501364924b01d7d8f0",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Apple, Home Depot and GE Vernova Object to ICE-OKX Tokenized Stock Venue as Count Hits 59",
-   "source": "Unchained",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://unchainedcrypto.com/apple-home-depot-and-ge-vernova-object-to-ice-okx-tokenized-stock-venue-as-count-hits-59/",
-   "timestamp": "2026-11-04T05:15:25-05:00",
-   "tickers": [
-    "GEV",
-    "AAPL"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Unchained · about GEV, AAPL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "cfaa24d171efc318683f5c2996c228adefee43bd",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Why Bitmine Immersion Technologies Stock Is In Focus After Its Ethereum Buying Spree",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:BMNR",
-   "url": "https://finance.yahoo.com/markets/crypto/articles/why-bitmine-immersion-technologies-stock-043344012.html",
-   "timestamp": "2026-11-03T23:33:44-05:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about BMNR",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6bb46ff9c8be7b5218d41b6a834b252b51dc6ce3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000310/xslF345X06/wk-form4_1793753189.xml",
-   "timestamp": "2026-11-03T19:46:32-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fa6230e03d89fd2cbf6c72249d01a5d2c31f218a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000308/xslF345X06/wk-form4_1793753143.xml",
-   "timestamp": "2026-11-03T19:45:46-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3cc8b433140e3bb344d907774d7ee55d45692015",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000306/xslF345X06/wk-form4_1793753109.xml",
-   "timestamp": "2026-11-03T19:45:12-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f3ff58eef86e2417cd23b7265914a924143f4e20",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000304/xslF345X06/wk-form4_1793752945.xml",
-   "timestamp": "2026-11-03T19:42:27-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "13f4cdffe9dceb8a47597ad4e631c5e899eadf16",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000302/xslF345X06/wk-form4_1793752881.xml",
-   "timestamp": "2026-11-03T19:41:23-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a4685adac629a427719e50b8efdbf1f4bd52322a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000300/xslF345X06/wk-form4_1793752852.xml",
-   "timestamp": "2026-11-03T19:40:55-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "888045e940d80d8ac5918285682efe98819936d7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000298/xslF345X06/wk-form4_1793752340.xml",
-   "timestamp": "2026-11-03T19:32:23-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2178479be23f28b716138e5f49aa27dbf4c9a20f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000296/xslF345X06/wk-form4_1793751548.xml",
-   "timestamp": "2026-11-03T19:19:11-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "aef2405623cf06cd15fb6f200b872a10017f0065",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000294/xslF345X06/wk-form4_1793751480.xml",
-   "timestamp": "2026-11-03T19:18:04-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ee8d57ea670e4e5227546698397443ac6ad8f60f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Sandisk Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/2023554/000124264826000049/xslF345X06/edgardoc.xml",
-   "timestamp": "2026-11-03T18:42:35-05:00",
-   "tickers": [
-    "SNDK"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "07ab4cd5813b59fb1421e51c956512abb6fd4c2e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by SCHWAB CHARLES CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/316709/000187997426000017/xslF345X06/wk-form4_1793744965.xml",
-   "timestamp": "2026-11-03T17:29:28-05:00",
-   "tickers": [
-    "SCHW"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3f52346c67041117343972a5cc534c34a65a7b92",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000221/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T17:15:27-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a8f50a9c90c6b609a856e9d26b5ba4e4d0ffa732",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by Booking Holdings Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1075531/000107553126000045/bkng-20260930.htm",
-   "timestamp": "2026-11-03T17:09:41-05:00",
-   "tickers": [
-    "BKNG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-03 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "850eebd57a8896c7bf128908ed3e1ae883cb28f0",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000219/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T17:08:29-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "506dedf0601c930a659550d413574ae02d9e9594",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by RTX Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/101829/000122520826008630/xslF345X06/doc4.xml",
-   "timestamp": "2026-11-03T17:02:40-05:00",
-   "tickers": [
-    "RTX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "bbf37623229d430c7353667ed98d0b2cb27c1a99",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DEXCOM INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1093557/000109355726000198/xslF345X06/wk-form4_1793743272.xml",
-   "timestamp": "2026-11-03T17:01:14-05:00",
-   "tickers": [
-    "DXCM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c8326e6be66a714a7aad3dc84d3fd1985003e4f6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000217/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:55:36-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "cf031e24fc471511d7bfc8f9f9f6a2cc1a3d83e9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000215/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:50:48-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4a95dad1bb37ad60e558db8156e81924e0db892f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NEWMONT Corp /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1164727/000199413126000014/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:37:21-05:00",
-   "tickers": [
-    "NEM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · STATEMENT OF CHANGES IN BENEFICIAL OWNERSHIP OF SECURITIES",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "02bd0c54ddcac1a3006bbc11f0cd615dd5569d94",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Zoetis Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1555280/000162828026069593/xslF345X06/wk-form4_1793741783.xml",
-   "timestamp": "2026-11-03T16:36:26-05:00",
-   "tickers": [
-    "ZTS"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "21ce495b7a7fddea5945883b63ae30af52df34f5",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NEWMONT Corp /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1164727/000193635426000024/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:34:45-05:00",
-   "tickers": [
-    "NEM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · STATEMENT OF CHANGES IN BENEFICIAL OWNERSHIP OF SECURITIES",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "62843dab72ba57ac118081c52b1adf1fe61c8d01",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BRISTOL MYERS SQUIBB CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/14272/000154374726000004/xslF345X06/wk-form4_1793741399.xml",
-   "timestamp": "2026-11-03T16:30:02-05:00",
-   "tickers": [
-    "BMY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "658b79b0bf6d858877275e0b0121094c0a707cbb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000213/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:28:40-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "75fb5710aabdfd5d06a24daed4085b11770c0ca7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BRISTOL MYERS SQUIBB CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/14272/000191732526000006/xslF345X06/wk-form4_1793741222.xml",
-   "timestamp": "2026-11-03T16:27:04-05:00",
-   "tickers": [
-    "BMY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ff22afff04b76e7f45e45ce35d69fab827d8e846",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000211/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:25:59-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3dcd9ad010ba56aa9addad79259aa7a20d6a8673",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by INTUIT INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/896878/000162828026069557/xslF345X06/wk-form4_1793741070.xml",
-   "timestamp": "2026-11-03T16:24:34-05:00",
-   "tickers": [
-    "INTU"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "008b95f778b649efd523be87bc8e5e30dc76cd4b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000209/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:23:16-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e85b90d8c3f45b0d1d5f469174a394e443d1a114",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000207/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:20:26-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "53914d730f8315e3345a3a8cb0ba893b8d366cc1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by VALERO ENERGY CORP/TX",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1035002/000162828026069539/xslF345X06/wk-form4_1793740747.xml",
-   "timestamp": "2026-11-03T16:19:10-05:00",
-   "tickers": [
-    "VLO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2efae90e5fe14d078f95eac15d27d1dcf0795908",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BRISTOL MYERS SQUIBB CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/14272/000190876926000006/xslF345X06/wk-form4_1793740736.xml",
-   "timestamp": "2026-11-03T16:18:58-05:00",
-   "tickers": [
-    "BMY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6e02b09f25cef19dc6a602741cef98293e148b19",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by EOG RESOURCES INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000205/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:17:15-05:00",
-   "tickers": [
-    "EOG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "79fdf917b2de12d32042c28b423c2c5a54293655",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000425/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:13:29-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7a9512ababec294b8361694682fc45ab6895202e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000424/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:12:05-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "31e1d38212bfaf61c87d061a0cd7310b4b62bc98",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000423/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:10:26-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5c06560fca2471bab82f191f6e8b0632b313cdeb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000422/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:09:10-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9c7bd93d5a7fd41b1d3ad969b39a8f22583e581c",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000421/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:07:39-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a6b2e508c447584b22a0aff77548163de9a7efd8",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000420/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:06:08-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2eb00605842222f6d26ae6ad250dfd044415fbb3",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by AMERICAN EXPRESS CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/4962/000000496226000419/xslF345X06/form4.xml",
-   "timestamp": "2026-11-03T16:04:15-05:00",
-   "tickers": [
-    "AXP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "81936b48e0f68a314bb32a841fbab8b4f5fb1f99",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by Booking Holdings Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1075531/000107553126000044/bkng-20261103.htm",
-   "timestamp": "2026-11-03T16:03:57-05:00",
-   "tickers": [
-    "BKNG"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-03 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "dde2ca85af72244838585fcd63061d54bd38035e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000110465926121972/xslF345X06/tm2628887-1_4seq1.xml",
-   "timestamp": "2026-11-03T16:01:06-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-03 · OWNERSHIP DOCUMENT",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "c2c356536b42832f8869e78acb64d02f4ffa5384",
+   "2fd34b46770838783bbe4ff0525aca6a98071c1d",
+   "e8624a5c632b6186b0583d238559878ca6177dee",
    "4d55bf5e4fd008ddb7c12803b74924278da1419b",
-   "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121",
-   "b73b0e48c7c2bb2b6d9c98e9db009aeb8ccdfe04",
-   "38adf9bf94859583496d95bdc17bb9c7756e9839",
-   "796335a15013d3b0ac20d5fe7f590a5283ce8ead"
+   "3bb7bac5fcbffbc5ccb73400f6ccf7a31ce73121"
   ],
   "NVDA": [
-   "cd16f056d7536ba98299c88ce5480ad6fac1b98d",
-   "ba6d1af6517cf9530c0680b9f5a694acc789790c",
-   "2865cb2be73ec5c8c4ed76b5bcadcd831ab72594",
-   "f36eb145f3b347550e1bd4e3f0a9152d4d6d3447",
-   "63d919805b7c4678a1a9413091d99f29087efd20"
+   "3caaae9ac987ced13834864d4a3d2e83b0871fa5",
+   "5a003f3b85fb7f88c1ca4ddfee420976d2cbbb08",
+   "43662e9311e0ebe789fdfe9798f2506250964d5f",
+   "c942009c489077eb67b40331b6ca5abd870224cf",
+   "4dbfc3533d674828179164b3e898d3c51e8861ba"
   ],
   "AVGO": [
+   "e53f945650d5b165de98d107561e91f522a99a0a",
+   "ba4aabe173c188551b8ba6988612193aa8b4f0d5",
    "fc58a8b50e381395998fa1cdbe1f47cfbff6a523",
    "7667a4a5f2b556d85defefe969b9e5db506de19a",
-   "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff",
-   "6a7a334b268a1892e502973fb1409117296e8525",
-   "dd7f373a4bea6fba84a328d1188a72772530739d"
+   "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff"
   ],
   "GOOG": [
+   "11fbf53eead3d2706023b586a5237ccb744f8018",
+   "bcef9f945872cc88d7d86b8ad8c188f90ce274a7",
+   "9746324f74c9ea8aad1a9c677e34b0108a1b1038",
    "8e48487147325d23c757263f1efd004d41c6b8e9",
-   "b3a87583deee36926adadd89f34a72a39a5a8fd2",
-   "1bc005929ed9f9a1352f8a03160ef28c6bc9af08",
-   "8e42bd41a0c4f0de4d6fb85acce91ace1f83c5e7",
-   "a8df7f98a346f49de2b68056bc2351b9bf2b89f7"
+   "b3a87583deee36926adadd89f34a72a39a5a8fd2"
   ],
   "BMNR": [
+   "8420857adfea5d1e0170fe8a198f08fd01dec855",
+   "2531c2e263e972499d58f49bde5e8f0d696a59b2",
+   "b409e236404fe843e33a6f11b7232557cc646a99",
    "a68609b0bd784a7cc0a2731bcb35d33d501f22c0",
-   "9c7c8e6afb0c9c052123c9d8699835a674ae5830",
-   "f7beb8db729cae0be43f25ac6c9c68f2a0117abe",
-   "f03a1577e95d413546a48718551aefbf475bcbc8",
-   "818ad7d3cb67f42fd12061e72b799495a2e680f8"
+   "9c7c8e6afb0c9c052123c9d8699835a674ae5830"
   ]
  },
  "last24h": [
+  "7b6fa4f3efc45e3b112c20046063a2c37ce7aa0d",
+  "6c26af88f87b3aa13c8b4a23f8e6142f7edec46a",
+  "c8ab099b6528f76511318c0218b5e7dd4afee6fe",
+  "51a4248a8c97460849040a472e06aab57a900485",
+  "288c31f022959ec285d9ca7f70d3e6d9a381152e",
+  "cebf1e79e03a4c9cf5968877461c0beb5c3bc08e",
+  "06b503f621b63515b1e0d5d28338b3bde5d29d96",
+  "d99c6b0705ec8675caf0c7533bbe0cc64ed50d33",
+  "dc2d0b1d65328ab1d2100920150a8f82ccf91595",
+  "b409e236404fe843e33a6f11b7232557cc646a99",
+  "4b7541778b9ca87fcde0b8b3d7d5545c50f50cb2",
+  "52e9f8abcd1174c40b2bdb16044f33a15c9376a2",
+  "62719e547a18bdcb896d804f842604c5c8a173f7",
+  "59598c2c27d8768faf54474c3243a9653768d721",
+  "e04058179b82d7e8f5687696b112cf5dc8e88d13",
   "2b7b524d13f1a18034b9ecd8f521438242bdd966",
   "f36eb145f3b347550e1bd4e3f0a9152d4d6d3447",
   "38adf9bf94859583496d95bdc17bb9c7756e9839",
   "94af6dcb1f1f09395718f9092ec40bc877b84522",
-  "10cd1e67199986e002e204d8486aa3c82e53a1f2",
-  "d9efcf7a2ebf7869812e4d2dc78f657ac6552f08",
-  "dd38c027bc9f07d1f43c44dec4c1244551e1398c",
-  "dcdc32785067dc132a18807204606268a163c392",
-  "3f876da85a1eb91edf75240b4c2174a721a51b53",
-  "8a588cd69c5f9310a1ebafd8355ed9a395aaa98a",
-  "4c2549d8fc1d1921afc897b6b24e15043a4a2a6e",
-  "a3e4aabb2b515c03b8dc3e4b88fa3e9de95bced7",
-  "a492b2d06853746c78b12a9b8a5fd71480701d01",
-  "001c198d18eac63aee4de8d9595a6b56740ac4bb",
-  "235530d513b668b2b669674e8cc412c5d2a7b101",
-  "8ebfc89a88fab9e73f939beb198a995b038af910",
-  "2062fa76730ffad8f3ead3723799b82311509b67",
-  "b100a74fe5422bc15e64143609cc7ee0da7b158f",
-  "4c0033cef65a17351bdbb9d2bc2b5cc055515554",
-  "fc8541d3e2b53c05e4f07c0fa0ce23167062ac3e",
-  "0f771f3c4293947334ac0b42c79af0a50872fef9",
-  "70e5308290828f8d2b3e3b35fcfd616b5d45d3d0",
-  "7045878efb3ab0c1db206810933dfde88665c736",
-  "8bfcd105f9d9e1d5647e41bf1bd0d9fb4db1b916",
-  "94b5937836c03c0652ddfdc0c2ee6ebc7e99428d",
-  "9bd2da376780e1ed8aca8c6f02e4d34b5954fa46",
-  "e79e1aeb1160156cbc5207fde06ffd91c3db79f3",
-  "f7a02db2749a769a81261e67d241c9fe7aa15e74",
-  "75bfdf551794f11172368bbc1822be4fb0e99705",
-  "2da4bda92180b8b693bfced7da5c997e1d7a1bf0",
-  "837830ea4ec9b51a5139b080eae78cbfc06aace7",
-  "deec5b5febd40ec894c2edef852c0a5c0b499a5e",
-  "78f3973b0fc8e999eb72cb0004652373c585d541",
-  "f3b3ce67250eee655f78e2e38bd77afe3b6e1cb4",
-  "8cdfc14340a44d522802ff64bfc6f17cd29d8657",
-  "796335a15013d3b0ac20d5fe7f590a5283ce8ead",
-  "d096a8db680dbf69c3361583bd63aa59626f85e7",
-  "6eac89af9c40f332365884db267f50ed04f2752a",
-  "6e4cb5ab08bc01e51780b26f4d089344608cc784",
+  "3caaae9ac987ced13834864d4a3d2e83b0871fa5",
+  "5a003f3b85fb7f88c1ca4ddfee420976d2cbbb08",
+  "43662e9311e0ebe789fdfe9798f2506250964d5f",
+  "c942009c489077eb67b40331b6ca5abd870224cf",
+  "11fbf53eead3d2706023b586a5237ccb744f8018",
+  "4dbfc3533d674828179164b3e898d3c51e8861ba",
+  "bcef9f945872cc88d7d86b8ad8c188f90ce274a7",
+  "9746324f74c9ea8aad1a9c677e34b0108a1b1038",
+  "90beb91d931f9100e5a5c569a766a0991d150339",
+  "c2c356536b42832f8869e78acb64d02f4ffa5384",
+  "8420857adfea5d1e0170fe8a198f08fd01dec855",
+  "e53f945650d5b165de98d107561e91f522a99a0a",
+  "ba4aabe173c188551b8ba6988612193aa8b4f0d5",
+  "2531c2e263e972499d58f49bde5e8f0d696a59b2",
+  "2fd34b46770838783bbe4ff0525aca6a98071c1d",
+  "2ea881bf1821d376b2ad56c814c9efcdd6e0222d",
+  "e8624a5c632b6186b0583d238559878ca6177dee",
   "8e48487147325d23c757263f1efd004d41c6b8e9",
   "b3a87583deee36926adadd89f34a72a39a5a8fd2",
   "1bc005929ed9f9a1352f8a03160ef28c6bc9af08",
@@ -4541,22 +4233,6 @@
   "a767d7c5e8ceea2cf762a6e3795b3e8362518731",
   "05e0af14056de283954224bb06c48f6d205e30ce",
   "5db6b9298c6f5ad3fa00a9440be5fa96ced730ae",
-  "13405fcc8ac540083cb00eb6481a0f855776a665",
-  "51e94893c6dcd0e984e9ae75962574c77fb52e84",
-  "cec54ae9e446e606fe9ea28eac4e24a92902710d",
-  "7667a4a5f2b556d85defefe969b9e5db506de19a",
-  "0f894bf853d85f2eafd262a9b47c47d63436c909",
-  "b8fb80af80cf79d5c3dcb3c52d048842ea75e08e",
-  "108012f40c14b8884a104872eea151013028a0aa",
-  "a6940882e09bb3bc7f900475d42f81bd3d75f484",
-  "f61e3dce709b8d76d0cd2e7fbe56eb99182d0656",
-  "ee01b352eccb9e30e74c0e593b4f79eeaee3685b",
-  "acdf1c2d5d92ec5d72dfa823843936de20fe2564",
-  "bc6c8715f6b185847983cf9b68057a1a225449dd",
-  "543e54e41a91bbfcce3108767a85d05664550608",
-  "587f7ff0fc219b098079d9ca8f8b7b5e810dad28",
-  "8eac043c4db90113271b131dc4f14ea50830b167",
-  "36d9ad72dd3852212eda54c710d4c0da8e9814ff",
-  "6735ed9f16d24a3b3c9ff3f9f811760a1b70c3ff"
+  "13405fcc8ac540083cb00eb6481a0f855776a665"
  ]
 }
