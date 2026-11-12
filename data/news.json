@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-11-10",
- "fetched_at": "2026-11-11T16:04:12-05:00",
+ "as_of": "2026-11-11",
+ "fetched_at": "2026-11-11T23:35:50-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -15,45 +15,45 @@
   ],
   "top40": [
    "GEV",
+   "GOOG",
    "NOC",
+   "LMT",
    "META",
    "TSM",
-   "PATH",
-   "LMT",
    "EXPE",
-   "ADBE",
+   "PATH",
    "RTX",
-   "CEG",
+   "ADBE",
    "APA",
+   "FTNT",
    "ZTS",
    "DASH",
-   "IT",
-   "AXP",
-   "GOOG",
-   "NTAP",
-   "EXE",
    "INTU",
-   "PLTR",
    "SCHW",
-   "NFLX",
-   "RMD",
-   "HON",
-   "HOOD",
-   "DXCM",
-   "IBM",
-   "ESTC",
-   "EOG",
-   "CRM",
-   "WDAY",
-   "DECK",
-   "EQT",
-   "CSCO",
-   "DELL",
+   "AXP",
+   "IT",
+   "NTAP",
+   "PAYX",
+   "PLTR",
    "ADSK",
-   "BKNG",
+   "EXE",
+   "CEG",
+   "NFLX",
+   "NVDA",
+   "HON",
    "MKC",
-   "AMP",
-   "GL"
+   "DXCM",
+   "COP",
+   "ESTC",
+   "ALL",
+   "RL",
+   "CRM",
+   "DECK",
+   "BMY",
+   "HOOD",
+   "IBM",
+   "BKNG",
+   "WDAY"
   ]
  },
  "sources_status": {
@@ -64,7 +64,7 @@
   "bls_release_day": "ok n=2 (constructed 2)",
   "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=84 (parsed 43 names)",
+  "edgar": "ok n=75 (parsed 42 names)",
   "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
   "ir_nvda": "ok n=4 (parsed 20)",
   "ir_gev": "ok n=5 (parsed 20)",
@@ -72,26 +72,285 @@
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=4 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
+  "yahoo_headlines:GEV": "ok n=3 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=7 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=7 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=5 (parsed 10)",
   "yahoo_headlines:BMNR": "ok n=7 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
-  "directive_rule": 1,
-  "irrelevant": 32,
-  "out_of_window": 28649,
+  "directive_rule": 3,
+  "irrelevant": 25,
+  "out_of_window": 28734,
   "unparseable": 0
  },
  "counts": {
-  "items": 254,
-  "tier1": 120,
-  "tier2": 134,
-  "last24h": 48
+  "items": 247,
+  "tier1": 100,
+  "tier2": 147,
+  "last24h": 46
  },
  "items": [
+  {
+   "id": "bd59c22f6a83d3a858913a72abac47726c0d554a",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Asian shares mostly slip as Nvidia's troubles weigh on AI stocks, despite a rally on Wall St",
+   "source": "Associated Press",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/asian-shares-mostly-slip-nvidias-041124515.html",
+   "timestamp": "2026-11-11T23:11:24-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Associated Press · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5c6f4b959620b03f57c7a530376f3ddcf57943ab",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia's stock dives as board weighs move to oust Jensen Huang",
+   "source": "CBS News",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.cbsnews.com/news/nvidia-stock-dives-report-board-prepares-oust-jensen-huang/",
+   "timestamp": "2026-11-11T23:10:36-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · CBS News · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e6d0c257b8fca12178ae69566a10ebaab545e632",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia Turmoil Lifts AMD, Broadcom on Bets for Business Gains",
+   "source": "Bloomberg",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/technology/articles/nvidia-turmoil-lifts-amd-broadcom-025615324.html",
+   "timestamp": "2026-11-11T21:56:15-05:00",
+   "tickers": [
+    "AVGO",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Bloomberg · about AVGO, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "759ca2881def64470d37edaf392dd107c4bfa4d6",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Jensen Huang’s Future At Nvidia Hangs In Balance As Board Weighs Fallout: Analysts Warn Of Challenges Ahead",
+   "source": "Stocktwits",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://stocktwits.com/news-articles/markets/equity/jensen-huang-s-future-at-nvidia-hangs-in-balance-as-board-reportedly-weighs-fallout-analysts-warn-of-challenges-ahead/cNGzikhR99g",
+   "timestamp": "2026-11-11T21:43:31-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Stocktwits · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2d5cdd78453547d7d800c05edff3c885226d67ac",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia board meets to decide CEO Huang's future as leadership crisis deepens",
+   "source": "Reuters",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/news/nvidia-preparing-oust-ceo-jensen-223546395.html",
+   "timestamp": "2026-11-11T21:21:13-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Reuters · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "039a1baf1dcd23bcdd8a384e8e1c1bd9702e1ba5",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Here's My Biggest Worry About Broadcom Stock. It Isn't Enough to Stop Me From Buying.",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.fool.com/investing/2026/11/11/here-s-my-biggest-worry-about-broadcom-stock-it-isn-t-enough-to-stop-me-from-buying/",
+   "timestamp": "2026-11-11T21:13:02-05:00",
+   "tickers": [
+    "AVGO"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about AVGO",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "bcc63843c4fe8e369d9962a8fb03be208764f949",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Alphabet Kicks Off Asia Bond Sale as AI Firms Face Scrutiny",
+   "source": "Bloomberg",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-kicks-off-asia-bond-011249415.html",
+   "timestamp": "2026-11-11T20:12:49-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Bloomberg · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9407d6ea40d7ff5b7b856a3f610d095c614005d6",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia Stock Sinks as Jensen Huang Ouster Report Sends Investors Toward AMD, Broadcom",
+   "source": "Benzinga",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/nvidia-stock-sinks-jensen-huang-002504447.html",
+   "timestamp": "2026-11-11T19:25:04-05:00",
+   "tickers": [
+    "AVGO",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Benzinga · about AVGO, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "208de83207ebb5731c851689af5b58f6e903af1d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "More Bad News for NVIDIA. With Board Planning to Boot Jensen Huang, Sam Altman Reveals Master Plan to Stop Buying Their Chips",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://247wallst.com/investing/2026/11/11/more-bad-news-for-nvidia-with-board-planning-to-boot-jensen-huang-sam-altman-reveals-master-plan-to-stop-buying-their-chips/",
+   "timestamp": "2026-11-11T19:19:31-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "f992d4c2d32a55d1f6d0e0f8a1dae53ee54d9492",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "GE Vernova’s Ontario Nuclear Plant Is Facing Delays And Rising Costs",
+   "source": "Stocktwits",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://stocktwits.com/news-articles/markets/equity/ge-vernova-s-ontario-nuclear-plant-is-facing-delays-and-rising-costs/cNGx5Z4R99I",
+   "timestamp": "2026-11-11T18:26:39-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Stocktwits · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "0106bbf5a1ec2cd2dcb28d4d01161a8949f4ff5e",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Who is Nvidia executive Kimberly Powell?",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/stocks/article/who-is-nvidia-executive-kimberly-powell-231652963.html",
+   "timestamp": "2026-11-11T18:16:52-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7f0218797583a4f606e989c23af67321e40e3a68",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia and Alphabet Just Agreed to Buy $10 Billion Each of Anthropic Stock at Its IPO Price",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.fool.com/investing/2026/11/11/nvidia-and-alphabet-just-agreed-to-buy-usd10-billion-each-of-anthropic-stock-at-its-ipo-price/",
+   "timestamp": "2026-11-11T18:07:01-05:00",
+   "tickers": [
+    "GOOG",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GOOG, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "8fd5a3e39726516fe9caf57a07d66d4eea56082d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia reportedly preparing to oust CEO Huang after alleged affairs with spy, Nvidia exec",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/technology/article/nvidia-reportedly-preparing-to-oust-ceo-huang-after-alleged-affairs-with-spy-nvidia-exec-231315876.html",
+   "timestamp": "2026-11-11T17:18:15-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "28035e1e997711e467b05ded8b21c5438b8e538e",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Stocks to Watch Recap: CoreWeave, Nvidia, TSMC",
+   "source": "The Wall Street Journal",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-11-11-2026/card/stocks-to-watch-coreweave-nvidia-tsmc-EbakJv4ZyAl7obXOSamP?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-11-11T16:49:35-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · The Wall Street Journal · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "cfcc82661ad9c3b5cb9a541f02bed1d11a3488e9",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Anthropic's Mythos claim may put Nvidia’s CUDA moat in a vulnerable spot",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/anthropics-mythos-claim-may-put-nvidias-cuda-moat-in-a-vulnerable-spot-214346380.html",
+   "timestamp": "2026-11-11T16:43:46-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "59e0733a10e627867be07d13f95819ee64c4cee4",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Tech round-up: A closer look at Anthropic, Nvidia, CoreWeave, and next week",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/tech-round-up-a-closer-look-at-anthropic-nvidia-coreweave-and-next-week-211955539.html",
+   "timestamp": "2026-11-11T16:19:55-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
   {
    "id": "bb21077efeb953e9b9cf315a4c0d22deaafeb15a",
    "tier": 2,
@@ -767,6 +1026,22 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "edca6154d723fadf60a4b754c30a93836190176f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ALLSTATE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000159/xslF345X06/form4.xml",
+   "timestamp": "2026-11-10T17:20:10-05:00",
+   "tickers": [
+    "ALL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · PRIMARY DOCUMENT",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "4b7541778b9ca87fcde0b8b3d7d5545c50f50cb2",
    "tier": 1,
    "tier_label": "primary",
@@ -844,6 +1119,22 @@
    ],
    "topics": [],
    "summary": "Tier 2 headline · TIKR · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2fb3e293d98b360536c60677a27afbe4546b6565",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by ALLSTATE CORP",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000158/xslF345X06/form4.xml",
+   "timestamp": "2026-11-10T16:06:37-05:00",
+   "tickers": [
+    "ALL"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-10 · PRIMARY DOCUMENT",
    "disclosure_lag_label": null
   },
   {
@@ -3565,6 +3856,38 @@
    "disclosure_lag_label": null
   },
   {
+   "id": "2eed3ea068c0f57969f2d4da5c5b3b0672acc2d8",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by CONOCOPHILLIPS",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1163165/000116316526000045/cop-20260930.htm",
+   "timestamp": "2026-11-05T07:24:35-05:00",
+   "tickers": [
+    "COP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-11-05 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "e41a64f82c60d729b5d1382ace934b6a25a6de2f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by CONOCOPHILLIPS",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1163165/000116316526000043/cop-20261105.htm",
+   "timestamp": "2026-11-05T07:13:17-05:00",
+   "tickers": [
+    "COP"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-11-05 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
    "id": "0101e0724889432d8dec9fd3895ea7336486e003",
    "tier": 2,
    "tier_label": "secondary",
@@ -3723,468 +4046,36 @@
    "topics": [],
    "summary": "Tier 2 headline · Unchained · about NOW",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "2bf304130b2b112a9d1e7e2e759f0aad762e0ff2",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "What GE Vernova Holders Got Right",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/ge-vernova-holders-got-031246550.html",
-   "timestamp": "2026-11-04T22:12:46-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ba86e65fa049a46709fd16588b726b9b3d499eb2",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Palantir Technologies Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000184024426000023/xslF345X06/wk-form4_1793845563.xml",
-   "timestamp": "2026-11-04T21:26:05-05:00",
-   "tickers": [
-    "PLTR"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d52206d327135963c9586dfac8d3a70e20f56429",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Is Broadcom Stock a Buy After Marvell's $115 Billion Deal?",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://www.fool.com/investing/2026/11/04/is-broadcom-stock-a-buy-after-marvell-s-usd115-billion-deal/",
-   "timestamp": "2026-11-04T20:43:01-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "74711389e67e9065d481ad2ea9060c2d0024b1b7",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Meta Platforms, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010326016962/xslF345X06/ownership.xml",
-   "timestamp": "2026-11-04T18:36:30-05:00",
-   "tickers": [
-    "META"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3bf483d5c64f3f1fb5c6f59e11ed2197afc78224",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NETFLIX INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000312/xslF345X06/wk-form4_1793835249.xml",
-   "timestamp": "2026-11-04T18:34:12-05:00",
-   "tickers": [
-    "NFLX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c07315bdb2019d343e0300631e4156660d45518b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000132442426000062/expe-20260930.htm",
-   "timestamp": "2026-11-04T17:48:09-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-05 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9288f1c6ec846f31180b07d3318472f156321106",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by AppLovin Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1751008/000175100826000069/app-20260930.htm",
-   "timestamp": "2026-11-04T17:05:43-05:00",
-   "tickers": [
-    "APP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-04 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5647728693f07d8f0693a48307b9535130359dba",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by CF Industries Holdings, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324404/000110465926122757/tm2628886d1_8k.htm",
-   "timestamp": "2026-11-04T16:59:05-05:00",
-   "tickers": [
-    "CF"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · FORM 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8569b8502313188d5212bbc235c9ed3dec9317dc",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by HERSHEY CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/47111/000095014226002947/xslF345X06/es260850696_4-hsy.xml",
-   "timestamp": "2026-11-04T16:52:35-05:00",
-   "tickers": [
-    "HSY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · OWNERSHIP DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f8bf79d90dc61ebc69cad6ddd94058dfcbe59076",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by BRISTOL MYERS SQUIBB CO",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/14272/000197571926000006/xslF345X06/wk-form4_1793828962.xml",
-   "timestamp": "2026-11-04T16:49:29-05:00",
-   "tickers": [
-    "BMY"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a54b1c15473a6f36a9357f98db854fb60391a421",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by CF Industries Holdings, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324404/000132440426000023/cf-20261104.htm",
-   "timestamp": "2026-11-04T16:47:47-05:00",
-   "tickers": [
-    "CF"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9b9d4e077b2b8a4ca12807f5cca54d0a899ed26b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by MongoDB, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026070241/xslF345X06/wk-form4_1793828758.xml",
-   "timestamp": "2026-11-04T16:46:01-05:00",
-   "tickers": [
-    "MDB"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "45757cd0ea3b06fddfb855065e211742088726dd",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by MongoDB, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026070237/xslF345X06/wk-form4_1793828677.xml",
-   "timestamp": "2026-11-04T16:44:40-05:00",
-   "tickers": [
-    "MDB"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "89c696a404b094be51cbdf3a5eb25d46d602d641",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by MongoDB, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026070232/xslF345X06/wk-form4_1793828503.xml",
-   "timestamp": "2026-11-04T16:41:47-05:00",
-   "tickers": [
-    "MDB"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e9062f43f50e933f74670f48be3e7803af843f67",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by GLOBE LIFE INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/320335/000032033526000231/gl-20260930.htm",
-   "timestamp": "2026-11-04T16:36:48-05:00",
-   "tickers": [
-    "GL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-04 · 10-Q (Q3 2026)",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "04740b299e5ce28a83b59755ba475863adc3e310",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by APA Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1841666/000184166626000063/apa8k-20261104.htm",
-   "timestamp": "2026-11-04T16:34:43-05:00",
-   "tickers": [
-    "APA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "48bf6492e4513e79bc45869e135af9e55ffb6953",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DoorDash, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000179033026000009/xslF345X06/form4.xml",
-   "timestamp": "2026-11-04T16:34:22-05:00",
-   "tickers": [
-    "DASH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · STATEMENT OF CHANGES IN BENEFICIAL OWNERSHIP OF SECURITIES",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b9265a94d30790807f24145b5cbec17351545db9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Robinhood Markets, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1783879/000170711226000008/xslF345X06/wk-form4_1793827889.xml",
-   "timestamp": "2026-11-04T16:31:33-05:00",
-   "tickers": [
-    "HOOD"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "624c0d0bec330735494ca599a30eccf2829aac19",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000157/all-20260930.htm",
-   "timestamp": "2026-11-04T16:18:21-05:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-04 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7cc4f2b33c40c8d9e10f265def56723011063686",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NORTHROP GRUMMAN CORP /DE/",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1133421/000162828026070174/xslF345X06/wk-form4_1793827081.xml",
-   "timestamp": "2026-11-04T16:18:04-05:00",
-   "tickers": [
-    "NOC"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "771e21b606b0f1dc971c50b7599b13252aa94ab5",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by ALLSTATE CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/899051/000089905126000156/all-20261104.htm",
-   "timestamp": "2026-11-04T16:16:26-05:00",
-   "tickers": [
-    "ALL"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a3d4467c62bce69811f50bfc9e4e30e9187c2620",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Why a Democratic Sweep Is Crushing GE Vernova and More Industrial Stocks",
-   "source": "Barrons.com",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.barrons.com/articles/ge-vernova-vertiv-eaton-ai-industrials-stocks-bf41f4bc?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-11-04T16:14:00-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Barrons.com · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "da38b5e2ffee930e90b6f7eab36479af303163bb",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Meta Platforms, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000116007726000013/xslF345X06/form4-11042026_091132.xml",
-   "timestamp": "2026-11-04T16:10:37-05:00",
-   "tickers": [
-    "META"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fece874cf634f3696e873568b9da58a34f0c3ede",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by AppLovin Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1751008/000175100826000068/app-20261029.htm",
-   "timestamp": "2026-11-04T16:08:17-05:00",
-   "tickers": [
-    "APP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-04 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "ec15a020088da23453c0ed31512193f95b6934a0",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by INSULET CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1145197/000114519726000192/podd-20260930.htm",
-   "timestamp": "2026-11-04T16:05:18-05:00",
-   "tickers": [
-    "PODD"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-04 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d4eff238d390330691b5e2c0267daa1357b704a1",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DoorDash, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183261426000037/xslF345X06/form4-11042026_041110.xml",
-   "timestamp": "2026-11-04T16:05:17-05:00",
-   "tickers": [
-    "DASH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "460d414075b4bcc48750c1f7c277090fc46b1320",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by DoorDash, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183239026000027/xslF345X06/form4-11042026_041107.xml",
-   "timestamp": "2026-11-04T16:05:12-05:00",
-   "tickers": [
-    "DASH"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-04 · 4",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "f992d4c2d32a55d1f6d0e0f8a1dae53ee54d9492",
    "dfee54a66f410e320a0c3f6e644baa8df9bacd8c",
    "e34b86f0cea5bdc4ffd147fb14c0f5a9ff2e47b9",
    "c2c356536b42832f8869e78acb64d02f4ffa5384",
-   "2fd34b46770838783bbe4ff0525aca6a98071c1d",
-   "e8624a5c632b6186b0583d238559878ca6177dee"
+   "2fd34b46770838783bbe4ff0525aca6a98071c1d"
   ],
   "NVDA": [
-   "92971b6c348d923be17396ae5380de470f039fac",
-   "0c986adb718829507dd781337501b6169b2c2f7a",
-   "6c01b0a063d4db30b4348f599281a06309a553e0",
-   "b8b69a213ead71c916b91547e3dd071d43517c25",
-   "01b72e1c2769a11338c4e7645ee5c468686514bd"
+   "bd59c22f6a83d3a858913a72abac47726c0d554a",
+   "5c6f4b959620b03f57c7a530376f3ddcf57943ab",
+   "e6d0c257b8fca12178ae69566a10ebaab545e632",
+   "759ca2881def64470d37edaf392dd107c4bfa4d6",
+   "2d5cdd78453547d7d800c05edff3c885226d67ac"
   ],
   "AVGO": [
+   "e6d0c257b8fca12178ae69566a10ebaab545e632",
+   "039a1baf1dcd23bcdd8a384e8e1c1bd9702e1ba5",
+   "9407d6ea40d7ff5b7b856a3f610d095c614005d6",
    "6c01b0a063d4db30b4348f599281a06309a553e0",
-   "373f3f03cb6fdf198ed5825e93fc9213d578dcfc",
-   "e53f945650d5b165de98d107561e91f522a99a0a",
-   "ba4aabe173c188551b8ba6988612193aa8b4f0d5",
-   "fc58a8b50e381395998fa1cdbe1f47cfbff6a523"
+   "373f3f03cb6fdf198ed5825e93fc9213d578dcfc"
   ],
   "GOOG": [
+   "bcc63843c4fe8e369d9962a8fb03be208764f949",
+   "7f0218797583a4f606e989c23af67321e40e3a68",
    "bb21077efeb953e9b9cf315a4c0d22deaafeb15a",
    "0486a8a2ec3932079337421ffb556ed3e7bab9a7",
-   "94feda1a117d25f2f3f2cc188276801c36e53bdb",
-   "11fbf53eead3d2706023b586a5237ccb744f8018",
-   "bcef9f945872cc88d7d86b8ad8c188f90ce274a7"
+   "94feda1a117d25f2f3f2cc188276801c36e53bdb"
   ],
   "BMNR": [
    "e12f0a6370b3e3eb8e95904b7f29133b0e017390",
@@ -4195,21 +4086,22 @@
   ]
  },
  "last24h": [
-  "7b6fa4f3efc45e3b112c20046063a2c37ce7aa0d",
-  "6c26af88f87b3aa13c8b4a23f8e6142f7edec46a",
-  "c8ab099b6528f76511318c0218b5e7dd4afee6fe",
-  "51a4248a8c97460849040a472e06aab57a900485",
-  "288c31f022959ec285d9ca7f70d3e6d9a381152e",
-  "cebf1e79e03a4c9cf5968877461c0beb5c3bc08e",
-  "06b503f621b63515b1e0d5d28338b3bde5d29d96",
-  "d99c6b0705ec8675caf0c7533bbe0cc64ed50d33",
-  "dc2d0b1d65328ab1d2100920150a8f82ccf91595",
-  "b409e236404fe843e33a6f11b7232557cc646a99",
-  "4b7541778b9ca87fcde0b8b3d7d5545c50f50cb2",
-  "52e9f8abcd1174c40b2bdb16044f33a15c9376a2",
-  "62719e547a18bdcb896d804f842604c5c8a173f7",
-  "59598c2c27d8768faf54474c3243a9653768d721",
-  "e04058179b82d7e8f5687696b112cf5dc8e88d13",
+  "bd59c22f6a83d3a858913a72abac47726c0d554a",
+  "5c6f4b959620b03f57c7a530376f3ddcf57943ab",
+  "e6d0c257b8fca12178ae69566a10ebaab545e632",
+  "759ca2881def64470d37edaf392dd107c4bfa4d6",
+  "2d5cdd78453547d7d800c05edff3c885226d67ac",
+  "039a1baf1dcd23bcdd8a384e8e1c1bd9702e1ba5",
+  "bcc63843c4fe8e369d9962a8fb03be208764f949",
+  "9407d6ea40d7ff5b7b856a3f610d095c614005d6",
+  "208de83207ebb5731c851689af5b58f6e903af1d",
+  "f992d4c2d32a55d1f6d0e0f8a1dae53ee54d9492",
+  "0106bbf5a1ec2cd2dcb28d4d01161a8949f4ff5e",
+  "7f0218797583a4f606e989c23af67321e40e3a68",
+  "8fd5a3e39726516fe9caf57a07d66d4eea56082d",
+  "28035e1e997711e467b05ded8b21c5438b8e538e",
+  "cfcc82661ad9c3b5cb9a541f02bed1d11a3488e9",
+  "59e0733a10e627867be07d13f95819ee64c4cee4",
   "bb21077efeb953e9b9cf315a4c0d22deaafeb15a",
   "0486a8a2ec3932079337421ffb556ed3e7bab9a7",
   "94feda1a117d25f2f3f2cc188276801c36e53bdb",
@@ -4239,9 +4131,6 @@
   "8420857adfea5d1e0170fe8a198f08fd01dec855",
   "e53f945650d5b165de98d107561e91f522a99a0a",
   "ba4aabe173c188551b8ba6988612193aa8b4f0d5",
-  "2531c2e263e972499d58f49bde5e8f0d696a59b2",
-  "2fd34b46770838783bbe4ff0525aca6a98071c1d",
-  "2ea881bf1821d376b2ad56c814c9efcdd6e0222d",
-  "e8624a5c632b6186b0583d238559878ca6177dee"
+  "2531c2e263e972499d58f49bde5e8f0d696a59b2"
  ]
 }

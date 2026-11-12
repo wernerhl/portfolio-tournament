@@ -1,14 +1,14 @@
 {
   "cadence": "daily",
-  "session_date": "2026-11-10",
-  "as_of": "2026-11-10",
-  "computed_at": "2026-11-11T08:16:27-05:00",
+  "session_date": "2026-11-11",
+  "as_of": "2026-11-11",
+  "computed_at": "2026-11-11T23:37:49-05:00",
   "color": "RED",
   "rules_fired": [
     {
       "id": "R1",
       "text": "regime label elevated or higher",
-      "evidence": "regime label HIGH RISK"
+      "evidence": "regime label ELEVATED"
     },
     {
       "id": "R6",
@@ -16,76 +16,76 @@
       "evidence": "below both levels: GEV, NVDA, GOOG, BMNR"
     }
   ],
-  "entry_id": "brief-2026-11-10-1",
-  "payload_sha256": "7688b587e5e262a39029f7885407e24312a2dd622b1886fe25df6df219baca83",
-  "text": "2026-11-10: S&P 500 -0.38%, VIX 19.46 (-2.3%), SKEW 151.1; regime HIGH RISK (R 0.4838); 10-year 4.88%; book -0.60% (NVDA -5.47%); next: PPI 2026-11-13.",
+  "entry_id": "brief-2026-11-11-1",
+  "payload_sha256": "f4e1871ab8e67eba9f5c7952ba3a136003162861dec174c30c25d8f88e7b343a",
+  "text": "2026-11-11: S&P 500 +1.31%, VIX 17.49 (-10.1%), SKEW 149.1; regime ELEVATED (R 0.4514); 10-year 4.88%; book +0.89% (AVGO +3.99%); next: PPI 2026-11-13.",
   "text_source": "template",
   "payload": {
-    "session": "2026-11-10",
+    "session": "2026-11-11",
     "indices": {
       "S&P 500": {
-        "close": 7520.93,
-        "change_pct": -0.38
+        "close": 7619.38,
+        "change_pct": 1.31
       },
       "SPY": {
-        "close": 749.92,
-        "change_pct": -0.37
+        "close": 759.81,
+        "change_pct": 1.32
       },
       "QQQ": {
-        "close": 674.76,
-        "change_pct": -0.68
+        "close": 690.38,
+        "change_pct": 2.31
       },
       "IWM": {
-        "close": 280.58,
-        "change_pct": -0.68
+        "close": 283.09,
+        "change_pct": 0.89
       },
       "SMH": {
-        "close": 483.63,
-        "change_pct": -0.78
+        "close": 506.96,
+        "change_pct": 4.82
       }
     },
     "sectors": {
-      "Technology": -1.15,
-      "Financials": 0.52,
-      "Energy": 0.44,
-      "Health care": 0.29,
-      "Industrials": -0.09,
-      "Consumer discretionary": 0.03,
-      "Consumer staples": 0.15,
-      "Utilities": -0.14,
-      "Materials": -0.17,
-      "Real estate": -0.13,
-      "Communication services": 0.37
+      "Technology": 3.23,
+      "Financials": 0.58,
+      "Energy": 1.86,
+      "Health care": 0.04,
+      "Industrials": 1.33,
+      "Consumer discretionary": -0.05,
+      "Consumer staples": 0.46,
+      "Utilities": 0.21,
+      "Materials": 0.32,
+      "Real estate": 0.02,
+      "Communication services": 0.78
     },
     "sectors_weakest": [
       [
-        "Technology",
-        -1.15
+        "Consumer discretionary",
+        -0.05
       ],
       [
-        "Materials",
-        -0.17
+        "Real estate",
+        0.02
       ]
     ],
     "sectors_strongest": [
       [
-        "Financials",
-        0.52
+        "Technology",
+        3.23
       ],
       [
         "Energy",
-        0.44
+        1.86
       ]
     ],
     "regime": {
-      "R": 0.4838,
-      "label": "HIGH RISK",
+      "R": 0.4514,
+      "label": "ELEVATED",
       "label_basis": "tournament row",
-      "series_date": "2026-11-10",
-      "prev_R": 0.4935,
+      "series_date": "2026-11-11",
+      "prev_R": 0.4842,
       "rising_streak_sessions": 0,
-      "published_R": 0.4838,
-      "published_label": "HIGH RISK"
+      "published_R": 0.4514,
+      "published_label": "ELEVATED"
     },
     "flags": {
       "complacency": false,
@@ -95,12 +95,12 @@
       "shock_reasons": []
     },
     "volatility": {
-      "vix": 19.46,
-      "vix_prev": 19.92,
-      "vix_change_pct": -2.3,
-      "vix3m": 20.64,
-      "skew": 151.1,
-      "vvix": 96.63
+      "vix": 17.49,
+      "vix_prev": 19.46,
+      "vix_change_pct": -10.1,
+      "vix3m": 19.24,
+      "skew": 149.1,
+      "vvix": 90.47
     },
     "rates": {
       "us10y_pct": 4.88,
@@ -116,65 +116,59 @@
       "as_of": "2026-11-09"
     },
     "book": {
-      "nav": 219620.0,
-      "nav_prev": 220942.0,
-      "change_pct": -0.6,
-      "change_dollars": -1323.0,
+      "nav": 221564.0,
+      "nav_prev": 219620.0,
+      "change_pct": 0.89,
+      "change_dollars": 1944.0,
       "top_contributor": {
-        "ticker": "NVDA",
-        "dollars": -979.0,
-        "change_pct": -5.47
+        "ticker": "AVGO",
+        "dollars": 662.0,
+        "change_pct": 3.99
       },
       "held_moves": [
         {
           "ticker": "GEV",
-          "close": 797.04,
-          "change_pct": -3.89,
-          "dollars": -808.0
+          "close": 808.24,
+          "change_pct": 1.41,
+          "dollars": 280.0
         },
         {
           "ticker": "NVDA",
-          "close": 168.89,
-          "change_pct": -5.47,
-          "dollars": -979.0
+          "close": 173.73,
+          "change_pct": 2.87,
+          "dollars": 485.0
         },
         {
           "ticker": "AVGO",
-          "close": 331.98,
-          "change_pct": 3.91,
-          "dollars": 625.0
+          "close": 345.22,
+          "change_pct": 3.99,
+          "dollars": 662.0
         },
         {
           "ticker": "GOOG",
-          "close": 284.92,
-          "change_pct": -0.38,
-          "dollars": -54.0
+          "close": 290.63,
+          "change_pct": 2.0,
+          "dollars": 285.0
         },
         {
           "ticker": "BMNR",
-          "close": 18.08,
-          "change_pct": -2.85,
-          "dollars": -106.0
+          "close": 19.24,
+          "change_pct": 6.42,
+          "dollars": 232.0
         }
       ],
       "moves_over_3pct": [
         {
-          "ticker": "GEV",
-          "close": 797.04,
-          "change_pct": -3.89,
-          "dollars": -808.0
-        },
-        {
-          "ticker": "NVDA",
-          "close": 168.89,
-          "change_pct": -5.47,
-          "dollars": -979.0
-        },
-        {
           "ticker": "AVGO",
-          "close": 331.98,
-          "change_pct": 3.91,
-          "dollars": 625.0
+          "close": 345.22,
+          "change_pct": 3.99,
+          "dollars": 662.0
+        },
+        {
+          "ticker": "BMNR",
+          "close": 19.24,
+          "change_pct": 6.42,
+          "dollars": 232.0
         }
       ],
       "holdings_as_of": "2026-09-30",
@@ -184,83 +178,70 @@
     "held_levels": [
       {
         "ticker": "GEV",
-        "close": 797.04,
-        "ma200": 946.85,
-        "ma200_dist_pct": -15.82,
-        "chandelier": 831.64,
+        "close": 808.24,
+        "ma200": 947.6,
+        "ma200_dist_pct": -14.71,
+        "chandelier": 826.97,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 829.34,
+        "prev_close": 797.04,
         "rulebook_trailing_level": 1033.88
       },
       {
         "ticker": "NVDA",
-        "close": 168.89,
-        "ma200": 204.38,
-        "ma200_dist_pct": -17.36,
-        "chandelier": 204.37,
+        "close": 173.73,
+        "ma200": 204.32,
+        "ma200_dist_pct": -14.97,
+        "chandelier": 203.57,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 178.67,
-        "rulebook_trailing_level": 196.18
+        "prev_close": 168.89,
+        "rulebook_trailing_level": 186.61
       },
       {
         "ticker": "AVGO",
-        "close": 331.98,
-        "ma200": 366.58,
-        "ma200_dist_pct": -9.44,
-        "chandelier": 315.55,
+        "close": 345.22,
+        "ma200": 366.71,
+        "ma200_dist_pct": -5.86,
+        "chandelier": 311.71,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": false,
         "below_ma200": true,
-        "prev_close": 319.48,
+        "prev_close": 331.98,
         "rulebook_trailing_level": 423.78
       },
       {
         "ticker": "GOOG",
-        "close": 284.92,
-        "ma200": 336.94,
-        "ma200_dist_pct": -15.44,
-        "chandelier": 324.05,
+        "close": 290.63,
+        "ma200": 336.76,
+        "ma200_dist_pct": -13.7,
+        "chandelier": 323.7,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 286.01,
+        "prev_close": 284.92,
         "rulebook_trailing_level": 351.16
       },
       {
         "ticker": "BMNR",
-        "close": 18.08,
-        "ma200": 20.62,
-        "ma200_dist_pct": -12.33,
-        "chandelier": 20.0,
+        "close": 19.24,
+        "ma200": 20.57,
+        "ma200_dist_pct": -6.49,
+        "chandelier": 19.92,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 18.61,
+        "prev_close": 18.08,
         "rulebook_trailing_level": 36.2
       }
     ],
-    "releases_today": [
-      {
-        "type": "CPI",
-        "name": "Consumer Price Index",
-        "impact": "high",
-        "time_et": "08:30",
-        "print": {
-          "value": 0.35,
-          "unit": "% m/m",
-          "period": "2026-10-01"
-        },
-        "print_note": "FRED at run time"
-      }
-    ],
+    "releases_today": [],
     "upcoming_two_sessions": {
       "sessions": [
-        "2026-11-11",
-        "2026-11-12"
+        "2026-11-12",
+        "2026-11-13"
       ],
       "high_impact_macro": [],
       "held_earnings": []
@@ -329,29 +310,20 @@
     ],
     "entry_state_changes": [
       {
-        "ticker": "APA",
-        "from": "READY",
-        "to": "WATCH",
-        "reason": "capped by the long-term ceiling at 52.82 until a close above it",
-        "groups": [
-          "board"
-        ]
-      },
-      {
         "ticker": "AVGO",
-        "from": "READY",
-        "to": "READY-HALF",
-        "reason": "a passing trend gate (earnings within 20 sessions: half size)",
+        "from": "READY-HALF",
+        "to": "AVOID",
+        "reason": "trend gate failed: below the 200-day average with negative 12-month momentum",
         "groups": [
           "held",
           "board"
         ]
       },
       {
-        "ticker": "DASH",
-        "from": "READY",
-        "to": "AVOID",
-        "reason": "trend gate failed: below the 200-day average with negative 12-month momentum",
+        "ticker": "IBM",
+        "from": "AVOID",
+        "to": "READY",
+        "reason": "a passing trend gate",
         "groups": [
           "board"
         ]

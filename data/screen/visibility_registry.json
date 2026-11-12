@@ -11,22 +11,6 @@
   "retirement": "two consecutive earnings cycles without review \u2192 retire to the sector prior, archive with history; re-registration (fresh rationale + date) required to restore"
  },
  "entries": {
-  "AMZN": {
-   "value": 17,
-   "rationale": "AWS backlog growing",
-   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
-   "as_of": "2026-07-29",
-   "sector": "Consumer Cyclical",
-   "sector_prior": 11,
-   "delta_vs_prior": 6,
-   "cadence": "earnings+14d",
-   "next_earnings": "2026-07-30",
-   "review_by": "2026-08-13",
-   "falsification": {
-    "claim": "AWS backlog growing",
-    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
-   }
-  },
   "ANET": {
    "value": 20,
    "rationale": "Multi-year AI networking pipeline",
@@ -331,6 +315,26 @@
    "retired_at": "2026-11-11",
    "retire_rule_date": "2026-11-11",
    "reason": "two consecutive earnings cycles without review"
+  },
+  {
+   "value": 17,
+   "rationale": "AWS backlog growing",
+   "source": "migrated from VISIBILITY_OVERRIDES (code+config union)",
+   "as_of": "2026-07-29",
+   "sector": "Consumer Cyclical",
+   "sector_prior": 11,
+   "delta_vs_prior": 6,
+   "cadence": "earnings+14d",
+   "next_earnings": "2026-07-30",
+   "review_by": "2026-08-13",
+   "falsification": {
+    "claim": "AWS backlog growing",
+    "hard_triggers": "guidance cut \u00b7 backlog decline QoQ \u00b7 cancelled PPA/contract \u2192 immediate review"
+   },
+   "ticker": "AMZN",
+   "retired_at": "2026-11-12",
+   "retire_rule_date": "2026-11-12",
+   "reason": "two consecutive earnings cycles without review"
   }
  ],
  "policy_events": [
@@ -341,6 +345,13 @@
     "GD",
     "MSFT",
     "VRT"
+   ]
+  },
+  {
+   "date": "2026-11-12",
+   "event": "retired",
+   "tickers": [
+    "AMZN"
    ]
   }
  ]

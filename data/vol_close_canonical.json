@@ -1,7 +1,7 @@
 {
-  "date": "2026-11-10",
-  "session_date": "2026-11-10",
-  "fetched_at": "2026-11-11T11:24:17Z",
+  "date": "2026-11-11",
+  "session_date": "2026-11-11",
+  "fetched_at": "2026-11-12T02:45:54Z",
   "provider_chain": "Cboe official close (us_indices/daily_prices/*_History.csv) \u2192 yfinance daily bar",
   "providers": {
     "vix": "cboe",
@@ -9,46 +9,48 @@
     "vvix": "cboe",
     "vix1d": "cboe",
     "skew": "cboe",
-    "move": "yfinance"
+    "move": "unavailable"
   },
-  "null_reasons": {},
-  "vix": 19.46,
-  "vix3m": 20.64,
-  "vvix": 96.63,
-  "vix1d": 13.95,
-  "skew": 151.12,
-  "move": 92.43,
-  "spread_spot_3m": -1.18,
+  "null_reasons": {
+    "move": "no ^MOVE bar for 2026-11-11: ICE publishes no free official close and yfinance had none; unavailable, not substituted"
+  },
+  "vix": 17.49,
+  "vix3m": 19.24,
+  "vvix": 90.47,
+  "vix1d": 12.64,
+  "skew": 149.09,
+  "move": null,
+  "spread_spot_3m": -1.75,
   "series_sources": {
     "vix": {
       "provider": "cboe",
       "from": "1990-01-02",
-      "to": "2026-11-10",
-      "n": 9313
+      "to": "2026-11-11",
+      "n": 9314
     },
     "vix3m": {
       "provider": "cboe",
       "from": "2009-09-18",
-      "to": "2026-11-10",
-      "n": 4313
+      "to": "2026-11-11",
+      "n": 4314
     },
     "vvix": {
       "provider": "cboe",
       "from": "2006-03-06",
-      "to": "2026-11-10",
-      "n": 5144
+      "to": "2026-11-11",
+      "n": 5145
     },
     "vix1d": {
       "provider": "cboe",
       "from": "2022-05-13",
-      "to": "2026-11-10",
-      "n": 1128
+      "to": "2026-11-11",
+      "n": 1129
     },
     "skew": {
       "provider": "cboe",
       "from": "1990-01-02",
-      "to": "2026-11-10",
-      "n": 9267
+      "to": "2026-11-11",
+      "n": 9268
     }
   },
   "source": "CANONICAL close for the vol complex \u2014 the single close of record. intraday.json is a live snapshot; post-close it reconciles to this file.",
