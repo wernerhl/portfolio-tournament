@@ -1,8 +1,8 @@
 {
   "cadence": "daily",
-  "session_date": "2026-11-11",
-  "as_of": "2026-11-11",
-  "computed_at": "2026-11-11T23:37:49-05:00",
+  "session_date": "2026-11-12",
+  "as_of": "2026-11-12",
+  "computed_at": "2026-11-13T08:21:17-05:00",
   "color": "RED",
   "rules_fired": [
     {
@@ -13,78 +13,83 @@
     {
       "id": "R6",
       "text": "a held name closes below its Chandelier level and its 200-day average on the same day",
-      "evidence": "below both levels: GEV, NVDA, GOOG, BMNR"
+      "evidence": "below both levels: NVDA, GOOG, BMNR"
+    },
+    {
+      "id": "Y6",
+      "text": "a held name within 3 percent of its 200-day average",
+      "evidence": "AVGO -0.7%"
     }
   ],
-  "entry_id": "brief-2026-11-11-1",
-  "payload_sha256": "f4e1871ab8e67eba9f5c7952ba3a136003162861dec174c30c25d8f88e7b343a",
-  "text": "2026-11-11: S&P 500 +1.31%, VIX 17.49 (-10.1%), SKEW 149.1; regime ELEVATED (R 0.4514); 10-year 4.88%; book +0.89% (AVGO +3.99%); next: PPI 2026-11-13.",
+  "entry_id": "brief-2026-11-12-1",
+  "payload_sha256": "4d2a2901630520aa15e2c2b3c426332705e5f6843e32435e084cfd8d690381e4",
+  "text": "2026-11-12: S&P 500 -0.35%, VIX 18.7 (+6.9%), SKEW 150.2; regime ELEVATED (R 0.4764); 10-year 4.98%; book +0.24% (AVGO +5.54%); next: PPI 2026-11-13.",
   "text_source": "template",
   "payload": {
-    "session": "2026-11-11",
+    "session": "2026-11-12",
     "indices": {
       "S&P 500": {
-        "close": 7619.38,
-        "change_pct": 1.31
+        "close": 7592.4,
+        "change_pct": -0.35
       },
       "SPY": {
-        "close": 759.81,
-        "change_pct": 1.32
+        "close": 757.12,
+        "change_pct": -0.35
       },
       "QQQ": {
-        "close": 690.38,
-        "change_pct": 2.31
+        "close": 688.17,
+        "change_pct": -0.32
       },
       "IWM": {
-        "close": 283.09,
-        "change_pct": 0.89
+        "close": 278.44,
+        "change_pct": -1.64
       },
       "SMH": {
-        "close": 506.96,
-        "change_pct": 4.82
+        "close": 501.73,
+        "change_pct": -1.03
       }
     },
     "sectors": {
-      "Technology": 3.23,
-      "Financials": 0.58,
-      "Energy": 1.86,
-      "Health care": 0.04,
-      "Industrials": 1.33,
-      "Consumer discretionary": -0.05,
-      "Consumer staples": 0.46,
-      "Utilities": 0.21,
-      "Materials": 0.32,
-      "Real estate": 0.02,
-      "Communication services": 0.78
+      "Technology": -0.34,
+      "Financials": -0.72,
+      "Energy": 1.51,
+      "Health care": -0.59,
+      "Industrials": -0.89,
+      "Consumer discretionary": -0.44,
+      "Consumer staples": -0.43,
+      "Utilities": -0.02,
+      "Materials": -1.28,
+      "Real estate": -0.52,
+      "Communication services": -0.96
     },
     "sectors_weakest": [
       [
-        "Consumer discretionary",
-        -0.05
+        "Materials",
+        -1.28
       ],
       [
-        "Real estate",
-        0.02
+        "Communication services",
+        -0.96
       ]
     ],
     "sectors_strongest": [
       [
-        "Technology",
-        3.23
+        "Energy",
+        1.51
       ],
       [
-        "Energy",
-        1.86
+        "Utilities",
+        -0.02
       ]
     ],
     "regime": {
-      "R": 0.4514,
+      "R": 0.4764,
       "label": "ELEVATED",
       "label_basis": "tournament row",
-      "series_date": "2026-11-11",
-      "prev_R": 0.4842,
-      "rising_streak_sessions": 0,
-      "published_R": 0.4514,
+      "series_date": "2026-11-12",
+      "prev_R": 0.4482,
+      "rising_streak_sessions": 1,
+      "published_R": 0.4764,
       "published_label": "ELEVATED"
     },
     "flags": {
@@ -95,80 +100,86 @@
       "shock_reasons": []
     },
     "volatility": {
-      "vix": 17.49,
-      "vix_prev": 19.46,
-      "vix_change_pct": -10.1,
-      "vix3m": 19.24,
-      "skew": 149.1,
-      "vvix": 90.47
+      "vix": 18.7,
+      "vix_prev": 17.49,
+      "vix_change_pct": 6.9,
+      "vix3m": 20.06,
+      "skew": 150.2,
+      "vvix": 96.71
     },
     "rates": {
-      "us10y_pct": 4.88,
-      "us10y_date": "2026-11-09",
-      "us10y_change_bp": 2.0,
-      "us10y_lag_note": "latest FRED observation 2026-11-09 (published with a lag)"
+      "us10y_pct": 4.98,
+      "us10y_date": "2026-11-10",
+      "us10y_change_bp": 10.0,
+      "us10y_lag_note": "latest FRED observation 2026-11-10 (published with a lag)"
     },
     "credit": {
       "ig_state": "normal",
       "hy_state": "wide",
-      "hy_oas_bps": 334.0,
-      "ig_oas_bps": 91.0,
-      "as_of": "2026-11-09"
+      "hy_oas_bps": 330.0,
+      "ig_oas_bps": 90.0,
+      "as_of": "2026-11-11"
     },
     "book": {
-      "nav": 221564.0,
-      "nav_prev": 219620.0,
-      "change_pct": 0.89,
-      "change_dollars": 1944.0,
+      "nav": 222100.0,
+      "nav_prev": 221564.0,
+      "change_pct": 0.24,
+      "change_dollars": 536.0,
       "top_contributor": {
         "ticker": "AVGO",
-        "dollars": 662.0,
-        "change_pct": 3.99
+        "dollars": 957.0,
+        "change_pct": 5.54
       },
       "held_moves": [
         {
           "ticker": "GEV",
-          "close": 808.24,
-          "change_pct": 1.41,
-          "dollars": 280.0
+          "close": 818.49,
+          "change_pct": 1.27,
+          "dollars": 256.0
         },
         {
           "ticker": "NVDA",
-          "close": 173.73,
-          "change_pct": 2.87,
-          "dollars": 485.0
+          "close": 166.19,
+          "change_pct": -4.34,
+          "dollars": -755.0
         },
         {
           "ticker": "AVGO",
-          "close": 345.22,
-          "change_pct": 3.99,
-          "dollars": 662.0
+          "close": 364.36,
+          "change_pct": 5.54,
+          "dollars": 957.0
         },
         {
           "ticker": "GOOG",
-          "close": 290.63,
-          "change_pct": 2.0,
-          "dollars": 285.0
+          "close": 295.35,
+          "change_pct": 1.62,
+          "dollars": 236.0
         },
         {
           "ticker": "BMNR",
-          "close": 19.24,
-          "change_pct": 6.42,
-          "dollars": 232.0
+          "close": 18.45,
+          "change_pct": -4.11,
+          "dollars": -158.0
         }
       ],
       "moves_over_3pct": [
         {
+          "ticker": "NVDA",
+          "close": 166.19,
+          "change_pct": -4.34,
+          "dollars": -755.0
+        },
+        {
           "ticker": "AVGO",
-          "close": 345.22,
-          "change_pct": 3.99,
-          "dollars": 662.0
+          "close": 364.36,
+          "change_pct": 5.54,
+          "dollars": 957.0
         },
         {
           "ticker": "BMNR",
-          "close": 19.24,
-          "change_pct": 6.42,
-          "dollars": 232.0
+          "close": 18.45,
+          "change_pct": -4.11,
+          "dollars": -158.0
         }
       ],
       "holdings_as_of": "2026-09-30",
@@ -178,70 +189,83 @@
     "held_levels": [
       {
         "ticker": "GEV",
-        "close": 808.24,
-        "ma200": 947.6,
-        "ma200_dist_pct": -14.71,
-        "chandelier": 826.97,
+        "close": 818.49,
+        "ma200": 948.37,
+        "ma200_dist_pct": -13.69,
+        "chandelier": 816.5,
         "chandelier_source": "OHLC (provider)",
-        "below_chandelier": true,
+        "below_chandelier": false,
         "below_ma200": true,
-        "prev_close": 797.04,
+        "prev_close": 808.24,
         "rulebook_trailing_level": 1033.88
       },
       {
         "ticker": "NVDA",
-        "close": 173.73,
-        "ma200": 204.32,
-        "ma200_dist_pct": -14.97,
-        "chandelier": 203.57,
+        "close": 166.19,
+        "ma200": 204.2,
+        "ma200_dist_pct": -18.62,
+        "chandelier": 198.29,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 168.89,
-        "rulebook_trailing_level": 186.61
+        "prev_close": 173.73,
+        "rulebook_trailing_level": 196.18
       },
       {
         "ticker": "AVGO",
-        "close": 345.22,
-        "ma200": 366.71,
-        "ma200_dist_pct": -5.86,
-        "chandelier": 311.71,
+        "close": 364.36,
+        "ma200": 366.91,
+        "ma200_dist_pct": -0.7,
+        "chandelier": 320.45,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": false,
         "below_ma200": true,
-        "prev_close": 331.98,
+        "prev_close": 345.22,
         "rulebook_trailing_level": 423.78
       },
       {
         "ticker": "GOOG",
-        "close": 290.63,
-        "ma200": 336.76,
-        "ma200_dist_pct": -13.7,
-        "chandelier": 323.7,
+        "close": 295.35,
+        "ma200": 336.57,
+        "ma200_dist_pct": -12.25,
+        "chandelier": 323.45,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 284.92,
+        "prev_close": 290.63,
         "rulebook_trailing_level": 351.16
       },
       {
         "ticker": "BMNR",
-        "close": 19.24,
-        "ma200": 20.57,
-        "ma200_dist_pct": -6.49,
-        "chandelier": 19.92,
+        "close": 18.45,
+        "ma200": 20.53,
+        "ma200_dist_pct": -10.12,
+        "chandelier": 19.8,
         "chandelier_source": "OHLC (provider)",
         "below_chandelier": true,
         "below_ma200": true,
-        "prev_close": 18.08,
+        "prev_close": 19.24,
         "rulebook_trailing_level": 36.2
       }
     ],
-    "releases_today": [],
+    "releases_today": [
+      {
+        "type": "CLAIMS",
+        "name": "Unemployment Insurance Weekly Claims",
+        "impact": "low",
+        "time_et": "08:30",
+        "print": {
+          "value": 200000.0,
+          "unit": "thousands",
+          "period": "2026-11-07"
+        },
+        "print_note": "FRED at run time"
+      }
+    ],
     "upcoming_two_sessions": {
       "sessions": [
-        "2026-11-12",
-        "2026-11-13"
+        "2026-11-13",
+        "2026-11-16"
       ],
       "high_impact_macro": [],
       "held_earnings": []
@@ -306,24 +330,32 @@
       "SPY"
     ],
     "notes": [
-      "10-year yield: latest FRED observation 2026-11-09 (published with a lag)"
+      "10-year yield: latest FRED observation 2026-11-10 (published with a lag)"
     ],
     "entry_state_changes": [
       {
-        "ticker": "AVGO",
-        "from": "READY-HALF",
+        "ticker": "CEG",
+        "from": "AVOID",
+        "to": "READY",
+        "reason": "a passing trend gate",
+        "groups": [
+          "board"
+        ]
+      },
+      {
+        "ticker": "HON",
+        "from": "READY",
         "to": "AVOID",
         "reason": "trend gate failed: below the 200-day average with negative 12-month momentum",
         "groups": [
-          "held",
           "board"
         ]
       },
       {
         "ticker": "IBM",
-        "from": "AVOID",
-        "to": "READY",
-        "reason": "a passing trend gate",
+        "from": "READY",
+        "to": "AVOID",
+        "reason": "trend gate failed: below the 200-day average with negative 12-month momentum",
         "groups": [
           "board"
         ]

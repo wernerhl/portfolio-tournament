@@ -1,13 +1,13 @@
 {
   "cadence": "daily",
-  "session_date": "2026-11-11",
-  "as_of": "2026-11-12",
-  "computed_at": "2026-11-12T15:52:52-05:00",
+  "session_date": "2026-11-12",
+  "as_of": "2026-11-13",
+  "computed_at": "2026-11-13T08:13:24-05:00",
   "history_years": 6,
   "reaction_rule": "before-open releases: prior close to the release-day close; after-close releases: release-day close to the next close. The timing comes from the company's 8-K (Item 2.02) acceptance time in EDGAR when one was filed on the release day, otherwise from the provider's stamp (hour 12 or later = after the close); each release records its source (order 6-Oct-2026, section 5)",
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
-    "store_through": "2026-11-11",
+    "store_through": "2026-11-12",
     "overlay": null
   },
   "names": {
@@ -12336,7 +12336,7 @@
         "mean_abs_last8": 0.078
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-11-05T08:13:45-05:00",
+      "retrieved_at": "2026-11-13T08:13:24-05:00",
       "history_years": 6
     },
     "MA": {
@@ -13382,7 +13382,7 @@
         "mean_abs_last8": 0.11821
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-11-05T08:13:45-05:00",
+      "retrieved_at": "2026-11-13T08:13:24-05:00",
       "history_years": 6
     },
     "MMM": {
@@ -13810,7 +13810,7 @@
         "mean_abs_last8": 0.05144
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-11-03T00:11:02-05:00",
+      "retrieved_at": "2026-11-13T08:13:24-05:00",
       "history_years": 6
     },
     "RJF": {
@@ -15327,14 +15327,6 @@
       },
       "history": [
         {
-          "date": "2020-11-06",
-          "time_of_day": "before_open",
-          "timing_source": "provider stamp 06:00",
-          "pre_date": "2020-11-05",
-          "post_date": "2020-11-06",
-          "reaction": 0.03319
-        },
-        {
           "date": "2021-02-04",
           "time_of_day": "before_open",
           "timing_source": "provider stamp 06:00",
@@ -15345,7 +15337,7 @@
         {
           "date": "2021-04-29",
           "time_of_day": "before_open",
-          "timing_source": "EDGAR 8-K item 2.02 accepted 06:51 ET (before the open)",
+          "timing_source": "provider stamp 06:00",
           "pre_date": "2021-04-28",
           "post_date": "2021-04-29",
           "reaction": 0.03374
@@ -15528,9 +15520,9 @@
         }
       ],
       "stats": {
-        "n": 25,
-        "mean_abs": 0.02605,
-        "median_abs": 0.02583,
+        "n": 24,
+        "mean_abs": 0.02576,
+        "median_abs": 0.02467,
         "max_abs": 0.09033,
         "max_date": "2026-02-05",
         "n_last8": 8,
@@ -15538,7 +15530,7 @@
         "mean_abs_last8": 0.03098
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-11-04T08:12:58-05:00",
+      "retrieved_at": "2026-11-13T08:13:24-05:00",
       "history_years": 6
     },
     "PAYX": {
@@ -16806,7 +16798,7 @@
         "mean_abs_last8": 0.07743
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-11-05T08:13:45-05:00",
+      "retrieved_at": "2026-11-13T08:13:24-05:00",
       "history_years": 6
     },
     "VRTX": {
@@ -20917,14 +20909,6 @@
       },
       "history": [
         {
-          "date": "2020-11-05",
-          "time_of_day": "before_open",
-          "timing_source": "provider stamp missing (before the open assumed)",
-          "pre_date": "2020-11-04",
-          "post_date": "2020-11-05",
-          "reaction": -0.00222
-        },
-        {
           "date": "2021-02-24",
           "time_of_day": "after_close",
           "timing_source": "provider stamp 17:00",
@@ -21119,9 +21103,9 @@
         }
       ],
       "stats": {
-        "n": 25,
-        "mean_abs": 0.04505,
-        "median_abs": 0.0388,
+        "n": 24,
+        "mean_abs": 0.04684,
+        "median_abs": 0.04104,
         "max_abs": 0.11322,
         "max_date": "2024-11-07",
         "n_last8": 8,
@@ -21129,7 +21113,7 @@
         "mean_abs_last8": 0.04675
       },
       "source": "provider earnings calendar (yfinance Ticker.get_earnings_dates); dates are the provider's, estimated until confirmed",
-      "retrieved_at": "2026-11-05T08:13:45-05:00",
+      "retrieved_at": "2026-11-13T08:13:24-05:00",
       "history_years": 6
     },
     "EOG": {
