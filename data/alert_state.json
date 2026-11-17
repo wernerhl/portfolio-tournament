@@ -1,44 +1,67 @@
 {
   "cadence": "daily",
-  "session_date": "2026-11-12",
-  "as_of": "2026-11-12",
-  "updated": "2026-11-14T03:53:06+00:00",
+  "session_date": "2026-11-16",
+  "as_of": "2026-11-16",
+  "updated": "2026-11-17T06:13:21+00:00",
   "schema": 1,
   "regime": {
-    "label": "ELEVATED",
-    "served_label": "ELEVATED",
-    "R_full": 0.4764,
-    "session": "2026-11-12"
+    "label": "HIGH RISK",
+    "served_label": "HIGH RISK",
+    "R_full": 0.5393,
+    "session": "2026-11-16"
   },
   "shock": {
-    "active": false,
-    "reasons": [],
-    "session": "2026-11-12"
+    "active": true,
+    "reasons": [
+      "VIX +19%",
+      "SPX -1.9%"
+    ],
+    "session": "2026-11-16"
   },
   "complacency": {
     "kind": null,
     "reason": null,
-    "session": "2026-11-12"
+    "session": "2026-11-16"
   },
   "intraday": {
-    "session_date": "2026-11-13",
-    "timestamp": "2026-11-14T00:56:45"
+    "session_date": "2026-11-17",
+    "timestamp": "2026-11-17T06:09:13"
   },
   "issues": {
-    "regime": null,
-    "shock": null,
+    "regime": {
+      "number": 25,
+      "url": "https://github.com/wernerhl/portfolio-tournament/issues/25",
+      "dry_run": false,
+      "opened_session": "2026-11-16",
+      "from": "ELEVATED",
+      "to": "HIGH RISK",
+      "R_full": 0.5393,
+      "session": "2026-11-16"
+    },
+    "shock": {
+      "number": 26,
+      "url": "https://github.com/wernerhl/portfolio-tournament/issues/26",
+      "dry_run": false,
+      "opened_session": "2026-11-16",
+      "reasons": [
+        "VIX +19%",
+        "SPX -1.9%"
+      ],
+      "session": "2026-11-16"
+    },
     "complacency": null
   },
   "last_opened": {
-    "regime": "2026-10-07",
-    "shock": "2026-11-04",
+    "regime": "2026-11-16",
+    "shock": "2026-11-16",
     "complacency": "2026-11-03"
   },
   "last_run": {
-    "session_date": "2026-11-12",
+    "session_date": "2026-11-16",
     "mode": "live",
     "actions": [
-      "no state change"
+      "[regime] opened ELEVATED -> HIGH RISK",
+      "[shock] opened"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
