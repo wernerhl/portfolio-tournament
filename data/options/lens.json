@@ -1,8 +1,8 @@
 {
   "cadence": "daily",
   "session_date": "2026-11-13",
-  "as_of": "2026-11-17",
-  "computed_at": "2026-11-17T01:09:08-05:00",
+  "as_of": "2026-11-18",
+  "computed_at": "2026-11-18T00:10:57-05:00",
   "snapshot_kind": "scheduled",
   "pulled_at": "2026-11-13T15:49:01-05:00",
   "risk_free": 0.043,
@@ -22,7 +22,7 @@
   },
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
-    "store_through": "2026-11-16",
+    "store_through": "2026-11-17",
     "overlay": null
   },
   "names": {
@@ -258,9 +258,7 @@
       "warnings": []
     },
     "ADSK": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
@@ -1584,46 +1582,46 @@
         "back_iv": 0.7866,
         "front_minus_back": 0.0069,
         "inverted": true,
-        "reason": "earnings 2026-11-20 falls inside the front tenor (2026-12-11)"
+        "reason": null
       },
       "event": {
-        "next_earnings": "2026-11-20",
+        "next_earnings": "2027-01-12",
         "time_of_day": "after_close",
-        "days_to": 7,
-        "sessions_to": 5,
-        "expiry_after": "2026-11-27",
-        "implied_move": 0.0418142606822987,
+        "days_to": 60,
+        "sessions_to": 39,
+        "expiry_after": "2027-01-15",
+        "implied_move": 0.08573126518248367,
         "implied_move_reason": null,
-        "expiry_before": "2026-11-20",
+        "expiry_before": "2026-12-24",
         "fallback": false,
-        "iv_post": 0.8002,
-        "sessions_to_post": 9,
-        "iv_pre": 0.8156,
-        "sessions_to_pre": 5,
-        "non_event_sessions": 3,
-        "event_variance": 0.001748,
+        "iv_post": 0.7965,
+        "sessions_to_post": 42,
+        "iv_pre": 0.7776,
+        "sessions_to_pre": 28,
+        "non_event_sessions": 13,
+        "event_variance": 0.00735,
         "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
         "superseded_26sept_method": {
-          "implied_move": 0.0568,
+          "implied_move": 0.0712,
           "base_iv_back": 0.7866,
           "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
         },
         "history": {
-          "n": 4,
-          "mean_abs": 0.0294,
-          "median_abs": 0.0354,
-          "max_abs": 0.0461,
-          "max_date": "2026-01-13",
-          "n_exceeding_implied": 1,
-          "share_exceeding_implied": 0.25,
+          "n": 5,
+          "mean_abs": 0.0364,
+          "median_abs": 0.04,
+          "max_abs": 0.0642,
+          "max_date": "2026-11-10",
+          "n_exceeding_implied": 0,
+          "share_exceeding_implied": 0.0,
           "last8": {
-            "n": 4,
-            "median_abs": 0.0354,
-            "mean_abs": 0.0294,
-            "n_exceeding_implied": 1
+            "n": 5,
+            "median_abs": 0.04,
+            "mean_abs": 0.0364,
+            "n_exceeding_implied": 0
           }
         },
-        "event_premium": 0.0064
+        "event_premium": 0.0457
       },
       "skew": {
         "expiry": "2026-12-11",
@@ -1772,7 +1770,9 @@
       "warnings": []
     },
     "BMY": {
-      "roles": [],
+      "roles": [
+        "board"
+      ],
       "roles_at_snapshot": [
         "board"
       ],
@@ -2456,9 +2456,7 @@
       "warnings": []
     },
     "CRM": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
@@ -3133,9 +3131,7 @@
       "warnings": []
     },
     "EOG": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
@@ -3352,9 +3348,7 @@
       ]
     },
     "EQT": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
@@ -5412,7 +5406,9 @@
       "warnings": []
     },
     "INTU": {
-      "roles": [],
+      "roles": [
+        "board"
+      ],
       "roles_at_snapshot": [
         "board"
       ],
@@ -8480,9 +8476,7 @@
       "warnings": []
     },
     "RMD": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],

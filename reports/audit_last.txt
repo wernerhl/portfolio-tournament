@@ -1,18 +1,16 @@
-last trading session: 2026-11-16
-[HIGH    ] tournament:freshness         alert_state.json: max date 2026-11-12 is 2 sessions-old vs last session 2026-11-16
+last trading session: 2026-11-17
 [HIGH    ] tournament:dead_columns      regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_7_20_random_forest', 'p_15_40_gradient_boost']
-[HIGH    ] xfile:vol_single_source      intraday vix 22.88 vs canonical 22.91
 [HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
 [HIGH    ] governance:coverage          1_cap_pres: unclassified share 51% > 15%
-[HIGH    ] governance:coverage          2_balanced: unclassified share 36% > 15%
+[HIGH    ] governance:coverage          2_balanced: unclassified share 37% > 15%
 [HIGH    ] governance:coverage          3_aggressive: unclassified share 41% > 15%
-[HIGH    ] governance:coverage          4_tactical: unclassified share 46% > 15%
+[HIGH    ] governance:coverage          4_tactical: unclassified share 47% > 15%
 [HIGH    ] governance:coverage          5_werner: unclassified share 17% > 15%
-[HIGH    ] book:holdings_age            holdings.json as_of 2026-09-30 is 33 sessions old (>5): confirm or re-export the account
-[HIGH    ] options:vintage_missing      no chain vintage for the last session 2026-11-16 (latest: 2026-11-13); reason no_run_in_window (first run of the day created 17:47 ET)
-[HIGH    ] options:captured_share       17 of the last 20 trading days captured (85% < 90%); missing: ['2026-11-02 no_run_in_window', '2026-11-09 no_run_in_window', '2026-11-16 no_run_in_window']
-[HIGH    ] options:lens_spot_stale      held names whose lens spot is not the last session 2026-11-16: ['AVGO: provider 1-minute tape', 'BMNR: provider 1-minute tape', 'GEV: provider 1-minute tape', 'GOOG: provider 1-minute tape', 'NVDA: provider 1-minute tape']
-[HIGH    ] rates:stale                  global-rates series older than their expected lag: ['us2: 2026-10-02 (31 business days behind 2026-11-16, allowed 2)', 'us10: 2026-10-02 (31 business days behind 2026-11-16, allowed 2)', 'us30: 2026-10-02 (31 business days behind 2026-11-16, allowed 2)', 'us_real10: 2026-10-02 (31 business days behind 2026-11-16, allowed 2)', 'us_be10: 2026-10-05 (30 business days behind 2026-11-16, allowed 2)', 'us_tp_kw: 2026-09-25 (36 business days behind 2026-11-16, allowed 8)', 'effr: 2026-10-02 (31 business days behind 2026-11-16, allowed 2)', 'us3m: 2026-10-02 (31 business days behind 2026-11-16, allowed 2)']
+[HIGH    ] book:holdings_age            holdings.json as_of 2026-09-30 is 34 sessions old (>5): confirm or re-export the account
+[HIGH    ] options:vintage_missing      no chain vintage for the last session 2026-11-17 (latest: 2026-11-13); reason no_run_in_window (first run of the day created 16:37 ET)
+[HIGH    ] options:captured_share       16 of the last 20 trading days captured (80% < 90%); missing: ['2026-11-02 no_run_in_window', '2026-11-09 no_run_in_window', '2026-11-16 no_run_in_window', '2026-11-17 no_run_in_window']
+[HIGH    ] options:lens_spot_stale      held names whose lens spot is not the last session 2026-11-17: ['AVGO: provider 1-minute tape', 'BMNR: provider 1-minute tape', 'GEV: provider 1-minute tape', 'GOOG: provider 1-minute tape', 'NVDA: provider 1-minute tape']
+[HIGH    ] rates:stale                  global-rates series older than their expected lag: ['us2: 2026-10-02 (32 business days behind 2026-11-17, allowed 2)', 'us10: 2026-10-02 (32 business days behind 2026-11-17, allowed 2)', 'us30: 2026-10-02 (32 business days behind 2026-11-17, allowed 2)', 'us_real10: 2026-10-02 (32 business days behind 2026-11-17, allowed 2)', 'us_be10: 2026-10-05 (31 business days behind 2026-11-17, allowed 2)', 'us_tp_kw: 2026-09-25 (37 business days behind 2026-11-17, allowed 8)', 'effr: 2026-10-02 (32 business days behind 2026-11-17, allowed 2)', 'us3m: 2026-10-02 (32 business days behind 2026-11-17, allowed 2)']
 [HIGH    ] governance:review_overdue    visibility override AVGO review_by 2026-09-17 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override GEV review_by 2026-11-11 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override GOOG review_by 2026-11-11 passed (decay should be active)
@@ -23,7 +21,7 @@ last trading session: 2026-11-16
 [HIGH    ] governance:review_overdue    visibility override RTX review_by 2026-11-03 passed (decay should be active)
 [HIGH    ] governance:review_overdue    visibility override TSM review_by 2026-10-29 passed (decay should be active)
 [HIGH    ] calendar:treasury_source     2 tentative auction(s) past their announcement date and not announced in TA_WS: 2026-11-18 20Y (scheduled announcement 2026-11-12); 2026-11-19 TIPS 10Y reopening (scheduled announcement 2026-11-12)
-[HIGH    ] universe:stale_ticker        universe names with no price bar in the last five sessions (2026-11-10..2026-11-16): ['AVB', 'CFLT', 'EA', 'KVUE', 'PSKY', 'PSTG', 'WBD']
+[HIGH    ] universe:stale_ticker        universe names with no price bar in the last five sessions (2026-11-11..2026-11-17): ['AVB', 'CFLT', 'EA', 'KVUE', 'PSKY', 'PSTG', 'WBD']
 [MEDIUM  ] v4:calibration_evaluation    v4_calibration.json lacks evaluation: out_of_fold with a fold definition (in-sample reliability is not calibration evidence)
 [INFO    ] tournament:freshness         loco_cv_results.csv: no date axis found (static config?)
 [INFO    ] tournament:freshness         ml_indicator_weights.csv: no date axis found (static config?)
@@ -40,7 +38,7 @@ last trading session: 2026-11-16
 [INFO    ] analyst:snapshot_index       5 missed day(s) on record: ['2026-10-16', '2026-10-23', '2026-10-30', '2026-11-06', '2026-11-13']
 [INFO    ] rates:vintage_session        rates vintage 2026-10-06 holds the 2026-10-05 session (erratum erratum-2026-10-06-rates-vintage-1; the file stays as written)
 [INFO    ] universe:index_gap           9 current index members (as of 2026-09-30) not in the universe; listed for the owner, never added by the pipeline: ['BE', 'FDXF', 'FERG', 'FLEX', 'HONA', 'ILMN', 'P', 'Q', 'RDDT']
-[INFO    ] site:session                 live site session 2026-11-13, 90.8 h since its last publish (last session 2026-11-16)
+[INFO    ] site:session                 live site session 2026-11-16, 24.9 h since its last publish (last session 2026-11-17)
 
-42 findings; 0 CRITICAL
-REFEREE COMPLETE: 42 findings; 0 CRITICAL
+40 findings; 0 CRITICAL
+REFEREE COMPLETE: 40 findings; 0 CRITICAL
