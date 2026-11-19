@@ -2,7 +2,7 @@
   "cadence": "daily",
   "session_date": "2026-11-13",
   "as_of": "2026-11-18",
-  "computed_at": "2026-11-18T00:10:57-05:00",
+  "computed_at": "2026-11-18T23:47:14-05:00",
   "snapshot_kind": "scheduled",
   "pulled_at": "2026-11-13T15:49:01-05:00",
   "risk_free": 0.043,
@@ -22,7 +22,7 @@
   },
   "closes_provenance": {
     "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
-    "store_through": "2026-11-17",
+    "store_through": "2026-11-18",
     "overlay": null
   },
   "names": {
@@ -2225,9 +2225,7 @@
       "warnings": []
     },
     "COP": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
@@ -2916,7 +2914,9 @@
       "warnings": []
     },
     "DECK": {
-      "roles": [],
+      "roles": [
+        "board"
+      ],
       "roles_at_snapshot": [
         "board"
       ],
@@ -6278,9 +6278,7 @@
       "warnings": []
     },
     "MKC": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
@@ -7331,46 +7329,46 @@
         "back_iv": 0.5108,
         "front_minus_back": 0.1089,
         "inverted": true,
-        "reason": "earnings 2026-11-17 falls inside the front tenor (2026-12-11)"
+        "reason": null
       },
       "event": {
-        "next_earnings": "2026-11-17",
+        "next_earnings": "2027-02-24",
         "time_of_day": "after_close",
-        "days_to": 4,
-        "sessions_to": 2,
-        "expiry_after": "2026-11-18",
-        "implied_move": 0.08639293127929538,
-        "implied_move_reason": null,
-        "expiry_before": "2026-11-16",
+        "days_to": 103,
+        "sessions_to": 68,
+        "expiry_after": "2027-03-19",
+        "implied_move": null,
+        "implied_move_reason": "event variance not positive under the bracketing method (the pre-expiry's variance and base exceed the post-expiry's)",
+        "expiry_before": "2027-02-19",
         "fallback": false,
-        "iv_post": 1.0114,
-        "sessions_to_post": 3,
-        "iv_pre": 0.7706,
-        "sessions_to_pre": 1,
-        "non_event_sessions": 1,
-        "event_variance": 0.007464,
+        "iv_post": 0.504,
+        "sessions_to_post": 85,
+        "iv_pre": 0.5108,
+        "sessions_to_pre": 65,
+        "non_event_sessions": 19,
+        "event_variance": -0.001303,
         "method": "bracketing: post total variance \u2212 pre total variance \u2212 IV_pre\u00b2\u00b7(non-event sessions)/252; pre = last expiry before the release, post = first expiry after it; sessions strictly after the snapshot session",
         "superseded_26sept_method": {
-          "implied_move": 0.1005,
+          "implied_move": null,
           "base_iv_back": 0.5108,
           "method": "sqrt(IV_E1\u00b2\u00b7n/252 \u2212 IV_back\u00b2\u00b7(n\u22121)/252) \u2014 replaced 30-Sept (C1)"
         },
         "history": {
-          "n": 24,
-          "mean_abs": 0.0605,
-          "median_abs": 0.0459,
+          "n": 25,
+          "mean_abs": 0.0593,
+          "median_abs": 0.0401,
           "max_abs": 0.2437,
           "max_date": "2023-05-24",
-          "n_exceeding_implied": 5,
-          "share_exceeding_implied": 0.2083,
+          "n_exceeding_implied": null,
+          "share_exceeding_implied": null,
           "last8": {
             "n": 8,
             "median_abs": 0.032,
-            "mean_abs": 0.0402,
-            "n_exceeding_implied": 1
+            "mean_abs": 0.0432,
+            "n_exceeding_implied": null
           }
         },
-        "event_premium": 0.0405
+        "event_premium": null
       },
       "skew": {
         "expiry": "2026-12-11",
@@ -7547,9 +7545,7 @@
       "warnings": []
     },
     "PATH": {
-      "roles": [
-        "board"
-      ],
+      "roles": [],
       "roles_at_snapshot": [
         "board"
       ],
