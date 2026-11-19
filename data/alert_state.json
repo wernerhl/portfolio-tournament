@@ -1,30 +1,30 @@
 {
   "cadence": "daily",
-  "session_date": "2026-11-17",
-  "as_of": "2026-11-17",
-  "updated": "2026-11-18T05:15:41+00:00",
+  "session_date": "2026-11-18",
+  "as_of": "2026-11-18",
+  "updated": "2026-11-19T04:51:29+00:00",
   "schema": 1,
   "regime": {
     "label": "HIGH RISK",
-    "served_label": "HIGH RISK",
-    "R_full": 0.5613,
-    "session": "2026-11-17"
+    "served_label": "ELEVATED",
+    "R_full": 0.5152,
+    "session": "2026-11-18"
   },
   "shock": {
     "active": true,
     "reasons": [
-      "VIX term backwardated (VIX 25.4 > VIX3M 25.1)"
+      "VIX term backwardated (VIX 24.6 > VIX3M 24.2)"
     ],
-    "session": "2026-11-17"
+    "session": "2026-11-18"
   },
   "complacency": {
     "kind": null,
     "reason": null,
-    "session": "2026-11-17"
+    "session": "2026-11-18"
   },
   "intraday": {
     "session_date": "2026-11-18",
-    "timestamp": "2026-11-18T05:11:03"
+    "timestamp": "2026-11-19T04:47:19"
   },
   "issues": {
     "regime": {
@@ -56,10 +56,10 @@
     "complacency": "2026-11-03"
   },
   "last_run": {
-    "session_date": "2026-11-17",
+    "session_date": "2026-11-18",
     "mode": "live",
     "actions": [
-      "no state change"
+      "[regime] suppressed by hysteresis: served label HIGH RISK -> ELEVATED but R_full 0.5152 is only -0.0152 beyond the 0.50 edge (< 0.02); alert state keeps HIGH RISK"
     ]
   },
   "cadence_note": "alerts bookkeeping, rewritten after each publish; changes only when an alert opens or closes \u2014 not a served daily artifact (order 26-Sept referee deadlock fix)"
