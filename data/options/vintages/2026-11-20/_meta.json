@@ -1,0 +1,584 @@
+{
+  "session": "2026-11-20",
+  "snapshot_kind": "scheduled",
+  "pulled_at": "2026-11-20T15:58:47-05:00",
+  "trigger": "backup cron 0 13 * * 1-5",
+  "risk_free": 0.0434,
+  "risk_free_date": "2026-11-18",
+  "iv_method": "Black-Scholes inversion, Brent on [0.01, 5.0]; provider IV field not stored",
+  "quote_rule": "bid-ask mid where both positive, else last (flagged)",
+  "closes_provenance": {
+    "store": "data/source/prices_daily.parquet + sector_etfs.parquet",
+    "store_through": "2026-11-19",
+    "overlay": "provider daily closes merged in memory through 2026-11-20 (store ended 2026-11-19; missing in store: none)"
+  },
+  "tickers": {
+    "ADBE": {
+      "roles": [
+        "board"
+      ],
+      "spot": 217.66000366210938,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 1208,
+      "n_iv": 966,
+      "front_live_quote_share": 0.7669902912621359,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "b1f6a7336267205bdb084b2499526c56485cdf5dbd1b22afd7f67daca21cc8e7",
+      "written_at": "2026-11-20T15:58:57-05:00"
+    },
+    "ADSK": {
+      "roles": [
+        "board"
+      ],
+      "spot": 244.1699981689453,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 12,
+      "n_strikes": 514,
+      "n_iv": 483,
+      "front_live_quote_share": 0.6,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "ea2f72ba8f9bb2d6f909d9acc8b07282bc76544ab05249d14e8be5d5a7483bf6",
+      "written_at": "2026-11-20T15:59:01-05:00"
+    },
+    "AMP": {
+      "roles": [
+        "board"
+      ],
+      "spot": 479.864990234375,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0138,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 3,
+      "n_strikes": 130,
+      "n_iv": 118,
+      "front_live_quote_share": 0.5636363636363636,
+      "expiries": [
+        "2026-12-18",
+        "2027-03-19",
+        "2027-06-17"
+      ],
+      "sha256": "0ce85b99f882a2c7a591ea7b645bf2b1dd3c77fc9f6381633274368121dcf5d0",
+      "written_at": "2026-11-20T15:59:02-05:00"
+    },
+    "AOS": {
+      "roles": [
+        "board"
+      ],
+      "spot": 63.060001373291016,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0239,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 3,
+      "n_strikes": 43,
+      "n_iv": 41,
+      "front_live_quote_share": 0.7777777777777778,
+      "expiries": [
+        "2026-12-18",
+        "2027-01-15",
+        "2027-04-16"
+      ],
+      "sha256": "97a4f5610cffc43688f85f306d0f51e9234aa14b85c7e31d2fb1f5f2f2d8103b",
+      "written_at": "2026-11-20T15:59:03-05:00"
+    },
+    "APA": {
+      "roles": [
+        "board"
+      ],
+      "spot": 44.880001068115234,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.022400000000000003,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 9,
+      "n_strikes": 317,
+      "n_iv": 288,
+      "front_live_quote_share": 0.75,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-03-19",
+        "2027-04-16"
+      ],
+      "sha256": "ea5be3b152ac6924762d46d4f607690eb09e9412c39cdbcc143e126d58fbdb05",
+      "written_at": "2026-11-20T15:59:06-05:00"
+    },
+    "AVGO": {
+      "roles": [
+        "held"
+      ],
+      "spot": 302.75,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0075,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 16,
+      "n_strikes": 2042,
+      "n_iv": 1707,
+      "front_live_quote_share": 0.8930348258706468,
+      "expiries": [
+        "2026-11-23",
+        "2026-11-25",
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "7dfcd200c7c267e895b9558475bb7f0fb14108890df51729b38f60dc2a44b846",
+      "written_at": "2026-11-20T15:59:13-05:00"
+    },
+    "AXP": {
+      "roles": [
+        "board"
+      ],
+      "spot": 301.30999755859375,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.012199999999999999,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 781,
+      "n_iv": 666,
+      "front_live_quote_share": 0.5789473684210527,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "44c0ee8a76d78971e5faed3ed2e11888c522412a1ce63bb133c2682d4b28853e",
+      "written_at": "2026-11-20T15:59:17-05:00"
+    },
+    "BMNR": {
+      "roles": [
+        "held"
+      ],
+      "spot": 12.895000457763672,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0007000000000000001,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 12,
+      "n_strikes": 582,
+      "n_iv": 387,
+      "front_live_quote_share": 0.9090909090909091,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-09-17"
+      ],
+      "sha256": "966f6f5d6b5747744962b42c66e701943487884475cc92204564b392a39b1607",
+      "written_at": "2026-11-20T15:59:21-05:00"
+    },
+    "BMY": {
+      "roles": [
+        "board"
+      ],
+      "spot": 58.775001525878906,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0432,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 12,
+      "n_strikes": 402,
+      "n_iv": 370,
+      "front_live_quote_share": 0.7307692307692307,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "a2978bf11d30e90d6dc6cab8cada1fa625f48906e2ce0561082a3862f0d51a2f",
+      "written_at": "2026-11-20T15:59:24-05:00"
+    },
+    "CDNS": {
+      "roles": [
+        "board"
+      ],
+      "spot": 281.3500061035156,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 780,
+      "n_iv": 681,
+      "front_live_quote_share": 0.631578947368421,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "0809c14e084222eb67384161a647f388026f7910922306ea18ac79d04771e5ee",
+      "written_at": "2026-11-20T15:59:29-05:00"
+    },
+    "CEG": {
+      "roles": [
+        "board"
+      ],
+      "spot": 237.5449981689453,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0068000000000000005,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 14,
+      "n_strikes": 939,
+      "n_iv": 813,
+      "front_live_quote_share": 0.6129032258064516,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "75da6afae6889f452ab65c87db06de70c07b5e235853751920fbaa3d3b324abf",
+      "written_at": "2026-11-20T15:59:33-05:00"
+    },
+    "CF": {
+      "roles": [
+        "board"
+      ],
+      "spot": 115.875,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0207,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 537,
+      "n_iv": 493,
+      "front_live_quote_share": 0.609375,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "5f840df0e9fe4cc02c629a37c54c1d004a0739069cc5d184e78d6f7f67e9cf95",
+      "written_at": "2026-11-20T15:59:38-05:00"
+    },
+    "CSCO": {
+      "roles": [
+        "board"
+      ],
+      "spot": 90.54000091552734,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0177,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 864,
+      "n_iv": 694,
+      "front_live_quote_share": 0.6483516483516484,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "5debab0a0f8d9aaf1dc4c93200c4f55167c0f97f01ab5f84fd9bf3b28f4d1b17",
+      "written_at": "2026-11-20T15:59:42-05:00"
+    },
+    "DASH": {
+      "roles": [
+        "board"
+      ],
+      "spot": 152.5500030517578,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 713,
+      "n_iv": 603,
+      "front_live_quote_share": 0.6585365853658537,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "2901bcb00e29bd49f75054dd8d0abb889e417e3d2110b2a73863524e67b8e2be",
+      "written_at": "2026-11-20T15:59:46-05:00"
+    },
+    "ESTC": {
+      "roles": [
+        "board"
+      ],
+      "spot": 75.41500091552734,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 6,
+      "n_strikes": 243,
+      "n_iv": 218,
+      "front_live_quote_share": 0.6808510638297872,
+      "expiries": [
+        "2026-12-18",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-05-21",
+        "2027-06-17",
+        "2027-12-17"
+      ],
+      "sha256": "f693d1e7d8df79dc5853f70c06a12951a8e2567824174c11ffac2ee95ef5ce62",
+      "written_at": "2026-11-20T15:59:48-05:00"
+    },
+    "EXE": {
+      "roles": [
+        "board"
+      ],
+      "spot": 81.08000183105469,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0279,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 12,
+      "n_strikes": 383,
+      "n_iv": 311,
+      "front_live_quote_share": 0.7272727272727273,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "d995ddc6e0aab90c3370546d950ddf7155611ff1e1ac82d9f8b652d291b81da8",
+      "written_at": "2026-11-20T15:59:52-05:00"
+    },
+    "EXPE": {
+      "roles": [
+        "board"
+      ],
+      "spot": 234.77999877929688,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.008,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 12,
+      "n_strikes": 685,
+      "n_iv": 579,
+      "front_live_quote_share": 0.6018518518518519,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "a0f442d2770cfa9b9ad87cb25b7de24f6f55e5abae670802e982d1fe32b5b2de",
+      "written_at": "2026-11-20T15:59:56-05:00"
+    },
+    "FTNT": {
+      "roles": [
+        "board"
+      ],
+      "spot": 124.5,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 11,
+      "n_strikes": 640,
+      "n_iv": 547,
+      "front_live_quote_share": 0.6203703703703703,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-03-19",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "62e4d7b4ac725e609573273de892907df6e3d68889d7afabfb35ec3f06f5845f",
+      "written_at": "2026-11-20T15:59:59-05:00"
+    },
+    "GEV": {
+      "roles": [
+        "held",
+        "board"
+      ],
+      "spot": 693.5599975585938,
+      "spot_source": "provider 1-minute tape",
+      "q": 0.0026,
+      "q_source": "fundamentals store dividendYield (percent)",
+      "n_expiries": 13,
+      "n_strikes": 2132,
+      "n_iv": 1615,
+      "front_live_quote_share": 0.7611336032388664,
+      "expiries": [
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11",
+        "2026-12-18",
+        "2026-12-24",
+        "2026-12-31",
+        "2027-01-15",
+        "2027-02-19",
+        "2027-03-19",
+        "2027-04-16",
+        "2027-06-17",
+        "2027-09-17",
+        "2027-12-17"
+      ],
+      "sha256": "1a6bd74f3669f39d9132e3163c876734f12348b29c2e42a5dfb019a84e6a03cc",
+      "written_at": "2026-11-20T16:00:06-05:00"
+    }
+  },
+  "completed_at": "2026-11-20T16:00:06-05:00",
+  "failed": [
+    "GOOG: window closed",
+    "HON: window closed",
+    "INTU: window closed",
+    "LMT: window closed",
+    "MCO: window closed",
+    "META: window closed",
+    "MKC: window closed",
+    "NEM: window closed",
+    "NFLX: window closed",
+    "NOC: window closed",
+    "NTAP: window closed",
+    "NVDA: window closed",
+    "PAYX: window closed",
+    "PFG: window closed",
+    "PLTR: window closed",
+    "QQQ: window closed",
+    "RJF: window closed",
+    "RL: window closed",
+    "RTX: window closed",
+    "SCHW: window closed",
+    "SMH: window closed",
+    "SPGI: window closed",
+    "SPY: window closed",
+    "TSM: window closed",
+    "WDAY: window closed",
+    "WSM: window closed",
+    "ZTS: window closed"
+  ]
+}
