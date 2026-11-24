@@ -1,17 +1,17 @@
 {
  "cadence": "daily",
- "as_of": "2026-11-19",
- "session_date": "2026-11-19",
- "computed_at": "2026-11-20T21:40:17-05:00",
+ "as_of": "2026-11-20",
+ "session_date": "2026-11-20",
+ "computed_at": "2026-11-24T00:24:35-05:00",
  "order": "free-analyst-data order (7 October 2026), task C: captured and missing snapshot days",
  "first_day": "2026-10-06",
- "decided_through": "2026-11-19",
+ "decided_through": "2026-11-20",
  "decision_rule": "a session is decided at 09:30 ET on the next trading day (the nightly's last retry is 06:41 ET)",
  "policy": "files are immutable (sha256 recorded); a missed day is never backfilled from a later day's values",
  "counts": {
-  "days": 33,
+  "days": 34,
   "captured": 28,
-  "missing": 5
+  "missing": 6
  },
  "captured_share_last_20": 0.8,
  "latest_captured": "2026-11-19",
@@ -414,6 +414,13 @@
    "first_run": false,
    "sha256": "8f91b82d2aab0dde738ba339b5ce5711ea2e9f90194052cd5da7b0febb457d75",
    "size_kb": 973.7
+  },
+  {
+   "date": "2026-11-20",
+   "status": "missing",
+   "reason": "snapshot_error",
+   "evidence": "run 209 reached the pipeline step; no snapshot was written",
+   "recorded_at": "2026-11-24T00:24:35-05:00"
   }
  ]
 }
