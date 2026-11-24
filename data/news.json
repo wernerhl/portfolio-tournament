@@ -1,7 +1,7 @@
 {
  "cadence": "intraday",
- "as_of": "2026-11-23",
- "fetched_at": "2026-11-23T20:29:46-05:00",
+ "as_of": "2026-11-24",
+ "fetched_at": "2026-11-24T18:23:59-05:00",
  "window_hours": 24,
  "stored_days": 7,
  "rule": "primary sources first: Tier 1 = the issuer's own release (Fed, BEA, BLS, Census, DOL, SEC EDGAR filings, company investor relations); Tier 2 = secondary headline feeds, labeled; bodies never stored; summaries system-written",
@@ -57,41 +57,632 @@
   ]
  },
  "sources_status": {
-  "fed_press": "ok n=4 (parsed 20)",
-  "fed_speeches": "ok n=5 (parsed 15)",
+  "fed_press": "ok n=5 (parsed 20)",
+  "fed_speeches": "ok n=4 (parsed 15)",
   "bea": "ok n=0 (parsed 49)",
   "bea_release_day": "skipped: primary feed ok",
   "bls_release_day": "ok n=0 (constructed 0)",
-  "census": "ok n=1 (parsed 18)",
+  "census": "ok n=0 (parsed 18)",
   "dol": "ok n=1 (parsed 10)",
-  "edgar": "ok n=73 (parsed 43 names)",
-  "ir_avgo": "ok n=0 (parsed 10)",
-  "ir_nvda": "ok n=5 (parsed 20)",
-  "ir_gev": "ok n=4 (parsed 20)",
+  "edgar": "ok n=66 (parsed 43 names)",
+  "ir_avgo": "failed: HTTPError: HTTP Error 403: Forbidden",
+  "ir_nvda": "ok n=2 (parsed 20)",
+  "ir_gev": "ok n=0 (parsed 20)",
   "ir_goog": "skipped: no feed found (checked 2026-09-30)",
   "ir_bmnr": "skipped: no feed found (checked 2026-09-30)",
   "ir_mu": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
   "ir_anet": "skipped: blocked: 403 to automated clients (checked 2026-09-30)",
-  "yahoo_headlines:GEV": "ok n=7 (parsed 10)",
-  "yahoo_headlines:NVDA": "ok n=6 (parsed 10)",
-  "yahoo_headlines:AVGO": "ok n=6 (parsed 10)",
-  "yahoo_headlines:GOOG": "ok n=4 (parsed 10)",
-  "yahoo_headlines:BMNR": "ok n=5 (parsed 10)"
+  "yahoo_headlines:GEV": "ok n=6 (parsed 10)",
+  "yahoo_headlines:NVDA": "ok n=7 (parsed 10)",
+  "yahoo_headlines:AVGO": "ok n=3 (parsed 10)",
+  "yahoo_headlines:GOOG": "ok n=2 (parsed 10)",
+  "yahoo_headlines:BMNR": "ok n=6 (parsed 10)"
  },
  "excluded": {
   "vocabulary_rule": 0,
   "directive_rule": 1,
-  "irrelevant": 31,
-  "out_of_window": 29347,
+  "irrelevant": 32,
+  "out_of_window": 29373,
   "unparseable": 0
  },
  "counts": {
-  "items": 248,
-  "tier1": 108,
-  "tier2": 140,
-  "last24h": 33
+  "items": 218,
+  "tier1": 93,
+  "tier2": 125,
+  "last24h": 41
  },
  "items": [
+  {
+   "id": "c565ca129b1561618288cec68c9de13ba4c80b67",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "A scandal like the one haunting Nvidia just reached AMD, its biggest rival",
+   "source": "TheStreet",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.thestreet.com/investing/stocks/scandal-like-one-haunting-nvidia-just-reached-amd-its-biggest-rival",
+   "timestamp": "2026-11-24T18:17:00-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · TheStreet · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4accafe52dbe6fa646858c02424b5fa13d9dd6e2",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "California AG Sees 'Bright Red Flags' Regarding Nvidia",
+   "source": "Bloomberg",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/california-ag-sees-bright-red-230340002.html",
+   "timestamp": "2026-11-24T18:03:40-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Bloomberg · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "68f25263ee26084823be1af56935b7ecb0f4bc97",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Dow Jones Futures: Nvidia, Anthropic Lead AI Retreat But Many Sectors Strong; Fed Inflation Data Due",
+   "source": "Investor's Business Daily",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-nvidia-anthropic-ai-retreat-fed-inflation-data/?src=A00220&yptr=yahoo",
+   "timestamp": "2026-11-24T18:02:58-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "22a773a6d66d757724ea23247e1753213315a17f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "In Response to the Turmoil at Nvidia, Bitcoin Drops Below $70,000. Is This a Buy-the-Dip Opportunity?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://www.fool.com/investing/2026/11/24/in-response-to-the-turmoil-at-nvidia-bitcoin-drops-below-usd70-000-is-this-a-buy-the-dip-opportunity/",
+   "timestamp": "2026-11-24T18:01:02-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "070e754fa0e0919d431d824318e806e7a683c69b",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Stock Market Today, Nov. 24: Bitmine Shares Sink 8.6% as Confidence Wanes",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.fool.com/coverage/stock-market-today/2026/11/24/stock-market-today-nov-24-bitmine-shares-sink-8-6-as-confidence-wanes/",
+   "timestamp": "2026-11-24T17:56:12-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "02baa5284cc712ce4a7fd645ca680b1ef4a343f3",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why Trump wanted Jensen Huang back at the helm of Nvidia",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/markets/article/why-trump-wanted-jensen-huang-back-at-the-helm-of-nvidia-224325153.html",
+   "timestamp": "2026-11-24T17:43:25-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7c0c2a59decfdda68f6c6ecd4fdc83e5552fc16b",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Billionaire Charlie Munger’s Protege Li Lu: Himalaya Capital Has 45% of Its $3.78 Billion Portfolio in Alphabet",
+   "source": "24/7 Wall St.",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://247wallst.com/investing/2026/11/24/billionaire-charlie-mungers-protege-li-lu-himalaya-capital-has-45-of-its-3-78-billion-portfolio-in-alphabet/",
+   "timestamp": "2026-11-24T16:58:58-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · 24/7 Wall St. · about GOOG",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "34f136483daf85daeab4f2a31d7124a1adb0135f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Stock Market Today, Nov. 24: Nvidia Gives Back $240 Billion in Market Value Despite Wall Street Upgrade Signaling 29% Upside",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://www.fool.com/coverage/stock-market-today/2026/11/24/stock-market-today-nov-24-nvidia-gives-back-usd240-billion-in-market-value-despite-wall-street-upgrade-signaling-29-upside/",
+   "timestamp": "2026-11-24T16:49:49-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "5d37ec03cefd3bdf171a427717247179c8596673",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526475973/d91615d8k.htm",
+   "timestamp": "2026-11-24T16:49:44-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-11-24 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "9f601098a802de11933f5eac951dedebe9f595ba",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Anthropic falls below IPO price as Nvidia gives back gains",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/anthropic-falls-below-ipo-price-as-nvidia-gives-back-gains-214558309.html",
+   "timestamp": "2026-11-24T16:45:58-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "26e6fd525d3d353fca417cdf6eb2cd08fc3bf3d1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by RAYMOND JAMES FINANCIAL INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/720005/000122520826009158/xslF345X06/doc4.xml",
+   "timestamp": "2026-11-24T16:43:46-05:00",
+   "tickers": [
+    "RJF"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "1fabfa91c609360a40ff725c6efdfcdec0e9d2b8",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Why Nvidia is 'bar none' the 'cheapest growth stock in the market'",
+   "source": "Yahoo Finance Video",
+   "source_id": "yahoo_headlines:NVDA",
+   "url": "https://finance.yahoo.com/video/why-nvidia-is-bar-none-the-cheapest-growth-stock-in-the-market-213425021.html",
+   "timestamp": "2026-11-24T16:34:25-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6b1a6414d8e2f7d0d81f410831b4df589ff75798",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Fortinet, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1262039/000147558726000017/xslF345X06/form4-11242026_041101.xml",
+   "timestamp": "2026-11-24T16:30:08-05:00",
+   "tickers": [
+    "FTNT"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "d01c60fd552ab0b0bfe4cee9bbdf4af1fe1db750",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by WILLIAMS SONOMA INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/719955/000071995526000248/wsm-20261101.htm",
+   "timestamp": "2026-11-24T16:28:06-05:00",
+   "tickers": [
+    "WSM"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-11-24 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "3bbedfe6b5406e3cabc87cdadb7812917be03278",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183355226000020/xslF345X06/form4-11242026_091125.xml",
+   "timestamp": "2026-11-24T16:24:29-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "65b99a51a5ecc74227ff51e52a5e4bc8f0e60a9f",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183261426000042/xslF345X06/form4-11242026_091152.xml",
+   "timestamp": "2026-11-24T16:23:57-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "12fa6f1e658a178055bf4809393df1d4713cd0c2",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000189968826000018/xslF345X06/form4-11242026_091104.xml",
+   "timestamp": "2026-11-24T16:23:09-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c5996cfb317479c6af57d5867ebcc2d32df9a5f3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000163564826000018/xslF345X06/form4-11242026_091111.xml",
+   "timestamp": "2026-11-24T16:22:15-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "95d96065236d92a3cf3868c41ad0713f0d98587b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000184970926000024/xslF345X06/form4-11242026_091112.xml",
+   "timestamp": "2026-11-24T16:21:16-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "7d560d356bec2bbce61d603c224e1f65e95b09f7",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183261226000022/xslF345X06/form4-11242026_091125.xml",
+   "timestamp": "2026-11-24T16:20:30-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "eca26806c91ec1065f1efd6ff0181653e9db6838",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by DoorDash, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1792789/000183239026000031/xslF345X06/form4-11242026_091111.xml",
+   "timestamp": "2026-11-24T16:19:16-05:00",
+   "tickers": [
+    "DASH"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · 4",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "a7a1cec35c4974fef31990a1de8bebe79527d9a0",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-K filed by RAYMOND JAMES FINANCIAL INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/720005/000072000526000086/rjf-20260930.htm",
+   "timestamp": "2026-11-24T16:08:15-05:00",
+   "tickers": [
+    "RJF"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-K · filed 2026-11-24 · 10-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "6c9028e9ab7c46e06dbcd4fb0fe1009a58f00e1e",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Autodesk, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/769397/000076939726000069/adsk-20261124.htm",
+   "timestamp": "2026-11-24T16:05:29-05:00",
+   "tickers": [
+    "ADSK"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-11-24 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "2f096f3f23fa1c03c18302e8df871e4eb4b44ec3",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "10-Q filed by Workday, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000132781126000058/wday-20261031.htm",
+   "timestamp": "2026-11-24T16:03:21-05:00",
+   "tickers": [
+    "WDAY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 10-Q · filed 2026-11-24 · 10-Q",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "69b6ead73130c0e9bf57e3e136919e3348882b1b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by Workday, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327811/000132781126000057/wday-20261124.htm",
+   "timestamp": "2026-11-24T16:01:55-05:00",
+   "tickers": [
+    "WDAY"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-11-24 · 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c6f1919bd172169fcf7afa3aa491281b1ede5383",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "8-K filed by CF Industries Holdings, Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1324404/000110465926131497/tm2630563d1_8k.htm",
+   "timestamp": "2026-11-24T14:49:53-05:00",
+   "tickers": [
+    "CF"
+   ],
+   "topics": [],
+   "summary": "EDGAR 8-K · filed 2026-11-24 · FORM 8-K",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "010d614c214e3e9be5bd8c3d501ae489df93cd16",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "$10,000 in GE Vernova on Its First Day of Trading Is Worth How Much Today?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.fool.com/investing/2026/11/24/10000-in-ge-vernova-on-its-first-day-of-trading-is-worth-how-much-today/",
+   "timestamp": "2026-11-24T14:35:02-05:00",
+   "tickers": [
+    "GEV"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about GEV",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "082ccadafa703e7b05e0ed930779f80277bf0b4e",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Intuit vs. Palo Alto Networks: Which Technology Stock Is a Better Buy for 2027?",
+   "source": "Motley Fool",
+   "source_id": "yahoo_headlines:GOOG",
+   "url": "https://www.fool.com/coverage/better-buy/2026/11/24/intuit-vs-palo-alto-networks-which-technology-stock-is-a-better-buy-for-2027/",
+   "timestamp": "2026-11-24T14:20:02-05:00",
+   "tickers": [
+    "INTU"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Motley Fool · about INTU",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "04af64fc022b290249ba99aa4f25f9181f4f1d0d",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Minutes of the Board's discount rate meetings on October 19 and October 28, 2026",
+   "source": "Federal Reserve Board press release",
+   "source_id": "fed_press",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261124a.htm",
+   "timestamp": "2026-11-24T14:00:00-05:00",
+   "tickers": [],
+   "topics": [],
+   "summary": "Tier 1 · Federal Reserve Board press release · Monetary Policy · topics: none",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "474099860cfea3dc585ceee03294c1addcbc3f3b",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by MCCORMICK & CO INC",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/63754/000006375426000347/xslF345X06/form4.xml",
+   "timestamp": "2026-11-24T11:01:12-05:00",
+   "tickers": [
+    "MKC"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-24 · STATEMENT OF CHANGES IN BENEFICIAL OWNERSHIP OF SECURITIES",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "324d80225544b5b99cc952ef3a3d687917071194",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia, AMD, Broadcom lead chip stocks lower as AI trade comes under pressure",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/article/nvidia-amd-broadcom-lead-chip-stocks-lower-as-ai-trade-comes-under-pressure-141635463.html",
+   "timestamp": "2026-11-24T09:16:35-05:00",
+   "tickers": [
+    "AVGO",
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about AVGO, NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b9e3e7d84551e2543b04317bcf1cd1f77e2f7131",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "What Bitmine’s Ethereum Buying Cap Could Mean For BMNR Stock",
+   "source": "Simply Wall St.",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://finance.yahoo.com/markets/crypto/articles/bitmine-ethereum-buying-cap-could-121616580.html",
+   "timestamp": "2026-11-24T07:16:16-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Simply Wall St. · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "ba5823d01cc157b5bf2182f50d28004c2743d06d",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Nvidia Slides Premarket: Here Are the Other Stocks Getting Hit",
+   "source": "The Wall Street Journal",
+   "source_id": "yahoo_headlines:GEV",
+   "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-11-24-2026/card/nvidia-slides-premarket-here-are-the-other-stocks-getting-hit-2R0qWbxfvCRdzfMv9ASw?siteid=yhoof2&yptr=yahoo",
+   "timestamp": "2026-11-24T06:46:56-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · The Wall Street Journal · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "4bc08d51870b351b7304cb0178ce1cad8bf28bb9",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine Stock: Tom Lee Calls ETH ‘Hard Money’ – But BMNR Share Count Jumps 164%",
+   "source": "Coinspeaker",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://www.coinspeaker.com/bitmine-stock-tom-lee-hard-money-shares/",
+   "timestamp": "2026-11-24T04:44:52-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Coinspeaker · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "b1a9c44dd08bc56b4078fe3d5dd98a4b29724d0f",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Stock market today: Dow rises, S&P 500 and Nasdaq decline as chip sector tumbles, Nvidia stock falls 6%",
+   "source": "Yahoo Finance",
+   "source_id": "yahoo_headlines:AVGO",
+   "url": "https://finance.yahoo.com/markets/live/stock-market-today-tuesday-november-24-dow-sp-500-nasdaq-chip-stocks-nvidia-140629923.html",
+   "timestamp": "2026-11-24T04:06:14-05:00",
+   "tickers": [
+    "NVDA"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "01b402a7e440f716f729ebe408ef39cc6a051b73",
+   "tier": 2,
+   "tier_label": "secondary",
+   "headline": "Bitmine's Ethereum Purchases Slip Into The Red Again, But Retail Traders Are Questioning ‘Transparency’ On Capital Allocation",
+   "source": "Stocktwits",
+   "source_id": "yahoo_headlines:BMNR",
+   "url": "https://stocktwits.com/news-articles/markets/equity/bitmine-ethereum-holdings-losses-capital-allocation/cNbrUJiR9kR",
+   "timestamp": "2026-11-24T00:49:37-05:00",
+   "tickers": [
+    "BMNR"
+   ],
+   "topics": [],
+   "summary": "Tier 2 headline · Stocktwits · about BMNR",
+   "disclosure_lag_label": null
+  },
+  {
+   "id": "c26edffbd7abaff0fda7afdb1ad70f42e43670d1",
+   "tier": 1,
+   "tier_label": "primary",
+   "headline": "Form 4 filed by Alphabet Inc.",
+   "source": "SEC EDGAR filing",
+   "source_id": "edgar",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526472910/xslF345X06/ownership.xml",
+   "timestamp": "2026-11-23T21:07:55-05:00",
+   "tickers": [
+    "GOOG"
+   ],
+   "topics": [],
+   "summary": "EDGAR 4 · filed 2026-11-23 · 4",
+   "disclosure_lag_label": null
+  },
   {
    "id": "8528bac5b0f0ccb9c672dbdb6f5d6aa5a48c0428",
    "tier": 2,
@@ -2978,1150 +3569,86 @@
    "topics": [],
    "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
    "disclosure_lag_label": null
-  },
-  {
-   "id": "1b21be63dae22bc2dab6eb0713bedcf4c322e8d6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by WILLIAMS SONOMA INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/719955/000071995526000239/xslF345X06/form4.xml",
-   "timestamp": "2026-11-17T18:03:24-05:00",
-   "tickers": [
-    "WSM"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · PRIMARY DOCUMENT",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "37256330b0523d73d44a09b1de455264285bf33b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000201095326000002/xslF345X06/wk-form4_1794956318.xml",
-   "timestamp": "2026-11-17T17:58:41-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b222f87bdeffd6f7eacc35472ea18bc12f07328e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000092706726000005/xslF345X06/wk-form4_1794956296.xml",
-   "timestamp": "2026-11-17T17:58:19-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9953d16e45d6e396ca6db6199daba127404f2dac",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000154904126000003/xslF345X06/wk-form4_1794956275.xml",
-   "timestamp": "2026-11-17T17:57:57-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "39da1928499e91aae019d7f091e4b5f80f48a7b9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000177708626000003/xslF345X06/wk-form4_1794956251.xml",
-   "timestamp": "2026-11-17T17:57:34-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "75f85acc905738c057c33418c027f35014c47918",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Expedia Group, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1324424/000153026726000003/xslF345X06/wk-form4_1794956068.xml",
-   "timestamp": "2026-11-17T17:54:31-05:00",
-   "tickers": [
-    "EXPE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3650d444efd212f4419af3faa26c2093a99ae1e5",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia Is Only 17% of SMH. After Its Beat, the Chip ETF Jumped Almost as Much as Nvidia Did",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://247wallst.com/investing/2026/11/17/nvidia-is-only-17-of-smh-after-its-beat-the-chip-etf-jumped-almost-as-much-as-nvidia-did/",
-   "timestamp": "2026-11-17T17:52:53-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0400c4f46acd87255fb425388c6e657b49dbff64",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "TD Cowen Cut Its Broadcom Target to $425. It Still Sees 24% Upside",
-   "source": "TIKR",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://www.tikr.com/blog/td-cowen-cut-its-broadcom-target-to-425-it-still-sees-24-upside?ref=yahoofinance&tlnk=yf-261117-7jhqfrh2",
-   "timestamp": "2026-11-17T17:52:42-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · TIKR · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "20f8f039d27015a7a599253d644b5b2ef0983c59",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia interim-CEO Colette Kress speaks on quarterly revenue hitting $116B",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidia-interim-ceo-colette-kress-speaks-on-quarterly-revenue-hitting-116b-224125904.html",
-   "timestamp": "2026-11-17T17:38:46-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1b98b4a16860d7ef8ea50dec4df87a8a4ea4286d",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by RTX Corp",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/101829/000122520826009034/xslF345X06/doc4.xml",
-   "timestamp": "2026-11-17T17:34:20-05:00",
-   "tickers": [
-    "RTX"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d141e744c33638d3ae59a003d2f6a8ae0466746e",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia with a positive Q3 despite SEC probing Nvidia amid Huang Scandal",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidia-with-a-positive-q3-despite-sec-probing-nvidia-amid-huang-scandal-223224298.html",
-   "timestamp": "2026-11-17T17:32:24-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "11e4b3bec9c3675f74cc01521b7f2c0fe92fa706",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia chair says board 'does not intend to reinstate Jensen as CEO'",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidia-chair-says-board-does-not-intend-to-reinstate-jensen-as-ceo-233753438.html",
-   "timestamp": "2026-11-17T17:29:00-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f3ae43dd55f589898539e32b620e323f6914d5ca",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Amazon and Google Could Own $400 Billion of Anthropic Stock",
-   "source": "Barrons.com",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.barrons.com/articles/amazon-google-anthropic-stock-ipo-6713e425?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-11-17T17:27:00-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Barrons.com · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "cf97d3f697c07df53571e599bf6ad8108d8ee599",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Every Gigawatt of GE Vernova's HA Turbines Is Expected to Generate $500 Million in Services. Here's Why That Outlasts the Boom.",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:GEV",
-   "url": "https://www.fool.com/investing/2026/11/17/every-gigawatt-of-ge-vernovas-ha-turbines-is-expec/",
-   "timestamp": "2026-11-17T17:25:00-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about GEV",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "29211fbb46b143dd979c6975667c39ee60f84cdc",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Stock Market Today, Nov. 17: Nvidia Slides Ahead of Earnings but Soars in After Hours Trading",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-nvidia-slides-ahead-of-earnings-but-soars-in-after-hours-trading/",
-   "timestamp": "2026-11-17T17:23:10-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e65aea8e9b4dcfe2c9bfb5558215843b2a9ad737",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "NVIDIA Expands Commitments With Supply Chain Partners to Support AI Infrastructure Buildout",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/nvidia-expands-commitments-with-supply-chain-partners-to-support-ai-infrastructure-buildout",
-   "timestamp": "2026-11-17T17:18:00-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "812359c50d680799e721df006be97fed5c785c33",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000195/xslF345X06/wk-form4_1794953642.xml",
-   "timestamp": "2026-11-17T17:14:05-05:00",
-   "tickers": [
-    "CSCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5efc09a6cd05eefcbfc7c8b212c117d5d715f944",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000194/xslF345X06/wk-form4_1794953636.xml",
-   "timestamp": "2026-11-17T17:13:59-05:00",
-   "tickers": [
-    "CSCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "996857a700c4c4e7a3eb27a7b88a88ca7248747f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000193/xslF345X06/wk-form4_1794953620.xml",
-   "timestamp": "2026-11-17T17:13:43-05:00",
-   "tickers": [
-    "CSCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "c1109729c7b26019c17d765bed626441825d073b",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000192/xslF345X06/wk-form4_1794953611.xml",
-   "timestamp": "2026-11-17T17:13:34-05:00",
-   "tickers": [
-    "CSCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d7f3bb3e86f105abfbd67893d1c8e180e0e5a930",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CISCO SYSTEMS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000191/xslF345X06/wk-form4_1794953605.xml",
-   "timestamp": "2026-11-17T17:13:28-05:00",
-   "tickers": [
-    "CSCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "fba058a05ed09fa9c13bc9201d7048057a2c2503",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia earnings: Why Jensen turmoil won't have a near-term impact on the numbers",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidia-earnings-why-jensen-turmoil-wont-have-a-near-term-impact-on-the-numbers-220936057.html",
-   "timestamp": "2026-11-17T17:09:36-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9f7e5060e65cd4f436b240a89a39c10f82dec51b",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Trading Day: AI trade unwind continues, but Nvidia beats",
-   "source": "Reuters",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/trading-day-ai-trade-unwind-220340221.html",
-   "timestamp": "2026-11-17T17:08:55-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Reuters · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d25bb606c463ed06e8b5def18a169184acf769f2",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "AMD, Broadcom, CoreWeave stocks mixed on Nvidia Q3 earnings beat",
-   "source": "Yahoo Finance",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/markets/stocks/article/amd-broadcom-tsmc-stocks-rise-on-nvidia-earnings-coreweave-nebius-shares-also-rally-220159436.html",
-   "timestamp": "2026-11-17T17:01:59-05:00",
-   "tickers": [
-    "AVGO",
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance · about AVGO, NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "0e3f04f856c2c66e82d1ecf1533acab9d629a7ae",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by ADOBE INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000172/xslF345X06/wk-form4_1794952686.xml",
-   "timestamp": "2026-11-17T16:58:09-05:00",
-   "tickers": [
-    "ADBE"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "186f4a8502859959e10c0ba482744bf7072f8f62",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Risks Loom Over Nvidia’s Fast-Growing Data Center Segment",
-   "source": "Barrons.com",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.barrons.com/livecoverage/nvidia-earnings-stock-huang-departure/card/nvidia-s-data-center-sales-breakdown-OT1XZsiunmyXnli3m4ZA?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-11-17T16:55:39-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Barrons.com · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9fed6a328d07b5d3eb1b99f39a7935c9b690384b",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia, Other Chip Stocks Climb After Hours",
-   "source": "The Wall Street Journal",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://www.wsj.com/livecoverage/nvidia-earnings-stock-market-news-11-17-2026/card/nvidia-other-chip-stocks-climb-after-hours-U0nM95y5lWdCfBk7DzdL?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-11-17T16:54:27-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · The Wall Street Journal · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "32e8e4d9d2d9c7e404780bc62023a952faa62b48",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CADENCE DESIGN SYSTEMS INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000131/xslF345X06/wk-form4_1794952409.xml",
-   "timestamp": "2026-11-17T16:53:32-05:00",
-   "tickers": [
-    "CDNS"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1f41825418156011c08a19d1a4270dbdd02a673e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by CADENCE DESIGN SYSTEMS INC",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000130/xslF345X06/wk-form4_1794952400.xml",
-   "timestamp": "2026-11-17T16:53:23-05:00",
-   "tickers": [
-    "CDNS"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · FORM 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "bba52bea2cc15f7611bc809f151d96c89c283f85",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia’s Q3 earnings show its advantage as the bank of the AI boom",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidias-q3-earnings-show-its-advantage-as-the-bank-of-the-ai-boom-215423703.html",
-   "timestamp": "2026-11-17T16:51:00-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7a6b3e78fb8ab189b6b2bdd5e2c0f334c0d83175",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "10-Q filed by CISCO SYSTEMS, INC.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000185/csco-20261024.htm",
-   "timestamp": "2026-11-17T16:36:56-05:00",
-   "tickers": [
-    "CSCO"
-   ],
-   "topics": [],
-   "summary": "EDGAR 10-Q · filed 2026-11-17 · 10-Q",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d7ed8126d583a09954420639397043d4eee68f93",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia beats Q3 earnings expectations in first report without Jensen Huang",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidia-beats-q3-earnings-expectations-in-first-report-without-jensen-huang-213316995.html",
-   "timestamp": "2026-11-17T16:33:16-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1b3ae3bb9e8ee98e8cd950d9408f4f18fb2e7746",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NetApp, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526465585/xslF345X06/ownership.xml",
-   "timestamp": "2026-11-17T16:30:20-05:00",
-   "tickers": [
-    "NTAP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "1ffff2448a8befa0d31de610da1bfb455101a412",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NetApp, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526465581/xslF345X06/ownership.xml",
-   "timestamp": "2026-11-17T16:30:13-05:00",
-   "tickers": [
-    "NTAP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4e417cfaaf22b58907b8fab23f7aef62052870da",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NetApp, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526465603/xslF345X06/ownership.xml",
-   "timestamp": "2026-11-17T16:30:09-05:00",
-   "tickers": [
-    "NTAP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "443f9fd3967e8901c6cbf4411c1d58df0201e629",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NetApp, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526465577/xslF345X06/ownership.xml",
-   "timestamp": "2026-11-17T16:30:07-05:00",
-   "tickers": [
-    "NTAP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "6b71aa53076bd9a0d3c69c9afd2d5b343b87411a",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by NetApp, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1002047/000119312526465598/xslF345X06/ownership.xml",
-   "timestamp": "2026-11-17T16:30:04-05:00",
-   "tickers": [
-    "NTAP"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "5e91ced10926436b8db4f57339268338919572e8",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "All Investor Eyes Are on Nvidia’s Future and Forward Looking Statements",
-   "source": "The Wall Street Journal",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.wsj.com/livecoverage/nvidia-earnings-stock-market-news-11-17-2026/card/all-investor-eyes-are-on-nvidia-s-future-and-forward-looking-statements-MjiANsr6LDeezdGavwxL?siteid=yhoof2&yptr=yahoo",
-   "timestamp": "2026-11-17T16:29:34-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · The Wall Street Journal · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "baf41392d9cbfc13b8a8e3339e2cfd2781ed20b9",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by NVIDIA CORP",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/nvda-20261117.htm",
-   "timestamp": "2026-11-17T16:20:51-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-17 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4faa980a30277cf4a23dc90948aa03bce38fb03f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "NVIDIA Announces Financial Results for Third Quarter Fiscal 2027",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-third-quarter-fiscal-2027",
-   "timestamp": "2026-11-17T16:20:00-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "38c4a24f63b744200bd6baf8d6a651ce430ec875",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Alphabet vs. Amazon: Which Is the Better AI Cloud Stock to Own for the Next 5 Years?",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.fool.com/investing/2026/11/17/alphabet-amazon-better-ai-cloud-stock-5-years/",
-   "timestamp": "2026-11-17T16:20:00-05:00",
-   "tickers": [
-    "GOOG"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about GOOG",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "2b43c617c9c9758f4165d99ee49d569c952e2944",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Berkshire Hathaway Slashes This Top 5 Stock; Nvidia Boosts SpaceX",
-   "source": "Investor's Business Daily",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.investors.com/news/berkshire-hathaway-stock-buys-sells-q3-13f-bac-nvidia-alphabet-spacex/?src=A00220&yptr=yahoo",
-   "timestamp": "2026-11-17T16:11:46-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investor's Business Daily · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "8b9c828428fadfadce2bce5f99c4120f92317a7d",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Billionaire David Tepper Grew His SpaceX Stake 17-Fold While Dumping AMD and Broadcom",
-   "source": "24/7 Wall St.",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://247wallst.com/investing/2026/11/17/billionaire-david-tepper-grew-his-spacex-stake-17-fold-while-dumping-amd-and-broadcom/",
-   "timestamp": "2026-11-17T16:10:51-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · 24/7 Wall St. · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b081de28fb767198aa7b8649b713d6cafaddb581",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Form 4 filed by Fortinet, Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/1262039/000201681326000024/xslF345X06/form4-11172026_091148.xml",
-   "timestamp": "2026-11-17T16:07:52-05:00",
-   "tickers": [
-    "FTNT"
-   ],
-   "topics": [],
-   "summary": "EDGAR 4 · filed 2026-11-17 · 4",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "630bb3ad915f63db97789b13b7c4271b3a5f6cb1",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Worried About Nvidia? 3 Artificial Intelligence (AI) Stocks That May Be Safer Buys Right Now",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://www.fool.com/investing/2026/11/17/worried-about-nvidia-3-artificial-intelligence-ai-stocks-that-may-be-safer-buys-right-now/",
-   "timestamp": "2026-11-17T15:50:02-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d73a355a7531860d842b0a5df992ab938ef6e277",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Broadcom Inc. (AVGO)’s AI Business Is Fueling Its Next Phase of Long-Term Growth",
-   "source": "Insider Monkey",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/technology/ai/articles/broadcom-inc-avgo-ai-business-202141475.html",
-   "timestamp": "2026-11-17T15:21:41-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Insider Monkey · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "bf468a80fe545650ee29e3e37bc82f72b9407460",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Memo to Nvidia interim CEO Colette Kress: Remind the world why you've been Jensen Huang's CFO for 13-plus years",
-   "source": "Yahoo Finance",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/markets/stocks/article/memo-to-nvidia-interim-ceo-colette-kress-remind-the-world-why-youve-been-jensen-huangs-cfo-for-13-plus-years-200000740.html",
-   "timestamp": "2026-11-17T15:00:00-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "dc04c4bb0a5ae0765257e73ea7f40fd5a719af69",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Alphabet, Amazon, and Nvidia All Have a Stake in Anthropic. Here’s the One I’d Buy If I Could Only Pick 1.",
-   "source": "Motley Fool",
-   "source_id": "yahoo_headlines:GOOG",
-   "url": "https://www.fool.com/investing/2026/11/17/alphabet-amazon-and-nvidia-all-have-a-stake-in-anthropic-here-s-the-1-i-d-buy-if-i-could-only-pick-1/",
-   "timestamp": "2026-11-17T14:27:02-05:00",
-   "tickers": [
-    "GOOG",
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Motley Fool · about GOOG, NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "caebea30694248d820b5dd2f0146dcb3b466b8c7",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "SpaceX is leasing $47 billion of Nvidia chips like a car — and lenders hold the title",
-   "source": "Yahoo Finance",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/markets/article/spacex-is-leasing-47-billion-of-nvidia-chips-like-a-car--and-lenders-hold-the-title-192002200.html",
-   "timestamp": "2026-11-17T14:20:02-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "50732c0ce067d0e624a03e851bd4aa2ca0d51d8f",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Nvidia set to report earnings as Huang scandal clouds outlook, Federal Reserve worries about AI",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/video/nvidia-set-to-report-earnings-as-huang-scandal-clouds-outlook-federal-reserve-worries-about-ai-184201223.html",
-   "timestamp": "2026-11-17T13:42:01-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "a32afe1e586213e99c7f4d7a7a4f511be7055266",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Why 'Shark Tank' star Kevin O'Leary wouldn't bring Jensen Huang back as Nvidia CEO",
-   "source": "Yahoo Finance",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/markets/article/why-shark-tank-star-kevin-oleary-wouldnt-bring-jensen-huang-back-as-nvidia-ceo-183343387.html",
-   "timestamp": "2026-11-17T13:33:43-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e2ca58bb1d22b13dd92b9ef175a599febaa2deac",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Could Nvidia's leadership change fuel a new wave of chip rivals?",
-   "source": "Yahoo Finance Video",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://finance.yahoo.com/video/could-nvidias-leadership-change-fuel-a-new-wave-of-chip-rivals-180416783.html",
-   "timestamp": "2026-11-17T13:04:16-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Yahoo Finance Video · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "41612f0b64adab5ee3283efe6bbbd029a6d52692",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Bitmine Immersion Technologies (BMNR) Stock Still Looks Cheap On Its $6.3B Loss",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:BMNR",
-   "url": "https://finance.yahoo.com/markets/stocks/articles/bitmine-immersion-technologies-bmnr-stock-171023174.html",
-   "timestamp": "2026-11-17T12:10:23-05:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about BMNR",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "33970346d5f803c846283ac8453efd6b778f5fe6",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Bitmine Immersion Technologies (BMNR) Looks Fairly Valued As Earnings Sharpen Ethereum Risk",
-   "source": "Simply Wall St.",
-   "source_id": "yahoo_headlines:BMNR",
-   "url": "https://finance.yahoo.com/markets/crypto/articles/bitmine-immersion-technologies-bmnr-looks-151238457.html",
-   "timestamp": "2026-11-17T10:12:38-05:00",
-   "tickers": [
-    "BMNR"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Simply Wall St. · about BMNR",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "64aad33a1b6b741dc84494cb2741f50014f06d8f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Waller, Considerations at the Intersection of Payments and Tokenized Markets",
-   "source": "Federal Reserve speech",
-   "source_id": "fed_speeches",
-   "url": "https://www.federalreserve.gov/newsevents/speech/waller20261117a.htm",
-   "timestamp": "2026-11-17T09:10:00-05:00",
-   "tickers": [],
-   "topics": [],
-   "summary": "Tier 1 · Federal Reserve speech · Speech · topics: none",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "83145ecc4ca8d132e6d56b26aba3dfcca503425e",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "Advance Monthly Sales for Retail and Food Services",
-   "source": "Census Bureau economic indicator",
-   "source_id": "census",
-   "url": "https://www.census.gov/retail/index.html",
-   "timestamp": "2026-11-17T08:30:00-05:00",
-   "tickers": [],
-   "topics": [
-    "RETAIL"
-   ],
-   "summary": "Tier 1 · Census Bureau economic indicator · topics: RETAIL",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "3a4fe68a343a75dadc6d4d86fa536477092481ff",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova CEO Scott Strazik to speak at Goldman Sachs Industrials and Materials Conference",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-ceo-scott-strazik-speak-goldman-sachs-industrials-materials-conference",
-   "timestamp": "2026-11-17T08:15:00-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "253f9b5e1ee334ac13b989abec948ed931ca93d6",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova's factory in Taubaté celebrates 70 years of operation in Brazil",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernovas-factory-taubate-celebrates-70-years-operation-brazil",
-   "timestamp": "2026-11-17T08:00:13-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "4253a7e07111d19c90b6f68bf041fc8225853844",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova strengthens German wind energy expansion with new order from wpd",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-strengthens-german-wind-energy-expansion-new-order-wpd",
-   "timestamp": "2026-11-17T07:41:00-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "b878ee9d8751c5f8634c2d25277def9cc508e913",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by S&P Global Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/64040/000006404026000063/spgi-20261116.htm",
-   "timestamp": "2026-11-17T07:18:32-05:00",
-   "tickers": [
-    "SPGI"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-17 · 8-K",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "350fb3acef43eeaa0513931f221b9a2513d1e330",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "NVIDIA Board of Directors Establishes National Security and Export Control Oversight Committee",
-   "source": "NVIDIA investor relations",
-   "source_id": "ir_nvda",
-   "url": "https://nvidianews.nvidia.com/news/nvidia-board-of-directors-establishes-national-security-and-export-control-oversight-committee",
-   "timestamp": "2026-11-17T05:00:00-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · NVDA · NVIDIA investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "67cbfb600757b359e627c118197ef8f81d6a8f9f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "GE Vernova launches SF₆-free compact switchgear for space-constrained high-voltage substations",
-   "source": "GE Vernova investor relations",
-   "source_id": "ir_gev",
-   "url": "https://www.gevernova.com/news/press-releases/ge-vernova-launches-sf6-free-compact-switchgear-space-constrained-high-voltage",
-   "timestamp": "2026-11-17T03:18:34-05:00",
-   "tickers": [
-    "GEV"
-   ],
-   "topics": [],
-   "summary": "Tier 1 · issuer press release · GEV · GE Vernova investor relations",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "f0d228a1224b14dfdd6c2baa258e9c73740ae84a",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Watch these Chinese chip stocks as U.S. tightens access to Nvidia hardware",
-   "source": "Investing.com",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/technology/ai/articles/watch-chinese-chip-stocks-u-060032967.html",
-   "timestamp": "2026-11-17T01:00:32-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investing.com · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "e13d70d2d2b2ae86b8db75c8bf9097562d63123d",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "Shares slide on tech weakness ahead of Nvidia earnings",
-   "source": "Reuters",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/markets/world-indices/articles/asia-shares-stumble-tech-weakness-012906483.html",
-   "timestamp": "2026-11-17T00:59:42-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Reuters · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "9a46876ff2b22f83f91ace7a8ebf4ea815848c25",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "U.S. Commerce Dept, DOJ say they investigated Nvidia partner Megaspeed in 2024",
-   "source": "Investing.com",
-   "source_id": "yahoo_headlines:NVDA",
-   "url": "https://finance.yahoo.com/technology/ai/articles/u-commerce-dept-doj-investigated-051834040.html",
-   "timestamp": "2026-11-17T00:18:34-05:00",
-   "tickers": [
-    "NVDA"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Investing.com · about NVDA",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "7d56738005c30fa6786dd2de29ff95ec8f3431b3",
-   "tier": 2,
-   "tier_label": "secondary",
-   "headline": "AMD, MU, SKHY, AVGO: Chip Stocks Ease Overnight After Selloff On New US Chip Restrictions Targeting China",
-   "source": "Stocktwits",
-   "source_id": "yahoo_headlines:AVGO",
-   "url": "https://stocktwits.com/news-articles/markets/equity/amd-mu-skhy-avgo-chip-stocks-ease-overnight-after-selloff-on-new-us-chip-restrictions-targeting-china/cNba10cR9gA",
-   "timestamp": "2026-11-16T23:04:20-05:00",
-   "tickers": [
-    "AVGO"
-   ],
-   "topics": [],
-   "summary": "Tier 2 headline · Stocktwits · about AVGO",
-   "disclosure_lag_label": null
-  },
-  {
-   "id": "d30f5ed90ff49cbde5ee09164a60bad6c491619f",
-   "tier": 1,
-   "tier_label": "primary",
-   "headline": "8-K filed by S&P Global Inc.",
-   "source": "SEC EDGAR filing",
-   "source_id": "edgar",
-   "url": "https://www.sec.gov/Archives/edgar/data/64040/000110465926128718/tm2619719d1_8k.htm",
-   "timestamp": "2026-11-16T21:29:31-05:00",
-   "tickers": [
-    "SPGI"
-   ],
-   "topics": [],
-   "summary": "EDGAR 8-K · filed 2026-11-17 · FORM 8-K",
-   "disclosure_lag_label": null
   }
  ],
  "per_name": {
   "GEV": [
+   "010d614c214e3e9be5bd8c3d501ae489df93cd16",
    "28170214045f414da9db900218f980d29520136d",
    "dd79f76bb3757e0aad5b1b05352b8fba929616a2",
    "3e6832f0c39fa4e9ccf523c7151c8d7f03f58ecb",
-   "9fae4a7deac1125a0f3c4f4bd38ff5cecbb4c16d",
-   "62bfd97b028e2e716032b6f4ade137d7763be555"
+   "9fae4a7deac1125a0f3c4f4bd38ff5cecbb4c16d"
   ],
   "NVDA": [
-   "8528bac5b0f0ccb9c672dbdb6f5d6aa5a48c0428",
-   "cdbf02db0c3dae7757d7c7cbee98b596eed78c6c",
-   "99371ff91a9149b1e202d4f8c39a1a181ec273ae",
-   "966c092da171fdc47a7eb77726178d4758a075eb",
-   "51e1eff6ac6005f27fe871afc150feebea8580b6"
+   "c565ca129b1561618288cec68c9de13ba4c80b67",
+   "4accafe52dbe6fa646858c02424b5fa13d9dd6e2",
+   "68f25263ee26084823be1af56935b7ecb0f4bc97",
+   "22a773a6d66d757724ea23247e1753213315a17f",
+   "02baa5284cc712ce4a7fd645ca680b1ef4a343f3"
   ],
   "AVGO": [
+   "324d80225544b5b99cc952ef3a3d687917071194",
    "d7f65e1d047db3ac1e04081578e712d4e86ac7cf",
    "41658c806e87e435306596a3bdcf5563f29ab1b1",
    "6795f2d0a81a7997c9e6b7d8374ed0e257c3268b",
-   "a8f118ab7898aa8d7acc02c455e6f5e3e5b39098",
-   "c49413e451f7a7abc75c556298eb02ac15aa49ce"
+   "a8f118ab7898aa8d7acc02c455e6f5e3e5b39098"
   ],
   "GOOG": [
+   "7c0c2a59decfdda68f6c6ecd4fdc83e5552fc16b",
+   "5d37ec03cefd3bdf171a427717247179c8596673",
+   "c26edffbd7abaff0fda7afdb1ad70f42e43670d1",
    "ba2c9517496bc8a6a81b9ff65b97ee6954081f04",
-   "48fdc80372ce337d67a548975a07851d77f94467",
-   "312f53b7800b07e17dc8c1eacd91dabf3fc6128d",
-   "d7f65e1d047db3ac1e04081578e712d4e86ac7cf",
-   "6795f2d0a81a7997c9e6b7d8374ed0e257c3268b"
+   "48fdc80372ce337d67a548975a07851d77f94467"
   ],
   "BMNR": [
-   "3e33a311aeb06a4e4b93d79c03a4b163808507fa",
-   "71a0dbf764c31b5df2f19b609adbd8982453c42f",
-   "fe882750f67635f7a4ecaeb27164bc4ca4f9391f",
-   "79ea2b80c95b069709cb707386a92f56ffccd108",
-   "4e15d6cf537d70140a2e86b73031374cd374456c"
+   "070e754fa0e0919d431d824318e806e7a683c69b",
+   "b9e3e7d84551e2543b04317bcf1cd1f77e2f7131",
+   "4bc08d51870b351b7304cb0178ce1cad8bf28bb9",
+   "01b402a7e440f716f729ebe408ef39cc6a051b73",
+   "3e33a311aeb06a4e4b93d79c03a4b163808507fa"
   ]
  },
  "last24h": [
+  "5d37ec03cefd3bdf171a427717247179c8596673",
+  "26e6fd525d3d353fca417cdf6eb2cd08fc3bf3d1",
+  "6b1a6414d8e2f7d0d81f410831b4df589ff75798",
+  "d01c60fd552ab0b0bfe4cee9bbdf4af1fe1db750",
+  "3bbedfe6b5406e3cabc87cdadb7812917be03278",
+  "65b99a51a5ecc74227ff51e52a5e4bc8f0e60a9f",
+  "12fa6f1e658a178055bf4809393df1d4713cd0c2",
+  "c5996cfb317479c6af57d5867ebcc2d32df9a5f3",
+  "95d96065236d92a3cf3868c41ad0713f0d98587b",
+  "7d560d356bec2bbce61d603c224e1f65e95b09f7",
+  "eca26806c91ec1065f1efd6ff0181653e9db6838",
+  "a7a1cec35c4974fef31990a1de8bebe79527d9a0",
+  "6c9028e9ab7c46e06dbcd4fb0fe1009a58f00e1e",
+  "2f096f3f23fa1c03c18302e8df871e4eb4b44ec3",
+  "69b6ead73130c0e9bf57e3e136919e3348882b1b",
+  "c6f1919bd172169fcf7afa3aa491281b1ede5383",
+  "04af64fc022b290249ba99aa4f25f9181f4f1d0d",
+  "474099860cfea3dc585ceee03294c1addcbc3f3b",
+  "c26edffbd7abaff0fda7afdb1ad70f42e43670d1",
   "f9a8046b7c4696f085cc87e1ce537d9c0134acd6",
-  "00e343c42783036bd08d95b3100a10617429ec77",
-  "be3cb1185a57c5ce47ec036983594ffec9fe5a8c",
-  "2f77c41f50bfc868b4d766e1d88897861da5fd41",
-  "77c25cae4de4dfa58c0fb762db676ea87eb841c9",
-  "e62ba9e3662aff568bfed5f9741f95ee282e56c0",
-  "be9c8fb91e885ef92907945280843ab5eafad5e5",
-  "4e15d6cf537d70140a2e86b73031374cd374456c",
-  "4ef021f5d02ede112287cf0be10fe585522ad984",
+  "c565ca129b1561618288cec68c9de13ba4c80b67",
+  "4accafe52dbe6fa646858c02424b5fa13d9dd6e2",
+  "68f25263ee26084823be1af56935b7ecb0f4bc97",
+  "22a773a6d66d757724ea23247e1753213315a17f",
+  "070e754fa0e0919d431d824318e806e7a683c69b",
+  "02baa5284cc712ce4a7fd645ca680b1ef4a343f3",
+  "7c0c2a59decfdda68f6c6ecd4fdc83e5552fc16b",
+  "34f136483daf85daeab4f2a31d7124a1adb0135f",
+  "9f601098a802de11933f5eac951dedebe9f595ba",
+  "1fabfa91c609360a40ff725c6efdfcdec0e9d2b8",
+  "010d614c214e3e9be5bd8c3d501ae489df93cd16",
+  "082ccadafa703e7b05e0ed930779f80277bf0b4e",
+  "324d80225544b5b99cc952ef3a3d687917071194",
+  "b9e3e7d84551e2543b04317bcf1cd1f77e2f7131",
+  "ba5823d01cc157b5bf2182f50d28004c2743d06d",
+  "4bc08d51870b351b7304cb0178ce1cad8bf28bb9",
+  "b1a9c44dd08bc56b4078fe3d5dd98a4b29724d0f",
+  "01b402a7e440f716f729ebe408ef39cc6a051b73",
   "8528bac5b0f0ccb9c672dbdb6f5d6aa5a48c0428",
   "cdbf02db0c3dae7757d7c7cbee98b596eed78c6c",
-  "99371ff91a9149b1e202d4f8c39a1a181ec273ae",
-  "ba2c9517496bc8a6a81b9ff65b97ee6954081f04",
-  "48fdc80372ce337d67a548975a07851d77f94467",
-  "966c092da171fdc47a7eb77726178d4758a075eb",
-  "51e1eff6ac6005f27fe871afc150feebea8580b6",
-  "f31dac41639a4b16fc29b850dac9c22cab24b1f9",
-  "e1fc764266bfbaea713f497f5a7cccb4b178f3eb",
-  "676bc3ede423d4deb2bf873d96a3e21dfb226c4e",
-  "20fd1934664e052505d138d49d6ec245ed193c1c",
-  "28170214045f414da9db900218f980d29520136d",
-  "dd79f76bb3757e0aad5b1b05352b8fba929616a2",
-  "1a9715010200970f24f34d14cdd52d1e26af7975",
-  "3e6832f0c39fa4e9ccf523c7151c8d7f03f58ecb",
-  "3e33a311aeb06a4e4b93d79c03a4b163808507fa",
-  "5d1435794a9301dcf2096385184b6916e4713c6e",
-  "e18a661f12043d896059114bd021958a6e667325",
-  "0b321055c70065527108b726d46b05503059e63f",
-  "71a0dbf764c31b5df2f19b609adbd8982453c42f",
-  "fe882750f67635f7a4ecaeb27164bc4ca4f9391f",
-  "79ea2b80c95b069709cb707386a92f56ffccd108",
-  "eae3c2ac0f613cf9ff9ab2f8f117454575a6d359",
-  "9fae4a7deac1125a0f3c4f4bd38ff5cecbb4c16d"
+  "99371ff91a9149b1e202d4f8c39a1a181ec273ae"
  ]
 }
