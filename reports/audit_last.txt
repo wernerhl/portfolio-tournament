@@ -2,6 +2,7 @@ last trading session: 2026-11-23
 [CRITICAL] options:snapshot_window      vintage 2026-11-20 has timestamps outside 15:30–16:00 ET on its trading day: ['completed_at 2026-11-20T16:00', 'GEV.written_at 2026-11-20T16:00'] (an after-hours pull is prohibited)
 [HIGH    ] tournament:freshness         alert_state.json: max date 2026-11-19 is 2 sessions-old vs last session 2026-11-23
 [HIGH    ] tournament:dead_columns      regime_v4_daily.csv: columns empty for last 5+ rows but populated earlier: ['p_7_20_random_forest', 'p_15_40_gradient_boost']
+[HIGH    ] xfile:vol_single_source      intraday vix 28.13 vs canonical 26.62
 [HIGH    ] nullguard                    intraday.vvix is null; dependent safety checks must read IMPAIRED not false
 [HIGH    ] governance:coverage          1_cap_pres: unclassified share 51% > 15%
 [HIGH    ] governance:coverage          2_balanced: unclassified share 42% > 15%
@@ -26,7 +27,7 @@ last trading session: 2026-11-23
 [HIGH    ] governance:review_overdue    visibility override TSM review_by 2026-10-29 passed (decay should be active)
 [HIGH    ] calendar:treasury_source     2 tentative auction(s) past their announcement date and not announced in TA_WS: 2026-11-24 5Y (scheduled announcement 2026-11-19); 2026-11-25 7Y (scheduled announcement 2026-11-19)
 [HIGH    ] universe:stale_ticker        universe names with no price bar in the last five sessions (2026-11-17..2026-11-23): ['AVB', 'CFLT', 'EA', 'KVUE', 'PSKY', 'PSTG', 'WBD']
-[HIGH    ] site:stale                   the live site serves session 2026-11-19 (91.5 h since its last publish); the last session is 2026-11-23 and one session behind (2026-11-20) is the most allowed
+[HIGH    ] site:stale                   the live site serves session 2026-11-19 (99.9 h since its last publish); the last session is 2026-11-23 and one session behind (2026-11-20) is the most allowed
 [MEDIUM  ] v4:calibration_evaluation    v4_calibration.json lacks evaluation: out_of_fold with a fold definition (in-sample reliability is not calibration evidence)
 [INFO    ] tournament:freshness         loco_cv_results.csv: no date axis found (static config?)
 [INFO    ] tournament:freshness         ml_indicator_weights.csv: no date axis found (static config?)
@@ -44,5 +45,5 @@ last trading session: 2026-11-23
 [INFO    ] rates:vintage_session        rates vintage 2026-10-06 holds the 2026-10-05 session (erratum erratum-2026-10-06-rates-vintage-1; the file stays as written)
 [INFO    ] universe:index_gap           9 current index members (as of 2026-09-30) not in the universe; listed for the owner, never added by the pipeline: ['BE', 'FDXF', 'FERG', 'FLEX', 'HONA', 'ILMN', 'P', 'Q', 'RDDT']
 
-44 findings; 1 CRITICAL
-REFEREE COMPLETE: 44 findings; 1 CRITICAL
+45 findings; 1 CRITICAL
+REFEREE COMPLETE: 45 findings; 1 CRITICAL
